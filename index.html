@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট | স্মার্ট ভূমিসেবা কেন্দ্র</title>
+    <meta name="description" content="ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট - সরকার অনুমোদিত ভূমিসেবা কেন্দ্র, কম্পিউটার কম্পোজ, ফটোস্ট্যাট ও সকল অনলাইন সেবা।">
+    <title>ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট | ডিজিটাল ও ভূমিসেবা কেন্দ্র</title>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Tailwind CSS -->
@@ -19,474 +20,258 @@
                     colors: {
                         brandGreen: '#047857', brandBlue: '#1d4ed8', brandGold: '#d97706',
                     },
-                    fontFamily: { sans: ['"Hind Siliguri"', 'sans-serif'] },
-                    animation: { 'marquee': 'marquee 25s linear infinite' },
-                    keyframes: {
-                        marquee: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-100%)' } }
-                    }
+                    fontFamily: { sans: ['"Hind Siliguri"', 'sans-serif'] }
                 }
             }
         }
     </script>
-    <style>
-        .page-section { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .chat-box { transition: all 0.3s ease; }
-    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen">
 
-    <!-- Scrolling Notice Board -->
-    <div class="bg-red-600 text-white text-sm py-2 overflow-hidden relative flex items-center">
-        <div class="bg-red-700 z-10 px-4 py-2 font-bold absolute left-0 h-full flex items-center shadow-md">
-            <i class="fas fa-bell mr-2 animate-pulse"></i> নোটিশ:
-        </div>
-        <div class="whitespace-nowrap animate-marquee pl-32 font-medium">
-            <span class="mx-4">• জরুরী নোটিশ: ই-নামজারি সার্ভার আপডেট চলার কারণে সাময়িকভাবে ধীরগতিতে কাজ করছে।</span>
-            <span class="mx-4 text-yellow-300">• সুখবর: এখন থেকে আমাদের এখানে অনলাইনে পাসপোর্টের ফি জমা দেওয়া যাচ্ছে!</span>
-        </div>
+    <!-- ১. সবার উপরে স্ক্রলিং নোটিশ বার ও সময়সূচী -->
+    <div class="bg-red-600 text-white text-xs md:text-sm py-2 px-4 text-center font-semibold tracking-wide">
+        <i class="fas fa-clock mr-2 text-yellow-300"></i> দোকান খোলা: শনি–বৃহস্পতি সকাল ১০:০০ টা - রাত ৯:০০ টা | শুক্রবার বিকাল ৪:০০ টা - রাত ৯:০০ টা
     </div>
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md sticky top-0 z-40">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <button onclick="switchPage('home')" class="flex flex-col text-left focus:outline-none">
-                <h1 class="text-2xl md:text-3xl font-bold text-brandBlue tracking-tight">ফয়জার <span class="text-brandGreen">কম্পিউটার</span></h1>
-                <p class="text-[10px] md:text-xs text-gray-600 font-semibold mt-1 bg-green-100 inline-block px-2 py-0.5 rounded border border-green-200">
-                    <i class="fas fa-certificate text-brandGold mr-1"></i>সরকার অনুমোদিত ভূমিসেবা কেন্দ্র
-                </p>
-            </button>
+    <!-- ২. ওয়েবসাইটের মূল হেডার (দোকানের নাম, প্রোপ্রাইটর ও মেনুবার) -->
+    <header class="bg-white pt-8 pb-8 border-b-4 border-brandGreen shadow-md">
+        <div class="container mx-auto px-4 text-center">
             
-            <!-- Desktop Menu -->
-            <div class="hidden lg:flex space-x-5 items-center font-medium text-sm">
-                <button onclick="switchPage('home')" id="nav-home" class="nav-link text-brandGreen font-bold transition">হোম</button>
-                <button onclick="switchPage('services')" id="nav-services" class="nav-link text-gray-700 hover:text-brandGreen transition">সেবাসমূহ ও অডিও</button>
-                <button onclick="switchPage('tracking')" id="nav-tracking" class="nav-link text-gray-700 hover:text-brandGreen transition">লাইভ ট্র্যাকিং</button>
-                <button onclick="switchPage('booking')" id="nav-booking" class="nav-link text-gray-700 hover:text-brandGreen transition">সিরিয়াল ও ফর্ম</button>
-                <button onclick="switchPage('helplines')" id="nav-helplines" class="nav-link text-gray-700 hover:text-brandGreen transition">অফিস ডিরেক্টরি</button>
-                <button onclick="switchPage('contact')" id="nav-contact" class="nav-link text-gray-700 hover:text-brandGreen transition">যোগাযোগ</button>
-                <a href="tel:01717101919" class="bg-brandGold text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition shadow">
-                    <i class="fas fa-phone mr-1"></i> কল করুন
+            <!-- দোকানের নাম -->
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-brandBlue mb-2 drop-shadow-sm tracking-tight leading-tight">
+                ফয়জার <span class="text-brandGreen">কম্পিউটার এন্ড ফটোস্ট্যাট</span>
+            </h1>
+
+            <!-- প্রোপ্রাইটরের নাম -->
+            <div class="text-base sm:text-lg md:text-xl font-bold text-gray-700 mb-3">
+                <i class="fas fa-user-tie text-brandGold mr-2"></i>প্রোপ্রাইটর: <span class="text-brandBlue">মোঃ ফয়জার আলী</span>
+            </div>
+            
+            <!-- সরকার অনুমোদিত ব্যাজ ও তার নিচে অনুমতি পত্র নম্বর -->
+            <div class="inline-flex flex-col items-center bg-green-50 border border-green-300 rounded-2xl px-6 py-2.5 mb-8 shadow-sm">
+                <span class="text-brandGreen font-extrabold text-base md:text-lg flex items-center">
+                    <i class="fas fa-certificate text-brandGold mr-2 text-xl"></i> সরকার অনুমোদিত ভূমিসেবা কেন্দ্র
+                </span>
+                <span class="text-gray-700 font-bold text-xs md:text-sm mt-0.5">
+                    (অনুমতি পত্র নং- দিনাফ/ফুল/এলএসএসএফসি-০৭/২০২৫)
+                </span>
+            </div>
+
+            <!-- বাটন আকারের মেনুবার -->
+            <div class="flex flex-wrap justify-center gap-2.5 md:gap-4">
+                <!-- হোম বাটন (অ্যাক্টিভ) -->
+                <a href="#" class="bg-brandGreen text-white px-5 md:px-7 py-3 rounded-xl font-bold shadow-md hover:bg-green-700 transition text-sm md:text-base flex items-center">
+                    <i class="fas fa-home mr-2"></i> হোম
+                </a>
+                
+                <!-- সেবাসমূহ -->
+                <a href="#" class="bg-gray-100 text-gray-700 border border-gray-300 px-5 md:px-7 py-3 rounded-xl font-bold shadow-sm hover:bg-brandGreen hover:text-white transition text-sm md:text-base flex items-center">
+                    <i class="fas fa-layer-group mr-2"></i> সেবাসমূহ
+                </a>
+                
+                <!-- অনলাইনে সেবা নিন -->
+                <a href="#" class="bg-gray-100 text-gray-700 border border-gray-300 px-5 md:px-7 py-3 rounded-xl font-bold shadow-sm hover:bg-brandGreen hover:text-white transition text-sm md:text-base flex items-center">
+                    <i class="fas fa-laptop mr-2"></i> অনলাইনে সেবা নিন
+                </a>
+                
+                <!-- সাধারণ জিজ্ঞাসা -->
+                <a href="#" class="bg-gray-100 text-gray-700 border border-gray-300 px-5 md:px-7 py-3 rounded-xl font-bold shadow-sm hover:bg-brandGreen hover:text-white transition text-sm md:text-base flex items-center">
+                    <i class="fas fa-question-circle mr-2"></i> সাধারণ জিজ্ঞাসা
+                </a>
+                
+                <!-- যোগাযোগ -->
+                <a href="#contact-footer" class="bg-gray-100 text-gray-700 border border-gray-300 px-5 md:px-7 py-3 rounded-xl font-bold shadow-sm hover:bg-brandGreen hover:text-white transition text-sm md:text-base flex items-center">
+                    <i class="fas fa-phone-alt mr-2"></i> যোগাযোগ
                 </a>
             </div>
-
-            <!-- Mobile Menu Toggle -->
-            <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="lg:hidden text-2xl text-brandBlue focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
-        
-        <!-- Mobile Dropdown -->
-        <div id="mobileMenu" class="hidden lg:hidden bg-white border-t absolute w-full shadow-lg pb-4 z-50">
-            <div class="flex flex-col px-4 pt-2 space-y-3 font-medium">
-                <button onclick="switchPage('home')" class="text-left py-2 border-b">হোম</button>
-                <button onclick="switchPage('services')" class="text-left py-2 border-b">সেবাসমূহ ও অডিও গাইড</button>
-                <button onclick="switchPage('tracking')" class="text-left py-2 border-b">লাইভ অ্যাপ্লিকেশন ট্র্যাকিং</button>
-                <button onclick="switchPage('booking')" class="text-left py-2 border-b">অনলাইন সিরিয়াল ও ফর্ম</button>
-                <button onclick="switchPage('helplines')" class="text-left py-2 border-b">স্থানীয় অফিস হেল্পলাইন</button>
-                <button onclick="switchPage('contact')" class="text-left py-2 text-brandBlue font-bold">যোগাযোগ ও ম্যাপ</button>
+    </header>
+
+    <!-- ৩. হোম পেজের ব্যানার (Hero Section - সংশোধিত) -->
+    <section class="bg-gradient-to-r from-brandGreen via-emerald-800 to-brandBlue text-white py-16 px-4 text-center relative overflow-hidden">
+        <div class="container mx-auto max-w-4xl relative z-10">
+            <span class="inline-block py-1.5 px-5 rounded-full bg-white/20 text-yellow-300 font-bold text-xs md:text-sm mb-5 border border-white/30 backdrop-blur-sm">
+                ১০০% নিরাপত্তা | বিশ্বস্ত সেবা | দ্রুত সমাধান
+            </span>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+                আপনার বিশ্বস্ত ডিজিটাল, <br class="hidden sm:inline"/> অনলাইন ও <span class="text-yellow-400">ভূমি সেবা সহায়তা কেন্দ্র</span>
+            </h2>
+            <p class="text-base sm:text-lg text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+                ই-নামজারি ও খাজনা পরিশোধের পাশাপাশি বাংলা-ইংরেজি নির্ভুল কম্পিউটার কম্পোজ, কালার ফটোস্ট্যাট, ল্যাব কোয়ালিটি ছবি প্রিন্ট এবং স্কুল-কলেজ-বিশ্ববিদ্যালয়ে ভর্তি ও চাকরির অনলাইন আবেদন অভিজ্ঞতার সাথে করা হয়।
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="tel:01717101919" class="w-full sm:w-auto bg-brandGold text-white px-8 py-3.5 rounded-full font-bold shadow-xl hover:bg-yellow-600 transition text-base md:text-lg flex items-center justify-center">
+                    <i class="fas fa-phone-alt mr-2"></i> সরাসরি কল করুন: 01717-101919
+                </a>
+                <a href="https://wa.me/8801717101919" target="_blank" class="w-full sm:w-auto bg-green-600 text-white px-8 py-3.5 rounded-full font-bold shadow-xl hover:bg-green-700 transition text-base md:text-lg flex items-center justify-center">
+                    <i class="fab fa-whatsapp mr-2 text-xl"></i> হোয়াটসঅ্যাপে মেসেজ দিন
+                </a>
             </div>
         </div>
-    </nav>
+    </section>
 
-    <!-- Floating Action Buttons (WhatsApp, Call & AI Chatbot Toggle) -->
-    <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-50">
-        <!-- AI Chatbot Button -->
-        <button onclick="toggleChatbot()" class="bg-purple-600 text-white p-3 rounded-full shadow-lg hover:bg-purple-700 transition flex items-center justify-center text-xl w-14 h-14 relative" title="এআই সহায়ক চ্যাট">
-            <i class="fas fa-robot"></i>
-            <span class="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></span>
-        </button>
-        <a href="https://wa.me/8801717101919" target="_blank" class="bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition flex items-center justify-center text-2xl w-14 h-14" title="WhatsApp">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="tel:01717101919" class="bg-brandBlue text-white p-3 rounded-full shadow-lg hover:bg-blue-800 transition flex items-center justify-center text-xl w-14 h-14" title="কল করুন">
-            <i class="fas fa-phone-alt"></i>
-        </a>
-    </div>
-
-    <!-- AI Chatbot Floating Window -->
-    <div id="chatbotWindow" class="hidden fixed bottom-24 right-6 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden chat-box">
-        <div class="bg-brandBlue text-white p-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i class="fas fa-robot text-xl text-brandGold"></i>
-                <div>
-                    <h5 class="font-bold text-sm">ফয়জার কম্পিউটার এআই অ্যাসিস্ট্যান্ট</h5>
-                    <p class="text-[10px] text-blue-200">অনলাইন ও ভূমিসেবা সহায়িকা</p>
-                </div>
+    <!-- ৪. বিস্তারিত বৈশিষ্ট্যসমূহ (নিরাপত্তা, দ্রুত সেবা, স্বচ্ছ সেবামূল্য) -->
+    <section class="py-14 px-4 bg-gray-50 flex-grow">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-10">
+                <h3 class="text-2xl sm:text-3xl font-bold text-brandBlue mb-2">কেন আমাদের সেবা গ্রহণ করবেন?</h3>
+                <p class="text-gray-600 text-sm md:text-base">গ্রাহকদের সর্বোচ্চ সন্তুষ্টি ও নির্ভরতা নিশ্চিত করাই আমাদের মূল লক্ষ্য</p>
+                <div class="w-20 h-1 bg-brandGold mx-auto rounded-full mt-3"></div>
             </div>
-            <button onclick="toggleChatbot()" class="text-white hover:text-gray-200 text-lg focus:outline-none"><i class="fas fa-times"></i></button>
-        </div>
-        <div id="chatBody" class="p-4 h-72 overflow-y-auto space-y-3 bg-gray-50 text-sm">
-            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 max-w-[85%]">
-                <p>আসসালামু আলাইকুম! ফয়জার কম্পিউটার ও ভূমিসেবা কেন্দ্রে আপনাকে স্বাগতম। আপনার কি জানা দরকার?</p>
-            </div>
-        </div>
-        <div class="p-3 bg-white border-t flex gap-2">
-            <input type="text" id="chatInput" placeholder="এখানে কিছু লিখুন..." class="flex-grow px-3 py-2 text-sm border rounded-full focus:outline-none focus:border-brandBlue">
-            <button onclick="sendChatMessage()" class="bg-brandBlue text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-700 transition"><i class="fas fa-paper-plane text-xs"></i></button>
-        </div>
-    </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow">
-        
-        <!-- ================= PAGE 1: HOME ================= -->
-        <div id="page-home" class="page-section block">
-            <header class="bg-gradient-to-r from-brandGreen to-brandBlue text-white py-20 px-4 text-center">
-                <div class="container mx-auto">
-                    <h2 class="text-3xl md:text-5xl font-bold mb-4">আপনার ডিজিটাল ও <span class="text-brandGold">ভূমি সেবা</span> সমাধান</h2>
-                    <p class="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                        বিশ্বস্ততার সাথে ই-নামজারি, পাসপোর্ট, খাজনা এবং সকল প্রকার অনলাইন কাজ সম্পন্ন করা হয়।
-                    </p>
-                    <button onclick="switchPage('services')" class="bg-white text-brandBlue px-8 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition mr-4">
-                        সেবাসমূহ ও অডিও গাইড
-                    </button>
-                    <button onclick="switchPage('tracking')" class="bg-brandGold text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-yellow-600 transition mt-4 sm:mt-0">
-                        লাইভ ট্র্যাকিং দেখুন
-                    </button>
-                </div>
-            </header>
-
-            <section class="py-12 px-4 container mx-auto max-w-5xl">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-lg text-center shadow-sm border border-gray-100">
-                        <i class="fas fa-volume-up text-4xl text-brandGreen mb-3"></i>
-                        <h4 class="font-bold text-lg">অডিও গাইড সুবিধা</h4>
-                        <p class="text-sm text-gray-500 mt-2">যাঁরা পড়তে সমস্যা বোধ করেন, তাঁরা অডিও শুনেই সকল তথ্য জেনে নিতে পারবেন।</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg text-center shadow-sm border border-gray-100">
-                        <i class="fas fa-search text-4xl text-brandGold mb-3"></i>
-                        <h4 class="font-bold text-lg">লাইভ অ্যাপ্লিকেশন ট্র্যাকিং</h4>
-                        <p class="text-sm text-gray-500 mt-2">আপনার কাজের বর্তমান অবস্থা ঘরে বসেই অনলাইনে যাচাই করুন।</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg text-center shadow-sm border border-gray-100">
-                        <i class="fas fa-robot text-4xl text-brandBlue mb-3"></i>
-                        <h4 class="font-bold text-lg">এআই চ্যাটবট সাপোর্ট</h4>
-                        <p class="text-sm text-gray-500 mt-2">যেকোনো সময় যেকোনো প্রশ্ন করলে এআই বট আপনাকে তাৎক্ষণিক উত্তর দেবে।</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- ================= PAGE 2: SERVICES & AUDIO GUIDE ================= -->
-        <div id="page-services" class="page-section hidden bg-gray-50 py-10 px-4">
-            <div class="container mx-auto max-w-6xl">
-                <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-brandBlue mb-2">সেবাসমূহ ও <span class="text-brandGreen">অডিও গাইডলাইন</span></h2>
-                    <p class="text-gray-600">স্পিকার আইকনে ক্লিক করে বিবরণটি অডিওতে শুনে নিতে পারেন</p>
-                    <div class="w-20 h-1 bg-brandGold mx-auto rounded mt-4"></div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Service 1 -->
-                    <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col h-full">
-                        <div class="bg-brandGreen text-white p-4 flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-file-signature text-2xl"></i>
-                                <h4 class="text-xl font-bold">ই-নামজারি ও ট্র্যাকিং</h4>
-                            </div>
-                            <button onclick="playAudio('ই-নামজারি করার জন্য মূল দলিল, পূর্ববর্তী খতিয়ান, খাজনার রসিদ ও জাতীয় পরিচয়পত্র প্রয়োজন। সরকারি ফি ১১৭০ টাকা এবং কম্পিউটার চার্জ ৩০০ থেকে ৫০০ টাকা।')" class="bg-white text-brandGreen w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-100 transition shadow" title="অডিও শুনুন">
-                                <i class="fas fa-volume-up"></i>
-                            </button>
-                        </div>
-                        <div class="p-6 flex-grow">
-                            <h5 class="font-bold text-brandBlue mb-2">প্রয়োজনীয় কাগজপত্র:</h5>
-                            <ul class="text-sm text-gray-700 space-y-1.5 pl-2 border-l-2 border-brandGreen ml-2 mb-4">
-                                <li>• মূল দলিল / সার্টিফাইড কপির স্ক্যান।</li>
-                                <li>• পূর্ববর্তী খতিয়ান (CS, SA, RS বা হাল খতিয়ান)।</li>
-                                <li>• সর্বশেষ পরিশোধিত খাজনার দাখিলা (রসিদ)।</li>
-                                <li>• আবেদনকারীর জাতীয় পরিচয়পত্র (NID)।</li>
-                            </ul>
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-600">সরকারি ফি:</span><span class="font-bold text-red-600">১১৭০ টাকা</span></div>
-                                <div class="flex justify-between text-sm"><span class="text-gray-600">কম্পিউটার চার্জ:</span><span class="font-bold text-brandGreen">৩০০ - ৫০০ টাকা</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Service 2 -->
-                    <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col h-full">
-                        <div class="bg-brandBlue text-white p-4 flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-passport text-2xl"></i>
-                                <h4 class="text-xl font-bold">ই-পাসপোর্ট আবেদন</h4>
-                            </div>
-                            <button onclick="playAudio('ই-পাসপোর্টের জন্য জাতীয় পরিচয়পত্র অথবা জন্ম সনদ, পুরানো পাসপোর্ট এবং পেশার প্রমাণপত্র প্রয়োজন। সরকারি ফি ৪০২৫ টাকা থেকে শুরু।')" class="bg-white text-brandBlue w-10 h-10 rounded-full flex items-center justify-center hover:bg-blue-100 transition shadow" title="অডিও শুনুন">
-                                <i class="fas fa-volume-up"></i>
-                            </button>
-                        </div>
-                        <div class="p-6 flex-grow">
-                            <h5 class="font-bold text-brandBlue mb-2">প্রয়োজনীয় কাগজপত্র:</h5>
-                            <ul class="text-sm text-gray-700 space-y-1.5 pl-2 border-l-2 border-brandBlue ml-2 mb-4">
-                                <li>• জাতীয় পরিচয়পত্র (NID) বা জন্ম সনদের কপি।</li>
-                                <li>• পুরাতন পাসপোর্ট (যদি থাকে)।</li>
-                                <li>• পেশার প্রমাণপত্র (স্টুডেন্ট আইডি/ট্রেড লাইসেন্স)।</li>
-                                <li>• পিতা-মাতার NID নম্বর।</li>
-                            </ul>
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-600">সরকারি ফি (৫ বছর):</span><span class="font-bold text-red-600">৪০২৫ টাকা</span></div>
-                                <div class="flex justify-between text-sm"><span class="text-gray-600">সার্ভিস চার্জ:</span><span class="font-bold text-brandGreen">২০০ - ৩০০ টাকা</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= PAGE 3: LIVE APPLICATION TRACKING ================= -->
-        <div id="page-tracking" class="page-section hidden bg-white py-12 px-4">
-            <div class="container mx-auto max-w-3xl text-center">
-                <h2 class="text-3xl font-bold text-brandBlue mb-2">লাইভ অ্যাপ্লিকেশন <span class="text-brandGreen">ট্র্যাকিং সিস্টেম</span></h2>
-                <p class="text-gray-600 mb-8">আপনার রসিদে থাকা ট্র্যাকিং আইডি অথবা মোবাইল নম্বর দিয়ে কাজের বর্তমান অবস্থা যাচাই করুন</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
-                <div class="bg-gray-50 p-6 rounded-xl border shadow-sm flex flex-col sm:flex-row gap-3 mb-8">
-                    <input type="text" id="trackInput" placeholder="উদাহরণ: FC-101 বা মোবাইল নম্বর..." class="flex-grow px-4 py-3 rounded border focus:outline-none focus:border-brandGreen">
-                    <button onclick="checkTrackingStatus()" class="bg-brandGreen text-white px-6 py-3 rounded font-bold hover:bg-green-700 transition shadow">
-                        অবস্থা যাচাই করুন
-                    </button>
-                </div>
-
-                <!-- Tracking Result Box -->
-                <div id="trackResult" class="hidden bg-blue-50 border border-blue-200 rounded-xl p-6 text-left">
-                    <h4 class="font-bold text-brandBlue text-lg mb-4 border-b pb-2 flex justify-between">
-                        <span>ট্র্যাকিং ফলাফল: <span id="resToken" class="text-gray-800"></span></span>
-                        <span id="resStatus" class="text-sm px-3 py-1 bg-green-100 text-brandGreen rounded-full"></span>
-                    </h4>
-                    <!-- Progress Steps -->
-                    <div class="space-y-4 mt-4">
-                        <div class="flex items-center gap-3">
-                            <div id="step1" class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold text-sm"><i class="fas fa-check"></i></div>
-                            <div><h5 class="font-bold text-sm">আবেদন ও ডকুমেন্টস জমা</h5><p class="text-xs text-gray-500">আপনার ফাইল রিসিভ করা হয়েছে।</p></div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div id="step2" class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold text-sm"><i class="fas fa-check"></i></div>
-                            <div><h5 class="font-bold text-sm">অনলাইন সাবমিশন ও প্রসেসিং</h5><p class="text-xs text-gray-500">সংশ্লিষ্ট পোর্টালে কাজ চলছে।</p></div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div id="step3" class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold text-sm"><i class="fas fa-check"></i></div>
-                            <div><h5 class="font-bold text-sm">কাজ সম্পন্ন ও ডেলিভারি</h5><p class="text-xs text-gray-500">আপনার কাজ কমপ্লিট, সংগ্রহ করুন।</p></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= PAGE 4: BOOKING & FORMS ================= -->
-        <div id="page-booking" class="page-section hidden bg-gray-50 py-12 px-4">
-            <div class="container mx-auto max-w-4xl">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-brandBlue">অনলাইন সিরিয়াল ও <span class="text-brandGold">ফর্ম ডাউনলোড</span></h2>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Form Booking -->
-                    <div class="bg-white p-6 rounded-xl shadow-md border">
-                        <h4 class="font-bold text-xl mb-4 text-brandGreen">সিরিয়াল বুক করুন</h4>
-                        <form onsubmit="event.preventDefault(); alert('ধন্যবাদ! আপনার সিরিয়াল বুকিং সফল হয়েছে।'); switchPage('home');">
-                            <div class="mb-4">
-                                <label class="block text-gray-700 font-bold mb-1 text-sm">আপনার নাম</label>
-                                <input type="text" required class="w-full px-3 py-2 rounded border outline-none focus:border-brandGreen" placeholder="নাম লিখুন">
-                            </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 font-bold mb-1 text-sm">মোবাইল নম্বর</label>
-                                <input type="tel" required class="w-full px-3 py-2 rounded border outline-none focus:border-brandGreen" placeholder="01XXX-XXXXXX">
-                            </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-700 font-bold mb-1 text-sm">সেবার ধরন</label>
-                                <select class="w-full px-3 py-2 rounded border outline-none focus:border-brandGreen">
-                                    <option>ই-নামজারি</option>
-                                    <option>পাসপোর্ট আবেদন</option>
-                                    <option>অন্যান্য</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="w-full bg-brandGreen text-white font-bold py-2 rounded hover:bg-green-700 transition">সাবমিট</button>
-                        </form>
-                    </div>
-
-                    <!-- Downloads -->
-                    <div class="bg-white p-6 rounded-xl shadow-md border">
-                        <h4 class="font-bold text-xl mb-4 text-brandBlue">প্রয়োজনীয় ফর্ম ডাউনলোড</h4>
-                        <div class="space-y-3">
-                            <a href="#" class="border p-3 rounded-lg flex items-center justify-between hover:bg-gray-50 transition block">
-                                <span class="text-sm font-medium">ওয়ারিশান সনদ ফর্ম</span><i class="fas fa-file-pdf text-red-500"></i>
-                            </a>
-                            <a href="#" class="border p-3 rounded-lg flex items-center justify-between hover:bg-gray-50 transition block">
-                                <span class="text-sm font-medium">নাগরিকত্ব আবেদন ফর্ম</span><i class="fas fa-file-pdf text-red-500"></i>
-                            </a>
-                            <a href="#" class="border p-3 rounded-lg flex items-center justify-between hover:bg-gray-50 transition block">
-                                <span class="text-sm font-medium">নামজারি অঙ্গীকারনামা</span><i class="fas fa-file-pdf text-red-500"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= PAGE 5: LOCAL OFFICE HELPLINES ================= -->
-        <div id="page-helplines" class="page-section hidden bg-white py-12 px-4">
-            <div class="container mx-auto max-w-4xl text-center">
-                <h2 class="text-3xl font-bold text-brandBlue mb-2">স্থানীয় অফিস ও <span class="text-brandGreen">হেল্পলাইন ডিরেক্টরি</span></h2>
-                <p class="text-gray-600 mb-8">জরুরী প্রয়োজনে বিভিন্ন সরকারি অফিস ও সেবার হেল্পলাইন নম্বর</p>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left">
-                    <div class="bg-gray-50 p-5 rounded-lg border shadow-sm">
-                        <h4 class="font-bold text-lg text-brandBlue mb-2"><i class="fas fa-landmark mr-2"></i>ফুলবাড়ী উপজেলা ভূমি অফিস</h4>
-                        <p class="text-sm text-gray-600 mb-1">যোগাযোগ: সহকারী কমিশনার (ভূমি) কার্যালয়, ফুলবাড়ী, দিনাজপুর।</p>
-                        <p class="text-sm font-bold text-brandGreen">হটলাইন / ল্যান্ডলাইন: ০৫৩৩১-xxxxxx</p>
-                    </div>
-                    <div class="bg-gray-50 p-5 rounded-lg border shadow-sm">
-                        <h4 class="font-bold text-lg text-brandBlue mb-2"><i class="fas fa-building mr-2"></i>দিনাজপুর জেলা প্রশাসন অফিস</h4>
-                        <p class="text-sm text-gray-600 mb-1">জেলা কালেক্টরেট ভবন, দিনাজপুর।</p>
-                        <p class="text-sm font-bold text-brandGreen">জেলা ই-সেবা কেন্দ্র: ০৫৩১-xxxxxx</p>
-                    </div>
-                    <div class="bg-gray-50 p-5 rounded-lg border shadow-sm">
-                        <h4 class="font-bold text-lg text-brandBlue mb-2"><i class="fas fa-phone-square-alt mr-2"></i>জাতীয় ভূমিসেবা হটলাইন</h4>
-                        <p class="text-sm text-gray-600 mb-1">ভূমি মন্ত্রণালয় সম্পর্কিত যেকোনো তথ্যের জন্য:</p>
-                        <p class="text-sm font-bold text-red-600 text-lg">১৬১২২</p>
-                    </div>
-                    <div class="bg-gray-50 p-5 rounded-lg border shadow-sm">
-                        <h4 class="font-bold text-lg text-brandBlue mb-2"><i class="fas fa-shield-alt mr-2"></i>জাতীয় জরুরী সেবা</h4>
-                        <p class="text-sm text-gray-600 mb-1">পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্স:</p>
-                        <p class="text-sm font-bold text-red-600 text-lg">৯৯৯</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= PAGE 6: CONTACT & MAP ================= -->
-        <div id="page-contact" class="page-section hidden bg-white py-12 px-4">
-            <div class="container mx-auto max-w-6xl">
-                <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-brandBlue">যোগাযোগ ও <span class="text-brandGold">ঠিকানা</span></h2>
-                    <div class="w-16 h-1 bg-brandGreen mx-auto rounded mt-4"></div>
-                </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+                <!-- কার্ড ১: ১০০% নিরাপত্তা ও গোপনীয়তা -->
+                <div class="bg-white p-7 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md hover:border-brandGreen transition flex flex-col justify-between">
                     <div>
-                        <div class="bg-gray-50 p-6 rounded-xl border mb-6">
-                            <h4 class="font-bold text-xl mb-4 border-b pb-2">আমাদের অফিসের ঠিকানা</h4>
-                            <p class="text-gray-700 mb-2"><i class="fas fa-map-marker-alt text-brandGreen w-6"></i> ফুলবাড়ী সরকারি কলেজ গেট এর পশ্চিম পার্শ্বে, ফুলবাড়ী, দিনাজপুর।</p>
-                            <p class="text-gray-700 mb-2"><i class="fas fa-phone-alt text-brandBlue w-6"></i> <strong>01717-101919</strong> (মোঃ ফয়জার আলী)</p>
-                            <p class="text-gray-700"><i class="fas fa-envelope text-brandGold w-6"></i> fayzar.computer@gmail.com</p>
+                        <div class="w-16 h-16 bg-green-50 text-brandGreen rounded-2xl flex items-center justify-center text-3xl mb-5 shadow-inner">
+                            <i class="fas fa-user-shield"></i>
                         </div>
-                        <a href="https://maps.app.goo.gl/5YJX7wsK5euPfkok8?g_st=ac" target="_blank" class="w-full block text-center bg-brandBlue hover:bg-blue-600 text-white py-3 rounded font-bold transition shadow">
-                            <i class="fas fa-directions mr-2"></i> Google Map-এ ডিরেকশন দেখুন
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">১০০% নিরাপত্তা ও তথ্যের গোপনীয়তা</h4>
+                        <ul class="text-sm text-gray-600 space-y-2.5">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandGreen mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>আপনার জমির মূল দলিল, এনআইডি ও ব্যক্তিগত কাগজের সর্বোচ্চ সুরক্ষা নিশ্চিত করা হয়।</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandGreen mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>অনলাইন আবেদনের ক্ষেত্রে কোনো তথ্য অপব্যবহার বা তৃতীয় পক্ষের কাছে হস্তান্তরের সুযোগ নেই।</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandGreen mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>সরকারি সার্ভারে সরাসরি আবেদন দাখিল ও ডিজিটাল রসিদ গ্রাহককে হস্তান্তর করা হয়।</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- কার্ড ২: দ্রুত সেবা প্রদান ও ট্র্যাকিং -->
+                <div class="bg-white p-7 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md hover:border-brandGold transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-16 h-16 bg-yellow-50 text-brandGold rounded-2xl flex items-center justify-center text-3xl mb-5 shadow-inner">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">অভিজ্ঞ ও দ্রুততম সেবা প্রদান</h4>
+                        <ul class="text-sm text-gray-600 space-y-2.5">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandGold mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>দক্ষ ও অভিজ্ঞ অপারেটর দ্বারা নির্ভুলভাবে যেকোনো ফরম ও আবেদনপত্র পূরণ করা হয়।</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandGold mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>আবেদনের সর্বশেষ অগ্রগতি ও ট্র্যাকিং তথ্য তাৎক্ষণিকভাবে গ্রাহককে জানিয়ে দেওয়া হয়।</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandGold mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>জরুরি প্রয়োজনে দ্রুত ডেলিভারি নিশ্চিত করতে বিশেষ গুরুত্ব দেওয়া হয়।</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- কার্ড ৩: স্বচ্ছ সেবামূল্য ও সরকারি ফি -->
+                <div class="bg-white p-7 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md hover:border-brandBlue transition flex flex-col justify-between">
+                    <div>
+                        <div class="w-16 h-16 bg-blue-50 text-brandBlue rounded-2xl flex items-center justify-center text-3xl mb-5 shadow-inner">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">স্বচ্ছ ও সরকারি নির্দিষ্ট ফি</h4>
+                        <ul class="text-sm text-gray-600 space-y-2.5">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandBlue mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>সরকারি সকল ফি সরাসরি ব্যাংকিং বা অনলাইন চ্যানেলের মাধ্যমে নির্ভুলভাবে জমা দেওয়া হয়।</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandBlue mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>কোনো অতিরিক্ত লুকায়িত চার্জ নেই; সরকারি ফি ও নামমাত্র কম্পিউটার চার্জ আগেই অবগত করা হয়।</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-brandBlue mr-2.5 mt-0.5 flex-shrink-0"></i>
+                                <span>প্রতিটি পেমেন্টের মূল চালান কপি ও বৈধ রসিদ গ্রাহককে বুঝিয়ে দেওয়া হয়।</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ৫. স্থায়ী ফুটার ও যোগাযোগের পূর্ণাঙ্গ তথ্য -->
+    <footer id="contact-footer" class="bg-gray-900 text-gray-300 border-t-8 border-brandGreen pt-12 pb-6">
+        <div class="container mx-auto px-4 max-w-6xl">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10 border-b border-gray-800">
+                
+                <!-- কলাম ১: দোকানের নাম ও বিবরণ -->
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-1">ফয়জার <span class="text-brandGreen">কম্পিউটার</span></h3>
+                    <p class="text-sm text-yellow-400 font-bold mb-2">প্রোপ্রাইটর: মোঃ ফয়জার আলী</p>
+                    <p class="text-xs text-brandGold font-bold mb-3">সরকার অনুমোদিত ভূমিসেবা কেন্দ্র (দিনাফ/ফুল/এলএসএসএফসি-০৭/২০২৫)</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        ভূমিসেবা, কম্পিউটার কম্পোজ, ফটোস্ট্যাট, ছবি প্রিন্ট এবং সকল প্রকার সরকারি-বেসরকারি অনলাইন আবেদন বিশ্বস্ততার সাথে সম্পন্ন করা হয়।
+                    </p>
+                </div>
+
+                <!-- কলাম ২: যোগাযোগের ঠিকানা ও মাধ্যম -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 border-b border-gray-700 pb-2 flex items-center">
+                        <i class="fas fa-address-book text-brandGold mr-2"></i> যোগাযোগের তথ্য
+                    </h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-red-500 mt-1 mr-3 flex-shrink-0 text-base"></i>
+                            <span>ফুলবাড়ী সরকারি কলেজ গেট এর পশ্চিম পার্শ্বে, ফুলবাড়ী, দিনাজপুর।</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt text-green-400 mr-3 flex-shrink-0 text-base"></i>
+                            <span>মোবাইল: <a href="tel:01717101919" class="text-white hover:text-brandGold font-bold">01717-101919</a></span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope text-blue-400 mr-3 flex-shrink-0 text-base"></i>
+                            <span>ইমেইল: <a href="mailto:fayzar.computer@gmail.com" class="hover:underline">fayzar.computer@gmail.com</a></span>
+                        </li>
+                    </ul>
+                    
+                    <!-- Google Map Link Button -->
+                    <div class="mt-4">
+                        <a href="https://maps.app.goo.gl/5YJX7wsK5euPfkok8?g_st=ac" target="_blank" class="inline-flex items-center bg-brandBlue hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow">
+                            <i class="fas fa-directions mr-2 text-yellow-300"></i> গুগল ম্যাপে লোকেশন দেখুন
                         </a>
                     </div>
-                    
-                    <div class="h-64 lg:h-full bg-gray-200 rounded-xl overflow-hidden border">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14436.5411786196!2d88.948248!3d25.534261!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e34cbb00000000!2sFayzar%20Computer!5e0!3m2!1sen!2sbd!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+
+                <!-- কলাম ৩: দোকান খোলার সময়সূচী ও জরুরি হেল্পলাইন -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 border-b border-gray-700 pb-2 flex items-center">
+                        <i class="fas fa-calendar-alt text-brandGold mr-2"></i> দোকান খোলার সময়সূচী
+                    </h4>
+                    <div class="bg-gray-800/80 p-3 rounded-xl border border-gray-700 mb-4 text-xs space-y-1.5">
+                        <p class="flex justify-between">
+                            <span class="text-gray-300">শনিবার – বৃহস্পতিবার:</span>
+                            <span class="text-yellow-400 font-bold">সকাল ১০:০০ - রাত ৯:০০</span>
+                        </p>
+                        <p class="flex justify-between border-t border-gray-700 pt-1.5">
+                            <span class="text-gray-300">শুক্রবার:</span>
+                            <span class="text-yellow-400 font-bold">বিকাল ৪:০০ - রাত ৯:০০</span>
+                        </p>
+                    </div>
+
+                    <div class="text-xs text-gray-400 space-y-1">
+                        <p><i class="fas fa-phone-square-alt text-brandGreen mr-1.5"></i> ভূমিসেবা হটলাইন: <strong class="text-white">১৬১২২</strong></p>
+                        <p><i class="fas fa-shield-alt text-red-400 mr-1.5"></i> জাতীয় জরুরি সেবা: <strong class="text-white">৯৯৯</strong></p>
                     </div>
                 </div>
+
+            </div>
+
+            <!-- কপিরাইট অংশ -->
+            <div class="pt-6 text-center text-xs text-gray-400 flex flex-col sm:flex-row justify-between items-center gap-2">
+                <p>&copy; 2026 ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট। সর্বস্বত্ব সংরক্ষিত।</p>
+                <p class="text-gray-400">ফুলবাড়ী, দিনাজপুর | একটি বিশ্বস্ত সেবা কেন্দ্র</p>
             </div>
         </div>
-
-    </main>
-
-    <!-- Global Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm">
-        <p>&copy; 2026 Fayzar Computer & Photostat. All Rights Reserved.</p>
     </footer>
 
-    <!-- JavaScript Logic -->
-    <script>
-        // Page Navigation
-        function switchPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(page => {
-                page.classList.add('hidden');
-                page.classList.remove('block');
-            });
-            document.getElementById('page-' + pageId).classList.remove('hidden');
-            document.getElementById('page-' + pageId).classList.add('block');
-
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('text-brandGreen', 'font-bold');
-                link.classList.add('text-gray-700');
-            });
-            if(document.getElementById('nav-' + pageId)) {
-                document.getElementById('nav-' + pageId).classList.add('text-brandGreen', 'font-bold');
-                document.getElementById('nav-' + pageId).classList.remove('text-gray-700');
-            }
-            document.getElementById('mobileMenu').classList.add('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Audio Guide Function using Web Speech API (Bengali Voice Support)
-        function playAudio(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // stop previous speech
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'bn-BD';
-                utterance.rate = 0.9;
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert('আপনার ব্রাউজার অডিও স্পিচ সাপোর্ট করছে না।');
-            }
-        }
-
-        // AI Chatbot Toggle
-        function toggleChatbot() {
-            const chatWin = document.getElementById('chatbotWindow');
-            chatWin.classList.toggle('hidden');
-        }
-
-        // AI Chatbot Simple Logic
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const body = document.getElementById('chatBody');
-            const text = input.value.trim();
-            if(!text) return;
-
-            // User Message
-            body.innerHTML += `<div class="bg-blue-50 p-3 rounded-lg shadow-sm border border-blue-100 max-w-[85%] ml-auto text-right"><p>${text}</p></div>`;
-            input.value = '';
-            body.scrollTop = body.scrollHeight;
-
-            // Bot Response Simulation
-            setTimeout(() => {
-                let reply = "ধন্যবাদ আপনার বার্তার জন্য। আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করবেন। বিস্তারিত জানতে 01717-101919 নম্বরে কল করুন।";
-                const lower = text.toLowerCase();
-                if(lower.includes('নামজারি') || lower.includes('খারিজ')) {
-                    reply = "ই-নামজারির সরকারি ফি ১১৭০ টাকা এবং আমাদের সার্ভিস চার্জ ৩০০ থেকে ৫০০ টাকা। দলিল ও খতিয়ান নিয়ে দোকানে আসুন।";
-                } else if(lower.includes('পাসপোর্ট')) {
-                    reply = "ই-পাসপোর্ট আবেদনের জন্য NID কার্ড এবং পুরানো পাসপোর্ট লাগবে। সরকারি ফি ৪০২৫ টাকা থেকে শুরু।";
-                } else if(lower.includes('সময়') || lower.includes('খোলা')) {
-                    reply = "আমাদের দোকান প্রতিদিন সকাল ৯টা থেকে রাত ৯টা পর্যন্ত খোলা থাকে।";
-                }
-
-                body.innerHTML += `<div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 max-w-[85%]"><p>${reply}</p></div>`;
-                body.scrollTop = body.scrollHeight;
-            }, 600);
-        }
-
-        // Live Tracking Simulation Logic
-        function checkTrackingStatus() {
-            const val = document.getElementById('trackInput').value.trim();
-            const resultBox = document.getElementById('trackResult');
-            if(!val) {
-                alert('দয়া করে একটি ট্র্যাকিং আইডি বা মোবাইল নম্বর দিন।');
-                return;
-            }
-
-            resultBox.classList.remove('hidden');
-            document.getElementById('resToken').textContent = val;
-            document.getElementById('resStatus').textContent = "প্রক্রিয়াধীন";
-
-            // Reset steps
-            ['step1', 'step2', 'step3'].forEach(id => {
-                const el = document.getElementById(id);
-                el.className = "w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold text-sm";
-            });
-
-            // Simulate status based on input length or default
-            setTimeout(() => {
-                document.getElementById('step1').className = "w-8 h-8 rounded-full bg-brandGreen text-white flex items-center justify-center font-bold text-sm";
-                document.getElementById('step2').className = "w-8 h-8 rounded-full bg-brandGreen text-white flex items-center justify-center font-bold text-sm";
-                document.getElementById('step3').className = "w-8 h-8 rounded-full bg-brandGreen text-white flex items-center justify-center font-bold text-sm";
-                document.getElementById('resStatus').textContent = "সম্পন্ন হয়েছে";
-                document.getElementById('resStatus').className = "text-sm px-3 py-1 bg-green-100 text-brandGreen rounded-full font-bold";
-            }, 500);
-        }
-    </script>
 </body>
 </html>
