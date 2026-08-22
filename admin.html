@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অ্যাডমিন প্যানেল | ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Google Fonts: Hind Siliguri -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandGreen: '#047857',
+            brandGreenDark: '#065f46',
+            brandBlue: '#1d4ed8',
+            brandGold: '#d97706'
+          },
+          fontFamily: {
+            sans: ['"Hind Siliguri"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body { font-family: 'Hind Siliguri', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- =========================================================================
+       ১. সিকিউরিটি পিন লক স্ক্রিন (PIN Login Screen)
+       ========================================================================= -->
+  <div id="admin-login-screen" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl text-center">
+      
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center text-2xl mb-4 shadow-inner">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      
+      <h2 class="text-2xl font-extrabold text-white mb-1">ফয়জার কম্পিউটার</h2>
+      <p class="text-xs text-amber-400 font-bold mb-6">অভ্যন্তরীণ অ্যাডমিন কন্ট্রোল প্যানেল</p>
+      
+      <form id="admin-login-form" class="space-y-4">
+        <div class="text-left">
+          <label class="block text-xs font-bold text-slate-400 mb-1.5">অ্যাডমিন সিকিউরিটি পিন (PIN)</label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="admin-pin-input" 
+              placeholder="পিন কোড লিখুন..." 
+              required
+              class="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 text-white rounded-2xl px-4 py-3 text-center text-lg tracking-widest font-mono focus:outline-none transition shadow-inner"
+            >
+            <button type="button" onclick="togglePinVisibility()" class="absolute right-4 top-3.5 text-slate-400 hover:text-white transition">
+              <i id="pin-eye-icon" class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="flex items-center justify-between mt-2 text-[11px] text-slate-500">
+            <span>ডিফল্ট পিন: <strong class="text-slate-300">101919</strong></span>
+            <span class="text-emerald-400 font-semibold"><i class="fas fa-lock text-[10px]"></i> সুরক্ষিত</span>
+          </div>
+        </div>
+        
+        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-brandGreen hover:from-emerald-500 hover:to-emerald-600 text-white font-extrabold py-3.5 rounded-2xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
+          <i class="fas fa-arrow-right-to-bracket"></i> ড্যাশবোর্ডে প্রবেশ করুন
+        </button>
+        
+        <div class="pt-2">
+          <a href="index.html" class="text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-1">
+            <i class="fas fa-arrow-left text-[10px]"></i> মূল ওয়েবসাইটে ফিরে যান
+          </a>
+        </div>
+      </form>
+      
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       ২. মূল অ্যাডমিন ড্যাশবোর্ড (Clean 4-Category Control Center)
+       ========================================================================= -->
+  <div id="admin-dashboard" class="hidden flex-1 flex flex-col">
+    
+    <!-- Top Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30 shadow-md">
+      <div class="container mx-auto max-w-7xl px-4 py-3.5 flex items-center justify-between">
+        
+        <!-- Left Brand Info -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-brandGreen text-white flex items-center justify-center text-lg font-black shadow">
+            <i class="fas fa-desktop"></i>
+          </div>
+          <div>
+            <div class="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+              ফয়জার কম্পিউটার অ্যাডমিন প্যানেল
+            </div>
+            <div class="text-[11px] text-slate-400">ফুলবাড়ী সরকারি কলেজ গেট, দিনাজপুর • অনুমতি পত্র নং- দিনাজ/ফুল/এলএসএসএফসি-০৭/২০২৫</div>
+          </div>
+        </div>
+        
+        <!-- Right Actions -->
+        <div class="flex items-center gap-2.5">
+          <a href="index.html" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-xl transition border border-slate-700 shadow-sm">
+            <i class="fas fa-external-link-alt text-amber-400 text-[11px]"></i> 
+            <span class="hidden sm:inline">ওয়েবসাইট দেখুন</span>
+          </a>
+          <button onclick="adminLogout()" class="text-xs font-bold bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/80 px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
+            <i class="fas fa-power-off text-[11px]"></i> 
+            <span class="hidden sm:inline">লগআউট</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto max-w-7xl px-4 py-6 flex-1 space-y-6">
+      
+      <!-- ৪টি নির্দিষ্ট প্রধান ক্যাটাগরি মেনু (Requested Tabs Order) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 border-b border-slate-800 pb-4">
+        
+        <!-- ক্যাটাগরি ১: সেবাসমূহ ম্যানেজমেন্ট -->
+        <button id="tab-btn-services" onclick="switchCategory('services')" class="p-3 sm:p-4 rounded-2xl bg-brandGreen text-white transition flex flex-col items-start gap-1 shadow-md border border-emerald-500/40 text-left group">
+          <div class="flex items-center justify-between w-full">
+            <span class="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center text-sm font-bold">
+              <i class="fas fa-hand-holding-dollar"></i>
+            </span>
+            <span id="badge-services-count" class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300">১১ টি</span>
+          </div>
+          <div class="font-extrabold text-sm sm:text-base mt-1">১. সেবাসমূহ ম্যানেজমেন্ট</div>
+          <div class="text-[11px] text-emerald-100">সরকারি ফি, দোকানের ফি ও কাগজপত্র</div>
+        </button>
+
+        <!-- ক্যাটাগরি ২: স্কুল/কলেজ সংক্রান্ত নোটিশ -->
+        <button id="tab-btn-college" onclick="switchCategory('college')" class="p-3 sm:p-4 rounded-2xl bg-slate-900 text-slate-300 hover:bg-slate-850 transition flex flex-col items-start gap-1 border border-slate-800 text-left group">
+          <div class="flex items-center justify-between w-full">
+            <span class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm font-bold">
+              <i class="fas fa-graduation-cap"></i>
+            </span>
+            <span id="badge-college-count" class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">৪ টি</span>
+          </div>
+          <div class="font-extrabold text-sm sm:text-base mt-1">২. স্কুল/কলেজ নোটিশ</div>
+          <div class="text-[11px] text-slate-400">ফুলবাড়ী কলেজ ও ভর্তি বিজ্ঞপ্তি</div>
+        </button>
+
+        <!-- ক্যাটাগরি ৩: চাকুরির নোটিশ -->
+        <button id="tab-btn-jobs" onclick="switchCategory('jobs')" class="p-3 sm:p-4 rounded-2xl bg-slate-900 text-slate-300 hover:bg-slate-850 transition flex flex-col items-start gap-1 border border-slate-800 text-left group">
+          <div class="flex items-center justify-between w-full">
+            <span class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-sm font-bold">
+              <i class="fas fa-briefcase"></i>
+            </span>
+            <span id="badge-jobs-count" class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300">২০+ জব</span>
+          </div>
+          <div class="font-extrabold text-sm sm:text-base mt-1">৩. চাকুরির নোটিশ</div>
+          <div class="text-[11px] text-slate-400">টেলিটক ও সরকারি জব সার্কুলার</div>
+        </button>
+
+        <!-- ক্যাটাগরি ৪: শেষে লাইভ নোটিশ -->
+        <button id="tab-btn-live" onclick="switchCategory('live')" class="p-3 sm:p-4 rounded-2xl bg-slate-900 text-slate-300 hover:bg-slate-850 transition flex flex-col items-start gap-1 border border-slate-800 text-left group">
+          <div class="flex items-center justify-between w-full">
+            <span class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm font-bold">
+              <i class="fas fa-globe"></i>
+            </span>
+            <span id="badge-live-count" class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">০ টি</span>
+          </div>
+          <div class="font-extrabold text-sm sm:text-base mt-1">৪. লাইভ নোটিশসমূহ</div>
+          <div class="text-[11px] text-slate-400">বর্তমানে সাইটে প্রদর্শিত নোটিশ</div>
+        </button>
+
+      </div>
+
+      <!-- =========================================================================
+           ক্যাটাগরি ১: সেবাসমূহ ম্যানেজমেন্ট
+           ========================================================================= -->
+      <div id="panel-services" class="space-y-4">
+        
+        <!-- Header Actions Bar -->
+        <div class="bg-gradient-to-r from-amber-950/80 via-slate-900 to-slate-900 border border-amber-500/30 p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-black text-white flex items-center gap-2">
+              <i class="fas fa-hand-holding-dollar text-amber-400"></i> সেবাসমূহ, কাগজপত্র ও ফি রেট ম্যানেজমেন্ট
+            </h3>
+            <p class="text-xs text-slate-300 mt-1">
+              যেকোনো সেবার সরকারি ফি, দোকানের সার্ভিস চার্জ ও কাগজপত্র পরিবর্তন করুন অথবা নতুন সেবা যোগ করুন।
+            </p>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+            <button onclick="openNewServiceModal()" class="bg-gradient-to-r from-emerald-600 to-brandGreen hover:from-emerald-500 hover:to-emerald-600 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-lg transition flex items-center gap-2 border border-emerald-400/40">
+              <i class="fas fa-plus-circle text-amber-300"></i> নতুন সেবা যুক্ত করুন
+            </button>
+            <button onclick="resetServicesToDefault()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-3.5 py-3 rounded-2xl transition border border-slate-700">
+              <i class="fas fa-rotate-left text-amber-400"></i> ডিফল্ট
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div class="relative flex-1">
+            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="search-services-input" onkeyup="filterServicesList()" placeholder="সেবার নাম বা প্রয়োজনীয় কাগজপত্র দিয়ে খুঁজুন..." class="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs font-semibold focus:border-amber-500 focus:outline-none placeholder:text-slate-500">
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
+            <button onclick="setServicesFilter('all')" id="srv-btn-all" class="px-3.5 py-2 rounded-xl bg-brandGreen text-white transition">সকল সেবা</button>
+            <button onclick="setServicesFilter('land')" id="srv-btn-land" class="px-3.5 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">🏛️ ভূমিসেবা</button>
+            <button onclick="setServicesFilter('online')" id="srv-btn-online" class="px-3.5 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">🌐 অনলাইন সেবা</button>
+            <button onclick="setServicesFilter('nid')" id="srv-btn-nid" class="px-3.5 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">🪪 NID সেবা</button>
+            <button onclick="setServicesFilter('computer')" id="srv-btn-computer" class="px-3.5 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">💻 কম্পিউটার ও স্টুডিও</button>
+          </div>
+        </div>
+
+        <!-- Services Cards Container -->
+        <div id="services-cards-container" class="space-y-3">
+          <!-- Populated by admin.js -->
+        </div>
+
+      </div>
+
+      <!-- =========================================================================
+           ক্যাটাগরি ২: স্কুল/কলেজ সংক্রান্ত নোটিশ
+           ========================================================================= -->
+      <div id="panel-college" class="hidden space-y-4">
+        
+        <!-- Header Actions Bar -->
+        <div class="bg-gradient-to-r from-purple-950/80 via-slate-900 to-slate-900 border border-purple-500/30 p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-black text-white flex items-center gap-2">
+              <i class="fas fa-graduation-cap text-purple-400"></i> স্কুল ও কলেজ সংক্রান্ত নোটিশ ম্যানেজমেন্ট
+            </h3>
+            <p class="text-xs text-slate-300 mt-1">
+              ফুলবাড়ী সরকারি কলেজ ও অন্যান্য শিক্ষা প্রতিষ্ঠানের ভর্তি, পরীক্ষার ফর্ম ফিলাপ ও নোটিশ যুক্ত বা এডিট করুন।
+            </p>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+            <button onclick="openNewNoticeModal('college')" class="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-lg transition flex items-center gap-2 border border-purple-400/40">
+              <i class="fas fa-plus-circle text-amber-300"></i> নতুন কলেজ নোটিশ তৈরি
+            </button>
+            <a href="https://www.phulbarigovtcollege.edu.bd/events" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs px-3.5 py-3 rounded-2xl transition border border-slate-700 flex items-center gap-1.5">
+              <i class="fas fa-external-link-alt text-purple-400"></i> ফুলবাড়ী কলেজ সাইট
+            </a>
+          </div>
+        </div>
+
+        <!-- College Notices List -->
+        <div id="college-notices-container" class="space-y-3">
+          <!-- Populated by admin.js -->
+        </div>
+
+      </div>
+
+      <!-- =========================================================================
+           ক্যাটাগরি ৩: চাকুরির নোটিশ
+           ========================================================================= -->
+      <div id="panel-jobs" class="hidden space-y-4">
+        
+        <!-- Header Actions Bar -->
+        <div class="bg-gradient-to-r from-sky-950/80 via-slate-900 to-slate-900 border border-sky-500/30 p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-black text-white flex items-center gap-2">
+              <i class="fas fa-briefcase text-sky-400"></i> চাকুরির সার্কুলার ও টেলিটক হাব (২০+ সরকারি নিয়োগ)
+            </h3>
+            <p class="text-xs text-slate-300 mt-1">
+              বস্ত্র অধিদপ্তর, বিদ্যুৎ বোর্ড, পুলিশ, রেলওয়ে, শিক্ষক সহ সকল চলমান চাকরি ১-ক্লিকে ওয়েবসাইটে লাইভ করুন বা নতুন সার্কুলার লিখুন।
+            </p>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+            <button onclick="openNewNoticeModal('jobs')" class="bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 text-white font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-lg transition flex items-center gap-2 border border-sky-400/40">
+              <i class="fas fa-plus-circle text-amber-300"></i> নতুন চাকরির সার্কুলার লিখুন
+            </button>
+            <button onclick="importAllTeletalkJobs()" class="bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-bold text-xs px-4 py-3 rounded-2xl transition border border-emerald-600 flex items-center gap-1.5">
+              <i class="fas fa-layer-group text-amber-300"></i> সবগুলো একসাথে যুক্ত করুন
+            </button>
+          </div>
+        </div>
+
+        <!-- Job Search & Sector Filter Toolbar -->
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div class="relative flex-1">
+            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="search-jobs-input" onkeyup="filterJobsList()" placeholder="পদের নাম বা প্রতিষ্ঠান দিয়ে খুঁজুন (যেমন: বস্ত্র, বিদ্যুৎ, শিক্ষক, পুলিশ...)" class="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs font-semibold focus:border-sky-500 focus:outline-none placeholder:text-slate-500">
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
+            <button onclick="setJobsSectorFilter('all')" id="job-sec-all" class="px-3 py-2 rounded-xl bg-brandGreen text-white transition">সকল চাকরি</button>
+            <button onclick="setJobsSectorFilter('admin')" id="job-sec-admin" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">প্রশাসন</button>
+            <button onclick="setJobsSectorFilter('edu')" id="job-sec-edu" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">শিক্ষা</button>
+            <button onclick="setJobsSectorFilter('power')" id="job-sec-power" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">বিদ্যুৎ</button>
+            <button onclick="setJobsSectorFilter('force')" id="job-sec-force" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">পুলিশ/প্রতিরক্ষা</button>
+            <button onclick="setJobsSectorFilter('eng')" id="job-sec-eng" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition">প্রকৌশল/কৃষি</button>
+          </div>
+        </div>
+
+        <!-- Jobs Directory List -->
+        <div id="jobs-directory-container" class="space-y-3">
+          <!-- Populated by admin.js -->
+        </div>
+
+      </div>
+
+      <!-- =========================================================================
+           ক্যাটাগরি ৪: শেষে লাইভ নোটিশ (Live Notices Management)
+           ========================================================================= -->
+      <div id="panel-live" class="hidden space-y-4">
+        
+        <div class="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-900 border border-emerald-500/30 p-5 rounded-3xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-black text-white flex items-center gap-2">
+              <i class="fas fa-globe text-emerald-400"></i> বর্তমানে ওয়েবসাইটে লাইভ প্রদর্শিত নোটিশসমূহ
+            </h3>
+            <p class="text-xs text-slate-300 mt-1">
+              মূল ওয়েবসাইটে গ্রাহকদের সামনে এই নোটিশগুলো প্রদর্শিত হচ্ছে। যেকোনো নোটিশ সরাসরি এডিট করুন বা মুছে ফেলুন।
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+            <button onclick="downloadNoticesJSON()" class="bg-brandGreen hover:bg-emerald-600 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow">
+              <i class="fas fa-download"></i> ব্যাকআপ ডাউনলোড
+            </button>
+            <button onclick="resetAllNotices()" class="bg-rose-900/50 hover:bg-rose-900 text-rose-300 font-bold text-xs px-3.5 py-2.5 rounded-xl transition border border-rose-800">
+              <i class="fas fa-rotate-left"></i> রিসেট
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Notices Filter -->
+        <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex items-center justify-between text-xs">
+          <div class="font-bold text-slate-300">মোট লাইভ নোটিশ: <span id="live-notices-subcount" class="text-emerald-400 font-extrabold text-sm">০ টি</span></div>
+          
+          <div class="flex items-center gap-1.5 font-bold">
+            <button onclick="filterLiveCategory('all')" id="live-cat-all" class="px-3 py-1.5 rounded-lg bg-brandGreen text-white transition">সকল নোটিশ</button>
+            <button onclick="filterLiveCategory('jobs')" id="live-cat-jobs" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">চাকরি</button>
+            <button onclick="filterLiveCategory('college')" id="live-cat-college" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">স্কুল/কলেজ</button>
+          </div>
+        </div>
+
+        <!-- Live Notices Cards List -->
+        <div id="live-notices-container" class="space-y-3">
+          <!-- Populated by admin.js -->
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Admin Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+      ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট • ফুলবাড়ী, দিনাজপুর • অভ্যন্তরীণ অ্যাডমিন কন্ট্রোল সেন্টার
+    </footer>
+
+  </div>
+
+  <!-- =========================================================================
+       মোডাল ১: সেবা তৈরি ও এডিট মোডাল (Service Modal)
+       ========================================================================= -->
+  <div id="service-edit-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-xs custom-scrollbar">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+            <i class="fas fa-hand-holding-dollar"></i>
+          </div>
+          <h3 id="service-modal-title" class="text-base font-extrabold text-white">সেবা তথ্য ও ফি পরিবর্তন</h3>
+        </div>
+        <button onclick="closeServiceModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="service-edit-form" onsubmit="saveServiceEdit(event)" class="space-y-3.5">
+        <input type="hidden" id="srv-edit-id">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-300 mb-1">সেবার নাম *</label>
+            <input type="text" id="srv-edit-title" required placeholder="যেমন: নতুন ই-নামজারি আবেদন" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">ক্যাটাগরি *</label>
+            <select id="srv-edit-category" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-amber-400 focus:outline-none">
+              <option value="land">🏛️ ভূমিসেবা</option>
+              <option value="online">🌐 অনলাইন সেবা</option>
+              <option value="nid">🪪 NID সেবা</option>
+              <option value="computer">💻 কম্পিউটার ও স্টুডিও</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">সরকারি ফি বিবরণ *</label>
+            <input type="text" id="srv-edit-govtfee" required placeholder="যেমন: ১,১৭০ ৳ বা সরকারি ফি নেই" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">দোকানের সার্ভিস চার্জ/ফি *</label>
+            <input type="text" id="srv-edit-servicefee" required placeholder="যেমন: ৩০০ - ৫০০ ৳" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-amber-400 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">ডেলিভারি / সম্পন্ন হওয়ার সময়</label>
+            <input type="text" id="srv-edit-duration" placeholder="যেমন: ২৮ কর্মদিবস / তাৎক্ষণিক" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">অফিসিয়াল পোর্টাল ওয়েবসাইট</label>
+            <input type="text" id="srv-edit-portal" placeholder="যেমন: mutation.land.gov.bd" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-amber-400 focus:outline-none font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">প্রয়োজনীয় কাগজপত্র (প্রতি লাইনে ১টি করে লিখুন) *</label>
+          <textarea id="srv-edit-docs" rows="4" required placeholder="মূল দলিলের ফটোকপি&#10;হাল খতিয়ান বা পর্চা&#10;এনআইডি কার্ডের কপি..." class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs font-semibold focus:border-amber-400 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">সংক্ষিপ্ত বিবরণ</label>
+          <textarea id="srv-edit-summary" rows="2" placeholder="সেবা সংক্রান্ত প্রয়োজনীয় তথ্য..." class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs font-semibold focus:border-amber-400 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeServiceModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">বাতিল</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black flex items-center gap-1.5 shadow-lg">
+            <i class="fas fa-check"></i> সংরক্ষণ করুন
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       মোডাল ২: নোটিশ ও সার্কুলার তৈরি/এডিট মোডাল (Notice Modal)
+       ========================================================================= -->
+  <div id="notice-edit-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-xs custom-scrollbar">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+            <i class="fas fa-pen-nib"></i>
+          </div>
+          <h3 id="notice-modal-title" class="text-base font-extrabold text-white">নোটিশ ও সার্কুলার তৈরি / এডিট</h3>
+        </div>
+        <button onclick="closeNoticeModal()" class="text-slate-400 hover:text-white text-lg">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="notice-edit-form" onsubmit="saveNoticeEdit(event)" class="space-y-3.5">
+        <input type="hidden" id="not-edit-id">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-300 mb-1">শিরোনাম / পদের নাম *</label>
+            <input type="text" id="not-edit-title" required placeholder="যেমন: বাংলাদেশ রেলওয়ে সহকারী স্টেশন মাস্টার নিয়োগ" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-emerald-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">ক্যাটাগরি *</label>
+            <select id="not-edit-category" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-emerald-500 focus:outline-none">
+              <option value="jobs">💼 চাকরির সার্কুলার</option>
+              <option value="college">🎓 স্কুল/কলেজ নোটিশ</option>
+              <option value="admission">📝 ভর্তি ও পরীক্ষা</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">প্রতিষ্ঠান / কলেজ / অধিদপ্তর *</label>
+            <input type="text" id="not-edit-org" required placeholder="যেমন: ফুলবাড়ী সরকারি কলেজ / বাংলাদেশ রেলওয়ে" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-emerald-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">পদসংখ্যা / শ্রেণি / বিভাগ</label>
+            <input type="text" id="not-edit-vacancies" placeholder="যেমন: ১০৮৫ জন / অনার্স ২য় বর্ষ" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-emerald-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">আবেদনের শেষ তারিখ / সময়সীমা *</label>
+            <input type="text" id="not-edit-deadline" required placeholder="যেমন: ৩০ সেপ্টেম্বর ২০২৬" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-emerald-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">ফি বিবরণ (যদি থাকে)</label>
+            <input type="text" id="not-edit-fee" placeholder="যেমন: সরকারি ফি: ২২৩ ৳" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-emerald-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">শিক্ষাগত যোগ্যতা / বিবরণ *</label>
+          <input type="text" id="not-edit-qual" required placeholder="যেমন: স্নাতক / এইচএসসি পাস অথবা নিয়মিত শিক্ষার্থী" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold focus:border-emerald-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">সার্কুলার PDF / নোটিশ লিংক (PDF URL)</label>
+            <input type="url" id="not-edit-pdf" placeholder="যেমন: https://br.teletalk.com.bd/circular.pdf" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:border-emerald-500 focus:outline-none font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">অনলাইন আবেদন পোর্টাল লিংক</label>
+            <input type="url" id="not-edit-source" placeholder="যেমন: http://br.teletalk.com.bd/" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white font-semibold focus:border-emerald-500 focus:outline-none font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">বিস্তারিত বিবরণ ও নির্দেশাবলী</label>
+          <textarea id="not-edit-details" rows="2" placeholder="নোটিশ বা আবেদন সংক্রান্ত বিস্তারিত..." class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs font-semibold focus:border-emerald-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeNoticeModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">বাতিল</button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-brandGreen hover:from-emerald-500 hover:to-emerald-600 text-white font-black flex items-center gap-1.5 shadow-lg">
+            <i class="fas fa-check"></i> ওয়েবসাইটে লাইভ প্রকাশ করুন
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="admin-toast" class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl text-white text-xs font-bold shadow-2xl transition-all duration-300 hidden flex items-center gap-2"></div>
+
+  <!-- Admin JavaScript Engine -->
+  <script src="js/admin.js"></script>
+</body>
+</html>

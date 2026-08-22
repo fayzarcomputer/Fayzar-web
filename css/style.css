@@ -1,0 +1,310 @@
+/* ==========================================================================
+   ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট - Custom Modern Design System
+   ========================================================================== */
+
+:root {
+  --brand-green: #047857;
+  --brand-green-dark: #065f46;
+  --brand-green-light: #ecfdf5;
+  --brand-green-border: #a7f3d0;
+  
+  --brand-blue: #1d4ed8;
+  --brand-blue-dark: #1e3a8a;
+  --brand-blue-light: #eff6ff;
+  
+  --brand-gold: #d97706;
+  --brand-gold-dark: #b45309;
+  --brand-gold-light: #fef3c7;
+  
+  --bg-main: #f8fafc;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --card-border: #e2e8f0;
+  
+  --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 12px 24px -4px rgba(4, 120, 87, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px rgba(4, 120, 87, 0.25);
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+
+/* Base resets & typography */
+html {
+  scroll-behavior: smooth;
+  font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-green);
+}
+
+/* Pulse animation for shop status & alert badges */
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.status-dot-open {
+  animation: pulse-ring 2s infinite cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.status-dot-closed {
+  animation: pulse-red 2s infinite cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+/* Marquee / Ticker text animation */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Glassmorphism & Header */
+.glass-header {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Card Hover Effects */
+.interactive-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--brand-green);
+}
+
+/* Hero Gradient & Patterns */
+.hero-gradient-bg {
+  background: radial-gradient(circle at 10% 20%, rgba(4, 120, 87, 0.95) 0%, rgba(6, 95, 70, 0.98) 40%, rgba(15, 23, 42, 0.98) 95%);
+  position: relative;
+}
+
+.hero-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* Tool Tabs & Service Tab Buttons */
+.service-tab-btn.active,
+.tool-tab-btn.active,
+.notice-tab-btn.active {
+  background-color: var(--brand-green);
+  color: #ffffff;
+  border-color: var(--brand-green);
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+}
+
+/* Tool tabs pill design */
+.tool-tab-btn {
+  transition: all 0.25s ease;
+}
+
+/* Image Resizer Dropzone */
+.resizer-dropzone {
+  border: 2px dashed #94a3b8;
+  transition: all 0.3s ease;
+}
+
+.resizer-dropzone.dragover {
+  border-color: var(--brand-green);
+  background-color: #ecfdf5;
+}
+
+/* Checklist Box */
+.checklist-item {
+  position: relative;
+  padding-left: 28px;
+}
+
+.checklist-item::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: #d1fae5;
+  color: #047857;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Floating Action Buttons */
+.floating-actions {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.floating-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.floating-btn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+
+.floating-btn .tooltip {
+  visibility: hidden;
+  position: absolute;
+  right: 62px;
+  background-color: #0f172a;
+  color: #fff;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  font-weight: 600;
+}
+
+.floating-btn:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Mobile Bottom Navigation Bar */
+@media (max-width: 640px) {
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 4px;
+    z-index: 100;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.06);
+  }
+  
+  .mobile-bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+    color: #475569;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  
+  .mobile-bottom-nav-item.active,
+  .mobile-bottom-nav-item:hover {
+    color: var(--brand-green);
+  }
+  
+  .floating-actions {
+    bottom: 74px;
+    right: 14px;
+  }
+}
+
+/* Modal styles */
+.modal-overlay {
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  transition: opacity 0.3s ease;
+}
+
+.modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Toast Notification */
+#toast-notification {
+  transform: translateY(100px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+}
+
+#toast-notification.show {
+  transform: translateY(0);
+}
+
+/* Live Search Suggestions Dropdown */
+#search-suggestions {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* Notice badge pulse */
+.notice-deadline-urgent {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  animation: pulse-red 2s infinite ease-in-out;
+}
