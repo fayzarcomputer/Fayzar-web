@@ -22,10 +22,11 @@
   <!-- FontAwesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN with DarkMode Class Config -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -44,12 +45,24 @@
       }
     }
   </script>
+
+  <!-- Prevent Theme Flash -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('fayzar_theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
   
   <!-- Custom Modern Design System -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-emerald-200 selection:text-emerald-900">
+<body class="bg-slate-50 dark:bg-[#111a2e] text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-emerald-200 selection:text-emerald-900 pb-20 lg:pb-0 transition-colors duration-300">
 
   <!-- =========================================================================
        ১. সবার উপরের লাইভ নোটিশ বার ও রিয়েল-টাইম দোকান খোলার স্ট্যাটাস
@@ -84,85 +97,108 @@
   </aside>
 
   <!-- =========================================================================
-       ২. মূল ব্র্যান্ড হেডার ও স্টিকি নেভিগেশন বার (সংশোধিত মেনু ক্রম অনুযায়ী)
+       ২. মূল ব্র্যান্ড হেডার ও স্টিকি নেভিগেশন বার
        ========================================================================= -->
-  <header class="sticky top-0 z-40 glass-header border-b border-slate-200 shadow-sm transition-all">
-    <div class="container mx-auto max-w-7xl px-4 py-3 sm:py-4 flex items-center justify-between">
+  <header class="sticky top-0 z-40 glass-header border-b border-slate-200 dark:border-slate-800/80 shadow-sm transition-all">
+    <div class="container mx-auto max-w-7xl px-4 py-2.5 sm:py-3.5 flex items-center justify-between">
       
       <!-- Brand Logo & Verification Emblem -->
       <a href="#" class="flex items-center gap-3 group">
-        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-brandGreen to-brandGreenDark p-0.5 shadow-md flex items-center justify-center text-white text-2xl group-hover:scale-105 transition">
+        <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-brandGreen to-brandGreenDark p-0.5 shadow-md flex items-center justify-center text-white text-xl sm:text-2xl group-hover:scale-105 transition">
           <i class="fas fa-desktop text-amber-300"></i>
         </div>
         <div>
-          <div class="text-xl sm:text-2xl font-extrabold text-brandBlue leading-none">
-            ফয়জার <span class="text-brandGreen">কম্পিউটার</span>
+          <div class="text-lg sm:text-xl font-extrabold text-brandBlue dark:text-blue-400 leading-none">
+            ফয়জার <span class="text-brandGreen dark:text-emerald-400">কম্পিউটার</span>
           </div>
-          <div class="text-xs sm:text-sm font-bold text-amber-600 tracking-wide mt-0.5">
+          <div class="text-[11px] sm:text-xs font-bold text-amber-600 dark:text-amber-400 tracking-wide mt-0.5">
             এন্ড ফটোস্ট্যাট | ডিজিটাল ও ভূমিসেবা কেন্দ্র
           </div>
-          <div class="text-[10px] text-slate-500 font-semibold hidden sm:block">
+          <div class="text-[9px] text-slate-500 dark:text-slate-400 font-semibold hidden sm:block">
             অনুমোদন নং: দিনাজ/ফুল/এলএসএসএফসি-০৭/২০২৫
           </div>
         </div>
       </a>
 
-      <!-- Desktop Navigation Menu (Order: Home -> Land Guide -> Notices -> All Services -> Smart Tools -> Contact) -->
-      <nav class="hidden lg:flex items-center gap-1 text-xs xl:text-sm font-bold text-slate-700">
-        <a href="#home" class="px-2.5 py-2 rounded-xl text-brandGreen bg-emerald-50 hover:bg-emerald-100 transition flex items-center gap-1">
+      <!-- Desktop Navigation Menu -->
+      <nav class="hidden lg:flex items-center gap-1 text-xs xl:text-sm font-bold text-slate-700 dark:text-slate-200">
+        <a href="#home" class="px-2.5 py-2 rounded-xl text-brandGreen dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 transition flex items-center gap-1">
           <i class="fas fa-home"></i> হোম
         </a>
-        <a href="#land-guide" class="px-2.5 py-2 rounded-xl hover:text-brandGreen hover:bg-slate-100 transition flex items-center gap-1">
-          <i class="fas fa-landmark text-amber-600"></i> সেবা গাইড ও ফি
+        <a href="#land-guide" class="px-2.5 py-2 rounded-xl hover:text-brandGreen dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1">
+          <i class="fas fa-landmark text-amber-600 dark:text-amber-400"></i> সেবা গাইড ও ফি
         </a>
-        <a href="#notices-hub" class="px-2.5 py-2 rounded-xl hover:text-brandGreen hover:bg-slate-100 transition flex items-center gap-1">
-          <i class="fas fa-briefcase text-blue-600"></i> চাকরি ও ভর্তি বুলেটিন
+        <a href="#notices-hub" class="px-2.5 py-2 rounded-xl hover:text-brandGreen dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1">
+          <i class="fas fa-briefcase text-blue-600 dark:text-blue-400"></i> চাকরি ও ভর্তি
         </a>
-        <a href="#all-services" class="px-2.5 py-2 rounded-xl hover:text-brandGreen hover:bg-slate-100 transition flex items-center gap-1">
-          <i class="fas fa-layer-group text-emerald-600"></i> সকল সেবাসমূহ
+        <a href="#all-services" class="px-2.5 py-2 rounded-xl hover:text-brandGreen dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1">
+          <i class="fas fa-layer-group text-emerald-600 dark:text-emerald-400"></i> সেবাসমূহ
         </a>
-        <a href="#smart-tools" class="px-2.5 py-2 rounded-xl hover:text-brandGreen hover:bg-slate-100 transition flex items-center gap-1">
-          <i class="fas fa-wand-magic-sparkles text-purple-600"></i> স্মার্ট টুলস
+        <a href="#smart-tools" class="px-2.5 py-2 rounded-xl hover:text-brandGreen dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1">
+          <i class="fas fa-wand-magic-sparkles text-purple-600 dark:text-purple-400"></i> স্মার্ট টুলস
         </a>
-        <a href="doc-converter.html" class="px-3 py-2 rounded-xl text-emerald-800 font-bold hover:text-brandGreen hover:bg-emerald-50 transition flex items-center gap-1.5 border border-emerald-300 bg-emerald-50/70 shadow-xs">
-          <i class="fas fa-language text-emerald-600 text-base"></i> ইউনিকোড ⇄ বিজয় ও Word কনভার্টার
+        <a href="doc-converter.html" class="px-3 py-2 rounded-xl text-emerald-800 dark:text-emerald-300 font-bold hover:text-brandGreen hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition flex items-center gap-1.5 border border-emerald-300 dark:border-emerald-700 bg-emerald-50/70 dark:bg-emerald-950/30 shadow-xs">
+          <i class="fas fa-language text-emerald-600 dark:text-emerald-400 text-base"></i> ইউনিকোড ⇄ বিজয় ও Word
         </a>
-        <a href="#contact" class="px-2.5 py-2 rounded-xl hover:text-brandGreen hover:bg-slate-100 transition flex items-center gap-1">
-          <i class="fas fa-map-marker-alt text-rose-600"></i> যোগাযোগ
+        <a href="#contact" class="px-2.5 py-2 rounded-xl hover:text-brandGreen dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1">
+          <i class="fas fa-map-marker-alt text-rose-600 dark:text-rose-400"></i> যোগাযোগ
         </a>
       </nav>
 
-      <!-- Header Action Buttons -->
-      <div class="flex items-center gap-2.5">
-        <a href="tel:01717101919" class="hidden sm:inline-flex items-center gap-2 bg-brandGreen hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl shadow-sm transition">
+      <!-- Header Action Buttons & Theme Toggles -->
+      <div class="flex items-center gap-2">
+        <!-- Day / Night Mode Toggle Button (Desktop & Mobile) -->
+        <button id="theme-toggle-btn" aria-label="ডে/নাইট মোড পরিবর্তন" class="theme-toggle-btn p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 transition flex items-center justify-center shadow-xs" title="ডে / নাইট মোড পরিবর্তন করুন">
+          <i class="fas fa-moon text-base dark:hidden"></i>
+          <i class="fas fa-sun text-base hidden dark:inline-block text-amber-400"></i>
+        </button>
+
+        <a href="tel:01717101919" class="hidden sm:inline-flex items-center gap-1.5 bg-brandGreen hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl shadow-sm transition">
           <i class="fas fa-phone-alt"></i> <span>01717-101919</span>
         </a>
         
         <!-- Mobile Menu Toggle Button -->
-        <button id="mobile-menu-toggle" aria-label="মেনু খুলুন" class="lg:hidden p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-          <i class="fas fa-bars text-xl"></i>
+        <button id="mobile-menu-toggle" aria-label="মেনু খুলুন" class="lg:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
+          <i class="fas fa-bars text-lg"></i>
         </button>
       </div>
 
     </div>
 
     <!-- Mobile Drawer Dropdown -->
-    <div id="mobile-drawer" class="hidden lg:hidden bg-white border-t border-slate-200 px-4 py-4 space-y-2 shadow-xl">
-      <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs mb-3 flex items-center justify-between">
-        <span class="font-bold text-emerald-800"><i class="fas fa-user-tie text-amber-600 mr-1"></i> মোঃ ফয়জার আলী</span>
-        <span class="text-slate-600 font-semibold">01717-101919</span>
+    <div id="mobile-drawer" class="hidden lg:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-4 py-4 space-y-2 shadow-xl">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+        <span class="text-xs font-bold text-slate-500 dark:text-slate-400">মেনু নেভিগেশন</span>
+        <button id="mobile-drawer-close" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1">
+          <i class="fas fa-times text-lg"></i>
+        </button>
       </div>
-      <a href="#home" class="block px-3 py-2 rounded-lg font-bold text-brandGreen bg-emerald-50">হোম</a>
-      <a href="#land-guide" class="block px-3 py-2 rounded-lg font-bold text-slate-700 hover:bg-slate-50">🏛️ সেবা গাইড ও ফি</a>
-      <a href="#notices-hub" class="block px-3 py-2 rounded-lg font-bold text-slate-700 hover:bg-slate-50">💼 চাকরি ও ভর্তি বুলেটিন</a>
-      <a href="#all-services" class="block px-3 py-2 rounded-lg font-bold text-slate-700 hover:bg-slate-50">📂 সকল সেবাসমূহ</a>
-      <a href="doc-converter.html" class="block px-3 py-2 rounded-lg font-bold text-emerald-800 bg-emerald-50 border border-emerald-300">📝 ইউনিকোড ⇄ বিজয় ও Word (DOCX/DOC) কনভার্টার</a>
-      <a href="#contact" class="block px-3 py-2 rounded-lg font-bold text-slate-700 hover:bg-slate-50">📍 ঠিকানা ও যোগাযোগ</a>
-      <div class="pt-2 grid grid-cols-2 gap-2">
-        <a href="tel:01717101919" class="bg-brandGreen text-white font-bold text-center py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5">
+      <a href="#home" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i class="fas fa-home text-emerald-600 w-5"></i> হোম
+      </a>
+      <a href="#land-guide" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i class="fas fa-landmark text-amber-600 w-5"></i> সেবা গাইড ও সরকারি ফি
+      </a>
+      <a href="#notices-hub" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i class="fas fa-briefcase text-blue-600 w-5"></i> চাকরি ও ভর্তি বুলেটিন
+      </a>
+      <a href="#all-services" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i class="fas fa-layer-group text-emerald-600 w-5"></i> সকল সেবাসমূহ
+      </a>
+      <a href="#smart-tools" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i class="fas fa-wand-magic-sparkles text-purple-600 w-5"></i> স্মার্ট ডিজিটাল টুলস
+      </a>
+      <a href="doc-converter.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 flex items-center gap-2">
+        <i class="fas fa-language text-emerald-600 w-5"></i> ইউনিকোড ⇄ বিজয় ও Word কনভার্টার
+      </a>
+      <a href="#contact" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-emerald-50 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i class="fas fa-map-marker-alt text-rose-600 w-5"></i> যোগাযোগ ও লোকেশন
+      </a>
+      <div class="pt-2 grid grid-cols-2 gap-2 border-t border-slate-100 dark:border-slate-800">
+        <a href="tel:01717101919" class="bg-brandGreen hover:bg-emerald-700 text-white font-bold text-center py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm">
           <i class="fas fa-phone-alt"></i> কল করুন
         </a>
-        <a href="https://wa.me/8801717101919" target="_blank" class="bg-emerald-600 text-white font-bold text-center py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5">
+        <a href="https://wa.me/8801717101919" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm">
           <i class="fab fa-whatsapp"></i> হোয়াটসঅ্যাপ
         </a>
       </div>
@@ -363,39 +399,39 @@
   <!-- =========================================================================
        ৬. ৪ নম্বর সেকশন: সকল সেবাসমূহ (All Services Grid with Tabs)
        ========================================================================= -->
-  <section id="all-services" class="py-16 px-4 bg-white border-b border-slate-200">
+  <section id="all-services" class="py-16 px-4 bg-white dark:bg-[#111a2e] border-b border-slate-200 dark:border-slate-800">
     <div class="container mx-auto max-w-6xl">
       
       <div class="text-center mb-10">
-        <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-blue-100 text-brandBlue border border-blue-200">
+        <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-brandBlue dark:text-blue-300 border border-blue-200 dark:border-blue-800">
           আমাদের পরিসেবা
         </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2 mb-2">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mt-2 mb-2">
           আমাদের পূর্ণাঙ্গ ও ডিজিটাল সেবাসমূহ
         </h2>
-        <p class="text-sm text-slate-600 max-w-2xl mx-auto">
+        <p class="text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
           আপনার প্রয়োজনীয় সেবায় ক্লিক করে বিস্তারিত তথ্য ও প্রয়োজনীয় কাগজপত্রের তালিকা জেনে নিন।
         </p>
 
         <!-- Category Tabs Filter -->
-        <div class="flex flex-wrap justify-center gap-2 mt-6">
-          <button data-category="all" class="service-tab-btn active px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition flex items-center gap-1.5 shadow-sm">
-            <i class="fas fa-border-all"></i> সকল সেবা
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mt-6">
+          <button data-category="all" class="service-tab-btn active px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-brandGreen text-white transition flex items-center gap-2 shadow-sm">
+            <i class="fas fa-border-all"></i> সকল সেবা (১৪+)
           </button>
-          <button data-category="land" class="service-tab-btn px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 shadow-sm">
-            <i class="fas fa-landmark text-amber-600"></i> ভূমিসেবা
+          <button data-category="land" class="service-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
+            <i class="fas fa-landmark text-amber-500"></i> ভূমিসেবা
           </button>
-          <button data-category="online" class="service-tab-btn px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 shadow-sm">
-            <i class="fas fa-globe text-blue-600"></i> অনলাইন ও সরকারি সেবা
+          <button data-category="online" class="service-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
+            <i class="fas fa-globe text-blue-500"></i> অনলাইন ও সরকারি সেবা
           </button>
-          <button data-category="computer" class="service-tab-btn px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5 shadow-sm">
-            <i class="fas fa-laptop text-emerald-600"></i> কম্পিউটার ও স্টুডিও
+          <button data-category="computer" class="service-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
+            <i class="fas fa-laptop text-emerald-500"></i> কম্পিউটার ও স্টুডিও
           </button>
         </div>
       </div>
 
-      <!-- Services Grid Container -->
-      <div id="services-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Services Grid Container (Razor-Sharp, Large 3-Column Cards) -->
+      <div id="services-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         <!-- Rendered by js/main.js -->
       </div>
 
@@ -405,17 +441,17 @@
   <!-- =========================================================================
        ৭. ৫ নম্বর সেকশন: স্মার্ট অনলাইন টুলস হাব (Smart Utility Tools Hub)
        ========================================================================= -->
-  <section id="smart-tools" class="py-16 px-4 bg-slate-50 border-b border-slate-200">
+  <section id="smart-tools" class="py-16 px-4 bg-slate-50 dark:bg-[#162035] border-b border-slate-200 dark:border-slate-800">
     <div class="container mx-auto max-w-5xl">
       
       <div class="text-center mb-10">
-        <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-purple-100 text-purple-800 border border-purple-300 uppercase tracking-wider">
+        <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800 uppercase tracking-wider">
           অনলাইন সেলফ-সার্ভিস টুলস
         </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2 mb-2">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mt-2 mb-2">
           স্মার্ট ডিজিটাল টুলস ও প্রয়োজনীয় সহায়িকা
         </h2>
-        <p class="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
           টেলিটক ছবি রিসাইজ, চাকরির বয়স যাচাই, জমির পরিমাপ রূপান্তর ও এক্সপ্রেস প্রিন্ট প্রি-অর্ডার করুন এক ক্লিকে।
         </p>
 
@@ -966,206 +1002,7 @@
     </div>
   </section>
 
-  <!-- =========================================================================
-       ১২. সরকারি অফিসিয়াল পোর্টাল ও অনলাইন লিংক ডিরেক্টরি (Official Govt Portals Hub)
-       ========================================================================= -->
-  <section id="official-portals" class="py-16 px-4 bg-white border-t border-slate-200">
-    <div class="container mx-auto max-w-6xl">
-      
-      <div class="text-center mb-10">
-        <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-sky-100 text-sky-800 border border-sky-300">
-          সরকারি ডিজিটাল সেবা লিংক
-        </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2 mb-2">
-          অফিসিয়াল সরকারি পোর্টাল ডিরেক্টরি
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto">
-          নিচের যেকেনো অফিসিয়াল সরকারি বা শিক্ষা পোর্টালে ১-ক্লিকে সরাসরি প্রবেশ করুন অথবা দোকানে এসে নির্ভুলভাবে কাজ সম্পন্ন করুন:
-        </p>
-      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        
-        <!-- ই-নামজারি -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-landmark"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">ই-নামজারি পোর্টাল</div>
-              <div class="text-[11px] text-slate-500 font-mono">mutation.land.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://mutation.land.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- ভূমি উন্নয়ন কর / খাজনা -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-receipt"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">অনলাইন খাজনা (LD Tax)</div>
-              <div class="text-[11px] text-slate-500 font-mono">ldtax.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://ldtax.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- ই-পর্চা ও খতিয়ান -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-file-contract"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">ই-পর্চা ও খতিয়ান সেবা</div>
-              <div class="text-[11px] text-slate-500 font-mono">eporcha.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://eporcha.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- ই-পাসপোর্ট -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-passport"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">ই-পাসপোর্ট বাংলাদেশ</div>
-              <div class="text-[11px] text-slate-500 font-mono">epassport.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://www.epassport.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- জাতীয় পরিচয়পত্র NID -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-id-card"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">NID কার্ড সংশোধন ও সেবা</div>
-              <div class="text-[11px] text-slate-500 font-mono">services.nidw.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://services.nidw.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- পুলিশ ক্লিয়ারেন্স -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">পুলিশ ক্লিয়ারেন্স (PCC)</div>
-              <div class="text-[11px] text-slate-500 font-mono">pcc.police.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://pcc.police.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- টেলিটক অলজবস -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-brandGreen flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-briefcase"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">টেলিটক অলজবস পোর্টাল</div>
-              <div class="text-[11px] text-slate-500 font-mono">alljobs.teletalk.com.bd</div>
-            </div>
-          </div>
-          <a href="https://alljobs.teletalk.com.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- ফুলবাড়ী সরকারি কলেজ নোটিশ -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-graduation-cap"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">ফুলবাড়ী কলেজ ইভেন্টস</div>
-              <div class="text-[11px] text-slate-500 font-mono">phulbarigovtcollege.edu.bd</div>
-            </div>
-          </div>
-          <a href="https://www.phulbarigovtcollege.edu.bd/events" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- একাদশ শ্রেণিতে ভর্তি -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-book-open"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">একাদশ শ্রেণি ভর্তি পোর্টাল</div>
-              <div class="text-[11px] text-slate-500 font-mono">xiclassadmission.gov.bd</div>
-            </div>
-          </div>
-          <a href="http://xiclassadmission.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- অনলাইন ই-রিটার্ন দাখিল -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-file-signature"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">অনলাইন ই-রিটার্ন পোর্টাল</div>
-              <div class="text-[11px] text-slate-500 font-mono">etaxnbr.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://etaxnbr.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-        <!-- ই-টিন সার্টিফিকেট -->
-        <div class="bg-slate-50 hover:bg-emerald-50/50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-300 transition flex items-center justify-between group shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-lg font-bold">
-              <i class="fas fa-file-invoice"></i>
-            </div>
-            <div>
-              <div class="font-extrabold text-slate-900 text-sm group-hover:text-brandGreen transition">ই-টিন (e-TIN) রেজিস্ট্রেশন</div>
-              <div class="text-[11px] text-slate-500 font-mono">incometax.gov.bd</div>
-            </div>
-          </div>
-          <a href="https://secure.incometax.gov.bd/" target="_blank" rel="noopener noreferrer" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <span>প্রবেশ করুন</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
 
   <!-- =========================================================================
        ১৩. পূর্ণাঙ্গ লোকেশন ও সরাসরি যোগাযোগ সেকশন (Contact & Location Map)
@@ -1395,27 +1232,34 @@
     </button>
   </div>
 
-  <!-- Mobile Bottom Sticky Navigation Bar -->
-  <nav aria-label="মোবাইল দ্রুত নেভিগেশন" class="mobile-bottom-nav sm:hidden">
-    <a href="#home" class="mobile-bottom-nav-item active">
-      <i class="fas fa-home text-base mb-0.5"></i>
+  <!-- Mobile Floating WhatsApp Button (Above Dock) -->
+  <a href="https://wa.me/8801717101919" target="_blank" class="fixed bottom-20 right-4 z-40 sm:hidden w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center text-2xl shadow-xl shadow-emerald-500/30" aria-label="হোয়াটসঅ্যাপ চ্যাট">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- =========================================================================
+       মোবাইল অ্যাপ-স্টাইল পারসিস্টেন্ট বটম ডক (Persistent Mobile App Dock)
+       ========================================================================= -->
+  <nav aria-label="মোবাইল দ্রুত নেভিগেশন ডক" class="mobile-app-dock lg:hidden">
+    <a href="#home" class="dock-item active">
+      <i class="fas fa-home"></i>
       <span>হোম</span>
     </a>
-    <a href="#land-guide" class="mobile-bottom-nav-item">
-      <i class="fas fa-landmark text-base mb-0.5"></i>
-      <span>ভূমি গাইড</span>
+    <a href="#notices-hub" class="dock-item">
+      <i class="fas fa-briefcase"></i>
+      <span>নোটিশ</span>
     </a>
-    <a href="#notices-hub" class="mobile-bottom-nav-item">
-      <i class="fas fa-briefcase text-base mb-0.5"></i>
-      <span>চাকরি</span>
+    <a href="doc-converter.html" class="dock-item dock-item-highlight" title="ইউনিকোড ⇄ বিজয় ও Word কনভার্টার">
+      <i class="fas fa-language"></i>
+      <span>কনভার্টার</span>
     </a>
-    <a href="#smart-tools" class="mobile-bottom-nav-item">
-      <i class="fas fa-crop-simple text-base mb-0.5"></i>
-      <span>টুলস</span>
+    <a href="#all-services" class="dock-item">
+      <i class="fas fa-layer-group"></i>
+      <span>সেবাসমূহ</span>
     </a>
-    <a href="https://wa.me/8801717101919" target="_blank" class="mobile-bottom-nav-item text-emerald-600 font-bold">
-      <i class="fab fa-whatsapp text-base mb-0.5"></i>
-      <span>চ্যাট</span>
+    <a href="tel:01717101919" class="dock-item text-emerald-600 dark:text-emerald-400">
+      <i class="fas fa-phone-volume"></i>
+      <span>কল / হেল্প</span>
     </a>
   </nav>
 
@@ -1423,7 +1267,7 @@
        ১৬. ডকুমেন্ট চেকলিস্ট ও সার্ভিস বিস্তারিত মডাল (Modal Popup)
        ========================================================================= -->
   <div id="service-detail-modal" class="fixed inset-0 z-50 modal-overlay hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden modal-content border border-slate-200">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden modal-content border border-slate-200 dark:border-slate-800">
       <div id="modal-body-content">
         <!-- Rendered by JS -->
       </div>
