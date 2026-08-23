@@ -450,6 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
   calculateDeedFees();
   initExpressPrint();
   
+  // Viewport-Driven Smart Auto-Play Engine (Runs ONLY the active visible section)
+  initViewportAutoPlayEngine();
+  
   // Refresh shop status every 60s
   setInterval(initShopStatus, 60000);
 });
@@ -541,10 +544,44 @@ function initShopStatus() {
 let currentNoticeFilter = 'jobs';
 let noticeCycleTimer = null;
 let noticeCycleIndex = 0;
-let isNoticeCyclePaused = false;
+let isNoticeHovered = false;
 let isNoticeViewAllActive = false;
 let isNoticeSwitching = false;
 const NOTICE_CATEGORIES = ['jobs', 'college'];
+
+function cycleNextNoticeCategory() {
+  if (isNoticeHovered || isNoticeViewAllActive) return;
+  noticeCycleIndex = (noticeCycleIndex + 1) % NOTICE_CATEGORIES.length;
+  const nextCat = NOTICE_CATEGORIES[noticeCycleIndex];
+  updateNoticeTabUI(nextCat);
+  renderNotices(nextCat, true);
+}
+
+function updateNoticeTabUI(category) {
+  const tabBtns = document.querySelectorAll('.notice-tab-btn');
+  tabBtns.forEach(btn => {
+    const cat = btn.getAttribute('data-notice-category');
+    if (cat === category) {
+      btn.classList.add('active', 'bg-brandGreen', 'text-white');
+      btn.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
+    } else {
+      btn.classList.remove('active', 'bg-brandGreen', 'text-white');
+      btn.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
+    }
+  });
+}
+
+function startNoticesAutoCycle() {
+  if (noticeCycleTimer) return;
+  noticeCycleTimer = setInterval(cycleNextNoticeCategory, 3500);
+}
+
+function stopNoticesAutoCycle() {
+  if (noticeCycleTimer) {
+    clearInterval(noticeCycleTimer);
+    noticeCycleTimer = null;
+  }
+}
 
 async function initNoticesBoard() {
   try {
@@ -562,60 +599,16 @@ async function initNoticesBoard() {
   
   const tabBtns = document.querySelectorAll('.notice-tab-btn');
   const container = document.getElementById('notices-cards-container');
-  const pauseBtn = document.getElementById('notice-cycle-pause-btn');
-  const pauseIcon = document.getElementById('notice-cycle-pause-icon');
-  const pauseText = document.getElementById('notice-cycle-pause-text');
   const expandBtn = document.getElementById('toggle-notices-expand-btn');
   const expandText = document.getElementById('toggle-notices-expand-text');
-
-  function updateNoticeTabUI(category) {
-    tabBtns.forEach(btn => {
-      const cat = btn.getAttribute('data-notice-category');
-      if (cat === category) {
-        btn.classList.add('active', 'bg-brandGreen', 'text-white');
-        btn.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-      } else {
-        btn.classList.remove('active', 'bg-brandGreen', 'text-white');
-        btn.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-      }
-    });
-  }
-
-  function cycleNextNoticeCategory() {
-    if (isNoticeCyclePaused || isNoticeViewAllActive) return;
-    noticeCycleIndex = (noticeCycleIndex + 1) % NOTICE_CATEGORIES.length;
-    const nextCat = NOTICE_CATEGORIES[noticeCycleIndex];
-    updateNoticeTabUI(nextCat);
-    renderNotices(nextCat, true);
-  }
-
-  // Start auto-cycling notices every 3.5 seconds
-  if (noticeCycleTimer) clearInterval(noticeCycleTimer);
-  noticeCycleTimer = setInterval(cycleNextNoticeCategory, 3500);
 
   // Pause on hover
   if (container) {
     container.addEventListener('mouseenter', () => {
-      isNoticeCyclePaused = true;
+      isNoticeHovered = true;
     });
     container.addEventListener('mouseleave', () => {
-      if (!isNoticeViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
-        isNoticeCyclePaused = false;
-      }
-    });
-  }
-
-  // Pause / Play Button
-  if (pauseBtn) {
-    pauseBtn.addEventListener('click', () => {
-      isNoticeCyclePaused = !isNoticeCyclePaused;
-      if (isNoticeCyclePaused) {
-        if (pauseIcon) pauseIcon.className = 'fas fa-play text-[10px] text-emerald-500';
-        if (pauseText) pauseText.innerText = 'প্লে করুন';
-      } else {
-        if (pauseIcon) pauseIcon.className = 'fas fa-pause text-[10px] text-amber-500';
-        if (pauseText) pauseText.innerText = 'পজ করুন';
-      }
+      isNoticeHovered = false;
     });
   }
 
@@ -640,18 +633,15 @@ async function initNoticesBoard() {
       renderNotices(category, true);
 
       // Temporary pause for 8s
-      isNoticeCyclePaused = true;
+      isNoticeHovered = true;
       setTimeout(() => {
-        if (!isNoticeViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
-          isNoticeCyclePaused = false;
-        }
+        isNoticeHovered = false;
       }, 8000);
     });
   });
 
   function openViewAllNotices() {
     isNoticeViewAllActive = true;
-    isNoticeCyclePaused = true;
     updateNoticeTabUI('all');
     renderNotices('all', true);
     if (expandText) expandText.innerHTML = `সংক্ষেপে দেখুন`;
@@ -659,7 +649,6 @@ async function initNoticesBoard() {
 
   function closeViewAllNotices(scrollBack = false) {
     isNoticeViewAllActive = false;
-    isNoticeCyclePaused = false;
     if (expandText) expandText.innerHTML = `সকল নোটিশ দেখুন`;
 
     const defaultCat = NOTICE_CATEGORIES[noticeCycleIndex] || 'jobs';
@@ -1433,64 +1422,56 @@ function closeServiceModal() {
   if (modal) modal.classList.add('hidden');
 }
 
+const SERVICE_TAB_CATEGORIES = ['land', 'online', 'computer'];
+let isServicesHovered = false;
+
+function updateServiceTabUI(category) {
+  const tabs = document.querySelectorAll('.service-tab-btn');
+  tabs.forEach(t => {
+    const cat = t.getAttribute('data-category');
+    if (cat === category) {
+      t.classList.add('active', 'bg-brandGreen', 'text-white');
+      t.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
+    } else {
+      t.classList.remove('active', 'bg-brandGreen', 'text-white');
+      t.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
+    }
+  });
+}
+
+function cycleNextServiceCategory() {
+  if (isServicesHovered || isViewAllActive || (currentServiceSearch && currentServiceSearch.trim() !== '')) return;
+  autoCycleIndex = (autoCycleIndex + 1) % SERVICE_TAB_CATEGORIES.length;
+  const nextCategory = SERVICE_TAB_CATEGORIES[autoCycleIndex];
+  updateServiceTabUI(nextCategory);
+  renderServicesGrid(nextCategory, '', true);
+}
+
+function startServicesAutoCycle() {
+  if (autoCycleTimer) return;
+  autoCycleTimer = setInterval(cycleNextServiceCategory, 3500);
+}
+
+function stopServicesAutoCycle() {
+  if (autoCycleTimer) {
+    clearInterval(autoCycleTimer);
+    autoCycleTimer = null;
+  }
+}
+
 function initTabs() {
-  const categories = ['land', 'online', 'computer'];
   const tabs = document.querySelectorAll('.service-tab-btn');
   const gridContainer = document.getElementById('services-grid-container');
-  const pauseBtn = document.getElementById('service-cycle-pause-btn');
-  const pauseIcon = document.getElementById('service-cycle-pause-icon');
-  const pauseText = document.getElementById('service-cycle-pause-text');
   const expandBtn = document.getElementById('toggle-services-expand-btn');
   const expandText = document.getElementById('toggle-services-expand-text');
-
-  function updateTabUI(category) {
-    tabs.forEach(t => {
-      const cat = t.getAttribute('data-category');
-      if (cat === category) {
-        t.classList.add('active', 'bg-brandGreen', 'text-white');
-        t.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-      } else {
-        t.classList.remove('active', 'bg-brandGreen', 'text-white');
-        t.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-      }
-    });
-  }
-
-  function cycleNextCategory() {
-    if (isAutoCyclePaused || isViewAllActive || (currentServiceSearch && currentServiceSearch.trim() !== '')) return;
-    autoCycleIndex = (autoCycleIndex + 1) % categories.length;
-    const nextCategory = categories[autoCycleIndex];
-    updateTabUI(nextCategory);
-    renderServicesGrid(nextCategory, '', true);
-  }
-
-  // Start auto-rotation every 3.5 seconds
-  if (autoCycleTimer) clearInterval(autoCycleTimer);
-  autoCycleTimer = setInterval(cycleNextCategory, 3500);
 
   // Pause on mouse hover so user can read / click peacefully
   if (gridContainer) {
     gridContainer.addEventListener('mouseenter', () => {
-      isAutoCyclePaused = true;
+      isServicesHovered = true;
     });
     gridContainer.addEventListener('mouseleave', () => {
-      if (!isViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
-        isAutoCyclePaused = false;
-      }
-    });
-  }
-
-  // Pause / Play Button Toggle
-  if (pauseBtn) {
-    pauseBtn.addEventListener('click', () => {
-      isAutoCyclePaused = !isAutoCyclePaused;
-      if (isAutoCyclePaused) {
-        if (pauseIcon) pauseIcon.className = 'fas fa-play text-[10px] text-emerald-500';
-        if (pauseText) pauseText.innerText = 'প্লে করুন';
-      } else {
-        if (pauseIcon) pauseIcon.className = 'fas fa-pause text-[10px] text-amber-500';
-        if (pauseText) pauseText.innerText = 'পজ করুন';
-      }
+      isServicesHovered = false;
     });
   }
 
@@ -1509,18 +1490,16 @@ function initTabs() {
         closeViewAllServices(false);
       }
       
-      autoCycleIndex = categories.indexOf(category);
+      autoCycleIndex = SERVICE_TAB_CATEGORIES.indexOf(category);
       if (autoCycleIndex === -1) autoCycleIndex = 0;
       
-      updateTabUI(category);
+      updateServiceTabUI(category);
       renderServicesGrid(category, '', true);
       
       // Pause rotation temporarily for 8 seconds when clicked manually
-      isAutoCyclePaused = true;
+      isServicesHovered = true;
       setTimeout(() => {
-        if (!isViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
-          isAutoCyclePaused = false;
-        }
+        isServicesHovered = false;
       }, 8000);
     });
   });
@@ -1528,19 +1507,17 @@ function initTabs() {
   // Open "View All Services"
   function openViewAllServices() {
     isViewAllActive = true;
-    isAutoCyclePaused = true;
-    updateTabUI('all');
+    updateServiceTabUI('all');
     renderServicesGrid('all', '', true);
     if (expandText) expandText.innerHTML = `⏱️ সংক্ষেপে দেখুন (অটো-প্রদর্শনী চালু করুন)`;
   }
 
   function closeViewAllServices(scrollBack = false) {
     isViewAllActive = false;
-    isAutoCyclePaused = false;
     if (expandText) expandText.innerHTML = `👁️ সকল সেবা একসাথে দেখুন (১৪+ টি সেবা)`;
     
-    const defaultCat = categories[autoCycleIndex] || 'land';
-    updateTabUI(defaultCat);
+    const defaultCat = SERVICE_TAB_CATEGORIES[autoCycleIndex] || 'land';
+    updateServiceTabUI(defaultCat);
     renderServicesGrid(defaultCat, '', true);
     
     if (scrollBack) {
@@ -1652,16 +1629,36 @@ function selectSearchResult(id) {
 // =========================================================================
 let calcCycleTimer = null;
 let calcCycleIndex = 0;
-let isCalcCyclePaused = false;
+let isCalcHovered = false;
 let isCalcSwitching = false;
 let orderedServicesList = [];
+
+function cycleNextLandCalcService() {
+  if (isCalcHovered || orderedServicesList.length === 0) return;
+  calcCycleIndex = (calcCycleIndex + 1) % orderedServicesList.length;
+  const nextService = orderedServicesList[calcCycleIndex];
+  if (nextService) {
+    const selectElem = document.getElementById('calc-service-select');
+    if (selectElem) selectElem.value = nextService.id;
+    updateLandCalculatorDisplay(nextService.id, true);
+  }
+}
+
+function startCalcAutoCycle() {
+  if (calcCycleTimer) return;
+  calcCycleTimer = setInterval(cycleNextLandCalcService, 4000);
+}
+
+function stopCalcAutoCycle() {
+  if (calcCycleTimer) {
+    clearInterval(calcCycleTimer);
+    calcCycleTimer = null;
+  }
+}
 
 function initLandCalculator() {
   const selectElem = document.getElementById('calc-service-select');
   const displayContainer = document.getElementById('calc-result-display');
-  const pauseBtn = document.getElementById('calc-cycle-pause-btn');
-  const pauseIcon = document.getElementById('calc-cycle-pause-icon');
-  const pauseText = document.getElementById('calc-cycle-pause-text');
   if (!selectElem) return;
   
   const preferredOrder = [
@@ -1696,51 +1693,24 @@ function initLandCalculator() {
   selectElem.innerHTML = orderedServicesList.map(s => `
     <option value="${s.id}">${s.title}</option>
   `).join('');
-  
-  function cycleNextService() {
-    if (isCalcCyclePaused || orderedServicesList.length === 0) return;
-    calcCycleIndex = (calcCycleIndex + 1) % orderedServicesList.length;
-    const nextService = orderedServicesList[calcCycleIndex];
-    if (nextService) {
-      selectElem.value = nextService.id;
-      updateLandCalculatorDisplay(nextService.id, true);
-    }
-  }
-
-  // Start auto-cycling every 4.0 seconds
-  if (calcCycleTimer) clearInterval(calcCycleTimer);
-  calcCycleTimer = setInterval(cycleNextService, 4000);
 
   // Pause on hover
   if (displayContainer) {
     displayContainer.addEventListener('mouseenter', () => {
-      isCalcCyclePaused = true;
+      isCalcHovered = true;
     });
     displayContainer.addEventListener('mouseleave', () => {
-      if (pauseText && pauseText.innerText === 'পজ করুন') {
-        isCalcCyclePaused = false;
-      }
+      isCalcHovered = false;
     });
   }
 
-  // Pause on select focus/hover
+  // Pause on select focus
   selectElem.addEventListener('focus', () => {
-    isCalcCyclePaused = true;
+    isCalcHovered = true;
   });
-
-  // Pause / Play Button Toggle
-  if (pauseBtn) {
-    pauseBtn.addEventListener('click', () => {
-      isCalcCyclePaused = !isCalcCyclePaused;
-      if (isCalcCyclePaused) {
-        if (pauseIcon) pauseIcon.className = 'fas fa-play text-[10px] text-emerald-500';
-        if (pauseText) pauseText.innerText = 'প্লে করুন';
-      } else {
-        if (pauseIcon) pauseIcon.className = 'fas fa-pause text-[10px] text-amber-500';
-        if (pauseText) pauseText.innerText = 'পজ করুন';
-      }
-    });
-  }
+  selectElem.addEventListener('blur', () => {
+    isCalcHovered = false;
+  });
 
   // User Manual Selection
   selectElem.addEventListener('change', () => {
@@ -1749,11 +1719,9 @@ function initLandCalculator() {
     updateLandCalculatorDisplay(selectElem.value, true);
 
     // Pause for 10s on manual change
-    isCalcCyclePaused = true;
+    isCalcHovered = true;
     setTimeout(() => {
-      if (pauseText && pauseText.innerText === 'পজ করুন') {
-        isCalcCyclePaused = false;
-      }
+      isCalcHovered = false;
     }, 10000);
   });
   
@@ -1824,7 +1792,7 @@ function updateLandCalculatorDisplay(serviceId, smoothTransition = true) {
           </h5>
           <div class="space-y-2.5">
             ${service.documents.map((doc, idx) => `
-              <label class="flex items-start gap-2.5 text-xs text-gray-700 dark:text-slate-300 cursor-pointer select-none" onclick="isCalcCyclePaused = true;">
+              <label class="flex items-start gap-2.5 text-xs text-gray-700 dark:text-slate-300 cursor-pointer select-none" onclick="isCalcHovered = true; setTimeout(() => { isCalcHovered = false; }, 8000);">
                 <input type="checkbox" id="chk-${idx}" class="mt-0.5 w-4 h-4 rounded text-brandGreen focus:ring-brandGreen accent-emerald-600 cursor-pointer">
                 <span>${doc}</span>
               </label>
@@ -1856,6 +1824,58 @@ function updateLandCalculatorDisplay(serviceId, smoothTransition = true) {
   } else {
     displayContainer.innerHTML = generateCalcMarkup();
   }
+}
+
+// =========================================================================
+// ১৩.১ স্মার্ট ভিউপোর্ট অটো-প্লে ইঞ্জিন (Active Section Viewport Auto-Play)
+// =========================================================================
+function initViewportAutoPlayEngine() {
+  if (!('IntersectionObserver' in window)) {
+    startServicesAutoCycle();
+    startNoticesAutoCycle();
+    startCalcAutoCycle();
+    return;
+  }
+
+  const sectionIds = ['land-guide', 'notices-hub', 'all-services'];
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.id;
+
+      if (entry.isIntersecting) {
+        if (id === 'land-guide') {
+          startCalcAutoCycle();
+          stopNoticesAutoCycle();
+          stopServicesAutoCycle();
+        } else if (id === 'notices-hub') {
+          startNoticesAutoCycle();
+          stopCalcAutoCycle();
+          stopServicesAutoCycle();
+        } else if (id === 'all-services') {
+          startServicesAutoCycle();
+          stopCalcAutoCycle();
+          stopNoticesAutoCycle();
+        }
+      } else {
+        if (id === 'land-guide') {
+          stopCalcAutoCycle();
+        } else if (id === 'notices-hub') {
+          stopNoticesAutoCycle();
+        } else if (id === 'all-services') {
+          stopServicesAutoCycle();
+        }
+      }
+    });
+  }, {
+    threshold: 0.25,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  sectionIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
 }
 
 // =========================================================================
