@@ -41,6 +41,18 @@
     }
   </script>
 
+  <!-- Prevent Theme Flash -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('fayzar_theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+
   <!-- Custom Styles & Webfonts -->
   <style>
     @font-face {
@@ -73,10 +85,17 @@
       backdrop-filter: blur(12px);
       border: 1px solid rgba(226, 232, 240, 0.8);
     }
+    html.dark .glass-card {
+      background: rgba(19, 28, 46, 0.95);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
     .dropzone-active {
       border-color: #059669 !important;
       background-color: #ecfdf5 !important;
       transform: scale(1.01);
+    }
+    html.dark .dropzone-active {
+      background-color: rgba(6, 78, 59, 0.3) !important;
     }
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
@@ -85,9 +104,15 @@
     .custom-scrollbar::-webkit-scrollbar-track {
       background: #f1f5f9;
     }
+    html.dark .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #cbd5e1;
       border-radius: 4px;
+    }
+    html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
@@ -101,13 +126,13 @@
   <script src="js/docx-to-doc-engine.js"></script>
 </head>
 
-<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-emerald-200 selection:text-emerald-900 min-h-screen flex flex-col">
+<body class="bg-slate-50 dark:bg-[#111a2e] text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-emerald-200 selection:text-emerald-900 min-h-screen flex flex-col transition-colors duration-300">
 
   <!-- ==========================================
        ১. হেডার ও নেভিগেশন বার
        ========================================== -->
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
-    <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center justify-between">
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#111a2e]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+    <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between">
       <!-- Logo & Brand -->
       <a href="index.html" class="flex items-center gap-3 group">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
@@ -115,19 +140,25 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-extrabold text-lg text-slate-900 tracking-tight">ওয়ার্ড ডকুমেন্ট কনভার্টার</span>
-            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">১০০% ফরমেট ফিক্সড</span>
+            <span class="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white tracking-tight">ওয়ার্ড ডকুমেন্ট কনভার্টার</span>
+            <span class="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700">১০০% ফরমেট ফিক্সড</span>
           </div>
-          <p class="text-xs text-slate-500 font-medium">ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট | ফুলবাড়ী, দিনাজপুর</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট | ফুলবাড়ী, দিনাজপুর</p>
         </div>
       </a>
 
       <!-- Quick Nav -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 transition border border-slate-200">
+        <!-- Theme Toggle Button -->
+        <button id="doc-theme-toggle-btn" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 transition flex items-center justify-center" title="ডে / নাইট মোড পরিবর্তন করুন">
+          <i class="fa-solid fa-moon text-sm dark:hidden"></i>
+          <i class="fa-solid fa-sun text-sm hidden dark:inline-block text-amber-400"></i>
+        </button>
+
+        <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-700 transition border border-slate-200 dark:border-slate-700">
           <i class="fa-solid fa-house"></i> হোম পেজ
         </a>
-        <a href="index.html#tools" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition">
+        <a href="index.html#tools" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition">
           <i class="fa-solid fa-toolbox"></i> সব টুলস
         </a>
         <a href="tel:01719398865" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition">
@@ -935,6 +966,21 @@
           toast.classList.add('opacity-0', 'translate-y-2');
           setTimeout(() => toast.remove(), 300);
         }, 3500);
+      }
+
+      // Day / Night Theme Switcher Handler (Silent)
+      const docThemeToggleBtn = document.getElementById('doc-theme-toggle-btn');
+      if (docThemeToggleBtn) {
+        docThemeToggleBtn.addEventListener('click', () => {
+          const isDark = document.documentElement.classList.contains('dark');
+          if (isDark) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('fayzar_theme', 'light');
+          } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('fayzar_theme', 'dark');
+          }
+        });
       }
 
       function escapeHtml(str) {
