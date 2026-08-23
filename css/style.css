@@ -422,15 +422,21 @@ html.dark .notice-deadline-urgent {
   border-color: rgba(239, 68, 68, 0.4);
 }
 
-/* Service Cards Crisp Rendering */
-#services-grid-container {
-  transform: none !important;
+/* Service Cards Crisp & Zero-Blur Cross-Fade Transition */
+.services-fade-container {
+  transition: opacity 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.services-fade-container.is-transitioning {
+  opacity: 0.05;
 }
 
 .service-card-item {
   transform: none !important;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==========================================================================
