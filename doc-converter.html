@@ -98,6 +98,7 @@
   <script src="js/jszip.min.js"></script>
   <script src="js/bangla-converter-engine.js"></script>
   <script src="js/docx-handler.js"></script>
+  <script src="js/docx-to-doc-engine.js"></script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-emerald-200 selection:text-emerald-900 min-h-screen flex flex-col">
@@ -123,10 +124,7 @@
 
       <!-- Quick Nav -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <a href="docx-to-doc.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition shadow-sm">
-          <i class="fa-solid fa-file-lines text-blue-600"></i> DOCX ➔ DOC (Word 2003)
-        </a>
-        <a href="index.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition">
+        <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 transition border border-slate-200">
           <i class="fa-solid fa-house"></i> হোম পেজ
         </a>
         <a href="index.html#tools" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition">
@@ -301,13 +299,18 @@
 
       <!-- Converted Files List & Download Section -->
       <div id="resultsCard" class="hidden space-y-4">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <h3 class="text-base font-extrabold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-circle-check text-emerald-600"></i> কনভার্ট করা ফাইলসমূহ
+            <i class="fa-solid fa-circle-check text-emerald-600"></i> কনভার্ট করা ফাইলসমূহ (DOCX ও DOC 2003 প্রস্তুত)
           </h3>
-          <button id="downloadAllBtn" class="hidden inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
-            <i class="fa-solid fa-download"></i> সবগুলো ডাউনলোড করুন
-          </button>
+          <div id="bulkDownloadGroup" class="hidden flex flex-wrap items-center gap-2">
+            <button id="downloadAllDocxBtn" class="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-sm">
+              <i class="fa-solid fa-file-word"></i> সব .DOCX ডাউনলোড
+            </button>
+            <button id="downloadAllDocBtn" class="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-sm">
+              <i class="fa-solid fa-file-lines"></i> সব .DOC (2003) ডাউনলোড
+            </button>
+          </div>
         </div>
 
         <div id="fileItemsContainer" class="space-y-3">
@@ -364,7 +367,7 @@
             <i class="fa-solid fa-trash-can text-red-500"></i> ক্লিয়ার
           </button>
           <button id="copyConvertedTextBtn" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-copy"></i> কনভার্ট করা টেক্সট কপি
+            <i class="fa-solid fa-copy"></i> কপি টেক্সট
           </button>
         </div>
       </div>
@@ -392,6 +395,21 @@
             <span id="targetStats" class="text-[11px] font-semibold text-slate-400">০ শব্দ | ০ বর্ণ</span>
           </div>
           <textarea id="targetTextArea" rows="12" readonly placeholder="স্বয়ংক্রিয়ভাবে কনভার্ট হওয়া লেখা এখানে প্রদর্শিত হবে..." class="w-full flex-grow p-3 bg-emerald-50/40 border border-emerald-200 rounded-xl text-sm text-slate-900 font-sutonny outline-none resize-none transition custom-scrollbar"></textarea>
+          
+          <!-- Direct File Download Options for Converted Text -->
+          <div class="mt-3 pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-[11px] font-bold text-slate-500 flex items-center gap-1">
+              <i class="fa-solid fa-floppy-disk text-emerald-600"></i> সরাসরি ফাইল ডাউনলোড:
+            </span>
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="downloadTextDocxBtn" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm transition">
+                <i class="fa-solid fa-file-word"></i> ডাউনলোড .DOCX
+              </button>
+              <button id="downloadTextDocBtn" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm transition">
+                <i class="fa-solid fa-file-lines"></i> ডাউনলোড .DOC (2003)
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -512,7 +530,9 @@
       const previewBox = document.getElementById('previewBox');
       const previewOriginalText = document.getElementById('previewOriginalText');
       const previewConvertedText = document.getElementById('previewConvertedText');
-      const downloadAllBtn = document.getElementById('downloadAllBtn');
+      const downloadAllDocxBtn = document.getElementById('downloadAllDocxBtn');
+      const downloadAllDocBtn = document.getElementById('downloadAllDocBtn');
+      const bulkDownloadGroup = document.getElementById('bulkDownloadGroup');
 
       const convDirection = document.getElementById('convDirection');
       const targetFontSelect = document.getElementById('targetFontSelect');
@@ -606,13 +626,32 @@
               convertNumbers: convertNumbers,
               numberFormat: numberFormat,
               onProgress: (percent, msg) => {
-                const totalProgress = Math.floor(((i + (percent / 100)) / totalCount) * 100);
+                const totalProgress = Math.floor(((i + (percent / 100)) / totalCount) * 85);
                 progressBar.style.width = totalProgress + '%';
                 progressPctText.textContent = totalProgress + '%';
                 progressTitle.textContent = `ফাইল প্রসেস হচ্ছে (${fileNum}/${totalCount}): ${file.name}`;
                 progressStatus.textContent = msg;
               }
             });
+
+            // Also generate Word 2003 (.doc) full-fidelity version
+            progressStatus.textContent = "Word 2003 (.doc) প্রশ্নপত্র ফরম্যাট প্রস্তুত হচ্ছে...";
+            let docBlob = null;
+            if (typeof DocxToDocConverter !== 'undefined') {
+              const docConverter = new DocxToDocConverter();
+              const docRes = await docConverter.convertDocxToDoc(result.convertedBlob, {
+                preserveSutonny: true,
+                optimizeForQuestionPaper: true
+              });
+              docBlob = docRes.convertedBlob;
+            } else {
+              docBlob = result.convertedBlob;
+            }
+
+            const baseName = file.name.replace(/\.docx$/i, '');
+            result.outputFileNameDocx = `${baseName}_converted.docx`;
+            result.outputFileNameDoc = `${baseName}_Word2003.doc`;
+            result.docBlob = docBlob;
 
             convertedFilesCache.push(result);
             renderConvertedFileItem(result);
@@ -648,56 +687,79 @@
           }
         }
 
+        progressBar.style.width = '100%';
+        progressPctText.textContent = '100%';
         progressCard.classList.add('hidden');
         showToast(`${docxFiles.length} টি ওয়ার্ড ফাইল সফলভাবে কনভার্ট হয়েছে!`, "success");
 
         if (docxFiles.length > 1) {
-          downloadAllBtn.classList.remove('hidden');
+          bulkDownloadGroup.classList.remove('hidden');
         } else {
-          downloadAllBtn.classList.add('hidden');
+          bulkDownloadGroup.classList.add('hidden');
         }
       }
 
       function renderConvertedFileItem(res) {
         const item = document.createElement('div');
-        item.className = "glass-card rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-slate-200 hover:border-emerald-300 transition shadow-sm";
+        item.className = "glass-card rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border border-slate-200 hover:border-emerald-300 transition shadow-sm";
         
         const fileSizeKB = (res.convertedBlob.size / 1024).toFixed(1);
 
         item.innerHTML = `
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg shadow-sm">
+          <div class="flex items-start sm:items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-xl shadow-md shadow-emerald-500/20 shrink-0">
               <i class="fa-solid fa-file-word"></i>
             </div>
             <div>
-              <h4 class="text-sm font-bold text-slate-800 break-all">${escapeHtml(res.outputFileName)}</h4>
-              <p class="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+              <h4 class="text-sm sm:text-base font-extrabold text-slate-900 break-all">${escapeHtml(res.outputFileNameDocx)}</h4>
+              <div class="text-xs text-slate-500 flex flex-wrap items-center gap-2 mt-1">
                 <span><i class="fa-solid fa-file-lines text-slate-400"></i> মূল: ${escapeHtml(res.originalName)}</span>
                 <span>•</span>
                 <span><i class="fa-solid fa-hard-drive text-slate-400"></i> ${fileSizeKB} KB</span>
                 <span>•</span>
-                <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check text-emerald-500"></i> ${res.stats.convertedRuns} টি অংশ কনভার্ট হয়েছে</span>
-              </p>
+                <span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check text-emerald-500"></i> ${res.stats.convertedRuns} টি অংশ কনভার্ট হয়েছে</span>
+              </div>
             </div>
           </div>
-          <button class="download-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm hover:shadow transition">
-            <i class="fa-solid fa-download"></i> ডাউনলোড করুন
-          </button>
+
+          <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            <!-- Button 1: Download .DOCX -->
+            <button class="download-docx-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm hover:shadow transition">
+              <i class="fa-solid fa-file-word"></i> ডাউনলোড .DOCX
+            </button>
+
+            <!-- Button 2: Download .DOC (Word 2003) -->
+            <button class="download-doc-btn flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm hover:shadow transition" title="অফিস ২০০৩ প্রশ্নপত্র ও ফরমেট শতভাগ অক্ষুণ্ণ">
+              <i class="fa-solid fa-file-lines"></i> ডাউনলোড .DOC (2003)
+            </button>
+          </div>
         `;
 
-        item.querySelector('.download-btn').addEventListener('click', () => {
-          downloadBlob(res.convertedBlob, res.outputFileName);
-          showToast(`ডাউনলোড শুরু হয়েছে: ${res.outputFileName}`, "info");
+        item.querySelector('.download-docx-btn').addEventListener('click', () => {
+          downloadBlob(res.convertedBlob, res.outputFileNameDocx);
+          showToast(`ডাউনলোড শুরু হয়েছে: ${res.outputFileNameDocx}`, "success");
+        });
+
+        item.querySelector('.download-doc-btn').addEventListener('click', () => {
+          downloadBlob(res.docBlob, res.outputFileNameDoc);
+          showToast(`Word 2003 .doc ডাউনলোড শুরু হয়েছে: ${res.outputFileNameDoc}`, "success");
         });
 
         fileItemsContainer.appendChild(item);
       }
 
-      downloadAllBtn.addEventListener('click', () => {
+      downloadAllDocxBtn.addEventListener('click', () => {
         convertedFilesCache.forEach(res => {
-          downloadBlob(res.convertedBlob, res.outputFileName);
+          downloadBlob(res.convertedBlob, res.outputFileNameDocx);
         });
-        showToast("সবগুলো ফাইল ডাউনলোড শুরু হয়েছে!", "success");
+        showToast("সবগুলো .DOCX ফাইল ডাউনলোড শুরু হয়েছে!", "success");
+      });
+
+      downloadAllDocBtn.addEventListener('click', () => {
+        convertedFilesCache.forEach(res => {
+          downloadBlob(res.docBlob, res.outputFileNameDoc);
+        });
+        showToast("সবগুলো .DOC (2003) ফাইল ডাউনলোড শুরু হয়েছে!", "success");
       });
 
 
@@ -714,6 +776,8 @@
       const targetStats = document.getElementById('targetStats');
       const clearTextBtn = document.getElementById('clearTextBtn');
       const copyConvertedTextBtn = document.getElementById('copyConvertedTextBtn');
+      const downloadTextDocxBtn = document.getElementById('downloadTextDocxBtn');
+      const downloadTextDocBtn = document.getElementById('downloadTextDocBtn');
 
       let textMode = 'u2b'; // 'u2b' or 'b2u'
 
@@ -791,6 +855,44 @@
           document.execCommand('copy');
           showToast("কনভার্ট করা টেক্সট সফলভাবে কপি হয়েছে!", "success");
         }
+      });
+
+      // Text Direct Download Handlers (.docx and .doc 2003)
+      downloadTextDocxBtn.addEventListener('click', async () => {
+        const text = targetTextArea.value;
+        if (!text.trim()) {
+          showToast("ডাউনলোড করার মতো কোনো লেখা নেই!", "warning");
+          return;
+        }
+
+        const fontName = (textMode === 'u2b') ? 'SutonnyMJ' : 'Kalpurush';
+        const isBijoy = (textMode === 'u2b');
+        showToast(".DOCX ফাইল প্রস্তুত হচ্ছে...", "info");
+
+        try {
+          const docxBlob = await DocxHandler.createDocxFromText(text, fontName, isBijoy);
+          const filename = `Text_${isBijoy ? 'Bijoy' : 'Unicode'}_${Date.now()}.docx`;
+          downloadBlob(docxBlob, filename);
+          showToast("DOCX ফাইল সফলভাবে ডাউনলোড হয়েছে!", "success");
+        } catch (err) {
+          console.error(err);
+          showToast("DOCX ফাইল তৈরিতে সমস্যা হয়েছে।", "error");
+        }
+      });
+
+      downloadTextDocBtn.addEventListener('click', () => {
+        const text = targetTextArea.value;
+        if (!text.trim()) {
+          showToast("ডাউনলোড করার মতো কোনো লেখা নেই!", "warning");
+          return;
+        }
+
+        const fontName = (textMode === 'u2b') ? 'SutonnyMJ' : 'Kalpurush';
+        const isBijoy = (textMode === 'u2b');
+        const docBlob = DocxHandler.createDocFromText(text, fontName);
+        const filename = `Question_Text_${isBijoy ? 'SutonnyMJ' : 'Unicode'}_Word2003_${Date.now()}.doc`;
+        downloadBlob(docBlob, filename);
+        showToast("Word 2003 (.doc) ফাইল সফলভাবে ডাউনলোড হয়েছে!", "success");
       });
 
       // Utility Helpers
