@@ -289,6 +289,104 @@
         opts.onProgress(percent, message);
       }
     }
+    /**
+     * Generate a complete standalone .docx Blob from raw text
+     */
+    static async createDocxFromText(text, fontName = 'SutonnyMJ', isBijoy = true) {
+      if (typeof JSZip === 'undefined') {
+        throw new Error("JSZip is not loaded.");
+      }
+
+      const zip = new JSZip();
+      const lines = (text || '').split(/\r?\n/);
+      
+      const paragraphsXml = lines.map(line => {
+        const escaped = (line || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `<w:p><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="${fontName}" w:hAnsi="${fontName}" w:cs="${fontName}" ${isBijoy ? 'w:hint="ascii"' : 'w:hint="cs"'}/><w:sz w:val="28"/><w:szCs w:val="28"/></w:rPr><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`;
+      }).join('\n');
+
+      const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+</Types>`;
+
+      const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+      const docRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+</Relationships>`;
+
+      const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <w:body>
+    ${paragraphsXml}
+    <w:sectPr>
+      <w:pgSz w:w="11906" w:h="16838"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
+
+      const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:ascii="${fontName}" w:hAnsi="${fontName}" w:cs="${fontName}"/>
+        <w:sz w:val="28"/>
+      </w:rPr>
+    </w:rPrDefault>
+  </w:docDefaults>
+</w:styles>`;
+
+      zip.file("[Content_Types].xml", contentTypesXml);
+      zip.file("_rels/.rels", relsXml);
+      zip.file("word/document.xml", documentXml);
+      zip.file("word/_rels/document.xml.rels", docRelsXml);
+      zip.file("word/styles.xml", stylesXml);
+
+      return await zip.generateAsync({
+        type: "blob",
+        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      });
+    }
+
+    /**
+     * Generate an Office 2003 .doc Blob from raw text
+     */
+    static createDocFromText(text, fontName = 'SutonnyMJ') {
+      const lines = (text || '').split(/\r?\n/);
+      const paragraphsHtml = lines.map(line => {
+        const escaped = (line || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `<p style="margin: 0 0 6pt 0; font-family: '${fontName}', SutonnyMJ, Arial, sans-serif; font-size: 14pt; line-height: 1.4;">${escaped || '&nbsp;'}</p>`;
+      }).join('\n');
+
+      const docHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+@page Section1 { size: 595.35pt 841.95pt; margin: 72pt 72pt 72pt 72pt; mso-header-margin: 36pt; mso-footer-margin: 36pt; }
+div.Section1 { page: Section1; }
+body { font-family: '${fontName}', SutonnyMJ, Arial, sans-serif; font-size: 14pt; }
+p { margin: 0 0 6pt 0; }
+</style>
+</head>
+<body>
+<div class="Section1">
+${paragraphsHtml}
+</div>
+</body>
+</html>`;
+
+      return new Blob([docHtml], { type: "application/msword;charset=utf-8" });
+    }
   }
 
   if (typeof module !== 'undefined' && module.exports) {
@@ -298,3 +396,4 @@
   }
 
 })(typeof window !== 'undefined' ? window : global);
+
