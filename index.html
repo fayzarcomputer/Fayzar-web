@@ -294,40 +294,50 @@
   <!-- =========================================================================
        ৪. ২ নম্বর সেকশন: সেবা গাইড ও ফি (Land Service Guide & Cost Checklist)
        ========================================================================= -->
-  <section id="land-guide" class="py-16 px-4 bg-white border-b border-slate-200">
+  <section id="land-guide" class="py-16 px-4 bg-white dark:bg-[#111a2e] border-b border-slate-200 dark:border-slate-800">
     <div class="container mx-auto max-w-5xl">
       
       <div class="text-center mb-8">
-        <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-brandGreen border border-emerald-300 uppercase tracking-wider">
+        <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-brandGreen dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 uppercase tracking-wider">
           ডিজিটাল, ভূমি ও নাগরিক সেবা নির্দেশিকা
         </span>
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-2 mb-2">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-100 mt-2 mb-2">
           সকল ডিজিটাল ও ভূমিসেবামূল্য এবং প্রয়োজনীয় কাগজের চেকলিস্ট
         </h2>
-        <p class="text-sm text-slate-600 max-w-2xl mx-auto">
+        <p class="text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
           দোকানে আসার আগেই যেকোনো সেবা নির্বাচন করে জেনে নিন সরকারি ফি, দোকানের কম্পিউটার চার্জ এবং প্রয়োজনীয় কাগজপত্রের সম্পূর্ণ চেকলিস্ট।
         </p>
+
+        <!-- Dynamic Checklist Exhibition Status Bar -->
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+          <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-200 dark:border-emerald-800 shadow-xs">
+            <span id="calc-cycle-badge-text">🔄 <strong>স্বয়ংক্রিয় সেবা নির্দেশিকা:</strong> প্রতি ৪ সেকেন্ড পর সেবা ও চেকলিস্ট পরিবর্তিত হচ্ছে</span>
+          </div>
+          <button id="calc-cycle-pause-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition shadow-xs">
+            <i id="calc-cycle-pause-icon" class="fas fa-pause text-[10px] text-amber-500"></i> <span id="calc-cycle-pause-text">পজ করুন</span>
+          </button>
+        </div>
       </div>
 
       <!-- Service Selection & Display Wrapper -->
-      <div class="bg-slate-50 p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="bg-slate-50 dark:bg-[#162035] p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
         
         <div class="mb-6">
-          <label for="calc-service-select" class="block text-sm font-extrabold text-slate-800 mb-2">
+          <label for="calc-service-select" class="block text-sm font-extrabold text-slate-800 dark:text-slate-200 mb-2">
             <i class="fas fa-hand-pointer text-brandGreen mr-1.5"></i> আপনার প্রয়োজনীয় সেবাটি বেছে নিন (ভূমিসেবা, পাসপোর্ট, NID, ই-টিন, ই-রিটার্ন ইত্যাদি):
           </label>
           <div class="relative">
-            <select id="calc-service-select" class="w-full bg-white border-2 border-emerald-300 rounded-xl px-4 py-3.5 text-slate-800 text-sm sm:text-base font-bold focus:outline-none focus:border-brandGreen shadow-sm appearance-none cursor-pointer">
+            <select id="calc-service-select" class="w-full bg-white dark:bg-[#1b263b] border-2 border-emerald-300 dark:border-emerald-700 rounded-xl px-4 py-3.5 text-slate-800 dark:text-slate-200 text-sm sm:text-base font-bold focus:outline-none focus:border-brandGreen shadow-sm appearance-none cursor-pointer">
               <!-- Dynamically populated by JS -->
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-emerald-700">
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-emerald-700 dark:text-emerald-400">
               <i class="fas fa-chevron-down"></i>
             </div>
           </div>
         </div>
 
-        <div id="calc-result-display">
-          <!-- Populated by JS -->
+        <div id="calc-result-display" class="calc-fade-container">
+          <!-- Populated dynamically with zero-blur transition by JS -->
         </div>
 
       </div>
@@ -338,42 +348,55 @@
   <!-- =========================================================================
        ৫. ৩ নম্বর সেকশন: চাকরি ও ভর্তি বুলেটিন (Job & Admission Notice Bulletin)
        ========================================================================= -->
-  <section id="notices-hub" class="py-16 px-4 bg-slate-50 border-b border-slate-200">
+  <section id="notices-hub" class="py-16 px-4 bg-slate-50 dark:bg-[#162035] border-b border-slate-200 dark:border-slate-800">
     <div class="container mx-auto max-w-6xl">
       
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 uppercase tracking-wider">
+          <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 uppercase tracking-wider">
             লাইভ বুলেটিন বোর্ড
           </span>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 mt-2">
             চলমান সরকারি চাকরি ও ভর্তি বিজ্ঞপ্তি
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 mt-1">
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
             ফুলবাড়ী সরকারি কলেজের শিক্ষার্থী ও চাকরিপ্রার্থীদের জন্য নিয়মিত হালনাগাদকৃত সার্কুলার।
           </p>
         </div>
 
         <!-- 2 Clear Filter Tabs: School/College & Job Notices -->
         <div class="flex flex-wrap items-center gap-2">
-          <div class="flex flex-wrap gap-2">
-            <button data-notice-category="jobs" class="notice-tab-btn active px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold border bg-brandGreen text-white transition shadow-sm flex items-center gap-1.5">
-              <i class="fas fa-briefcase text-amber-300"></i> চাকুরির নোটিশ
-              <span id="site-job-badge" class="px-2 py-0.5 rounded-full bg-white/20 text-white text-xs font-black">০</span>
-            </button>
-            <button data-notice-category="college" class="notice-tab-btn px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold border bg-white text-slate-700 hover:bg-slate-100 transition shadow-sm flex items-center gap-1.5">
-              <i class="fas fa-graduation-cap text-purple-600"></i> স্কুল/কলেজ সংক্রান্ত নোটিশ
-              <span id="site-college-badge" class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-xs font-black">০</span>
-            </button>
-            <button data-notice-category="all" class="notice-tab-btn px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border bg-white text-slate-600 hover:bg-slate-100 transition shadow-sm">
-              সকল নোটিশ
-            </button>
-          </div>
+          <button data-notice-category="jobs" class="notice-tab-btn active px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold border bg-brandGreen text-white transition shadow-sm flex items-center gap-1.5">
+            <i class="fas fa-briefcase text-amber-300"></i> চাকুরির নোটিশ
+            <span id="site-job-badge" class="px-2 py-0.5 rounded-full bg-white/20 text-white text-xs font-black">০</span>
+          </button>
+          <button data-notice-category="college" class="notice-tab-btn px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-sm flex items-center gap-1.5">
+            <i class="fas fa-graduation-cap text-purple-500"></i> স্কুল/কলেজ সংক্রান্ত নোটিশ
+            <span id="site-college-badge" class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-xs font-black">০</span>
+          </button>
+          <button data-notice-category="all" class="notice-tab-btn px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border bg-white dark:bg-[#1b263b] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-sm">
+            সকল নোটিশ
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic Notice Status Bar -->
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#1b263b] p-3 rounded-2xl border border-slate-200 dark:border-slate-700">
+        <div class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+          <span id="notice-cycle-badge-text">🔄 <strong>চলমান ক্যাটাগরি:</strong> সরকারি চাকরি (৩টি নোটিশ প্রদর্শিত)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="notice-cycle-pause-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">
+            <i id="notice-cycle-pause-icon" class="fas fa-pause text-[10px] text-amber-500"></i> <span id="notice-cycle-pause-text">পজ করুন</span>
+          </button>
+          <button id="toggle-notices-expand-btn" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-brandGreen dark:text-emerald-300 hover:bg-emerald-200 transition border border-emerald-300 dark:border-emerald-800">
+            <i class="fas fa-list"></i> <span id="toggle-notices-expand-text">সকল নোটিশ দেখুন</span>
+          </button>
         </div>
       </div>
 
       <!-- Notices Cards Grid Container -->
-      <div id="notices-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div id="notices-cards-container" class="notices-fade-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         <!-- Dynamically rendered by js/main.js -->
       </div>
 
