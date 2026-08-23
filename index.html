@@ -402,7 +402,7 @@
   <section id="all-services" class="py-16 px-4 bg-white dark:bg-[#111a2e] border-b border-slate-200 dark:border-slate-800">
     <div class="container mx-auto max-w-6xl">
       
-      <div class="text-center mb-10">
+      <div class="text-center mb-8">
         <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-brandBlue dark:text-blue-300 border border-blue-200 dark:border-blue-800">
           আমাদের পরিসেবা
         </span>
@@ -413,26 +413,43 @@
           আপনার প্রয়োজনীয় সেবায় ক্লিক করে বিস্তারিত তথ্য ও প্রয়োজনীয় কাগজপত্রের তালিকা জেনে নিন।
         </p>
 
-        <!-- Category Tabs Filter -->
-        <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mt-6">
-          <button data-category="all" class="service-tab-btn active px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-brandGreen text-white transition flex items-center gap-2 shadow-sm">
-            <i class="fas fa-border-all"></i> সকল সেবা (১৪+)
+        <!-- Category Tabs Filter & Dynamic Controls -->
+        <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mt-6">
+          <button data-category="land" class="service-tab-btn active px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-brandGreen text-white transition flex items-center gap-2 shadow-sm">
+            <i class="fas fa-landmark text-amber-300"></i> ভূমিসেবা
           </button>
-          <button data-category="land" class="service-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
-            <i class="fas fa-landmark text-amber-500"></i> ভূমিসেবা
-          </button>
-          <button data-category="online" class="service-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
+          <button data-category="online" class="service-tab-btn px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
             <i class="fas fa-globe text-blue-500"></i> অনলাইন ও সরকারি সেবা
           </button>
-          <button data-category="computer" class="service-tab-btn px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
+          <button data-category="computer" class="service-tab-btn px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
             <i class="fas fa-laptop text-emerald-500"></i> কম্পিউটার ও স্টুডিও
+          </button>
+          <button data-category="all" class="service-tab-btn px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
+            <i class="fas fa-border-all text-purple-500"></i> সকল সেবা (১৪+)
+          </button>
+        </div>
+
+        <!-- Dynamic Exhibition Status Bar -->
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+          <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-200 dark:border-emerald-800 shadow-xs">
+            <span id="service-cycle-badge-text">🔄 <strong>স্বয়ংক্রিয় প্রদর্শনী:</strong> প্রতি ৩ সেকেন্ড পর ক্যাটাগরি পরিবর্তিত হচ্ছে</span>
+          </div>
+          <button id="service-cycle-pause-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition shadow-xs">
+            <i id="service-cycle-pause-icon" class="fas fa-pause text-[10px] text-amber-500"></i> <span id="service-cycle-pause-text">পজ করুন</span>
           </button>
         </div>
       </div>
 
-      <!-- Services Grid Container (Razor-Sharp, Large 3-Column Cards) -->
-      <div id="services-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-        <!-- Rendered by js/main.js -->
+      <!-- Services Grid Container (Razor-Sharp, 3-Column Cards) -->
+      <div id="services-grid-container" class="services-fade-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        <!-- Rendered dynamically by js/main.js -->
+      </div>
+
+      <!-- Bottom View All / Toggle Button -->
+      <div class="mt-8 text-center">
+        <button id="toggle-services-expand-btn" class="inline-flex items-center gap-2 bg-gradient-to-r from-slate-900 to-emerald-900 hover:from-black hover:to-emerald-800 text-white font-extrabold px-6 py-3.5 rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-lg transition">
+          <i class="fas fa-layer-group text-amber-400"></i> <span id="toggle-services-expand-text">👁️ সকল সেবা একসাথে দেখুন (১৪+ টি সেবা)</span>
+        </button>
       </div>
 
     </div>
