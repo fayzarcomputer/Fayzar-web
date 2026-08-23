@@ -1,0 +1,5 @@
+# Security: Do not push secret tokens
+github-config.json
+sync-to-github.bat
+sync-to-github.ps1
+test-engine-syntax.js
