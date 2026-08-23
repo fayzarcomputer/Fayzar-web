@@ -535,9 +535,16 @@ function initShopStatus() {
 }
 
 // =========================================================================
-// ৫. নোটিশ ও সার্কুলার বুলেটিন বোর্ড (পাবলিক ভিউয়ার)
 // =========================================================================
-let currentNoticeFilter = 'all';
+// ৫. নোটিশ ও সার্কুলার বুলেটিন বোর্ড ডায়নামিক অটো-সাইকেল ইঞ্জিন (Zero-Blur Notice Carousel)
+// =========================================================================
+let currentNoticeFilter = 'jobs';
+let noticeCycleTimer = null;
+let noticeCycleIndex = 0;
+let isNoticeCyclePaused = false;
+let isNoticeViewAllActive = false;
+let isNoticeSwitching = false;
+const NOTICE_CATEGORIES = ['jobs', 'college'];
 
 async function initNoticesBoard() {
   try {
@@ -550,29 +557,138 @@ async function initNoticesBoard() {
     }
   } catch (e) {}
 
-  let currentNoticeFilter = 'jobs';
-  renderNotices(currentNoticeFilter);
+  currentNoticeFilter = 'jobs';
+  renderNotices('jobs', false);
   
   const tabBtns = document.querySelectorAll('.notice-tab-btn');
+  const container = document.getElementById('notices-cards-container');
+  const pauseBtn = document.getElementById('notice-cycle-pause-btn');
+  const pauseIcon = document.getElementById('notice-cycle-pause-icon');
+  const pauseText = document.getElementById('notice-cycle-pause-text');
+  const expandBtn = document.getElementById('toggle-notices-expand-btn');
+  const expandText = document.getElementById('toggle-notices-expand-text');
+
+  function updateNoticeTabUI(category) {
+    tabBtns.forEach(btn => {
+      const cat = btn.getAttribute('data-notice-category');
+      if (cat === category) {
+        btn.classList.add('active', 'bg-brandGreen', 'text-white');
+        btn.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
+      } else {
+        btn.classList.remove('active', 'bg-brandGreen', 'text-white');
+        btn.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
+      }
+    });
+  }
+
+  function cycleNextNoticeCategory() {
+    if (isNoticeCyclePaused || isNoticeViewAllActive) return;
+    noticeCycleIndex = (noticeCycleIndex + 1) % NOTICE_CATEGORIES.length;
+    const nextCat = NOTICE_CATEGORIES[noticeCycleIndex];
+    updateNoticeTabUI(nextCat);
+    renderNotices(nextCat, true);
+  }
+
+  // Start auto-cycling notices every 3.5 seconds
+  if (noticeCycleTimer) clearInterval(noticeCycleTimer);
+  noticeCycleTimer = setInterval(cycleNextNoticeCategory, 3500);
+
+  // Pause on hover
+  if (container) {
+    container.addEventListener('mouseenter', () => {
+      isNoticeCyclePaused = true;
+    });
+    container.addEventListener('mouseleave', () => {
+      if (!isNoticeViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
+        isNoticeCyclePaused = false;
+      }
+    });
+  }
+
+  // Pause / Play Button
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', () => {
+      isNoticeCyclePaused = !isNoticeCyclePaused;
+      if (isNoticeCyclePaused) {
+        if (pauseIcon) pauseIcon.className = 'fas fa-play text-[10px] text-emerald-500';
+        if (pauseText) pauseText.innerText = 'প্লে করুন';
+      } else {
+        if (pauseIcon) pauseIcon.className = 'fas fa-pause text-[10px] text-amber-500';
+        if (pauseText) pauseText.innerText = 'পজ করুন';
+      }
+    });
+  }
+
+  // Notice Tab Clicks
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      tabBtns.forEach(b => {
-        b.classList.remove('active', 'bg-brandGreen', 'text-white');
-        b.classList.add('bg-white', 'text-slate-700');
-      });
-      btn.classList.add('active', 'bg-brandGreen', 'text-white');
-      btn.classList.remove('bg-white', 'text-slate-700');
+      const category = btn.getAttribute('data-notice-category');
       
-      currentNoticeFilter = btn.getAttribute('data-notice-category');
-      renderNotices(currentNoticeFilter);
+      if (category === 'all') {
+        openViewAllNotices();
+        return;
+      }
+
+      if (isNoticeViewAllActive) {
+        closeViewAllNotices(false);
+      }
+
+      noticeCycleIndex = NOTICE_CATEGORIES.indexOf(category);
+      if (noticeCycleIndex === -1) noticeCycleIndex = 0;
+
+      updateNoticeTabUI(category);
+      renderNotices(category, true);
+
+      // Temporary pause for 8s
+      isNoticeCyclePaused = true;
+      setTimeout(() => {
+        if (!isNoticeViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
+          isNoticeCyclePaused = false;
+        }
+      }, 8000);
     });
   });
+
+  function openViewAllNotices() {
+    isNoticeViewAllActive = true;
+    isNoticeCyclePaused = true;
+    updateNoticeTabUI('all');
+    renderNotices('all', true);
+    if (expandText) expandText.innerHTML = `সংক্ষেপে দেখুন`;
+  }
+
+  function closeViewAllNotices(scrollBack = false) {
+    isNoticeViewAllActive = false;
+    isNoticeCyclePaused = false;
+    if (expandText) expandText.innerHTML = `সকল নোটিশ দেখুন`;
+
+    const defaultCat = NOTICE_CATEGORIES[noticeCycleIndex] || 'jobs';
+    updateNoticeTabUI(defaultCat);
+    renderNotices(defaultCat, true);
+
+    if (scrollBack) {
+      const hub = document.getElementById('notices-hub');
+      if (hub) hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  if (expandBtn) {
+    expandBtn.addEventListener('click', () => {
+      if (!isNoticeViewAllActive) {
+        openViewAllNotices();
+      } else {
+        closeViewAllNotices(true);
+      }
+    });
+  }
 }
 
-function renderNotices(category = 'jobs') {
+function renderNotices(category = 'jobs', smoothTransition = true) {
   const container = document.getElementById('notices-cards-container');
+  const cycleBadgeText = document.getElementById('notice-cycle-badge-text');
   if (!container) return;
   
+  currentNoticeFilter = category;
   const allItems = getActiveNotices();
   
   // Update category badge counts
@@ -591,64 +707,95 @@ function renderNotices(category = 'jobs') {
   } else if (category === 'college') {
     items = allItems.filter(n => n.category === 'college' || n.category === 'admission' || n.category === 'admissions' || n.category === 'results');
   }
-  
-  if (items.length === 0) {
-    container.innerHTML = `
-      <div class="col-span-full py-10 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-        <i class="fas fa-inbox text-slate-300 dark:text-slate-600 text-3xl mb-2"></i>
-        <p class="text-sm font-bold text-slate-700 dark:text-slate-300">এই ক্যাটাগরিতে বর্তমানে কোনো নোটিশ নেই।</p>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">প্রয়োজনে সরাসরি আমাদের দোকানে যোগাযোগ করুন।</p>
-      </div>
-    `;
-    return;
+
+  // Update notice status badge
+  if (cycleBadgeText) {
+    if (category === 'all' || isNoticeViewAllActive) {
+      cycleBadgeText.innerHTML = `🌟 <strong>সকল নোটিশ একসাথে:</strong> মোট ${items.length}টি নোটিশ`;
+    } else if (category === 'jobs') {
+      cycleBadgeText.innerHTML = `💼 <strong>চলমান ক্যাটাগরি:</strong> সরকারি চাকরি (${items.length}টির মধ্যে ৩টি প্রদর্শিত)`;
+    } else {
+      cycleBadgeText.innerHTML = `🎓 <strong>চলমান ক্যাটাগরি:</strong> স্কুল/কলেজ ও ভর্তি (${items.length}টির মধ্যে ৩টি প্রদর্শিত)`;
+    }
   }
-  
-  container.innerHTML = items.map((n) => `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition interactive-card flex flex-col justify-between relative group">
-      <div>
-        <div class="flex items-center justify-between gap-1.5 mb-1.5">
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-            ${n.type}
-          </span>
-          <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${n.badgeClass || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
-            <i class="fas fa-clock text-[8px] mr-1"></i> ${n.daysLeft || 'চলমান'}
-          </span>
+
+  function generateNoticeMarkup() {
+    if (items.length === 0) {
+      return `
+        <div class="col-span-full py-10 text-center bg-white dark:bg-[#1b263b] rounded-2xl border border-slate-200 dark:border-slate-800">
+          <i class="fas fa-inbox text-slate-300 dark:text-slate-600 text-3xl mb-2"></i>
+          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">এই ক্যাটাগরিতে বর্তমানে কোনো নোটিশ নেই।</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">প্রয়োজনে সরাসরি আমাদের দোকানে যোগাযোগ করুন।</p>
+        </div>
+      `;
+    }
+
+    // Display 3 compact and neat cards per category for sleek single-row layout
+    let displayItems = items;
+    if (!isNoticeViewAllActive && category !== 'all') {
+      displayItems = items.slice(0, 3);
+    }
+    
+    return displayItems.map((n) => `
+      <div class="notice-card-item bg-white dark:bg-[#1b263b] rounded-2xl border border-slate-200 dark:border-slate-700/80 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between relative group">
+        <div>
+          <div class="flex items-center justify-between gap-1.5 mb-1.5">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              ${n.type}
+            </span>
+            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${n.badgeClass || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
+              <i class="fas fa-clock text-[8px] mr-1"></i> ${n.daysLeft || 'চলমান'}
+            </span>
+          </div>
+          
+          <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug line-clamp-1 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition" title="${n.title}">
+            ${n.title}
+          </h4>
+          <div class="text-xs font-semibold text-brandBlue dark:text-blue-400 mb-2 flex items-center justify-between gap-1">
+            <span class="truncate"><i class="fas fa-building text-amber-500 mr-1"></i> ${n.org}</span>
+            ${n.vacancies ? `<span class="bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-black shrink-0 border border-amber-200 dark:border-amber-800">পদ: ${n.vacancies}</span>` : ''}
+          </div>
+          
+          <div class="bg-slate-50 dark:bg-[#162035] px-2.5 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700/60 text-[11px] flex items-center justify-between mb-2.5">
+            <span class="text-slate-600 dark:text-slate-300 truncate max-w-[140px]" title="${n.qualification}">🎓 ${n.qualification}</span>
+            <span class="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">${n.fee}</span>
+          </div>
         </div>
         
-        <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug line-clamp-1 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition" title="${n.title}">
-          ${n.title}
-        </h4>
-        <div class="text-xs font-semibold text-brandBlue dark:text-blue-400 mb-2 flex items-center justify-between gap-1">
-          <span class="truncate"><i class="fas fa-building text-amber-500 mr-1"></i> ${n.org}</span>
-          ${n.vacancies ? `<span class="bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-black shrink-0 border border-amber-200 dark:border-amber-800">পদ: ${n.vacancies}</span>` : ''}
-        </div>
-        
-        <div class="bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-lg border border-slate-100 dark:border-slate-800 text-[11px] flex items-center justify-between mb-2.5">
-          <span class="text-slate-600 dark:text-slate-300 truncate max-w-[140px]" title="${n.qualification}">🎓 ${n.qualification}</span>
-          <span class="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">${n.fee}</span>
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-1.5">
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">শেষ: <strong class="text-slate-800 dark:text-slate-200">${n.deadline}</strong></span>
+          <div class="flex items-center gap-1 shrink-0">
+            ${n.sourceUrl ? `
+              <a href="${n.sourceUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 transition flex items-center justify-center text-xs" title="অফিসিয়াল পোর্টাল">
+                <i class="fas fa-globe text-sky-600 dark:text-sky-400"></i>
+              </a>
+            ` : ''}
+            ${n.pdfUrl ? `
+              <a href="${n.pdfUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center text-xs" title="সার্কুলার PDF">
+                <i class="fas fa-file-pdf text-rose-500"></i>
+              </a>
+            ` : ''}
+            <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${n.title}" (${n.org}) এর জন্য সরাসরি অনলাইনে আবেদন করতে চাচ্ছি।`)}" target="_blank" class="bg-brandGreen hover:bg-emerald-700 text-white font-bold text-xs px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs">
+              <i class="fab fa-whatsapp"></i> আবেদন
+            </a>
+          </div>
         </div>
       </div>
-      
-      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5">
-        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">শেষ: <strong class="text-slate-800 dark:text-slate-200">${n.deadline}</strong></span>
-        <div class="flex items-center gap-1 shrink-0">
-          ${n.sourceUrl ? `
-            <a href="${n.sourceUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 transition flex items-center justify-center text-xs" title="অফিসিয়াল পোর্টাল">
-              <i class="fas fa-globe text-sky-600 dark:text-sky-400"></i>
-            </a>
-          ` : ''}
-          ${n.pdfUrl ? `
-            <a href="${n.pdfUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center text-xs" title="সার্কুলার PDF">
-              <i class="fas fa-file-pdf text-rose-500"></i>
-            </a>
-          ` : ''}
-          <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${n.title}" (${n.org}) এর জন্য সরাসরি অনলাইনে আবেদন করতে চাচ্ছি।`)}" target="_blank" class="bg-brandGreen hover:bg-emerald-700 text-white font-bold text-xs px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs">
-            <i class="fab fa-whatsapp"></i> আবেদন
-          </a>
-        </div>
-      </div>
-    </div>
-  `).join('');
+    `).join('');
+  }
+
+  if (smoothTransition && container.children.length > 0) {
+    if (isNoticeSwitching) return;
+    isNoticeSwitching = true;
+    container.classList.add('is-transitioning');
+    setTimeout(() => {
+      container.innerHTML = generateNoticeMarkup();
+      container.classList.remove('is-transitioning');
+      isNoticeSwitching = false;
+    }, 180);
+  } else {
+    container.innerHTML = generateNoticeMarkup();
+  }
 }
 
 // =========================================================================
@@ -1501,10 +1648,20 @@ function selectSearchResult(id) {
 }
 
 // =========================================================================
-// ১৩. ডিজিটাল ও ভূমিসেবা ক্যালকুলেটর ও চেকলিস্ট
+// ১৩. ডিজিটাল ও ভূমিসেবা ক্যালকুলেটর ও চেকলিস্ট ডায়নামিক অটো-সাইকেল ইঞ্জিন
 // =========================================================================
+let calcCycleTimer = null;
+let calcCycleIndex = 0;
+let isCalcCyclePaused = false;
+let isCalcSwitching = false;
+let orderedServicesList = [];
+
 function initLandCalculator() {
   const selectElem = document.getElementById('calc-service-select');
+  const displayContainer = document.getElementById('calc-result-display');
+  const pauseBtn = document.getElementById('calc-cycle-pause-btn');
+  const pauseIcon = document.getElementById('calc-cycle-pause-icon');
+  const pauseText = document.getElementById('calc-cycle-pause-text');
   if (!selectElem) return;
   
   const preferredOrder = [
@@ -1523,98 +1680,182 @@ function initLandCalculator() {
   ];
 
   const allServices = getLiveServicesData();
-  const orderedServices = [];
+  orderedServicesList = [];
 
   preferredOrder.forEach(id => {
     const found = allServices.find(s => s.id === id && s.category !== 'computer');
-    if (found) orderedServices.push(found);
+    if (found) orderedServicesList.push(found);
   });
 
   allServices.forEach(s => {
-    if (s.category !== 'computer' && !orderedServices.some(item => item.id === s.id)) {
-      orderedServices.push(s);
+    if (s.category !== 'computer' && !orderedServicesList.some(item => item.id === s.id)) {
+      orderedServicesList.push(s);
     }
   });
 
-  selectElem.innerHTML = orderedServices.map(s => `
+  selectElem.innerHTML = orderedServicesList.map(s => `
     <option value="${s.id}">${s.title}</option>
   `).join('');
   
+  function cycleNextService() {
+    if (isCalcCyclePaused || orderedServicesList.length === 0) return;
+    calcCycleIndex = (calcCycleIndex + 1) % orderedServicesList.length;
+    const nextService = orderedServicesList[calcCycleIndex];
+    if (nextService) {
+      selectElem.value = nextService.id;
+      updateLandCalculatorDisplay(nextService.id, true);
+    }
+  }
+
+  // Start auto-cycling every 4.0 seconds
+  if (calcCycleTimer) clearInterval(calcCycleTimer);
+  calcCycleTimer = setInterval(cycleNextService, 4000);
+
+  // Pause on hover
+  if (displayContainer) {
+    displayContainer.addEventListener('mouseenter', () => {
+      isCalcCyclePaused = true;
+    });
+    displayContainer.addEventListener('mouseleave', () => {
+      if (pauseText && pauseText.innerText === 'পজ করুন') {
+        isCalcCyclePaused = false;
+      }
+    });
+  }
+
+  // Pause on select focus/hover
+  selectElem.addEventListener('focus', () => {
+    isCalcCyclePaused = true;
+  });
+
+  // Pause / Play Button Toggle
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', () => {
+      isCalcCyclePaused = !isCalcCyclePaused;
+      if (isCalcCyclePaused) {
+        if (pauseIcon) pauseIcon.className = 'fas fa-play text-[10px] text-emerald-500';
+        if (pauseText) pauseText.innerText = 'প্লে করুন';
+      } else {
+        if (pauseIcon) pauseIcon.className = 'fas fa-pause text-[10px] text-amber-500';
+        if (pauseText) pauseText.innerText = 'পজ করুন';
+      }
+    });
+  }
+
+  // User Manual Selection
   selectElem.addEventListener('change', () => {
-    updateLandCalculatorDisplay(selectElem.value);
+    const idx = orderedServicesList.findIndex(s => s.id === selectElem.value);
+    if (idx !== -1) calcCycleIndex = idx;
+    updateLandCalculatorDisplay(selectElem.value, true);
+
+    // Pause for 10s on manual change
+    isCalcCyclePaused = true;
+    setTimeout(() => {
+      if (pauseText && pauseText.innerText === 'পজ করুন') {
+        isCalcCyclePaused = false;
+      }
+    }, 10000);
   });
   
-  if (orderedServices.length > 0) {
-    updateLandCalculatorDisplay(orderedServices[0].id);
+  if (orderedServicesList.length > 0) {
+    calcCycleIndex = 0;
+    updateLandCalculatorDisplay(orderedServicesList[0].id, false);
   }
 }
 
-function updateLandCalculatorDisplay(serviceId) {
+function updateLandCalculatorDisplay(serviceId, smoothTransition = true) {
   const services = getLiveServicesData();
   const service = services.find(s => s.id === serviceId);
   if (!service) return;
 
   const displayContainer = document.getElementById('calc-result-display');
+  const badgeTextElem = document.getElementById('calc-cycle-badge-text');
+  const selectElem = document.getElementById('calc-service-select');
   if (!displayContainer) return;
+
+  if (selectElem && selectElem.value !== serviceId) {
+    selectElem.value = serviceId;
+  }
+
+  if (badgeTextElem && orderedServicesList.length > 0) {
+    const currentIndex = orderedServicesList.findIndex(s => s.id === serviceId);
+    const displayIndex = currentIndex !== -1 ? currentIndex + 1 : 1;
+    badgeTextElem.innerHTML = `🔄 <strong>স্বয়ংক্রিয় সেবা নির্দেশিকা:</strong> ${service.title} (${displayIndex}/${orderedServicesList.length})`;
+  }
 
   const portalUrl = service.portal ? (service.portal.startsWith('http') ? service.portal : 'https://' + service.portal) : '';
   
-  displayContainer.innerHTML = `
-    <div class="bg-emerald-50/70 dark:bg-emerald-950/30 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-800">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div>
-          <span class="text-xs font-bold px-3 py-1 rounded-full bg-brandGreen text-white">${service.badge}</span>
-          <h4 class="text-xl font-bold text-gray-900 dark:text-slate-100 mt-2">${service.title}</h4>
-        </div>
-        ${portalUrl ? `
-          <div class="flex flex-col sm:items-end gap-1">
-            <span class="text-[11px] text-gray-500 dark:text-slate-400 font-bold">অফিসিয়াল পোর্টাল:</span>
-            <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition">
-              <i class="fas fa-globe text-[11px]"></i> <span>${service.portal}</span> <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
-            </a>
+  function generateCalcMarkup() {
+    return `
+      <div class="bg-emerald-50/70 dark:bg-emerald-950/30 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-800">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <span class="text-xs font-bold px-3 py-1 rounded-full bg-brandGreen text-white">${service.badge}</span>
+            <h4 class="text-xl font-bold text-gray-900 dark:text-slate-100 mt-2">${service.title}</h4>
           </div>
-        ` : ''}
-      </div>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
-          <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-coins text-amber-500 mr-1"></i> সরকারি ফি:</div>
-          <div class="text-sm font-extrabold text-red-600 dark:text-rose-400">${service.govtFee}</div>
+          ${portalUrl ? `
+            <div class="flex flex-col sm:items-end gap-1">
+              <span class="text-[11px] text-gray-500 dark:text-slate-400 font-bold">অফিসিয়াল পোর্টাল:</span>
+              <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition">
+                <i class="fas fa-globe text-[11px]"></i> <span>${service.portal}</span> <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+              </a>
+            </div>
+          ` : ''}
         </div>
-        <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
-          <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-desktop text-brandGreen mr-1"></i> কম্পিউটার চার্জ:</div>
-          <div class="text-sm font-extrabold text-brandGreen dark:text-emerald-400">${service.serviceFee}</div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+          <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
+            <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-coins text-amber-500 mr-1"></i> সরকারি ফি:</div>
+            <div class="text-sm font-extrabold text-red-600 dark:text-rose-400">${service.govtFee}</div>
+          </div>
+          <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
+            <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-desktop text-brandGreen mr-1"></i> কম্পিউটার চার্জ:</div>
+            <div class="text-sm font-extrabold text-brandGreen dark:text-emerald-400">${service.serviceFee}</div>
+          </div>
+          <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
+            <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-clock text-blue-500 mr-1"></i> আনুমানিক সময়:</div>
+            <div class="text-sm font-extrabold text-gray-800 dark:text-slate-200">${service.duration}</div>
+          </div>
         </div>
-        <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
-          <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-clock text-blue-500 mr-1"></i> আনুমানিক সময়:</div>
-          <div class="text-sm font-extrabold text-gray-800 dark:text-slate-200">${service.duration}</div>
+        
+        <div class="bg-white dark:bg-[#1b263b] p-5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm mb-5">
+          <h5 class="text-sm font-bold text-gray-800 dark:text-slate-200 mb-3 flex items-center gap-2">
+            <i class="fas fa-tasks text-brandGreen"></i> সাথে যে যে কাগজপত্র আনতে হবে (চেকলিস্ট):
+          </h5>
+          <div class="space-y-2.5">
+            ${service.documents.map((doc, idx) => `
+              <label class="flex items-start gap-2.5 text-xs text-gray-700 dark:text-slate-300 cursor-pointer select-none" onclick="isCalcCyclePaused = true;">
+                <input type="checkbox" id="chk-${idx}" class="mt-0.5 w-4 h-4 rounded text-brandGreen focus:ring-brandGreen accent-emerald-600 cursor-pointer">
+                <span>${doc}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${service.title}" সেবাটির জন্য প্রয়োজনীয় কাগজপত্র প্রস্তুত করেছি। বিস্তারিত সাহায্য প্রয়োজন।`)}" target="_blank" class="flex-1 bg-brandGreen hover:bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl text-center text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fab fa-whatsapp text-lg"></i> হোয়াটসঅ্যাপে সরাসরি পরামর্শ নিন
+          </a>
+          <a href="tel:01717101919" class="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-gray-800 dark:text-slate-200 border border-gray-300 dark:border-slate-600 font-bold py-3 px-5 rounded-xl text-center text-sm shadow-sm transition flex items-center justify-center gap-2">
+            <i class="fas fa-phone-alt text-brandGreen"></i> 01717-101919
+          </a>
         </div>
       </div>
-      
-      <div class="bg-white dark:bg-[#1b263b] p-5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm mb-5">
-        <h5 class="text-sm font-bold text-gray-800 dark:text-slate-200 mb-3 flex items-center gap-2">
-          <i class="fas fa-tasks text-brandGreen"></i> সাথে যে যে কাগজপত্র আনতে হবে (চেকলিস্ট):
-        </h5>
-        <div class="space-y-2.5">
-          ${service.documents.map((doc, idx) => `
-            <label class="flex items-start gap-2.5 text-xs text-gray-700 dark:text-slate-300 cursor-pointer select-none">
-              <input type="checkbox" id="chk-${idx}" class="mt-0.5 w-4 h-4 rounded text-brandGreen focus:ring-brandGreen accent-emerald-600 cursor-pointer">
-              <span>${doc}</span>
-            </label>
-          `).join('')}
-        </div>
-      </div>
-      
-      <div class="flex flex-col sm:flex-row gap-3">
-        <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${service.title}" সেবাটির জন্য প্রয়োজনীয় কাগজপত্র প্রস্তুত করেছি। বিস্তারিত সাহায্য প্রয়োজন।`)}" target="_blank" class="flex-1 bg-brandGreen hover:bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl text-center text-sm shadow-md transition flex items-center justify-center gap-2">
-          <i class="fab fa-whatsapp text-lg"></i> হোয়াটসঅ্যাপে সরাসরি পরামর্শ নিন
-        </a>
-        <a href="tel:01717101919" class="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-gray-800 dark:text-slate-200 border border-gray-300 dark:border-slate-600 font-bold py-3 px-5 rounded-xl text-center text-sm shadow-sm transition flex items-center justify-center gap-2">
-          <i class="fas fa-phone-alt text-brandGreen"></i> 01717-101919
-        </a>
-      </div>
-    </div>
-  `;
+    `;
+  }
+
+  if (smoothTransition && displayContainer.children.length > 0) {
+    if (isCalcSwitching) return;
+    isCalcSwitching = true;
+    displayContainer.classList.add('is-transitioning');
+    setTimeout(() => {
+      displayContainer.innerHTML = generateCalcMarkup();
+      displayContainer.classList.remove('is-transitioning');
+      isCalcSwitching = false;
+    }, 180);
+  } else {
+    displayContainer.innerHTML = generateCalcMarkup();
+  }
 }
 
 // =========================================================================
