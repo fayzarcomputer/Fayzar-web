@@ -1,408 +1,407 @@
 /**
- * ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট - Interactive Engine (Multi-Utility Version)
+ * ফয়জার কম্পিউটার অ্যান্ড ডিজিটাল সেন্টার - Interactive Engine (Multi-Utility Version)
  * Author: Antigravity AI
  */
 
 // =========================================================================
-// ১. সকল মূল সেবাসমূহের ডাটাবেজ
+// ১. প্রধান সেবাসমূহের ডাটাবেজ
 // =========================================================================
 const SERVICES_DATA = [
   {
     id: 'e-mutation',
     category: 'land',
-    title: 'ই-নামজারি ও রেকর্ড খারিজ (E-Mutation)',
-    badge: 'সর্বাধিক জনপ্রিয়',
+    title: 'ই-নামজারি ও জমাভাগ আবেদন (E-Mutation)',
+    badge: 'ডিজিটাল ভূমিসেবা',
     badgeColor: 'bg-green-100 text-emerald-800 border-green-300',
     icon: 'fa-landmark',
-    summary: 'জমি ক্রয়, হেবা, দান বা ওয়ারিশসূত্রে প্রাপ্ত জমির মালিকানা পরিবর্তন ও নতুন খতিয়ান তৈরি।',
+    summary: 'জমি ক্রয়, হেবা, দান বা ওয়ারিশসূত্রে প্রাপ্ত জমির নামজারি ও জমাভাগ খতিয়ান আবেদন।',
     portal: 'mutation.land.gov.bd',
     govtFee: '১,১৭০ ৳ (কোর্ট ফি ২০৳ + নোটিশ ফি ৫০৳ + রেকর্ড সংশোধন ফি ১,০০০৳ + খতিয়ান ফি ১০০৳)',
-    serviceFee: '৩০০ - ৫০০ ৳',
-    duration: '২৮ কর্মদিবস (সাধারণত)',
+    serviceFee: '১৫০ - ২৫০ ৳',
+    duration: '২৮ কার্যদিবস (সর্বোচ্চ)',
     documents: [
-      'মূল দলিল / বায়া দলিলের সার্টিফাইড ফটোকপি',
-      'পূর্ববর্তী খতিয়ানসমূহ (CS, SA, RS, হাল খতিয়ান)',
-      'সর্বশেষ পরিশোধিত ভূমি উন্নয়ন কর (খাজনা) দাখিলা',
+      'মূল দলিল / হেবা দলিল এর স্ক্যান কপি',
+      'পিঠ খতিয়ানসমূহ (CS, SA, RS, সিটি খতিয়ান)',
+      'হালনাগাদ ভূমি উন্নয়ন কর (খাজনা) দাখিলা',
       'ক্রেতা ও বিক্রেতার জাতীয় পরিচয়পত্র (NID) নম্বর ও ছবি',
-      'ওয়ারিশান সনদ ও মৃত্যু সনদ (ওয়ারিশ সূত্রে প্রাপ্ত জমির ক্ষেত্রে)',
-      'জমির হাত নকশা বা সীমানা বিবরণী (প্রযোজ্য ক্ষেত্রে)'
+      'ওয়ারিশান সনদপত্র (ওয়ারিশসূত্রে প্রাপ্ত জমির ক্ষেত্রে)',
+      'জমির চৌহদ্দি বা সীমানা বিবরণী (প্রযোজ্য ক্ষেত্রে)'
     ]
   },
   {
     id: 'ld-tax',
     category: 'land',
-    title: 'অনলাইনে জমির খাজনা পরিশোধ (LD Tax)',
-    badge: 'ডিজিটাল দাখিলা',
-    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    title: 'ভূমি উন্নয়ন কর ও বকেয়া খাজনা (LD-Tax)',
+    badge: 'খাজনা ও কর',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
     icon: 'fa-file-invoice-dollar',
-    summary: 'নতুন হোল্ডিং এন্ট্রি, বার্ষিক ভূমি উন্নয়ন কর অনলাইন পেমেন্ট ও তাৎক্ষণিক ডিজিটাল রসিদ সংগ্রহ।',
+    summary: 'অনলাইনে জমির হোল্ডিং এন্ট্রি, কর নির্ধারণ এবং ডিজিটাল দাখিলা (রশিদ) প্রিন্ট।',
     portal: 'ldtax.gov.bd',
-    govtFee: 'জমির ধরণ ও শতক অনুযায়ী সরকারি নির্ধারিত ফি',
+    govtFee: 'জমির শ্রেণি ও পরিমাণ অনুযায়ী নির্ধারিত',
     serviceFee: '৫০ - ১০০ ৳',
-    duration: 'তাৎক্ষণিক (অনলাইন পেমেন্ট সাপেক্ষে)',
+    duration: 'তাৎক্ষণিক (অনলাইন রশিদ)',
     documents: [
-      'জমির হাল খতিয়ান / নামজারি পর্চার কপি',
-      'পূর্বে পরিশোধিত সর্বশেষ খাজনার দাখিলা কপি (যদি থাকে)',
-      'মালিকের সচল জাতীয় পরিচয়পত্র (NID) নম্বর',
-      'ওটিপি (OTP) যাচাইয়ের জন্য সচল মোবাইল নম্বর'
+      'জমির সর্বশেষ নামজারি খতিয়ান নম্বর',
+      'পূর্বের দাখিলা / খাজনার রশিদ',
+      'মালিকের এনআইডি ও মোবাইল নম্বর'
     ]
   },
   {
     id: 'khatian',
     category: 'land',
-    title: 'খতিয়ান/পর্চা যাচাই ও সার্টিফাইড কপি',
-    badge: 'অনলাইন ও ডাক ডেলিভারি',
+    title: 'খতিয়ান ও পর্চা তোলা ও যাচাই (Khatian Online)',
+    badge: 'রেকর্ড ও পর্চা',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
-    icon: 'fa-search-location',
-    summary: 'CS, SA, RS, BS ও সিটি জরিপের খতিয়ান অনুসন্ধান, অনলাইন কপি ও জেলা রেকর্ডরুমের মূল পর্চা আবেদন।',
+    icon: 'fa-scroll',
+    summary: 'সিএস, এসএ, আরএস, বিএস ও সিটি জরিপের অনলাইন খতিয়ান কপি এবং সার্টিফাইড কপি আবেদন।',
     portal: 'eporcha.gov.bd',
-    govtFee: 'অনলাইন কপি: ৫০৳ | সার্টিফাইড হার্ডকপি: ১০০৳ + ডাক মাশুল',
+    govtFee: 'অনলাইন কপি ২০ ৳ | সার্টিফাইড কপি ১০০ ৳ + ডাকমাশুল ৪০ ৳',
     serviceFee: '৫০ - ১০০ ৳',
-    duration: 'অনলাইন কপি সাথে সাথে | সার্টিফাইড কপি ৫-৭ দিন',
+    duration: 'অনলাইন কপি তাৎক্ষণিক, সার্টিফাইড কপি ৭-১০ দিন',
     documents: [
-      'বিভাগ, জেলা, উপজেলা ও সংশ্লিষ্ট মৌজার নাম / JL নম্বর',
-      'খতিয়ান নম্বর অথবা দাগ নম্বর অথবা মালিকের নাম',
-      'আবেদনকারীর নাম, এনআইডি নম্বর ও মোবাইল নম্বর'
+      'বিভাগ, জেলা, উপজেলা ও মৌজা নাম',
+      'খতিয়ান নম্বর অথবা দাগ নম্বর অথবা মালিকের নাম'
     ]
   },
   {
     id: 'mouza-map',
     category: 'land',
-    title: 'মৌজা ম্যাপ (নকশা) ও ডিজিটাল সিট আবেদন',
-    badge: 'ডাকযোগে হোম ডেলিভারি',
-    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
+    title: 'মৌজা ম্যাপ ও নকশা অর্ডার (Mouza Map)',
+    badge: 'নকশা ও ম্যাপ',
+    badgeColor: 'bg-teal-100 text-teal-800 border-teal-300',
     icon: 'fa-map-marked-alt',
-    summary: 'যেকোনো মৌজার মূল সিট বা নকশার জন্য ভূমি রেকর্ড ও জরিপ অধিদপ্তরে সরাসরি অনলাইন আবেদন।',
-    portal: 'dlrs.gov.bd',
-    govtFee: 'সরকারি ম্যাপ ফি ও পোস্টাল চার্জ (৫২০৳+)',
-    serviceFee: '১০০ - ১৫০ ৳',
-    duration: '৭ - ১০ কর্মদিবস',
+    summary: 'যেকোনো মৌজার আসল সিএস, এসএ বা আরএস সিট ম্যাপ ডাকযোগে পাওয়ার সরকারি আবেদন।',
+    portal: 'eporcha.gov.bd',
+    govtFee: 'প্রতি সিট সরকারি ফি ৫২০ ৳ + ডাকমাশুল ১১০ ৳',
+    serviceFee: '১০০ ৳',
+    duration: '৭ - ১৫ কার্যদিবস (ডাকযোগে)',
     documents: [
-      'মৌজার নাম ও জে.এল (JL) নম্বর',
-      'সিট নম্বর (Sheet Number)',
-      'আবেদনকারীর সঠিক ডাক ঠিকানা ও সচল মোবাইল নম্বর'
+      'মৌজার নাম ও জেএল (JL) নম্বর',
+      'ম্যাপের সিট নম্বর (Sheet No.)',
+      'গ্রাহকের পূর্ণাঙ্গ পোস্টাল ঠিকানা ও মোবাইল নম্বর'
     ]
   },
   {
     id: 'miss-case',
     category: 'land',
-    title: 'রেকর্ড সংশোধন ও বিবিধ মিস কেস আবেদন',
-    badge: 'আইনি সহায়তা',
-    badgeColor: 'bg-red-100 text-red-800 border-red-300',
-    icon: 'fa-gavel',
-    summary: 'খতিয়ানে নামের ভুল, দাগ নম্বর বা হিস্যা ভুল সংক্রান্ত সহকারী কমিশনার (ভূমি) বরাবর মিস কেস আবেদন।',
+    title: 'মিস কেস ও রেকর্ড সংশোধন মামলা (Land Dispute)',
+    badge: 'ভূমি সমাধান',
+    badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+    icon: 'fa-balance-scale',
+    summary: 'রেকর্ড সংশোধন, ভুল নামজারি বাতিল বা সীমানা সংক্রান্ত অভিযোগের অনলাইন আবেদন।',
     portal: 'land.gov.bd',
-    govtFee: 'কোর্ট ফি ও নির্ধারিত সরকারি চালানের কপি',
-    serviceFee: '২০০ - ৫০০ ৳',
+    govtFee: 'সরকারি আবেদন ফি ১০০ ৳',
+    serviceFee: '২০০ - ৫০০ ৳ (কেস অনুযায়ী)',
     duration: 'শুনানি ও তদন্ত সাপেক্ষে',
     documents: [
-      'ভুল খতিয়ান বা দলিলের কপি',
-      'সঠিক তথ্যের স্বপক্ষে দালিলিক প্রমাণাদি',
-      'জাতীয় পরিচয়পত্র ও আবেদনকারীর ছবি'
+      'মালিকানাস্বত্ব সংক্রান্ত সকল দলিল ও পর্চা',
+      'অভিযোগের বিস্তারিত বিবরণ ও কারণ',
+      'প্রতিপক্ষের নাম ও ঠিকানা'
     ]
   },
   {
     id: 'e-passport',
     category: 'online',
-    title: 'ই-পাসপোর্ট (E-Passport) নতুন ও রিনিউ আবেদন',
-    badge: 'জরুরি সেবা',
-    badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+    title: 'ই-পাসপোর্ট নতুন আবেদন ও রিনিউ (E-Passport)',
+    badge: 'আন্তর্জাতিক সেবা',
+    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
     icon: 'fa-passport',
-    summary: '৪৮ ও ৬৪ পাতার ৫ বা ১০ বছর মেয়াদি নতুন ই-পাসপোর্ট আবেদন, তথ্য এন্ট্রি ও ব্যাংক ড্রাফট পেমেন্ট।',
+    summary: '১০ বছর বা ৫ বছর মেয়াদী ৪৮ বা ৬৪ পাতার নতুন পাসপোর্ট ফরম পূরণ, সংশোধন ও স্লট বুকিং।',
     portal: 'epassport.gov.bd',
-    govtFee: '৫ বছর (৪৮ পাতা): ৪,০২৫৳ | ১০ বছর: ৫,৭৫০৳ (জরুরিতে বেশি)',
+    govtFee: '৪৮ পাতা ৫ বছর: ৪,০২৫ ৳ | ৪৮ পাতা ১০ বছর: ৫,৭৫০ ৳ (রেগুলার)',
     serviceFee: '২০০ - ৩০০ ৳',
-    duration: 'অনলাইন ফরম পূরণ তাৎক্ষণিক',
+    duration: '১৫ - ২১ কার্যদিবস (জরুরি ৭ দিন)',
     documents: [
-      'মূল এনআইডি (NID) অথবা অনলাইন জন্ম নিবন্ধন (১৭ ডিজিট)',
-      'পুরাতন পাসপোর্ট (রিনিউ করার ক্ষেত্রে)',
-      'পেশাগত সনদের কপি (সরকারি/বেসরকারি চাকুরিজীবী বা ছাত্র হলে)',
-      'বিবাহিত হলে নিকাহনামা/ম্যারেজ সার্টিফিকেট (প্রযোজ্য ক্ষেত্রে)'
+      'মূল স্মার্ট এনআইডি কার্ড (NID) অথবা অনলাইন জন্ম নিবন্ধন (BRIS যাচাইকৃত)',
+      'পুরোনো পাসপোর্ট (রিনিউ এর ক্ষেত্রে)',
+      'পেশাগত সনদের কপি (সরকারি/বেসরকারি চাকরিজীবী হলে GO/NOC)',
+      'পিতা-মাতার এনআইডি কার্ডের নম্বর'
     ]
   },
   {
     id: 'police-clearance',
     category: 'online',
-    title: 'পুলিশ ক্লিয়ারেন্স সার্টিফিকেট (PCC)',
-    badge: 'বিদেশ গমনার্থী',
-    badgeColor: 'bg-teal-100 text-teal-800 border-teal-300',
+    title: 'পুলিশ ক্লিয়ারেন্স সার্টিফিকেট (Online Police Clearance)',
+    badge: 'সরকারি ছাড়পত্র',
+    badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-300',
     icon: 'fa-shield-alt',
-    summary: 'বিদেশ যাত্রা বা চাকরির প্রয়োজনে পুলিশ ক্লিয়ারেন্স সার্টিফিকেট এর নির্ভুল অনলাইন আবেদন ও চালান জমা।',
+    summary: 'বিদেশ যাত্রা বা চাকরির জন্য অনলাইন পুলিশ ক্লিয়ারেন্স ভেরিফিকেশন ও চালান ফি প্রদান।',
     portal: 'pcc.police.gov.bd',
-    govtFee: '৫০০ ৳ (চালান কোড অনুযায়ী ব্যাংক ট্রেজারি বা সোনালী সেবা)',
+    govtFee: 'সরকারি ফি ৫০০ ৳ (চালান কোড: ১-২২০১-০০০১-২৬৮১)',
     serviceFee: '১৫০ - ২০০ ৳',
-    duration: '৭ - ১৫ কর্মদিবস (পুলিশ ভেরিফিকেশন সাপেক্ষে)',
+    duration: '৭ - ১০ কার্যদিবস',
     documents: [
-      'পাসপোর্টের ১ম পাতার সত্যায়িত ফটোকপি (মেয়াদ অন্তত ৩ মাস থাকতে হবে)',
-      'জাতীয় পরিচয়পত্র (NID) বা অনলাইন জন্ম নিবন্ধন',
-      'স্থানীয় ইউনিয়ন পরিষদ/পৌরসভার চেয়ারম্যান প্রদত্ত চারিত্রিক সনদ',
-      'বর্তমান ঠিকানার ইউটিলিটি বিলের কপি (প্রয়োজনে)'
-    ]
-  },
-  {
-    id: 'online-gd',
-    category: 'online',
-    title: 'অনলাইন সাধারণ ডায়েরি (Online GD)',
-    badge: 'তাৎক্ষণিক সেবা',
-    badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
-    icon: 'fa-file-shield',
-    summary: 'জাতীয় পরিচয়পত্র, সার্টিফিকেট, পাসপোর্ট, ব্যাংকের চেক বা মূল্যবান নথি হারানো সংক্রান্ত থানা জিডি।',
-    portal: 'gd.police.gov.bd',
-    govtFee: '০ ৳ (সরকারি কোনো ফি নেই)',
-    serviceFee: '১০০ - ১৫০ ৳',
-    duration: '১০ - ২০ মিনিট',
-    documents: [
-      'আবেদনকারীর জাতীয় পরিচয়পত্র (NID) নম্বর ও জন্ম তারিখ',
-      'হারিয়ে যাওয়া ডকুমেন্টের নম্বর বা স্পষ্ট বিবরণ',
-      'একটি সচল মোবাইল নম্বর (এসএমএস ভেরিফিকেশনের জন্য)'
+      'বৈধ পাসপোর্টের স্ক্যান কপি (নূন্যতম ৩ মাস মেয়াদ থাকতে হবে)',
+      'সঠিক স্থায়ী ও বর্তমান ঠিকানার তথ্য',
+      'প্রথম শ্রেণির গেজেটেড কর্মকর্তা দ্বারা সত্যায়িত পাসপোর্ট কপি'
     ]
   },
   {
     id: 'nid-correct',
     category: 'online',
-    title: 'এনআইডি (NID) সংশোধন ও রি-ইস্যু আবেদন',
-    badge: 'নির্বাচন কমিশন',
-    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    title: 'এনআইডি সংশোধন ও রি-ইস্যু (NID Correction)',
+    badge: 'পরিচয়পত্র সেবা',
+    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
     icon: 'fa-id-card',
-    summary: 'জাতীয় পরিচয়পত্রে নাম, জন্ম তারিখ, পিতা-মাতার নাম ও ঠিকানা সংক্রান্ত ভুল সংশোধন আবেদন।',
+    summary: 'নামের বানান, পিতা-মাতার নাম, জন্মতারিখ, ঠিকানা ও রক্তের গ্রুপ সংশোধন আবেদন।',
     portal: 'services.nidw.gov.bd',
-    govtFee: 'ক্যাটাগরি অনুযায়ী ২৩০ ৳ থেকে ৩৪৫ ৳ (বিকাশ/রকেটে প্রদেয়)',
-    serviceFee: '১৫০ - ২৫০ ৳',
-    duration: 'নির্বাচন কমিশনের অনুমোদন সাপেক্ষে',
+    govtFee: 'ক্যাটাগরি অনুযায়ী ২৩০ ৳ থেকে ৪৬০ ৳',
+    serviceFee: '১০০ - ২০০ ৳',
+    duration: '৭ - ৩০ কার্যদিবস (ক্যাটাগরি ভেদে)',
     documents: [
-      'এসএসসি/সমমানের শিক্ষাগত যোগ্যতার মূল সার্টিফিকেট',
-      'ডিজিটাল অনলাইন জন্ম নিবন্ধন সনদ',
-      'পিতা ও মাতার মূল জাতীয় পরিচয়পত্রের কপি',
-      'বিবাহিত হলে কাবিননামা ও স্বামীর NID কপি'
+      'এসএসসি / সমমান পরীক্ষার সার্টিফিকেট কপি',
+      'ডিজিটাল জন্ম নিবন্ধন সনদপত্র (বাংলা ও ইংরেজি)',
+      'পাসপোর্ট / ড্রাইভিং লাইসেন্স (যদি থাকে)',
+      'পিতা-মাতার এনআইডি ও নিকাহনামা (প্রয়োজনে)'
     ]
   },
   {
     id: 'nid-download',
     category: 'online',
-    title: 'অনলাইন ভোটার আইডি ডাউনলোড ও লেমিনেশন',
-    badge: 'দ্রুত ডেলিভারি',
+    title: 'জাতীয় পরিচয়পত্র (NID) অনলাইন কপি ডাউনলোড',
+    badge: 'তাৎক্ষণিক সেবা',
     badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-300',
     icon: 'fa-download',
-    summary: 'নতুন ভোটারদের স্লিপ নম্বর বা হারিয়ে যাওয়া NID এর অনলাইন কপি ডাউনলোড ও প্লাস্টিক কার্ড প্রিন্ট।',
+    summary: 'হারিয়ে যাওয়া বা নতুন ভোটারের ভোটার স্লট নম্বর দিয়ে অনলাইন কালার এনআইডি কপি প্রিন্ট।',
     portal: 'services.nidw.gov.bd',
-    govtFee: 'প্রযোজ্য ক্ষেত্রে সরকারি ফি',
+    govtFee: 'সরকারি রি-ইস্যু ফি (হারানো হলে ২৩০৳)',
     serviceFee: '৫০ - ১০০ ৳',
-    duration: '৫ - ১০ মিনিট',
+    duration: 'তাৎক্ষণিক (৫ মিনিট)',
     documents: [
-      'ভোটার নিবন্ধন ফরম নম্বর / স্লিপ নম্বর অথবা NID নম্বর',
-      'ভোটার হওয়ার সময় প্রদত্ত সঠিক জন্ম তারিখ',
-      'নিবন্ধনকৃত মোবাইল নম্বর (ফেস ভেরিফিকেশন বা OTP এর জন্য)'
+      'ভোটার স্লট ফরম নম্বর অথবা এনআইডি নম্বর',
+      'সঠিক জন্ম তারিখ ও নিবন্ধিত মোবাইল নম্বর (Face Verification প্রয়োজন)'
     ]
-  },
-  {
-    id: 'job-apply',
-    category: 'computer',
-    title: 'চাকরি ও বিশ্ববিদ্যালয়ে ভর্তির অনলাইন আবেদন',
-    badge: 'কম্পিউটার সেবা',
-    badgeColor: 'bg-violet-100 text-violet-800 border-violet-300',
-    icon: 'fa-user-graduate',
-    summary: 'বিসিএস, প্রাথমিক শিক্ষক, সরকারি-বেসরকারি চাকরি এবং জাতীয় ও পাবলিক বিশ্ববিদ্যালয়ে ভর্তি আবেদন।',
-    portal: 'বিভিন্ন সরকারি ও বিশ্ববিদ্যালয়ের পোর্টাল',
-    govtFee: 'বিজ্ঞপ্তি অনুযায়ী নির্দিষ্ট অ্যাপ্লিকেশন ফি',
-    serviceFee: '১০০ - ২০০ ৳',
-    duration: '১০ - ১৫ মিনিট',
-    documents: [
-      'পাসপোর্ট সাইজ ছবি ও স্বাক্ষরের স্পষ্ট কপি (৩০০x৩০০ ও ৩০০x৮০ পিক্সেল)',
-      'সকল শিক্ষাগত যোগ্যতার রোল, রেজিস্ট্রেশন নম্বর ও জিপিএ',
-      'জাতীয় পরিচয়পত্র ও কোটা সনদ (প্রযোজ্য হলে)'
-    ]
-  },
-  {
-    id: 'pvc-id-card',
-    category: 'computer',
-    title: 'স্কুল-কলেজ ও মাদ্রাসার ডিজিটাল পিভিসি (PVC) আইডি কার্ড ও ফিতা',
-    badge: 'স্টুডিও ও প্রিন্টিং',
-    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
-    icon: 'fa-id-badge',
-    summary: 'স্কুল, কলেজ, মাদ্রাসা ও যেকোনো প্রতিষ্ঠানের উন্নত মানের ডিজিটাল পিভিসি আইডি কার্ড, প্রিমিয়াম প্রিন্টেড ফিতা (Lanyard) ও কার্ড হোল্ডার তৈরি।',
-    portal: 'fayzarcomputer.com',
-    govtFee: 'সরকারি ফি নেই',
-    serviceFee: '৬০ - ১১০ ৳ (প্রতি পিস - ফিতা ও মান অনুযায়ী)',
-    duration: '১ - ৩ কর্মদিবস (পরিমাণ সাপেক্ষে)',
-    documents: [
-      'শিক্ষার্থী বা কর্মকর্তা/কর্মচারীর পাসপোর্ট সাইজ স্পষ্ট ছবি',
-      'শিক্ষার্থীর নাম, শ্রেণি, রোল, রক্তের গ্রুপ ও পিতা-মাতার নাম',
-      'প্রতিষ্ঠানের নাম, লোগো ও প্রধানের স্বাক্ষর'
-    ]
-  },
-  {
-    id: 'typing',
-    category: 'computer',
-    title: 'বাংলা ও ইংরেজি কম্পিউটার কম্পোজ',
-    badge: 'কম্পিউটার কম্পোজ',
-    badgeColor: 'bg-sky-100 text-sky-800 border-sky-300',
-    icon: 'fa-keyboard',
-    summary: 'আবেদনপত্র, দরখাস্ত, সিভি (Curriculum Vitae), স্ট্যাম্প চুক্তিপত্র ও প্রশ্ন নির্ভুলভাবে কম্পোজ।',
-    portal: 'ইন-শপ সার্ভিস',
-    govtFee: 'প্রযোজ্য নয়',
-    serviceFee: 'প্রতি পেজ ২০ - ৫০ ৳',
-    duration: 'দ্রুত ডেলিভারি',
-    documents: [
-      'হাতে লেখা খসড়া বা মূল কাগজের নমুনা',
-      'সিভির ক্ষেত্রে শিক্ষাগত তথ্য ও ব্যক্তিগত বিবরণ'
-    ]
-  },
-  {
-    id: 'photostat',
-    category: 'computer',
-    title: 'ডিজিটাল ফটোস্ট্যাট ও কালার প্রিন্ট',
-    badge: 'ফটোস্ট্যাট ও প্রিন্ট',
-    badgeColor: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-    icon: 'fa-print',
-    summary: 'হাই-স্পিড ডিজিটাল ফটোকপি, অফসেট পেপারে নিখুঁত সাদাকালো ও লেজার কালার প্রিন্টিং।',
-    portal: 'ইন-শপ সার্ভিস',
-    govtFee: 'প্রযোজ্য নয়',
-    serviceFee: 'প্রতি পৃষ্ঠা স্বল্পমূল্যে',
-    duration: 'তাৎক্ষণিক',
-    documents: ['যে ডকুমেন্ট বা পিডিএফ প্রিন্ট করতে চান']
   },
   {
     id: 'tin-cert',
     category: 'online',
-    title: 'ই-টিন (e-TIN) সার্টিফিকেট নতুন আবেদন ও সংশোধন',
-    badge: 'এনবিআর ট্যাক্স সেবা',
-    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    title: 'নতুন ই-টিন সার্টিফিকেট তৈরি ও রিটার্ন (E-TIN)',
+    badge: 'ট্যাক্স ও ব্যবসা',
+    badgeColor: 'bg-yellow-100 text-yellow-800 border-yellow-300',
     icon: 'fa-file-invoice',
-    summary: 'ব্যবসা, সঞ্চয়পত্র ক্রয়, ব্যাংক লোন বা ট্রেড লাইসেন্সের জন্য নতুন ১২ ডিজিটের ই-টিন সার্টিফিকেট তাৎক্ষণিক গ্রহণ।',
-    portal: 'incometax.gov.bd',
-    govtFee: 'সরকারি ফি নেই (ফ্রি)',
-    serviceFee: '১০০ - ১৫০ ৳',
-    duration: 'তাৎক্ষণিক (৫-১০ মিনিট)',
+    summary: 'ব্যবসা, ব্যাংক লোন বা ট্রেড লাইসেন্সের জন্য তাত্ক্ষণিক ১২ ডিজিটের ই-টিন সার্টিফিকেট।',
+    portal: 'secure.incometax.gov.bd',
+    govtFee: 'ফ্রি (সরকারি ফি নেই)',
+    serviceFee: '১০০ ৳',
+    duration: 'তাৎক্ষণিক (১০ মিনিট)',
     documents: [
-      'আবেদনকারীর সচল জাতীয় পরিচয়পত্র (NID) নম্বর',
-      'সচল মোবাইল নম্বর (ওটিপি যাচাইয়ের জন্য)',
-      'ব্যবসার নাম ও ঠিকানা (ব্যবসায়িক টিন এর ক্ষেত্রে)'
+      'আবেদনকারীর এনআইডি নম্বর',
+      'চলতি মোবাইল নম্বর ও ব্যবসার নাম/ঠিকানা'
     ]
   },
   {
-    id: 'e-return',
+    id: 'driving',
     category: 'online',
-    title: 'অনলাইন আয়কর ই-রিটার্ন দাখিল (e-Return Dakhil)',
-    badge: 'এনবিআর ই-ট্যাক্স',
-    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-    icon: 'fa-file-signature',
-    summary: 'এনবিআর এর অনলাইন পোর্টালে বার্ষিক আয়কর ই-রিটার্ন দাখিল, ট্যাক্স হিসাব এবং তাৎক্ষণিক অফিসিয়াল প্রমাণপত্র/একনলেজমেন্ট প্রাপ্তি।',
-    portal: 'etaxnbr.gov.bd',
-    govtFee: 'আয়কর স্ল্যাব অনুযায়ী অথবা জিরো ট্যাক্স',
-    serviceFee: '২০০ - ৫০০ ৳',
-    duration: 'তাৎক্ষণিক একনলেজমেন্ট রসিদ',
+    title: 'ড্রাইভিং লাইসেন্স আবেদন ও ফি (BRTA e-Service)',
+    badge: 'বিআরটিএ সেবা',
+    badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
+    icon: 'fa-motorcycle',
+    summary: 'লার্নার লাইসেন্স, স্মার্ট কার্ড ড্রাইভিং লাইসেন্স আবেদন ও ফি পেমেন্ট।',
+    portal: 'bsp.brta.gov.bd',
+    govtFee: 'লার্নার: ৩৪৫৳ (১ ক্যাটাগরি) | লাইসেন্স: ২,৫৪২৳ - ৪,১৮১৳',
+    serviceFee: '১৫০ - ২৫০ ৳',
+    duration: 'লার্নার তাৎক্ষণিক, কার্ড পরীক্ষা সাপেক্ষে',
     documents: [
-      '১২ ডিজিটের ই-টিন (e-TIN) নম্বর',
-      'আবেদনকারীর নিজস্ব নামে বায়োমেট্রিক নিবন্ধিত সিম নম্বর',
-      'ব্যাংক স্টেটমেন্ট ও বেতন বিবরণী (যদি থাকে)',
-      'স্থাবর ও অস্থাবর সম্পত্তির বিবরণ ও সঞ্চয়পত্র/ডিপিএস তথ্য'
+      'রেজিস্টার্ড ডাক্তারের মেডিকেল সার্টিফিকেট',
+      'এনআইডি কপি ও ইউটিলিটি বিলের কপি',
+      'শিক্ষাগত যোগ্যতার সনদ (ন্যূনতম ৮ম শ্রেণি পাস)'
     ]
   },
   {
-    id: 'photo-studio',
+    id: 'trade-lic',
+    category: 'online',
+    title: 'ইউনিয়ন ও পৌর ট্রেড লাইসেন্স আবেদন',
+    badge: 'বাণিজ্যিক সেবা',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    icon: 'fa-briefcase',
+    summary: 'অনলাইন ই-ট্রেড লাইসেন্স আবেদন, রিনিউ এবং ভেরিফিকেশন।',
+    portal: 'etradelicense.gov.bd',
+    govtFee: 'ব্যবসার ধরন ও ক্যাপিটাল অনুযায়ী নির্ধারিত',
+    serviceFee: '১০০ - ২০০ ৳',
+    duration: '২ - ৩ কার্যদিবস',
+    documents: [
+      'দোকান ভাড়ার চুক্তিপত্র বা জায়গার খাজনা রশিদ',
+      'মালিকের এনআইডি ও পাসপোর্ট সাইজ ছবি',
+      'ই-টিন সার্টিফিকেট'
+    ]
+  },
+  {
+    id: 'computer-training',
     category: 'computer',
-    title: 'স্টুডিও কোয়ালিটি ছবি প্রিন্ট ও লেমিনেটিং',
-    badge: 'ডিজিটাল স্টুডিও',
-    badgeColor: 'bg-pink-100 text-pink-800 border-pink-300',
-    icon: 'fa-camera-retro',
-    summary: 'পাসপোর্ট সাইজ, স্ট্যাম্প সাইজ ও থ্রি-আর/ফোর-আর ছবি প্রিন্ট এবং ডকুমেন্টস হার্ড লেমিনেটিং।',
-    portal: 'ইন-শপ সার্ভিস',
+    title: 'কম্পিউটার বেসিক ও অফিস অ্যাপ্লিকেশন কোর্স',
+    badge: 'প্রশিক্ষণ ও স্কিল',
+    badgeColor: 'bg-violet-100 text-violet-800 border-violet-300',
+    icon: 'fa-graduation-cap',
+    summary: 'মাইক্রোসফট ওয়ার্ড, এক্সেল, পাওয়ারপয়েন্ট, ইউনিকোড/বিজয় টাইপিং ও ইন্টারনেট ব্রাউজিং প্রশিক্ষণ।',
+    portal: 'ফয়জার কম্পিউটার প্রশিক্ষণ একাডেমি',
+    govtFee: 'কোর্স ভেদে নির্ধারিত',
+    serviceFee: 'সুলভ ফি ও কিস্তি সুবিধা',
+    duration: '১ মাস / ৩ মাস / ৬ মাস মেয়াদী',
+    documents: [
+      'শিক্ষার্থীর পাসপোর্ট সাইজ ছবি ২ কপি',
+      'এনআইডি অথবা জন্ম নিবন্ধন সনদের ফটোকপি',
+      'সর্বশেষ শিক্ষাগত যোগ্যতার সনদ'
+    ]
+  },
+  {
+    id: 'printing-service',
+    category: 'computer',
+    title: 'হাই-স্পিড ফটো ও দলিল কালার প্রিন্ট',
+    badge: 'স্টুডিও সেবা',
+    badgeColor: 'bg-sky-100 text-sky-800 border-sky-300',
+    icon: 'fa-print',
+    summary: 'স্টুডিও কোয়ালিটি ল্যাব ফটো প্রিন্ট, ব্লু-প্রিন্ট নকশা, দলিল প্রিন্ট ও লেমিনেশন।',
+    portal: 'দোকানে সরাসরি সেবা',
     govtFee: 'প্রযোজ্য নয়',
-    serviceFee: 'সাইজ ও কপি অনুযায়ী নির্ধারিত',
-    duration: '৫ মিনিটে ডেলিভারি',
-    documents: ['ছবি বা সরাসরি দোকানে ছবি তোলার সুবিধা']
+    serviceFee: 'সাইজ ও পৃষ্ঠা অনুযায়ী পাইকারি মূল্য',
+    duration: 'তাৎক্ষণিক ডেলিভারি',
+    documents: [
+      'পেনড্রাইভ / হোয়াটসঅ্যাপ / ইমেইলে সফটকপি'
+    ]
   }
 ];
 
-// Helper to get active services from localStorage or defaults
-function getLiveServicesData() {
-  try {
-    const saved = localStorage.getItem('fayzar_services_data');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    }
-  } catch (e) {}
-  return SERVICES_DATA;
-}
-
 // =========================================================================
-// ২. চলমান সরকারি চাকরি ও ভর্তি বুলেটিন নোটিশ ডিফল্ট ডাটা
+// ২. নোটিশ ও সার্কুলার ডাটাবেজ
 // =========================================================================
 const DEFAULT_NOTICES_DATA = [
   {
-    id: 'job-1',
+    id: 'notice-railway-running',
     category: 'jobs',
     type: 'সরকারি চাকরি',
-    title: 'প্রাথমিক সহকারী শিক্ষক নিয়োগ ও আবেদন',
-    org: 'প্রাথমিক শিক্ষা অধিদপ্তর (DPE)',
-    deadline: 'চলমান আবেদন',
-    daysLeft: 'আবেদন চলছে',
-    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-    qualification: 'যেকোনো বিষয়ে স্নাতক/সমমান (ন্যূনতম ২য় বিভাগ/সিজিপিএ ২.২৫)',
-    fee: 'সরকারি ফি: ২২০ ৳',
-    details: 'টেলিটকের মাধ্যমে dpe.teletalk.com.bd পোর্টালে অনলাইন আবেদন ও ছবি/স্বাক্ষর আপলোড।'
-  },
-  {
-    id: 'job-2',
-    category: 'jobs',
-    type: 'সরকারি চাকরি',
-    title: 'বাংলাদেশ রেলওয়ে বিভিন্ন পদে নিয়োগ বিজ্ঞপ্তি',
+    title: 'বাংলাদেশ রেলওয়ে সহকারী স্টেশন মাস্টার ও পয়েন্টসম্যান নিয়োগ',
     org: 'বাংলাদেশ রেলওয়ে (BR)',
-    deadline: 'চলতি মাসের শেষ তারিখ',
+    vacancies: '১০৮৫ জন',
+    deadline: 'চলতি মাসের ২৫ তারিখ',
     daysLeft: 'জরুরি আবেদন',
     badgeClass: 'notice-deadline-urgent',
-    qualification: 'এইচএসসি / এসএসসি / স্নাতক পাস পদ অনুযায়ী',
+    qualification: 'স্নাতক / এইচএসসি / এসএসসি পাস',
     fee: 'সরকারি ফি: ১১২ - ২২৩ ৳',
-    details: 'পয়েন্টসম্যান, খালাসি, সহকারী স্টেশন মাস্টার পদে অনলাইনে আবেদন চলছে।'
+    details: 'টেলিটক br.teletalk.com.bd পোর্টালে অনলাইন আবেদন চলছে। বয়স ১৮-৩০ বছর। দ্রুত আবেদন ফরম পূরণ ও ছবি/স্বাক্ষর আপলোডের জন্য যোগাযোগ করুন।',
+    sourceUrl: 'https://br.teletalk.com.bd',
+    pdfUrl: 'https://br.teletalk.com.bd'
   },
   {
-    id: 'job-3',
+    id: 'notice-police-si-live',
     category: 'jobs',
-    type: 'প্রতিরক্ষা চাকরি',
-    title: 'বাংলাদেশ পুলিশ ও আনসার কনস্টেবল নিয়োগ',
-    org: 'বাংলাদেশ পুলিশ হেডকোয়ার্টার্স',
+    type: 'সরকারি চাকরি',
+    title: 'বাংলাদেশ পুলিশ সাব-ইন্সপেক্টর (SI) নিয়োগ ২০২৬',
+    org: 'বাংলাদেশ পুলিশ সদর দপ্তর',
+    vacancies: 'নির্দিষ্ট নয়',
     deadline: 'বিজ্ঞপ্তি অনুযায়ী',
     daysLeft: 'আবেদন চলছে',
+    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    qualification: 'ন্যূনতম স্নাতক (ডিগ্রি/অনার্স)',
+    fee: 'সরকারি ফি: ৫৫০ ৳',
+    details: 'police.teletalk.com.bd এর মাধ্যমে আবেদন ফরম পূরণ, শারীরিক মাপের প্রস্তুতি এবং প্রবেশপত্র প্রিন্ট সেবা।',
+    sourceUrl: 'https://police.teletalk.com.bd',
+    pdfUrl: 'https://police.teletalk.com.bd'
+  },
+  {
+    id: 'notice-primary-dpe-job',
+    category: 'jobs',
+    type: 'সরকারি চাকরি',
+    title: 'প্রাথমিক সহকারী শিক্ষক নিয়োগ পরীক্ষা (রংপুর বিভাগ)',
+    org: 'প্রাথমিক শিক্ষা অধিদপ্তর (DPE)',
+    vacancies: '৩,৫০০+ জন',
+    deadline: 'প্রবেশপত্র ডাউনলোড চলমান',
+    daysLeft: 'এডমিট কার্ড লাইভ',
     badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
-    qualification: 'এসএসসি / সমমান পাস (ন্যূনতম জিপিএ ২.৫)',
-    fee: 'সরকারি ফি: ৪০ - ১২০ ৳',
-    details: 'অনলাইনে ট্রেইনি রিক্রুট কনস্টেবল (TRC) পদে আবেদন ও শারীরিক যোগ্যতার ফর্ম পূরণ।'
+    qualification: 'স্নাতক / সমমান',
+    fee: 'প্রিন্ট চার্জ প্রযোজ্য',
+    details: 'dpe.teletalk.com.bd থেকে এডমিট কার্ড কালার প্রিন্ট ও পরীক্ষার নির্দেশিকা প্রদান করা হচ্ছে।',
+    sourceUrl: 'https://dpe.teletalk.com.bd',
+    pdfUrl: 'https://dpe.teletalk.com.bd'
   },
   {
-    id: 'adm-1',
-    category: 'admissions',
-    type: 'বিশ্ববিদ্যালয় ভর্তি',
-    title: 'জাতীয় বিশ্ববিদ্যালয় অনার্স ও ডিগ্রি ১ম বর্ষ ভর্তি',
-    org: 'জাতীয় বিশ্ববিদ্যালয় (National University)',
-    deadline: 'চলমান কার্যক্রম',
-    daysLeft: 'ভর্তি ফরম চলছে',
-    badgeClass: 'bg-purple-100 text-purple-800 border-purple-300',
-    qualification: 'এসএসসি ও এইচএসসি উত্তীর্ণ (ফুলবাড়ী সরকারি কলেজ সহ সকল কলেজ)',
-    fee: 'প্রাথমিক আবেদন ফি: ৩৫০ ৳',
-    details: 'app1.nu.edu.bd পোর্টালে কলেজ ও বিষয় পছন্দক্রম দিয়ে অনলাইন আবেদন ও ফি জমা।'
-  },
-  {
-    id: 'adm-2',
-    category: 'admissions',
-    type: 'উন্মুক্ত ভর্তি',
-    title: 'বাংলাদেশ উন্মুক্ত বিশ্ববিদ্যালয় (BOU) এইচএসসি ও ডিগ্রি ভর্তি',
-    org: 'বাংলাদেশ উন্মুক্ত বিশ্ববিদ্যালয়',
-    deadline: 'চলমান রেজিষ্ট্রেশন',
+    id: 'notice-nu-degree-adm-26',
+    category: 'college',
+    type: 'ভর্তি বিজ্ঞপ্তি',
+    title: 'জাতীয় বিশ্ববিদ্যালয় ডিগ্রি (পাস) ও অনার্স ভর্তি কার্যক্রম',
+    org: 'জাতীয় বিশ্ববিদ্যালয় / ফুলবাড়ী সরকারি কলেজ',
+    vacancies: 'সকল আসন',
+    deadline: 'নির্ধারিত সময়সূচি অনুযায়ী',
     daysLeft: 'ভর্তি ওপেন',
-    badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-    qualification: 'এসএসসি / এইচএসসি পাস যেকেউ কর্মজীবীদের জন্য সুবর্ণ সুযোগ',
-    fee: 'কোর্স অনুযায়ী নির্ধারিত',
-    details: 'বাউবির অনলাইন পোর্টালে ভর্তি ফরম পূরণ ও অনলাইন পেমেন্ট সহায়তা।'
+    badgeClass: 'bg-purple-100 text-purple-800 border-purple-300',
+    qualification: 'এসএসসি ও এইচএসসি পাস',
+    fee: 'প্রাথমিক আবেদন ফি: ৩৫০ ৳',
+    details: 'app1.nu.edu.bd পোর্টালে ফুলবাড়ী সরকারি কলেজ সহ জাতীয় বিশ্ববিদ্যালয়ের সকল কলেজের ১ম মেধা তালিকায় আবেদন ও নিশ্চায়ন।',
+    sourceUrl: 'http://app1.nu.edu.bd',
+    pdfUrl: 'http://app1.nu.edu.bd'
   },
   {
-    id: 'admit-1',
-    category: 'results',
-    type: 'এডমিট ও ফলাফল',
-    title: 'দিনাজপুর শিক্ষা বোর্ড ও জাতীয় বিশ্ববিদ্যালয়ের রেজাল্ট ও এডমিট কার্ড',
-    org: 'দিনাজপুর শিক্ষা বোর্ড / এনইউ',
-    deadline: 'সার্বক্ষণিক সেবা',
-    daysLeft: 'ডাউনলোড সচল',
+    id: 'notice-bteb-diploma-adm',
+    category: 'college',
+    type: 'ভর্তি বিজ্ঞপ্তি',
+    title: 'কারিগরি শিক্ষা বোর্ড ৪ বছর মেয়াদী ডিপ্লোমা ভর্তি',
+    org: 'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB)',
+    vacancies: 'পলিটেকনিক আসনসমূহ',
+    deadline: 'চলমান কার্যক্রম',
+    daysLeft: 'আবেদন চলছে',
+    badgeClass: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+    qualification: 'এসএসসি / দাখিল / সমমান',
+    fee: 'বোর্ড ফি: ১৬০ ৳',
+    details: 'btebadmission.gov.bd পোর্টালে সরকারি ও বেসরকারি পলিটেকনিক ইনস্টিটিউটে ভর্তির অনলাইন আবেদন ও কলেজ চয়েস।',
+    sourceUrl: 'http://btebadmission.gov.bd',
+    pdfUrl: 'http://btebadmission.gov.bd'
+  },
+  {
+    id: 'notice-du-admission-26',
+    category: 'college',
+    type: 'ভর্তি বিজ্ঞপ্তি',
+    title: 'ঢাকা বিশ্ববিদ্যালয় ও গুচ্ছ বিশ্ববিদ্যালয় স্নাতক ভর্তি পরীক্ষা',
+    org: 'বিশ্ববিদ্যালয় মঞ্জুরি কমিশন (UGC)',
+    vacancies: 'সকল ইউনিট',
+    deadline: 'বিজ্ঞপ্তি অনুযায়ী',
+    daysLeft: 'প্রস্তুতি ও আবেদন',
+    badgeClass: 'bg-rose-100 text-rose-800 border-rose-300',
+    qualification: 'এইচএসসি উত্তীর্ণ',
+    fee: 'ইউনিট ফি: ১,০০০ ৳',
+    details: 'ছবি সাইজিং, পেমেন্ট গেটওয়ে সম্পন্ন ও প্রবেশপত্র কালার প্রিন্ট সেবা।',
+    sourceUrl: 'https://admission.eis.du.ac.bd',
+    pdfUrl: 'https://admission.eis.du.ac.bd'
+  },
+  {
+    id: 'notice-army-sainik-26',
+    category: 'jobs',
+    type: 'সরকারি চাকরি',
+    title: 'বাংলাদেশ সেনাবাহিনী সৈনিক পদে পুরুষ ও মহিলা নিয়োগ',
+    org: 'বাংলাদেশ সেনাবাহিনী (Army)',
+    vacancies: 'নির্দিষ্ট নয়',
+    deadline: 'চলতি মাসের শেষ দিন',
+    daysLeft: 'আবেদন চলমান',
+    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    qualification: 'এসএসসি পাস (ন্যূনতম জিপিএ ৩.০০)',
+    fee: 'সরকারি ফি: ৩০০ ৳',
+    details: 'sainik.teletalk.com.bd এ এসএমএস ও অনলাইন আবেদন ফরম পূরণ।',
+    sourceUrl: 'https://sainik.teletalk.com.bd',
+    pdfUrl: 'https://sainik.teletalk.com.bd'
+  },
+  {
+    id: 'notice-brta-inspector-job',
+    category: 'jobs',
+    type: 'সরকারি চাকরি',
+    title: 'বিআরটিএ মোটরযান পরিদর্শক ও সহকারী পরিচালক নিয়োগ',
+    org: 'বাংলাদেশ সড়ক পরিবহন কর্তৃপক্ষ (BRTA)',
+    vacancies: '৬৪ জন',
+    deadline: 'বিজ্ঞপ্তি অনুযায়ী',
+    daysLeft: 'চলমান',
+    badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
+    qualification: 'ডিপ্লোমা ইন অটোমোবাইল / ডিগ্রি',
+    fee: 'সরকারি ফি: ২২৩ ৳',
+    details: 'brta.teletalk.com.bd এ আবেদন সাবমিশন ও প্রবেশপত্র সংগ্রহ।',
+    sourceUrl: 'https://brta.teletalk.com.bd',
+    pdfUrl: 'https://brta.teletalk.com.bd'
+  },
+  {
+    id: 'notice-board-results-marksheet',
+    category: 'college',
+    type: 'ফলাফল ও মার্কশিট',
+    title: 'এসএসসি ও এইচএসসি পরীক্ষার মূল নম্বরপত্র ও সনদপত্র উত্তোলন',
+    org: 'দিনাজপুর শিক্ষা বোর্ড',
+    vacancies: 'সকল শিক্ষার্থী',
+    deadline: 'যে কোনো সময়',
+    daysLeft: 'সার্বক্ষণিক',
     badgeClass: 'bg-teal-100 text-teal-800 border-teal-300',
     qualification: 'পরীক্ষার্থীদের জন্য',
     fee: 'প্রিন্ট চার্জ প্রযোজ্য',
@@ -410,7 +409,6 @@ const DEFAULT_NOTICES_DATA = [
   }
 ];
 
-// Helper to get active notices from localStorage or defaults
 function getActiveNotices() {
   try {
     const saved = localStorage.getItem('fayzar_notices_data');
@@ -429,90 +427,13 @@ function saveActiveNotices(data) {
   }
 }
 
-// Staged Drafts Data
-const DEFAULT_DRAFTS_DATA = [
-  {
-    id: "draft-railway-running",
-    category: "jobs",
-    type: "সরকারি চাকরি",
-    title: "বাংলাদেশ রেলওয়ে সহকারী স্টেশন মাস্টার ও পয়েন্টসম্যান নিয়োগ",
-    org: "বাংলাদেশ রেলওয়ে (BR)",
-    vacancies: "১০৮৫ জন",
-    qualification: "স্নাতক / এইচএসসি / এসএসসি পাস",
-    deadline: "চলতি মাসের ২৫ তারিখ",
-    daysLeft: "জরুরি আবেদন",
-    badgeClass: "notice-deadline-urgent",
-    fee: "সরকারি ফি: ১১২ - ২২৩ ৳",
-    details: "টেলিটক br.teletalk.com.bd পোর্টালে অনলাইন আবেদন চলছে। বয়স ১৮-৩০ বছর।"
-  },
-  {
-    id: "draft-dpe-teacher",
-    category: "jobs",
-    type: "সরকারি চাকরি",
-    title: "সরকারি প্রাথমিক সহকারী শিক্ষক নিয়োগ",
-    org: "প্রাথমিক শিক্ষা অধিদপ্তর (DPE)",
-    vacancies: "৩,৫০০+ জন",
-    qualification: "স্নাতক/সমমান (ন্যূনতম ২য় বিভাগ/সিজিপিএ ২.২৫)",
-    deadline: "চলমান কার্যক্রম",
-    daysLeft: "আবেদন সচল",
-    badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-    fee: "সরকারি ফি: ২২০ ৳",
-    details: "রংপুর ও রাজশাহী বিভাগ সহ সকল জেলার প্রার্থীদের জন্য dpe.teletalk.com.bd এ আবেদন।"
-  },
-  {
-    id: "draft-nu-degree-adm",
-    category: "admissions",
-    type: "কলেজ ও বিশ্ববিদ্যালয় ভর্তি",
-    title: "জাতীয় বিশ্ববিদ্যালয় ডিগ্রি (পাস) ও অনার্স ভর্তি কার্যক্রম",
-    org: "জাতীয় বিশ্ববিদ্যালয় / ফুলবাড়ী সরকারি কলেজ",
-    vacancies: "সকল আসন",
-    qualification: "এসএসসি ও এইচএসসি পাস",
-    deadline: "বিজ্ঞপ্তি অনুযায়ী",
-    daysLeft: "ভর্তি ওপেন",
-    badgeClass: "bg-purple-100 text-purple-800 border-purple-300",
-    fee: "প্রাথমিক ফি: ৩৫০ ৳",
-    details: "ফুলবাড়ী সরকারি কলেজ সহ জাতীয় বিশ্ববিদ্যালয়ের সকল অধিভুক্ত কলেজে অনলাইন ভর্তি ফরম পূরণ।"
-  },
-  {
-    id: "draft-bpsc-noncadre",
-    category: "jobs",
-    type: "সরকারি চাকরি",
-    title: "১০ম ও ৯ম গ্রেড বিভিন্ন মন্ত্রণালয় নন-ক্যাডার নিয়োগ",
-    org: "বাংলাদেশ সরকারি কর্ম কমিশন (BPSC)",
-    vacancies: "৪৫০+ জন",
-    qualification: "স্নাতকোত্তর / স্নাতক (সম্মান)",
-    deadline: "বিজ্ঞপ্তি অনুযায়ী",
-    daysLeft: "নতুন সার্কুলার",
-    badgeClass: "bg-blue-100 text-blue-800 border-blue-300",
-    fee: "সরকারি ফি: ৫০০ ৳",
-    details: "bpsc.teletalk.com.bd পোর্টালে আবেদন দাখিল ও ছবি/স্বাক্ষর আপলোড।"
-  }
-];
-
-function getActiveDrafts() {
-  try {
-    const saved = localStorage.getItem('fayzar_drafts_data');
-    if (saved) return JSON.parse(saved);
-  } catch (e) {
-    console.error(e);
-  }
-  return DEFAULT_DRAFTS_DATA;
-}
-
-function saveActiveDrafts(data) {
-  try {
-    localStorage.setItem('fayzar_drafts_data', JSON.stringify(data));
-  } catch (e) {
-    console.error(e);
-  }
-}
-
 // =========================================================================
 // ৩. DOM Ready & Event Listeners
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
+  initThemeToggle();
   initShopStatus();
-  renderServicesGrid('all');
+  renderServicesGrid('all', '');
   initTabs();
   initLiveSearch();
   initLandCalculator();
@@ -528,11 +449,32 @@ document.addEventListener('DOMContentLoaded', () => {
   initLandConverter();
   calculateDeedFees();
   initExpressPrint();
-  initNoticeManagerForm();
   
   // Refresh shop status every 60s
   setInterval(initShopStatus, 60000);
 });
+
+// Theme (Day / Night) Switcher (Silent, Smooth Toggle)
+function initThemeToggle() {
+  const toggleBtns = document.querySelectorAll('.theme-toggle-btn, #theme-toggle-btn');
+  
+  function updateTheme(isDark) {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('fayzar_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('fayzar_theme', 'light');
+    }
+  }
+
+  toggleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isCurrentlyDark = document.documentElement.classList.contains('dark');
+      updateTheme(!isCurrentlyDark);
+    });
+  });
+}
 
 // =========================================================================
 // ৪. লাইভ শপ স্ট্যাটাস ট্র্যাকার
@@ -652,59 +594,56 @@ function renderNotices(category = 'jobs') {
   
   if (items.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
-        <i class="fas fa-inbox text-slate-300 text-4xl mb-2"></i>
-        <p class="text-sm font-bold text-slate-700">এই ক্যাটাগরিতে বর্তমানে কোনো নোটিশ নেই।</p>
-        <p class="text-xs text-slate-500 mt-1">প্রয়োজনে সরাসরি আমাদের দোকানে যোগাযোগ করুন।</p>
+      <div class="col-span-full py-10 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <i class="fas fa-inbox text-slate-300 dark:text-slate-600 text-3xl mb-2"></i>
+        <p class="text-sm font-bold text-slate-700 dark:text-slate-300">এই ক্যাটাগরিতে বর্তমানে কোনো নোটিশ নেই।</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">প্রয়োজনে সরাসরি আমাদের দোকানে যোগাযোগ করুন।</p>
       </div>
     `;
     return;
   }
   
   container.innerHTML = items.map((n) => `
-    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition interactive-card flex flex-col justify-between relative group">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition interactive-card flex flex-col justify-between relative group">
       <div>
-        <div class="flex items-center justify-between gap-2 mb-3">
-          <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+        <div class="flex items-center justify-between gap-1.5 mb-1.5">
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
             ${n.type}
           </span>
-          <div class="flex items-center gap-1.5">
-            <span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full border ${n.badgeClass || 'bg-emerald-100 text-emerald-800 border-emerald-300'}">
-              <i class="fas fa-clock text-[10px] mr-1"></i> ${n.daysLeft || 'চলমান'}
-            </span>
-          </div>
+          <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${n.badgeClass || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
+            <i class="fas fa-clock text-[8px] mr-1"></i> ${n.daysLeft || 'চলমান'}
+          </span>
         </div>
         
-        <h4 class="text-lg font-extrabold text-slate-900 mb-1 leading-snug">
+        <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug line-clamp-1 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition" title="${n.title}">
           ${n.title}
         </h4>
-        <div class="text-xs font-bold text-brandBlue mb-3 flex items-center justify-between">
-          <span><i class="fas fa-building text-amber-500 mr-1"></i> ${n.org}</span>
-          ${n.vacancies ? `<span class="bg-amber-50 text-amber-800 px-2 py-0.5 rounded-lg border border-amber-200 text-[11px] font-extrabold">পদসংখ্যা: ${n.vacancies}</span>` : ''}
+        <div class="text-xs font-semibold text-brandBlue dark:text-blue-400 mb-2 flex items-center justify-between gap-1">
+          <span class="truncate"><i class="fas fa-building text-amber-500 mr-1"></i> ${n.org}</span>
+          ${n.vacancies ? `<span class="bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-black shrink-0 border border-amber-200 dark:border-amber-800">পদ: ${n.vacancies}</span>` : ''}
         </div>
         
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs space-y-1.5 mb-4">
-          <p class="text-slate-700"><strong>যোগ্যতা:</strong> ${n.qualification}</p>
-          <p class="text-emerald-700 font-bold">${n.fee}</p>
-          <p class="text-slate-500 leading-relaxed">${n.details || ''}</p>
+        <div class="bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-lg border border-slate-100 dark:border-slate-800 text-[11px] flex items-center justify-between mb-2.5">
+          <span class="text-slate-600 dark:text-slate-300 truncate max-w-[140px]" title="${n.qualification}">🎓 ${n.qualification}</span>
+          <span class="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">${n.fee}</span>
         </div>
       </div>
       
-      <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-        <span class="text-xs text-slate-500 font-semibold">শেষ সময়: <strong class="text-slate-800">${n.deadline}</strong></span>
-        <div class="flex flex-wrap items-center gap-1.5">
+      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-1.5">
+        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">শেষ: <strong class="text-slate-800 dark:text-slate-200">${n.deadline}</strong></span>
+        <div class="flex items-center gap-1 shrink-0">
           ${n.sourceUrl ? `
-            <a href="${n.sourceUrl}" target="_blank" rel="noopener noreferrer" class="bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1 border border-sky-200" title="অফিসিয়াল আবেদন পোর্টালে সরাসরি প্রবেশ করুন">
-              <i class="fas fa-globe text-sky-600"></i> পোর্টাল
+            <a href="${n.sourceUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 transition flex items-center justify-center text-xs" title="অফিসিয়াল পোর্টাল">
+              <i class="fas fa-globe text-sky-600 dark:text-sky-400"></i>
             </a>
           ` : ''}
           ${n.pdfUrl ? `
-            <a href="${n.pdfUrl}" target="_blank" rel="noopener noreferrer" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1 border border-slate-200" title="অফিসিয়াল সার্কুলার PDF বা নোটিশ দেখুন">
-              <i class="fas fa-file-pdf text-rose-500"></i> সার্কুলার PDF
+            <a href="${n.pdfUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center text-xs" title="সার্কুলার PDF">
+              <i class="fas fa-file-pdf text-rose-500"></i>
             </a>
           ` : ''}
-          <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${n.title}" (${n.org}) এর জন্য সরাসরি অনলাইনে আবেদন করতে চাচ্ছি।`)}" target="_blank" class="bg-brandGreen hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-            <i class="fab fa-whatsapp"></i> আবেদন করুন
+          <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${n.title}" (${n.org}) এর জন্য সরাসরি অনলাইনে আবেদন করতে চাচ্ছি।`)}" target="_blank" class="bg-brandGreen hover:bg-emerald-700 text-white font-bold text-xs px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs">
+            <i class="fab fa-whatsapp"></i> আবেদন
           </a>
         </div>
       </div>
@@ -1009,14 +948,14 @@ function calculateDeedFees() {
 
   if (deedType === 'saf-kabala') {
     badgeText = 'সাফ-কবলা (বিক্রয় দলিল)';
-    regFee = Math.round(val * 0.01); // ১%
-    stampFee = Math.round(val * 0.015); // ১.৫%
+    regFee = Math.round(val * 0.01);
+    stampFee = Math.round(val * 0.015);
     localFee = area === 'paurashava' ? Math.round(val * 0.03) : (area === 'city' ? Math.round(val * 0.03) : Math.round(val * 0.02));
-    aitFee = Math.round(val * 0.03); // ৩%
+    aitFee = Math.round(val * 0.03);
   } else if (deedType === 'heba') {
     badgeText = 'হেবা / দানপত্র (রক্তের সম্পর্কে)';
-    regFee = 100; // ফিক্সড ১০০৳
-    stampFee = 200; // ফিক্সড ২০০৳
+    regFee = 100;
+    stampFee = 200;
     localFee = 0;
     aitFee = 0;
   } else if (deedType === 'partition') {
@@ -1098,11 +1037,17 @@ function initExpressPrint() {
 }
 
 // =========================================================================
-// ১১. সেবাসমূহ গ্রিড ও ট্যাব রেন্ডারার
+// ১১. সেবাসমূহ গ্রিড ও ক্যাটাগরি ট্যাব ফিল্টার ইঞ্জিন (Crisp & Razor-Sharp)
 // =========================================================================
+let currentServiceCategory = 'all';
+let currentServiceSearch = '';
+
 function renderServicesGrid(filterCategory = 'all', searchQuery = '') {
   const container = document.getElementById('services-grid-container');
   if (!container) return;
+  
+  currentServiceCategory = filterCategory;
+  currentServiceSearch = searchQuery;
   
   const allServices = getLiveServicesData();
   let filtered = allServices;
@@ -1119,14 +1064,14 @@ function renderServicesGrid(filterCategory = 'all', searchQuery = '') {
       (Array.isArray(item.documents) && item.documents.some(d => d.toLowerCase().includes(q)))
     );
   }
-  
+
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-gray-200">
-        <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
-        <h4 class="text-lg font-bold text-gray-700">দুঃখিত, কোনো সেবা খুঁজে পাওয়া যায়নি!</h4>
-        <p class="text-sm text-gray-500 mt-1">অনুগ্রহ করে অন্য শব্দ দিয়ে অনুসন্ধান করুন অথবা সরাসরি কল করুন।</p>
-        <a href="tel:01717101919" class="mt-4 inline-flex items-center gap-2 bg-brandGreen text-white px-5 py-2 rounded-xl text-sm font-bold shadow hover:bg-emerald-700 transition">
+      <div class="col-span-full py-12 text-center bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200 dark:border-slate-700">
+        <i class="fas fa-search text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+        <h4 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200">দুঃখিত, কোনো সেবা খুঁজে পাওয়া যায়নি!</h4>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">অন্য শব্দ দিয়ে অনুসন্ধান করুন অথবা সরাসরি আমাদের কল করুন।</p>
+        <a href="tel:01717101919" class="mt-4 inline-flex items-center gap-2 bg-brandGreen text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow hover:bg-emerald-700 transition">
           <i class="fas fa-phone-alt"></i> 01717-101919
         </a>
       </div>
@@ -1138,60 +1083,64 @@ function renderServicesGrid(filterCategory = 'all', searchQuery = '') {
     const portalUrl = item.portal ? (item.portal.startsWith('http') ? item.portal : 'https://' + item.portal) : '';
 
     return `
-      <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between interactive-card group">
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-3 gap-2">
-            <span class="text-xs font-extrabold px-3 py-1 rounded-full border ${item.badgeColor || 'bg-emerald-100 text-emerald-800 border-emerald-300'}">
-              ${item.badge || 'ডিজিটাল সেবা'}
-            </span>
-            ${portalUrl ? `
-              <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 px-2.5 py-1 rounded-lg border border-sky-200 transition flex items-center gap-1 font-mono shadow-sm" title="অফিসিয়াল সরকারি পোর্টাল খুলুন">
-                <i class="fas fa-arrow-up-right-from-square text-[10px] text-sky-500"></i> ${item.portal}
-              </a>
-            ` : ''}
+      <div class="service-card-item bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-sm hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between group">
+        <div>
+          <!-- Card Header: Icon & Badges -->
+          <div class="flex items-start justify-between mb-4 gap-2">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-100 to-teal-50 dark:from-emerald-950/80 dark:to-teal-950/40 text-brandGreen dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 group-hover:bg-brandGreen group-hover:text-white transition duration-200">
+              <i class="fas ${item.icon || 'fa-landmark'}"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="text-xs font-extrabold px-3 py-1 rounded-full border ${item.badgeColor || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
+                ${item.badge || 'ডিজিটাল সেবা'}
+              </span>
+              ${portalUrl ? `
+                <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800 transition flex items-center gap-1 font-mono shadow-xs truncate max-w-[150px]" title="অফিসিয়াল সরকারি পোর্টাল">
+                  <i class="fas fa-arrow-up-right-from-square text-[9px] text-sky-500"></i> <span class="truncate">${item.portal}</span>
+                </a>
+              ` : ''}
+            </div>
           </div>
           
-          <h4 class="text-xl font-bold text-gray-800 mb-2 group-hover:text-brandGreen transition leading-snug">
+          <!-- Service Title -->
+          <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition leading-snug" title="${item.title}">
             ${item.title}
-          </h4>
+          </h3>
           
-          <p class="text-sm text-gray-600 mb-4 leading-relaxed line-clamp-2">
+          <!-- Service Summary -->
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed line-clamp-2">
             ${item.summary}
           </p>
           
-          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-100 mb-4">
-            <div class="text-xs text-gray-700 flex items-center gap-2 mb-1.5 font-bold">
-              <i class="fas fa-file-alt text-brandGold"></i> প্রধান কাগজপত্র:
+          <!-- Service Fee & Duration Box -->
+          <div class="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-[#162035] p-3 rounded-2xl border border-slate-100 dark:border-slate-700/60 mb-4 text-xs">
+            <div>
+              <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-hand-holding-dollar text-emerald-500 mr-1"></i>সার্ভিস চার্জ</span>
+              <strong class="text-emerald-600 dark:text-emerald-400 font-extrabold text-xs sm:text-sm">${item.serviceFee}</strong>
             </div>
-            <p class="text-xs text-gray-600 line-clamp-2">
-              ${Array.isArray(item.documents) ? item.documents.slice(0, 2).join(' • ') : ''}...
-            </p>
+            <div>
+              <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-clock text-blue-500 mr-1"></i>সময়সীমা</span>
+              <strong class="text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm">${item.duration}</strong>
+            </div>
           </div>
+
+          <!-- Documents Preview -->
+          ${Array.isArray(item.documents) && item.documents.length > 0 ? `
+            <div class="bg-emerald-50/60 dark:bg-emerald-950/30 px-3 py-2 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40 mb-4 flex items-center gap-2 text-xs text-emerald-900 dark:text-emerald-300">
+              <i class="fas fa-file-shield text-emerald-600 dark:text-emerald-400 text-sm"></i>
+              <span class="truncate font-medium">প্রয়োজনীয় কাগজ: <strong>${item.documents[0]}</strong> সহ ${item.documents.length}টি নথি</span>
+            </div>
+          ` : ''}
         </div>
         
-        <div class="bg-slate-50/80 px-5 py-4 border-t border-gray-100 flex flex-col gap-3">
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-gray-500 font-semibold">কম্পিউটার চার্জ: <strong class="text-brandGreen font-bold">${item.serviceFee}</strong></span>
-            <span class="text-gray-500">সময়: <strong class="text-gray-700 font-bold">${item.duration}</strong></span>
-          </div>
-          
-          <div class="grid grid-cols-3 gap-1.5 pt-1">
-            ${portalUrl ? `
-              <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-300 font-extrabold text-[11px] py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow-sm" title="অফিসিয়াল সরকারি পোর্টালে সরাসরি প্রবেশ করুন">
-                <i class="fas fa-globe text-sky-600"></i> পোর্টাল
-              </a>
-            ` : `
-              <button onclick="openServiceModal('${item.id}')" class="w-full bg-slate-100 text-slate-600 font-bold text-[11px] py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1">
-                <i class="fas fa-circle-info"></i> বিস্তারিত
-              </button>
-            `}
-            <button onclick="openServiceModal('${item.id}')" class="w-full bg-white hover:bg-emerald-50 text-brandGreen border border-emerald-300 font-bold text-[11px] py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow-sm">
-              <i class="fas fa-list-check"></i> কাগজপত্র
-            </button>
-            <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার ওয়েবসাইট থেকে "${item.title}" সেবাটি সম্পর্কে জানতে বা আবেদন করতে চাচ্ছি।`)}" target="_blank" class="w-full bg-brandGreen hover:bg-emerald-700 text-white font-bold text-[11px] py-2.5 px-2 rounded-xl transition flex items-center justify-center gap-1 shadow-sm">
-              <i class="fab fa-whatsapp"></i> আবেদন
-            </a>
-          </div>
+        <!-- Action Buttons -->
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-2 gap-2">
+          <button onclick="openServiceModal('${item.id}')" class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-800 dark:text-slate-200 hover:text-brandGreen dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-600 font-bold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs">
+            <i class="fas fa-list-check text-brandGreen dark:text-emerald-400"></i> বিস্তারিত
+          </button>
+          <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার ওয়েবসাইট থেকে "${item.title}" সেবাটি সম্পর্কে জানতে বা আবেদন করতে চাচ্ছি।`)}" target="_blank" class="w-full bg-brandGreen hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg">
+            <i class="fab fa-whatsapp text-sm"></i> আবেদন করুন
+          </a>
         </div>
       </div>
     `;
@@ -1295,20 +1244,22 @@ function closeServiceModal() {
 
 function initTabs() {
   const tabs = document.querySelectorAll('.service-tab-btn');
+
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => {
         t.classList.remove('active', 'bg-brandGreen', 'text-white');
-        t.classList.add('bg-white', 'text-gray-700');
+        t.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
       });
       tab.classList.add('active', 'bg-brandGreen', 'text-white');
-      tab.classList.remove('bg-white', 'text-gray-700');
+      tab.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
       
       const category = tab.getAttribute('data-category');
       renderServicesGrid(category);
     });
   });
   
+  // Smart Tools Tabs
   const toolTabs = document.querySelectorAll('.tool-tab-btn');
   toolTabs.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1347,7 +1298,8 @@ function initLiveSearch() {
       return;
     }
     
-    const matches = SERVICES_DATA.filter(item => 
+    const allServices = getLiveServicesData();
+    const matches = allServices.filter(item => 
       item.title.toLowerCase().includes(val) || 
       item.summary.toLowerCase().includes(val) ||
       (Array.isArray(item.documents) && item.documents.some(d => d.toLowerCase().includes(val)))
@@ -1355,14 +1307,14 @@ function initLiveSearch() {
     
     if (matches.length > 0) {
       suggestionsBox.innerHTML = matches.map(item => `
-        <div onclick="selectSearchResult('${item.id}')" class="p-3.5 hover:bg-emerald-50 cursor-pointer border-b border-gray-100 last:border-0 flex items-center justify-between group transition">
+        <div onclick="selectSearchResult('${item.id}')" class="p-3.5 hover:bg-emerald-50 dark:hover:bg-slate-800 cursor-pointer border-b border-gray-100 dark:border-slate-800 last:border-0 flex items-center justify-between group transition">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-emerald-100 text-brandGreen flex items-center justify-center text-sm">
               <i class="fas ${item.icon}"></i>
             </div>
             <div>
-              <div class="text-sm font-bold text-gray-800 group-hover:text-brandGreen">${item.title}</div>
-              <div class="text-xs text-gray-500">${item.summary.substring(0, 50)}...</div>
+              <div class="text-sm font-bold text-gray-800 dark:text-slate-200 group-hover:text-brandGreen">${item.title}</div>
+              <div class="text-xs text-gray-500 dark:text-slate-400">${item.summary.substring(0, 50)}...</div>
             </div>
           </div>
           <span class="text-xs font-semibold text-brandGold group-hover:underline flex items-center gap-1">
@@ -1373,7 +1325,7 @@ function initLiveSearch() {
       suggestionsBox.classList.remove('hidden');
     } else {
       suggestionsBox.innerHTML = `
-        <div class="p-4 text-center text-xs text-gray-500">
+        <div class="p-4 text-center text-xs text-gray-500 dark:text-slate-400">
           কোনো ফলাফল পাওয়া যায়নি। সরাসরি কল করতে পারেন: <strong>01717-101919</strong>
         </div>
       `;
@@ -1401,7 +1353,6 @@ function initLandCalculator() {
   const selectElem = document.getElementById('calc-service-select');
   if (!selectElem) return;
   
-  // Specific preferred order for Government & Citizen Digital/Land services only
   const preferredOrder = [
     'e-mutation',
     'ld-tax',
@@ -1413,7 +1364,6 @@ function initLandCalculator() {
     'nid-correct',
     'nid-download',
     'tin-cert',
-    'e-return',
     'driving',
     'trade-lic'
   ];
@@ -1421,7 +1371,6 @@ function initLandCalculator() {
   const allServices = getLiveServicesData();
   const orderedServices = [];
 
-  // Exclude computer and studio services from the government/citizen checklist dropdown
   preferredOrder.forEach(id => {
     const found = allServices.find(s => s.id === id && s.category !== 'computer');
     if (found) orderedServices.push(found);
@@ -1457,15 +1406,15 @@ function updateLandCalculatorDisplay(serviceId) {
   const portalUrl = service.portal ? (service.portal.startsWith('http') ? service.portal : 'https://' + service.portal) : '';
   
   displayContainer.innerHTML = `
-    <div class="bg-emerald-50/70 p-5 rounded-2xl border border-emerald-200">
+    <div class="bg-emerald-50/70 dark:bg-emerald-950/30 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-800">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
           <span class="text-xs font-bold px-3 py-1 rounded-full bg-brandGreen text-white">${service.badge}</span>
-          <h4 class="text-xl font-bold text-gray-900 mt-2">${service.title}</h4>
+          <h4 class="text-xl font-bold text-gray-900 dark:text-slate-100 mt-2">${service.title}</h4>
         </div>
         ${portalUrl ? `
           <div class="flex flex-col sm:items-end gap-1">
-            <span class="text-[11px] text-gray-500 font-bold">অফিসিয়াল পোর্টাল:</span>
+            <span class="text-[11px] text-gray-500 dark:text-slate-400 font-bold">অফিসিয়াল পোর্টাল:</span>
             <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition">
               <i class="fas fa-globe text-[11px]"></i> <span>${service.portal}</span> <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
             </a>
@@ -1474,27 +1423,27 @@ function updateLandCalculatorDisplay(serviceId) {
       </div>
       
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <div class="bg-white p-3.5 rounded-xl border border-emerald-100 shadow-sm">
-          <div class="text-xs text-gray-500 font-semibold mb-1"><i class="fas fa-coins text-amber-500 mr-1"></i> সরকারি ফি:</div>
-          <div class="text-sm font-extrabold text-red-600">${service.govtFee}</div>
+        <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
+          <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-coins text-amber-500 mr-1"></i> সরকারি ফি:</div>
+          <div class="text-sm font-extrabold text-red-600 dark:text-rose-400">${service.govtFee}</div>
         </div>
-        <div class="bg-white p-3.5 rounded-xl border border-emerald-100 shadow-sm">
-          <div class="text-xs text-gray-500 font-semibold mb-1"><i class="fas fa-desktop text-brandGreen mr-1"></i> কম্পিউটার চার্জ:</div>
-          <div class="text-sm font-extrabold text-brandGreen">${service.serviceFee}</div>
+        <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
+          <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-desktop text-brandGreen mr-1"></i> কম্পিউটার চার্জ:</div>
+          <div class="text-sm font-extrabold text-brandGreen dark:text-emerald-400">${service.serviceFee}</div>
         </div>
-        <div class="bg-white p-3.5 rounded-xl border border-emerald-100 shadow-sm">
-          <div class="text-xs text-gray-500 font-semibold mb-1"><i class="fas fa-clock text-blue-500 mr-1"></i> আনুমানিক সময়:</div>
-          <div class="text-sm font-extrabold text-gray-800">${service.duration}</div>
+        <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
+          <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-clock text-blue-500 mr-1"></i> আনুমানিক সময়:</div>
+          <div class="text-sm font-extrabold text-gray-800 dark:text-slate-200">${service.duration}</div>
         </div>
       </div>
       
-      <div class="bg-white p-5 rounded-xl border border-emerald-100 shadow-sm mb-5">
-        <h5 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+      <div class="bg-white dark:bg-[#1b263b] p-5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm mb-5">
+        <h5 class="text-sm font-bold text-gray-800 dark:text-slate-200 mb-3 flex items-center gap-2">
           <i class="fas fa-tasks text-brandGreen"></i> সাথে যে যে কাগজপত্র আনতে হবে (চেকলিস্ট):
         </h5>
         <div class="space-y-2.5">
           ${service.documents.map((doc, idx) => `
-            <label class="flex items-start gap-2.5 text-xs text-gray-700 cursor-pointer select-none">
+            <label class="flex items-start gap-2.5 text-xs text-gray-700 dark:text-slate-300 cursor-pointer select-none">
               <input type="checkbox" id="chk-${idx}" class="mt-0.5 w-4 h-4 rounded text-brandGreen focus:ring-brandGreen accent-emerald-600 cursor-pointer">
               <span>${doc}</span>
             </label>
@@ -1506,7 +1455,7 @@ function updateLandCalculatorDisplay(serviceId) {
         <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${service.title}" সেবাটির জন্য প্রয়োজনীয় কাগজপত্র প্রস্তুত করেছি। বিস্তারিত সাহায্য প্রয়োজন।`)}" target="_blank" class="flex-1 bg-brandGreen hover:bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl text-center text-sm shadow-md transition flex items-center justify-center gap-2">
           <i class="fab fa-whatsapp text-lg"></i> হোয়াটসঅ্যাপে সরাসরি পরামর্শ নিন
         </a>
-        <a href="tel:01717101919" class="bg-white hover:bg-slate-100 text-gray-800 border border-gray-300 font-bold py-3 px-5 rounded-xl text-center text-sm shadow-sm transition flex items-center justify-center gap-2">
+        <a href="tel:01717101919" class="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-gray-800 dark:text-slate-200 border border-gray-300 dark:border-slate-600 font-bold py-3 px-5 rounded-xl text-center text-sm shadow-sm transition flex items-center justify-center gap-2">
           <i class="fas fa-phone-alt text-brandGreen"></i> 01717-101919
         </a>
       </div>
@@ -1522,9 +1471,10 @@ function initQuickOrderForm() {
   if (!form) return;
   
   const select = document.getElementById('order-service-select');
+  const allServices = getLiveServicesData();
   if (select) {
     select.innerHTML = `<option value="">-- আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন --</option>` +
-      SERVICES_DATA.map(s => `<option value="${s.title}">${s.title}</option>`).join('');
+      allServices.map(s => `<option value="${s.title}">${s.title}</option>`).join('');
   }
   
   form.addEventListener('submit', (e) => {
@@ -1553,86 +1503,7 @@ function initQuickOrderForm() {
 }
 
 // =========================================================================
-// ১৫. সার্ভিস বিস্তারিত মডাল
-// =========================================================================
-function openServiceModal(serviceId) {
-  const service = SERVICES_DATA.find(s => s.id === serviceId);
-  if (!service) return;
-  
-  const modal = document.getElementById('service-detail-modal');
-  const modalBody = document.getElementById('modal-body-content');
-  if (!modal || !modalBody) return;
-  
-  modalBody.innerHTML = `
-    <div class="p-6 sm:p-8">
-      <div class="flex items-start justify-between gap-4 mb-6">
-        <div>
-          <span class="text-xs font-bold px-3 py-1 rounded-full border ${service.badgeColor}">
-            ${service.badge}
-          </span>
-          <h3 class="text-2xl font-extrabold text-gray-900 mt-2">${service.title}</h3>
-          <p class="text-xs text-gray-500 mt-1">অফিসিয়াল পোর্টাল: <span class="text-brandBlue font-bold">${service.portal}</span></p>
-        </div>
-        <button onclick="closeServiceModal()" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      
-      <p class="text-sm text-gray-700 leading-relaxed mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
-        ${service.summary}
-      </p>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-        <div class="bg-red-50/70 p-3.5 rounded-xl border border-red-100">
-          <div class="text-xs font-bold text-red-700 mb-1">সরকারি ফি</div>
-          <div class="text-xs text-gray-800 font-extrabold">${service.govtFee}</div>
-        </div>
-        <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100">
-          <div class="text-xs font-bold text-brandGreen mb-1">কম্পিউটার ও সার্ভিস চার্জ</div>
-          <div class="text-xs text-gray-800 font-extrabold">${service.serviceFee}</div>
-        </div>
-        <div class="bg-blue-50/70 p-3.5 rounded-xl border border-blue-100">
-          <div class="text-xs font-bold text-brandBlue mb-1">প্রক্রিয়াকরণ সময়</div>
-          <div class="text-xs text-gray-800 font-extrabold">${service.duration}</div>
-        </div>
-      </div>
-      
-      <div class="mb-6">
-        <h4 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-          <i class="fas fa-clipboard-check text-brandGreen"></i> প্রয়োজনীয় কাগজপত্র ও তথ্যাবলী:
-        </h4>
-        <ul class="space-y-2">
-          ${service.documents.map(d => `
-            <li class="checklist-item text-xs text-gray-700 leading-relaxed">${d}</li>
-          `).join('')}
-        </ul>
-      </div>
-      
-      <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-        <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${service.title}" সেবাটির জন্য সরাসরি আবেদন করতে চাচ্ছি।`)}" target="_blank" class="flex-1 bg-brandGreen hover:bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl text-center text-sm shadow-md transition flex items-center justify-center gap-2">
-          <i class="fab fa-whatsapp text-lg"></i> হোয়াটসঅ্যাপে সরাসরি আবেদন শুরু করুন
-        </a>
-        <a href="tel:01717101919" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-5 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
-          <i class="fas fa-phone-alt text-brandGreen"></i> 01717-101919
-        </a>
-      </div>
-    </div>
-  `;
-  
-  modal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeServiceModal() {
-  const modal = document.getElementById('service-detail-modal');
-  if (modal) {
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-  }
-}
-
-// =========================================================================
-// ১৬. সাধারণ জিজ্ঞাসা ও উত্তর (FAQ)
+// ১৫. সাধারণ জিজ্ঞাসা ও উত্তর (FAQ)
 // =========================================================================
 function initFAQ() {
   const faqButtons = document.querySelectorAll('.faq-toggle');
@@ -1655,7 +1526,7 @@ function initFAQ() {
 }
 
 // =========================================================================
-// ১৭. টোস্ট নোটিফিকেশন ও ক্লিপবোর্ড কপি
+// ১৬. টোস্ট নোটিফিকেশন ও ক্লিপবোর্ড কপি
 // =========================================================================
 function showToast(message, type = 'info') {
   let toast = document.getElementById('toast-notification');
