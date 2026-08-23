@@ -433,7 +433,7 @@ function saveActiveNotices(data) {
 document.addEventListener('DOMContentLoaded', () => {
   initThemeToggle();
   initShopStatus();
-  renderServicesGrid('all', '');
+  renderServicesGrid('land', '', false);
   initTabs();
   initLiveSearch();
   initLandCalculator();
@@ -1037,13 +1037,25 @@ function initExpressPrint() {
 }
 
 // =========================================================================
-// ১১. সেবাসমূহ গ্রিড ও ক্যাটাগরি ট্যাব ফিল্টার ইঞ্জিন (Crisp & Razor-Sharp)
+// ১১. সেবাসমূহ ডায়নামিক স্বয়ংক্রিয় প্রদর্শনী ও ফিল্টার ইঞ্জিন (Zero-Blur Dynamic Carousel)
 // =========================================================================
-let currentServiceCategory = 'all';
+const SERVICE_CATEGORIES = [
+  { id: 'land', name: '🏛️ ভূমিসেবা' },
+  { id: 'online', name: '🌐 অনলাইন ও সরকারি সেবা' },
+  { id: 'computer', name: '💻 কম্পিউটার ও স্টুডিও' }
+];
+
+let autoCycleTimer = null;
+let autoCycleIndex = 0;
+let isAutoCyclePaused = false;
+let isViewAllActive = false;
+let isSwitchingServices = false;
+let currentServiceCategory = 'land';
 let currentServiceSearch = '';
 
-function renderServicesGrid(filterCategory = 'all', searchQuery = '') {
+function renderServicesGrid(filterCategory = 'land', searchQuery = '', smoothTransition = true) {
   const container = document.getElementById('services-grid-container');
+  const cycleBadgeText = document.getElementById('service-cycle-badge-text');
   if (!container) return;
   
   currentServiceCategory = filterCategory;
@@ -1065,86 +1077,118 @@ function renderServicesGrid(filterCategory = 'all', searchQuery = '') {
     );
   }
 
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="col-span-full py-12 text-center bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200 dark:border-slate-700">
-        <i class="fas fa-search text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
-        <h4 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200">দুঃখিত, কোনো সেবা খুঁজে পাওয়া যায়নি!</h4>
-        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">অন্য শব্দ দিয়ে অনুসন্ধান করুন অথবা সরাসরি আমাদের কল করুন।</p>
-        <a href="tel:01717101919" class="mt-4 inline-flex items-center gap-2 bg-brandGreen text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow hover:bg-emerald-700 transition">
-          <i class="fas fa-phone-alt"></i> 01717-101919
-        </a>
-      </div>
-    `;
-    return;
+  // Update cycle badge text
+  if (cycleBadgeText) {
+    if (filterCategory === 'all' || isViewAllActive) {
+      cycleBadgeText.innerHTML = `🌟 <strong>সকল সেবা একসাথে</strong> (${filtered.length} টি সেবা)`;
+    } else {
+      const catObj = SERVICE_CATEGORIES.find(c => c.id === filterCategory);
+      cycleBadgeText.innerHTML = `🔄 <strong>চলমান ক্যাটাগরি:</strong> ${catObj ? catObj.name : 'সেবাসমূহ'} (${filtered.length} টি সেবা)`;
+    }
   }
-  
-  container.innerHTML = filtered.map(item => {
-    const portalUrl = item.portal ? (item.portal.startsWith('http') ? item.portal : 'https://' + item.portal) : '';
 
-    return `
-      <div class="service-card-item bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-sm hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between group">
-        <div>
-          <!-- Card Header: Icon & Badges -->
-          <div class="flex items-start justify-between mb-4 gap-2">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-100 to-teal-50 dark:from-emerald-950/80 dark:to-teal-950/40 text-brandGreen dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 group-hover:bg-brandGreen group-hover:text-white transition duration-200">
-              <i class="fas ${item.icon || 'fa-landmark'}"></i>
-            </div>
-            <div class="flex flex-col items-end gap-1.5">
-              <span class="text-xs font-extrabold px-3 py-1 rounded-full border ${item.badgeColor || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
-                ${item.badge || 'ডিজিটাল সেবা'}
-              </span>
-              ${portalUrl ? `
-                <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800 transition flex items-center gap-1 font-mono shadow-xs truncate max-w-[150px]" title="অফিসিয়াল সরকারি পোর্টাল">
-                  <i class="fas fa-arrow-up-right-from-square text-[9px] text-sky-500"></i> <span class="truncate">${item.portal}</span>
-                </a>
-              ` : ''}
-            </div>
-          </div>
-          
-          <!-- Service Title -->
-          <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition leading-snug" title="${item.title}">
-            ${item.title}
-          </h3>
-          
-          <!-- Service Summary -->
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed line-clamp-2">
-            ${item.summary}
-          </p>
-          
-          <!-- Service Fee & Duration Box -->
-          <div class="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-[#162035] p-3 rounded-2xl border border-slate-100 dark:border-slate-700/60 mb-4 text-xs">
-            <div>
-              <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-hand-holding-dollar text-emerald-500 mr-1"></i>সার্ভিস চার্জ</span>
-              <strong class="text-emerald-600 dark:text-emerald-400 font-extrabold text-xs sm:text-sm">${item.serviceFee}</strong>
-            </div>
-            <div>
-              <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-clock text-blue-500 mr-1"></i>সময়সীমা</span>
-              <strong class="text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm">${item.duration}</strong>
-            </div>
-          </div>
-
-          <!-- Documents Preview -->
-          ${Array.isArray(item.documents) && item.documents.length > 0 ? `
-            <div class="bg-emerald-50/60 dark:bg-emerald-950/30 px-3 py-2 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40 mb-4 flex items-center gap-2 text-xs text-emerald-900 dark:text-emerald-300">
-              <i class="fas fa-file-shield text-emerald-600 dark:text-emerald-400 text-sm"></i>
-              <span class="truncate font-medium">প্রয়োজনীয় কাগজ: <strong>${item.documents[0]}</strong> সহ ${item.documents.length}টি নথি</span>
-            </div>
-          ` : ''}
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-2 gap-2">
-          <button onclick="openServiceModal('${item.id}')" class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-800 dark:text-slate-200 hover:text-brandGreen dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-600 font-bold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs">
-            <i class="fas fa-list-check text-brandGreen dark:text-emerald-400"></i> বিস্তারিত
-          </button>
-          <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার ওয়েবসাইট থেকে "${item.title}" সেবাটি সম্পর্কে জানতে বা আবেদন করতে চাচ্ছি।`)}" target="_blank" class="w-full bg-brandGreen hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg">
-            <i class="fab fa-whatsapp text-sm"></i> আবেদন করুন
+  function generateMarkup() {
+    if (filtered.length === 0) {
+      return `
+        <div class="col-span-full py-12 text-center bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200 dark:border-slate-700">
+          <i class="fas fa-search text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+          <h4 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200">দুঃখিত, কোনো সেবা খুঁজে পাওয়া যায়নি!</h4>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">অন্য শব্দ দিয়ে অনুসন্ধান করুন অথবা সরাসরি আমাদের কল করুন।</p>
+          <a href="tel:01717101919" class="mt-4 inline-flex items-center gap-2 bg-brandGreen text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow hover:bg-emerald-700 transition">
+            <i class="fas fa-phone-alt"></i> 01717-101919
           </a>
         </div>
-      </div>
-    `;
-  }).join('');
+      `;
+    }
+
+    // Show 3 compact and spacious cards per category view for a sleek, single-row display
+    let displayItems = filtered;
+    if (!isViewAllActive && filterCategory !== 'all' && searchQuery.trim() === '') {
+      displayItems = filtered.slice(0, 3);
+    }
+
+    return displayItems.map(item => {
+      const portalUrl = item.portal ? (item.portal.startsWith('http') ? item.portal : 'https://' + item.portal) : '';
+
+      return `
+        <div class="service-card-item bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-sm hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between group">
+          <div>
+            <!-- Card Header: Icon & Badges -->
+            <div class="flex items-start justify-between mb-4 gap-2">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-100 to-teal-50 dark:from-emerald-950/80 dark:to-teal-950/40 text-brandGreen dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 group-hover:bg-brandGreen group-hover:text-white transition duration-200">
+                <i class="fas ${item.icon || 'fa-landmark'}"></i>
+              </div>
+              <div class="flex flex-col items-end gap-1.5">
+                <span class="text-xs font-extrabold px-3 py-1 rounded-full border ${item.badgeColor || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
+                  ${item.badge || 'ডিজিটাল সেবা'}
+                </span>
+                ${portalUrl ? `
+                  <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800 transition flex items-center gap-1 font-mono shadow-xs truncate max-w-[150px]" title="অফিসিয়াল সরকারি পোর্টাল">
+                    <i class="fas fa-arrow-up-right-from-square text-[9px] text-sky-500"></i> <span class="truncate">${item.portal}</span>
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+            
+            <!-- Service Title -->
+            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition leading-snug" title="${item.title}">
+              ${item.title}
+            </h3>
+            
+            <!-- Service Summary -->
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed line-clamp-2">
+              ${item.summary}
+            </p>
+            
+            <!-- Service Fee & Duration Box -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-[#162035] p-3 rounded-2xl border border-slate-100 dark:border-slate-700/60 mb-4 text-xs">
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-hand-holding-dollar text-emerald-500 mr-1"></i>সার্ভিস চার্জ</span>
+                <strong class="text-emerald-600 dark:text-emerald-400 font-extrabold text-xs sm:text-sm">${item.serviceFee}</strong>
+              </div>
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-clock text-blue-500 mr-1"></i>সময়সীমা</span>
+                <strong class="text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm">${item.duration}</strong>
+              </div>
+            </div>
+
+            <!-- Documents Preview -->
+            ${Array.isArray(item.documents) && item.documents.length > 0 ? `
+              <div class="bg-emerald-50/60 dark:bg-emerald-950/30 px-3 py-2 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40 mb-4 flex items-center gap-2 text-xs text-emerald-900 dark:text-emerald-300">
+                <i class="fas fa-file-shield text-emerald-600 dark:text-emerald-400 text-sm"></i>
+                <span class="truncate font-medium">প্রয়োজনীয় কাগজ: <strong>${item.documents[0]}</strong> সহ ${item.documents.length}টি নথি</span>
+              </div>
+            ` : ''}
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-2 gap-2">
+            <button onclick="openServiceModal('${item.id}')" class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-800 dark:text-slate-200 hover:text-brandGreen dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-600 font-bold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs">
+              <i class="fas fa-list-check text-brandGreen dark:text-emerald-400"></i> বিস্তারিত
+            </button>
+            <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার ওয়েবসাইট থেকে "${item.title}" সেবাটি সম্পর্কে জানতে বা আবেদন করতে চাচ্ছি।`)}" target="_blank" class="w-full bg-brandGreen hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg">
+              <i class="fab fa-whatsapp text-sm"></i> আবেদন করুন
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Smooth zero-blur opacity cross-fade
+  if (smoothTransition && container.children.length > 0) {
+    if (isSwitchingServices) return;
+    isSwitchingServices = true;
+    container.classList.add('is-transitioning');
+    
+    setTimeout(() => {
+      container.innerHTML = generateMarkup();
+      container.classList.remove('is-transitioning');
+      isSwitchingServices = false;
+    }, 180);
+  } else {
+    container.innerHTML = generateMarkup();
+  }
 }
 
 function openServiceModal(serviceId) {
@@ -1243,22 +1287,132 @@ function closeServiceModal() {
 }
 
 function initTabs() {
+  const categories = ['land', 'online', 'computer'];
   const tabs = document.querySelectorAll('.service-tab-btn');
+  const gridContainer = document.getElementById('services-grid-container');
+  const pauseBtn = document.getElementById('service-cycle-pause-btn');
+  const pauseIcon = document.getElementById('service-cycle-pause-icon');
+  const pauseText = document.getElementById('service-cycle-pause-text');
+  const expandBtn = document.getElementById('toggle-services-expand-btn');
+  const expandText = document.getElementById('toggle-services-expand-text');
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => {
+  function updateTabUI(category) {
+    tabs.forEach(t => {
+      const cat = t.getAttribute('data-category');
+      if (cat === category) {
+        t.classList.add('active', 'bg-brandGreen', 'text-white');
+        t.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
+      } else {
         t.classList.remove('active', 'bg-brandGreen', 'text-white');
         t.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-      });
-      tab.classList.add('active', 'bg-brandGreen', 'text-white');
-      tab.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-      
+      }
+    });
+  }
+
+  function cycleNextCategory() {
+    if (isAutoCyclePaused || isViewAllActive || (currentServiceSearch && currentServiceSearch.trim() !== '')) return;
+    autoCycleIndex = (autoCycleIndex + 1) % categories.length;
+    const nextCategory = categories[autoCycleIndex];
+    updateTabUI(nextCategory);
+    renderServicesGrid(nextCategory, '', true);
+  }
+
+  // Start auto-rotation every 3.5 seconds
+  if (autoCycleTimer) clearInterval(autoCycleTimer);
+  autoCycleTimer = setInterval(cycleNextCategory, 3500);
+
+  // Pause on mouse hover so user can read / click peacefully
+  if (gridContainer) {
+    gridContainer.addEventListener('mouseenter', () => {
+      isAutoCyclePaused = true;
+    });
+    gridContainer.addEventListener('mouseleave', () => {
+      if (!isViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
+        isAutoCyclePaused = false;
+      }
+    });
+  }
+
+  // Pause / Play Button Toggle
+  if (pauseBtn) {
+    pauseBtn.addEventListener('click', () => {
+      isAutoCyclePaused = !isAutoCyclePaused;
+      if (isAutoCyclePaused) {
+        if (pauseIcon) pauseIcon.className = 'fas fa-play text-[10px] text-emerald-500';
+        if (pauseText) pauseText.innerText = 'প্লে করুন';
+      } else {
+        if (pauseIcon) pauseIcon.className = 'fas fa-pause text-[10px] text-amber-500';
+        if (pauseText) pauseText.innerText = 'পজ করুন';
+      }
+    });
+  }
+
+  // Category Tab Clicks
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
       const category = tab.getAttribute('data-category');
-      renderServicesGrid(category);
+      
+      if (category === 'all') {
+        openViewAllServices();
+        return;
+      }
+      
+      // If user clicked a specific category tab
+      if (isViewAllActive) {
+        closeViewAllServices(false);
+      }
+      
+      autoCycleIndex = categories.indexOf(category);
+      if (autoCycleIndex === -1) autoCycleIndex = 0;
+      
+      updateTabUI(category);
+      renderServicesGrid(category, '', true);
+      
+      // Pause rotation temporarily for 8 seconds when clicked manually
+      isAutoCyclePaused = true;
+      setTimeout(() => {
+        if (!isViewAllActive && pauseText && pauseText.innerText === 'পজ করুন') {
+          isAutoCyclePaused = false;
+        }
+      }, 8000);
     });
   });
-  
+
+  // Open "View All Services"
+  function openViewAllServices() {
+    isViewAllActive = true;
+    isAutoCyclePaused = true;
+    updateTabUI('all');
+    renderServicesGrid('all', '', true);
+    if (expandText) expandText.innerHTML = `⏱️ সংক্ষেপে দেখুন (অটো-প্রদর্শনী চালু করুন)`;
+  }
+
+  function closeViewAllServices(scrollBack = false) {
+    isViewAllActive = false;
+    isAutoCyclePaused = false;
+    if (expandText) expandText.innerHTML = `👁️ সকল সেবা একসাথে দেখুন (১৪+ টি সেবা)`;
+    
+    const defaultCat = categories[autoCycleIndex] || 'land';
+    updateTabUI(defaultCat);
+    renderServicesGrid(defaultCat, '', true);
+    
+    if (scrollBack) {
+      const sec = document.getElementById('all-services');
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Expand Button Handler
+  if (expandBtn) {
+    expandBtn.addEventListener('click', () => {
+      if (!isViewAllActive) {
+        openViewAllServices();
+      } else {
+        closeViewAllServices(true);
+      }
+    });
+  }
+
   // Smart Tools Tabs
   const toolTabs = document.querySelectorAll('.tool-tab-btn');
   toolTabs.forEach(btn => {
