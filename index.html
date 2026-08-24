@@ -50,10 +50,17 @@
   <script>
     (function() {
       const savedTheme = localStorage.getItem('fayzar_theme');
-      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
-      } else {
+      } else if (savedTheme === 'light') {
         document.documentElement.classList.remove('dark');
+      } else {
+        const hour = new Date().getHours();
+        if (hour >= 18 || hour < 6) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       }
     })();
   </script>
@@ -327,10 +334,7 @@
       </div>
 
       <!-- Dynamic Notice Status Bar -->
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#1b263b] p-3 rounded-2xl border border-slate-200 dark:border-slate-700">
-        <div class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200">
-          <span id="notice-cycle-badge-text">🔄 <strong>চলমান ক্যাটাগরি:</strong> সরকারি চাকরি (৩টি নোটিশ প্রদর্শিত)</span>
-        </div>
+      <div class="mb-6 flex flex-wrap items-center justify-end gap-3 bg-white dark:bg-[#1b263b] p-3 rounded-2xl border border-slate-200 dark:border-slate-700">
         <div class="flex items-center gap-2">
           <button id="toggle-notices-expand-btn" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-brandGreen dark:text-emerald-300 hover:bg-emerald-200 transition border border-emerald-300 dark:border-emerald-800">
             <i class="fas fa-list"></i> <span id="toggle-notices-expand-text">সকল নোটিশ দেখুন</span>
@@ -379,12 +383,6 @@
           দোকানে আসার আগেই যেকোনো সেবা নির্বাচন করে জেনে নিন সরকারি ফি, দোকানের কম্পিউটার চার্জ এবং প্রয়োজনীয় কাগজপত্রের সম্পূর্ণ চেকলিস্ট।
         </p>
 
-        <!-- Dynamic Checklist Exhibition Status Bar -->
-        <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-200 dark:border-emerald-800 shadow-xs">
-            <span id="calc-cycle-badge-text">🔄 <strong>স্বয়ংক্রিয় সেবা নির্দেশিকা:</strong> প্রতি ৪ সেকেন্ড পর সেবা ও চেকলিস্ট পরিবর্তিত হচ্ছে</span>
-          </div>
-        </div>
       </div>
 
       <!-- Service Selection & Display Wrapper -->
@@ -444,13 +442,6 @@
           <button data-category="all" class="service-tab-btn px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border bg-white dark:bg-[#1b263b] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
             <i class="fas fa-border-all text-purple-500"></i> সকল সেবা (১৯+)
           </button>
-        </div>
-
-        <!-- Dynamic Exhibition Status Bar -->
-        <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-200 dark:border-emerald-800 shadow-xs">
-            <span id="service-cycle-badge-text">🔄 <strong>স্বয়ংক্রিয় প্রদর্শনী:</strong> প্রতি ৩.৫ সেকেন্ড পর ক্যাটাগরি পরিবর্তিত হচ্ছে</span>
-          </div>
         </div>
       </div>
 
@@ -1013,7 +1004,7 @@
        ১২. গুগল রিভিউ ও কাস্টমার রেটিং কলআউট (Google Review Callout)
        ========================================================================= -->
   <section class="py-12 px-4 bg-gradient-to-r from-emerald-700 via-brandGreen to-brandBlue text-white">
-    <div class="container mx-auto max-w-5xl text-center space-y-4">
+    <div class="container mx-auto max-w-6xl text-center space-y-4">
       <div class="flex items-center justify-center gap-1 text-amber-300 text-2xl">
         <i class="fas fa-star"></i>
         <i class="fas fa-star"></i>
@@ -1022,10 +1013,16 @@
         <i class="fas fa-star"></i>
       </div>
       <h3 class="text-2xl sm:text-3xl font-extrabold">আমাদের সেবায় আপনি কি সন্তুষ্ট?</h3>
-      <p class="text-xs sm:text-sm text-emerald-100 max-w-xl mx-auto">
+      <p class="text-xs sm:text-sm text-emerald-100 max-w-xl mx-auto mb-6">
         আপনার মূল্যবান মতামত আমাদের সেবার মান আরও বৃদ্ধি করতে সাহায্য করে। গুগল ম্যাপে একটি ৫-স্টার রিভিউ দিয়ে আমাদের পাশে থাকুন।
       </p>
-      <div class="pt-2">
+      
+      <!-- Google Reviews Container -->
+      <div id="google-reviews-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto my-8 text-left">
+        <!-- Reviews will be injected by JavaScript -->
+      </div>
+      
+      <div class="pt-4">
         <a href="https://maps.app.goo.gl/5YJX7wsK5euPfkok8?g_st=ac" target="_blank" class="inline-flex items-center gap-2 bg-white text-slate-900 font-extrabold px-6 py-3 rounded-xl text-xs sm:text-sm shadow-xl hover:bg-slate-100 transition">
           <i class="fab fa-google text-red-500 text-base"></i> গুগলে ৫-স্টার রিভিউ দিন
         </a>
