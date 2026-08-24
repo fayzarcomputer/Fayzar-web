@@ -160,7 +160,7 @@
 
     { u: "ন্ট", b: "b&U" },
     { u: "ন্ঠ", b: "b&V" },
-    { u: "ন্ড", b: "b&W" },
+    { u: "ন্ড", b: "Û" },
     { u: "ন্ত", b: "šÍ" },
     { u: "ন্ত্র", b: "š¿" }, // Authentic SutonnyMJ Ntra (š + ¿) -> গঠনতন্ত্র: MVbZš¿
     { u: "ন্থ", b: "š" },
@@ -803,9 +803,19 @@
     return result;
   }
 
+  function autoConvert(text, options = {}) {
+    if (!text) return text;
+    if (hasBengaliText(text)) {
+      return unicodeToBijoy(text, options);
+    } else {
+      return bijoyToUnicode(text, options);
+    }
+  }
+
   const BanglaConverter = {
     unicodeToBijoy,
     bijoyToUnicode,
+    autoConvert,
     hasBengaliText,
     isBengaliChar,
     convertDigits
