@@ -542,6 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLandConverter();
   calculateDeedFees();
   initExpressPrint();
+  initGoogleReviews();
   
   // Viewport-Driven Smart Auto-Play Engine (Runs ONLY the active visible section)
   initViewportAutoPlayEngine();
@@ -819,7 +820,7 @@ function renderNotices(category = 'jobs', smoothTransition = true) {
     }
     
     return displayItems.map((n) => `
-      <div class="notice-card-item bg-white dark:bg-[#1b263b] rounded-2xl border border-slate-200 dark:border-slate-700/80 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between relative group">
+      <div class="notice-card-item bg-blue-50/40 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700/80 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between relative group">
         <div>
           <div class="flex items-center justify-between gap-1.5 mb-1.5">
             <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
@@ -1334,12 +1335,15 @@ function renderServicesGrid(filterCategory = 'land', searchQuery = '', smoothTra
     }
 
     let displayItems = filtered;
+    if (!isViewAllActive && currentServiceCategory !== 'all') {
+      displayItems = filtered.slice(0, 3);
+    }
 
     return displayItems.map(item => {
       const portalUrl = item.portal ? (item.portal.startsWith('http') ? item.portal : 'https://' + item.portal) : '';
 
       return `
-        <div class="service-card-item bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-sm hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between group">
+        <div class="service-card-item bg-emerald-50/30 dark:bg-slate-800/90 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-sm hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between group">
           <div>
             <!-- Card Header: Icon & Badges -->
             <div class="flex items-start justify-between mb-4 gap-2">
@@ -2103,4 +2107,54 @@ function initMobileDrawer() {
       drawer.classList.add('hidden');
     });
   }
+}
+
+// =========================================================================
+// গুগল রিভিউ ডাইনামিক রেন্ডারিং (Google Reviews)
+// =========================================================================
+function initGoogleReviews() {
+  const container = document.getElementById('google-reviews-container');
+  if (!container) return;
+
+  const reviews = [
+    {
+      name: 'IMRAN CHOWDHURY',
+      avatar: 'https://ui-avatars.com/api/?name=Imran+Chowdhury&background=random&color=fff',
+      meta: 'Local Guide · 96 reviews',
+      rating: 4,
+      time: '2 years ago',
+      text: 'Services are very satisfactory. Behaviour is fantastic. Photocopies, typing and printing services are available here.'
+    },
+    {
+      name: 'Md Sharol Hossain',
+      avatar: 'https://ui-avatars.com/api/?name=Md+Sharol+Hossain&background=random&color=fff',
+      meta: '2 reviews',
+      rating: 5,
+      time: '2 years ago',
+      text: 'Nice work. Those person is very experienced. Thank you'
+    }
+  ];
+
+  container.innerHTML = reviews.map(r => `
+    <div class="bg-white/10 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-white/20 text-white shadow-lg flex flex-col justify-between hover:bg-white/15 transition h-full">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <img src="${r.avatar}" alt="${r.name}" class="w-10 h-10 rounded-full border border-white/30 object-cover">
+          <div>
+            <h4 class="font-bold text-sm sm:text-base leading-tight">${r.name}</h4>
+            <span class="text-[10px] sm:text-xs text-emerald-100/80">${r.meta}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 mb-2">
+          <div class="flex items-center text-amber-300 text-xs">
+            ${Array(r.rating).fill('<i class="fas fa-star"></i>').join('')}${Array(5 - r.rating).fill('<i class="far fa-star text-emerald-200/50"></i>').join('')}
+          </div>
+          <span class="text-[10px] text-emerald-100/70">${r.time}</span>
+        </div>
+        <p class="text-xs sm:text-sm text-emerald-50 leading-relaxed line-clamp-4">
+          "${r.text}"
+        </p>
+      </div>
+    </div>
+  `).join('');
 }
