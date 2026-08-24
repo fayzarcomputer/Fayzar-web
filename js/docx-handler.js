@@ -165,8 +165,16 @@
           const originalText = tNode.textContent;
           if (originalText === null || originalText === undefined) continue;
 
+          let runIsU2B = isU2B;
+          if (opts.direction === 'auto') {
+            runIsU2B = BanglaConverter.hasBengaliText(originalText) || /[০-৯\u0964\u0965]/.test(originalText);
+            if (!runIsU2B && paragraphHasBengali && /^[\s\d\.\,\/\-\:\;\(\)\[\]\{\}\'\"\|\?\!\@\#\$\%\^\&\*\+\=\<\>\–\—«»“”‘’]+$/.test(originalText)) {
+               runIsU2B = true;
+            }
+          }
+
           let shouldConvert = false;
-          if (isU2B) {
+          if (runIsU2B) {
             shouldConvert = BanglaConverter.hasBengaliText(originalText) || 
                             /[০-৯\u0964\u0965]/.test(originalText) ||
                             (paragraphHasBengali && /^[\s\d\.\,\/\-\:\;\(\)\[\]\{\}\'\"\|\?\!\@\#\$\%\^\&\*\+\=\<\>\–\—«»“”‘’]+$/.test(originalText));
@@ -176,7 +184,9 @@
 
           if (shouldConvert) {
             let convertedText = "";
-            if (isU2B) {
+            let currentTargetFont = runIsU2B ? 'SutonnyMJ' : (opts.targetFont || 'Kalpurush');
+
+            if (runIsU2B) {
               convertedText = BanglaConverter.unicodeToBijoy(originalText, {
                 convertNumbers: opts.convertNumbers,
                 numberFormat: opts.numberFormat
@@ -198,7 +208,7 @@
             }
 
             // Update font & remove Complex Script flags
-            this._updateRunFontAndProps(r, xmlDoc, targetFontName, isU2B);
+            this._updateRunFontAndProps(r, xmlDoc, typeof currentTargetFont !== 'undefined' ? currentTargetFont : targetFontName, runIsU2B);
           }
         }
       }
