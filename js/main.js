@@ -1294,100 +1294,40 @@ function renderServicesPage() {
   if (countComputer) countComputer.textContent = toBanglaNumber(computerCount);
   if (countAll) countAll.textContent = toBanglaNumber(allServices.length);
 
-  // Auto-Rotation State
-  let currentCategory = 'land';
+  // ক্যাটাগরি অনুযায়ী অটো রোটেশন স্টেট
+  const CATEGORIES = ['land', 'online', 'computer'];
+  let currentCategoryIndex = 0;
+  let activeCategory = 'land';
   let searchQueryText = '';
-  let currentBatch = 0;
-  let isAutoRotateEnabled = true;
-  let isCardHovered = false;
-  let isViewAll = false;
-  let pageServiceTimer = null;
+  let categoryRotateTimer = null;
+  let isMouseOverServices = false;
 
-  function getBatchSize() {
-    if (window.innerWidth >= 1024) return 6; // Desktop: 2 rows of 3
-    if (window.innerWidth >= 640) return 4;  // Tablet: 2 rows of 2
-    return 2;                                // Mobile: 2 items
-  }
+  function renderCategory(cat) {
+    activeCategory = cat;
 
-  function getFilteredList() {
+    // ক্যাটাগরি বাটনগুলোর স্টাইল আপডেট
+    document.querySelectorAll('.service-tab-btn').forEach(btn => {
+      const isSelected = btn.dataset.category === cat;
+      const countBadge = btn.querySelector('span');
+
+      if (isSelected) {
+        btn.className = 'service-tab-btn active px-4 py-2.5 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-md transition flex items-center gap-1.5 cursor-pointer';
+        if (countBadge) countBadge.className = 'px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black';
+      } else {
+        btn.className = 'service-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold border bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition shadow-xs flex items-center gap-1.5 cursor-pointer';
+        if (countBadge) countBadge.className = 'px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-600 text-[10px] font-extrabold';
+      }
+    });
+
+    // ফিল্টার অনুযায়ী সেবা লিস্ট
     let list = allServices;
-    if (currentCategory !== 'all') {
-      list = list.filter(s => s.category === currentCategory);
+    if (cat !== 'all') {
+      list = list.filter(s => s.category === cat);
     }
     if (searchQueryText.trim()) {
       const q = searchQueryText.toLowerCase();
       list = list.filter(s => s.title.toLowerCase().includes(q) || (s.summary && s.summary.toLowerCase().includes(q)));
     }
-    return list;
-  }
-
-  function updateStatusUI(totalBatches, totalItems) {
-    const batchIndicator = document.getElementById('service-batch-indicator');
-    const rotateBadge = document.getElementById('service-rotate-badge');
-    const rotateText = document.getElementById('service-rotate-text');
-    const pauseText = document.getElementById('service-pause-text');
-    const pauseBtn = document.getElementById('service-pause-btn');
-    const viewAllToggle = document.getElementById('service-view-all-toggle');
-    const dotsContainer = document.getElementById('service-dots-container');
-
-    if (viewAllToggle) {
-      viewAllToggle.textContent = isViewAll ? '🔄 অটো রোটেট মোড' : '📋 সবগুলো একসাথে দেখুন';
-    }
-
-    if (batchIndicator) {
-      if (isViewAll || totalBatches <= 1) {
-        batchIndicator.textContent = `মোট ${toBanglaNumber(totalItems)}টি সেবা`;
-      } else {
-        batchIndicator.textContent = `ব্যাচ ${toBanglaNumber(currentBatch + 1)}/${toBanglaNumber(totalBatches)} (মোট ${toBanglaNumber(totalItems)}টি)`;
-      }
-    }
-
-    if (rotateBadge && rotateText) {
-      if (isViewAll) {
-        rotateBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
-        rotateText.textContent = 'সকল সেবা প্রদর্শন মোড';
-      } else if (isCardHovered) {
-        rotateBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300';
-        rotateText.textContent = '⏸️ মাউস বিরতি (সরালে চলবে)';
-      } else if (!isAutoRotateEnabled) {
-        rotateBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300';
-        rotateText.textContent = 'অটো রোটেট বন্ধ';
-      } else {
-        rotateBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
-        rotateText.textContent = 'অটো রোটেট চালু (৩ সেকেন্ড)';
-      }
-    }
-
-    if (pauseText && pauseBtn) {
-      pauseText.textContent = isAutoRotateEnabled ? 'পজ' : 'চালু';
-      pauseBtn.querySelector('i')?.setAttribute('class', isAutoRotateEnabled ? 'fas fa-pause' : 'fas fa-play text-emerald-500');
-    }
-
-    // Render Dots
-    if (dotsContainer) {
-      if (isViewAll || totalBatches <= 1) {
-        dotsContainer.innerHTML = '';
-      } else {
-        dotsContainer.innerHTML = Array.from({ length: totalBatches }).map((_, idx) => `
-          <button 
-            type="button" 
-            onclick="window.goToServicePageBatch(${idx})" 
-            aria-label="ব্যাচ ${idx + 1}"
-            class="h-2.5 rounded-full transition-all duration-300 ${idx === currentBatch ? 'w-8 bg-emerald-600 shadow-sm' : 'w-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}"
-          ></button>
-        `).join('');
-      }
-    }
-  }
-
-  function renderCurrentBatch() {
-    const list = getFilteredList();
-    const batchSize = getBatchSize();
-    const totalBatches = Math.max(1, Math.ceil(list.length / batchSize));
-
-    if (currentBatch >= totalBatches) currentBatch = 0;
-
-    updateStatusUI(totalBatches, list.length);
 
     if (list.length === 0) {
       gridContainer.innerHTML = `
@@ -1399,13 +1339,7 @@ function renderServicesPage() {
       return;
     }
 
-    let displayList = list;
-    if (!isViewAll && totalBatches > 1) {
-      const start = currentBatch * batchSize;
-      displayList = list.slice(start, start + batchSize);
-    }
-
-    gridContainer.innerHTML = displayList.map(s => `
+    gridContainer.innerHTML = list.map(s => `
       <div class="service-card card-accent-${s.category || 'land'} p-5 sm:p-6 flex flex-col justify-between transition-all duration-300">
         <div>
           <div class="flex items-center gap-3.5 mb-3">
@@ -1445,166 +1379,56 @@ function renderServicesPage() {
     `).join('');
   }
 
-  function startTimer() {
-    clearInterval(pageServiceTimer);
-    pageServiceTimer = setInterval(() => {
-      if (isAutoRotateEnabled && !isCardHovered && !isViewAll) {
-        const list = getFilteredList();
-        const batchSize = getBatchSize();
-        const totalBatches = Math.max(1, Math.ceil(list.length / batchSize));
-        if (totalBatches > 1) {
-          currentBatch = (currentBatch + 1) % totalBatches;
-          renderCurrentBatch();
-        }
+  // অটো-রোটেশন টাইমার: প্রতি ৩.৫ সেকেন্ড পর পর এক ক্যাটাগরি থেকে অন্য ক্যাটাগরিতে যাবে
+  function startCategoryAutoTimer() {
+    clearInterval(categoryRotateTimer);
+    categoryRotateTimer = setInterval(() => {
+      // যদি মাউস কার্ডের ওপর থাকে, সার্চ চলতে থাকে বা 'সকল সেবা' দেখা হয়, তবে ক্যাটাগরি রোটেট থামবে
+      if (!isMouseOverServices && !searchQueryText.trim() && activeCategory !== 'all') {
+        currentCategoryIndex = (currentCategoryIndex + 1) % CATEGORIES.length;
+        renderCategory(CATEGORIES[currentCategoryIndex]);
       }
-    }, 3000);
+    }, 3500);
   }
 
-  function resetTimer() {
-    startTimer();
+  function resetCategoryTimer() {
+    startCategoryAutoTimer();
   }
 
-  // Global helper for dots
-  window.goToServicePageBatch = function(idx) {
-    currentBatch = idx;
-    renderCurrentBatch();
-    resetTimer();
-  };
-
-  // Previous / Next Buttons
-  document.getElementById('service-prev-batch-btn')?.addEventListener('click', () => {
-    const list = getFilteredList();
-    const batchSize = getBatchSize();
-    const totalBatches = Math.max(1, Math.ceil(list.length / batchSize));
-    currentBatch = (currentBatch - 1 + totalBatches) % totalBatches;
-    renderCurrentBatch();
-    resetTimer();
-  });
-
-  document.getElementById('service-next-batch-btn')?.addEventListener('click', () => {
-    const list = getFilteredList();
-    const batchSize = getBatchSize();
-    const totalBatches = Math.max(1, Math.ceil(list.length / batchSize));
-    currentBatch = (currentBatch + 1) % totalBatches;
-    renderCurrentBatch();
-    resetTimer();
-  });
-
-  // Pause / Play Button
-  document.getElementById('service-pause-btn')?.addEventListener('click', () => {
-    isAutoRotateEnabled = !isAutoRotateEnabled;
-    const list = getFilteredList();
-    const batchSize = getBatchSize();
-    updateStatusUI(Math.max(1, Math.ceil(list.length / batchSize)), list.length);
-    if (isAutoRotateEnabled) resetTimer();
-  });
-
-  // View All Toggle
-  document.getElementById('service-view-all-toggle')?.addEventListener('click', () => {
-    isViewAll = !isViewAll;
-    currentBatch = 0;
-    renderCurrentBatch();
-    if (!isViewAll) resetTimer();
-  });
-
-  // Hover Pause Behavior
+  // মাউস কার্ডের ওপর নিলে রোটেশন সাময়িক বিরতি (Pause)
   gridContainer.addEventListener('mouseenter', () => {
-    isCardHovered = true;
-    const list = getFilteredList();
-    const batchSize = getBatchSize();
-    updateStatusUI(Math.max(1, Math.ceil(list.length / batchSize)), list.length);
+    isMouseOverServices = true;
   });
 
   gridContainer.addEventListener('mouseleave', () => {
-    isCardHovered = false;
-    const list = getFilteredList();
-    const batchSize = getBatchSize();
-    updateStatusUI(Math.max(1, Math.ceil(list.length / batchSize)), list.length);
+    isMouseOverServices = false;
   });
 
-  // Category Tab Filters
+  // ক্যাটাগরি বাটনে ক্লিক হ্যান্ডলার
   document.querySelectorAll('.service-tab-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.service-tab-btn').forEach(b => {
-        b.className = 'service-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition shadow-xs';
-      });
-      btn.className = 'service-tab-btn active px-4 py-2.5 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-md transition';
-      currentCategory = btn.dataset.category || 'all';
-      currentBatch = 0;
-      renderCurrentBatch();
-      resetTimer();
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.category || 'all';
+      if (cat !== 'all') {
+        const foundIdx = CATEGORIES.indexOf(cat);
+        if (foundIdx !== -1) currentCategoryIndex = foundIdx;
+      }
+      renderCategory(cat);
+      resetCategoryTimer();
     });
   });
 
+  // সার্চ ইনপুট হ্যান্ডলার
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       searchQueryText = e.target.value;
-      currentBatch = 0;
-      renderCurrentBatch();
-      resetTimer();
+      renderCategory(activeCategory);
+      resetCategoryTimer();
     });
   }
 
-  window.addEventListener('resize', () => {
-    renderCurrentBatch();
-  });
-
-  // Initial Render & Timer Start
-  renderCurrentBatch();
-  startTimer();
-
-  // Cost & Checklist Calculator Selector
-  if (calcSelect && calcResult) {
-    function updateCalcResult(serviceId) {
-      const s = allServices.find(item => item.id === serviceId) || allServices[0];
-      if (!s) return;
-
-      calcResult.innerHTML = `
-        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="text-slate-500 dark:text-slate-400 text-[11px] block font-bold">সরকারি রাজস্ব ফি:</span>
-              <strong class="text-sm text-slate-900 dark:text-white block mt-1">${s.govtFee || 'সরকারি নিয়ম অনুযায়ী'}</strong>
-            </div>
-            <div class="bg-emerald-50/50 dark:bg-emerald-950/40 p-3.5 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 shadow-xs">
-              <span class="text-emerald-700 dark:text-emerald-400 text-[11px] block font-bold">দোকানের সার্ভিস চার্জ:</span>
-              <strong class="text-sm text-emerald-800 dark:text-emerald-300 block mt-1">${s.serviceFee || '৫০ - ১০০ ৳'}</strong>
-            </div>
-            <div class="bg-amber-50/50 dark:bg-amber-950/40 p-3.5 rounded-2xl border-2 border-amber-200 dark:border-amber-800 shadow-xs">
-              <span class="text-amber-700 dark:text-amber-400 text-[11px] block font-bold">প্রক্রিয়াকরণ সময়:</span>
-              <strong class="text-sm text-amber-800 dark:text-amber-300 block mt-1">${s.duration || 'তাৎক্ষণিক'}</strong>
-            </div>
-          </div>
-
-          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border-2 border-emerald-100 dark:border-slate-700 shadow-xs">
-            <h4 class="text-xs font-black text-slate-900 dark:text-white mb-2.5 flex items-center gap-2">
-              <i class="fas fa-clipboard-check text-emerald-600 text-sm"></i> যা যা সাথে আনতে হবে (প্রয়োজনীয় কাগজপত্র):
-            </h4>
-            <ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
-              ${(s.documents || []).map(doc => `
-                <li class="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl">
-                  <i class="fas fa-check-circle text-emerald-600 mt-0.5 text-xs"></i>
-                  <span class="font-semibold">${doc}</span>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-
-          <div class="flex items-center justify-between gap-2 pt-2">
-            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20${encodeURIComponent(s.title)}%20সেবাটি%20নিতে%20চাচ্ছি。" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-3 rounded-xl text-xs flex items-center gap-2 shadow-md glow-btn-primary">
-              <i class="fab fa-whatsapp text-sm"></i> হোয়াটসঅ্যাপে সরাসরি এই সেবা নিন
-            </a>
-          </div>
-        </div>
-      `;
-    }
-
-    calcSelect.addEventListener('change', (e) => updateCalcResult(e.target.value));
-    updateCalcResult(allServices[0]?.id);
-  }
-
-  const activeTabBtn = document.querySelector('.service-tab-btn.active');
-  renderGrid(activeTabBtn ? activeTabBtn.dataset.category : 'all');
+  // প্রারম্ভিক রেন্ডার (প্রথম ক্যাটাগরি: ভূমিসেবা) এবং অটো-রোটেশন চালু
+  renderCategory('land');
+  startCategoryAutoTimer();
 }
 
 // Notices Page Renderer
