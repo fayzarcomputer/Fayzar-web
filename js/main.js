@@ -1,18 +1,17 @@
 /**
- * ফয়জার কম্পিউটার অ্যান্ড ডিজিটাল সেন্টার - Interactive Engine (Multi-Utility Version)
- * Author: Antigravity AI
+ * Fayzar Computer & Digital Center - Modular Frontend Controller
+ * Version: 3.5 (All 19 Services & Live Notices Embedded)
  */
 
 // =========================================================================
-// ১. প্রধান সেবাসমূহের ডাটাবেজ
+// ১. পূর্ণাঙ্গ ১৯টি ডিজিটাল, ভূমি ও অনলাইন সেবাসমূহ (Full 19 Services Data)
 // =========================================================================
-const SERVICES_DATA = [
+const ALL_SERVICES_DATA = [
   {
     id: 'e-mutation',
     category: 'land',
     title: 'ই-নামজারি ও রেকর্ড খারিজ (E-Mutation)',
-    badge: 'সর্বাধিক জনপ্রিয়',
-    badgeColor: 'bg-green-100 text-emerald-800 border-green-300',
+    badge: 'সর্বাধিক জনপ্রিয় ভূমিসেবা',
     icon: 'fa-landmark',
     summary: 'জমি ক্রয়, হেবা, দান বা ওয়ারিশসূত্রে প্রাপ্ত জমির মালিকানা পরিবর্তন ও নতুন খতিয়ান তৈরি।',
     portal: 'mutation.land.gov.bd',
@@ -32,8 +31,7 @@ const SERVICES_DATA = [
     id: 'ld-tax',
     category: 'land',
     title: 'অনলাইনে জমির খাজনা পরিশোধ (LD Tax)',
-    badge: 'ডিজিটাল দাখিলা',
-    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    badge: 'ডিজিটাল খাজনা দাখিলা',
     icon: 'fa-file-invoice-dollar',
     summary: 'নতুন হোল্ডিং এন্ট্রি, বার্ষিক ভূমি উন্নয়ন কর অনলাইন পেমেন্ট ও তাৎক্ষণিক ডিজিটাল রসিদ সংগ্রহ।',
     portal: 'ldtax.gov.bd',
@@ -52,7 +50,6 @@ const SERVICES_DATA = [
     category: 'land',
     title: 'খতিয়ান/পর্চা যাচাই ও সার্টিফাইড কপি',
     badge: 'অনলাইন ও ডাক ডেলিভারি',
-    badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
     icon: 'fa-search-location',
     summary: 'CS, SA, RS, BS ও সিটি জরিপের খতিয়ান অনুসন্ধান, অনলাইন কপি ও জেলা রেকর্ডরুমের মূল পর্চা আবেদন।',
     portal: 'eporcha.gov.bd',
@@ -70,7 +67,6 @@ const SERVICES_DATA = [
     category: 'land',
     title: 'মৌজা ম্যাপ (নকশা) ও ডিজিটাল সিট আবেদন',
     badge: 'ডাকযোগে হোম ডেলিভারি',
-    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
     icon: 'fa-map-marked-alt',
     summary: 'যেকোনো মৌজার মূল সিট বা নকশার জন্য ভূমি রেকর্ড ও জরিপ অধিদপ্তরে সরাসরি অনলাইন আবেদন।',
     portal: 'dlrs.gov.bd',
@@ -87,8 +83,7 @@ const SERVICES_DATA = [
     id: 'miss-case',
     category: 'land',
     title: 'রেকর্ড সংশোধন ও বিবিধ মিস কেস আবেদন',
-    badge: 'আইনি সহায়তা',
-    badgeColor: 'bg-red-100 text-red-800 border-red-300',
+    badge: 'আইনি ও ভূমিসেবা',
     icon: 'fa-gavel',
     summary: 'খতিয়ানে নামের ভুল, দাগ নম্বর বা হিস্যা ভুল সংক্রান্ত সহকারী কমিশনার (ভূমি) বরাবর মিস কেস আবেদন।',
     portal: 'land.gov.bd',
@@ -105,12 +100,11 @@ const SERVICES_DATA = [
     id: 'e-passport',
     category: 'online',
     title: 'ই-পাসপোর্ট (E-Passport) নতুন ও রিনিউ আবেদন',
-    badge: 'জরুরি সেবা',
-    badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+    badge: 'জরুরি সরকারি সেবা',
     icon: 'fa-passport',
-    summary: '৪৮ ও ৬৪ পাতার ৫ বা ১০ বছর মেয়াদি নতুন ই-পাসপোর্ট আবেদন, তথ্য এন্ট্রি ও ব্যাংক ড্রাফট পেমেন্ট।',
+    summary: '৪৮ ও ৬৪ পাতার ৫ বা ১০ বছর মেয়াদি নতুন ই-পাসপোর্ট আবেদন, তথ্য এন্ট্রি ও চালান পেমেন্ট।',
     portal: 'epassport.gov.bd',
-    govtFee: '৫ বছর (৪৮ পাতা): ৪,০২৫৳ | ১০ বছর: ৫,৭৫০৳ (জরুরিতে বেশি)',
+    govtFee: '৫ বছর (৪৮ পাতা): ৪,০২৫৳ | ১০ বছর: ৫,৭৫০৳ (সাধারণ ডেলিভারি)',
     serviceFee: '২০০ - ৩০০ ৳',
     duration: 'অনলাইন ফরম পূরণ তাৎক্ষণিক',
     documents: [
@@ -124,8 +118,7 @@ const SERVICES_DATA = [
     id: 'police-clearance',
     category: 'online',
     title: 'পুলিশ ক্লিয়ারেন্স সার্টিফিকেট (PCC)',
-    badge: 'বিদেশ গমনার্থী',
-    badgeColor: 'bg-teal-100 text-teal-800 border-teal-300',
+    badge: 'বিদেশ গমনার্থী সেবা',
     icon: 'fa-shield-alt',
     summary: 'বিদেশ যাত্রা বা চাকরির প্রয়োজনে পুলিশ ক্লিয়ারেন্স সার্টিফিকেট এর নির্ভুল অনলাইন আবেদন ও চালান জমা।',
     portal: 'pcc.police.gov.bd',
@@ -143,8 +136,7 @@ const SERVICES_DATA = [
     id: 'online-gd',
     category: 'online',
     title: 'অনলাইন সাধারণ ডায়েরি (Online GD)',
-    badge: 'তাৎক্ষণিক সেবা',
-    badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+    badge: 'তাৎক্ষণিক জিডি সেবা',
     icon: 'fa-file-shield',
     summary: 'জাতীয় পরিচয়পত্র, সার্টিফিকেট, পাসপোর্ট, ব্যাংকের চেক বা মূল্যবান নথি হারানো সংক্রান্ত থানা জিডি।',
     portal: 'gd.police.gov.bd',
@@ -161,8 +153,7 @@ const SERVICES_DATA = [
     id: 'nid-correct',
     category: 'online',
     title: 'এনআইডি (NID) সংশোধন ও রি-ইস্যু আবেদন',
-    badge: 'নির্বাচন কমিশন',
-    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    badge: 'নির্বাচন কমিশন সেবা',
     icon: 'fa-id-card',
     summary: 'জাতীয় পরিচয়পত্রে নাম, জন্ম তারিখ, পিতা-মাতার নাম ও ঠিকানা সংক্রান্ত ভুল সংশোধন আবেদন।',
     portal: 'services.nidw.gov.bd',
@@ -180,8 +171,7 @@ const SERVICES_DATA = [
     id: 'nid-download',
     category: 'online',
     title: 'অনলাইন ভোটার আইডি ডাউনলোড ও লেমিনেশন',
-    badge: 'দ্রুত ডেলিভারি',
-    badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-300',
+    badge: 'দ্রুত অনলাইন ডেলিভারি',
     icon: 'fa-download',
     summary: 'নতুন ভোটারদের স্লিপ নম্বর বা হারিয়ে যাওয়া NID এর অনলাইন কপি ডাউনলোড ও প্লাস্টিক কার্ড প্রিন্ট।',
     portal: 'services.nidw.gov.bd',
@@ -199,7 +189,6 @@ const SERVICES_DATA = [
     category: 'online',
     title: 'ই-টিন (e-TIN) সার্টিফিকেট নতুন আবেদন ও সংশোধন',
     badge: 'এনবিআর ট্যাক্স সেবা',
-    badgeColor: 'bg-blue-100 text-blue-800 border-blue-300',
     icon: 'fa-file-invoice',
     summary: 'ব্যবসা, সঞ্চয়পত্র ক্রয়, ব্যাংক লোন বা ট্রেড লাইসেন্সের জন্য নতুন ১২ ডিজিটের ই-টিন সার্টিফিকেট তাৎক্ষণিক গ্রহণ।',
     portal: 'incometax.gov.bd',
@@ -217,9 +206,8 @@ const SERVICES_DATA = [
     category: 'online',
     title: 'অনলাইন আয়কর ই-রিটার্ন দাখিল (e-Return Dakhil)',
     badge: 'এনবিআর ই-ট্যাক্স',
-    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
     icon: 'fa-file-signature',
-    summary: 'এনবিআর এর অনলাইন পোর্টালে বার্ষিক আয়কর ই-রিটার্ন দাখিল, ট্যাক্স হিসাব এবং তাৎক্ষণিক অফিসিয়াল প্রমাণপত্র/একনলেজমেন্ট প্রাপ্তি।',
+    summary: 'এনবিআর এর অনলাইন পোর্টালে বার্ষিক আয়কর ই-রিটার্ন দাখিল, ট্যাক্স হিসাব এবং তাৎক্ষণিক অফিসিয়াল একনলেজমেন্ট প্রাপ্তি।',
     portal: 'etaxnbr.gov.bd',
     govtFee: 'আয়কর স্ল্যাব অনুযায়ী অথবা জিরো ট্যাক্স',
     serviceFee: '২০০ - ৫০০ ৳',
@@ -236,7 +224,6 @@ const SERVICES_DATA = [
     category: 'online',
     title: 'ই-ট্রেড লাইসেন্স ও অনলাইন রিনিউ',
     badge: 'ব্যবসা সেবা',
-    badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
     icon: 'fa-store',
     summary: 'ইউনিয়ন পরিষদ বা পৌরসভা আওতাধীন ব্যবসার বৈধ ই-ট্রেড লাইসেন্স আবেদন ও রিনিউ ফি জমা।',
     portal: 'etradelicense.gov.bd',
@@ -254,7 +241,6 @@ const SERVICES_DATA = [
     category: 'online',
     title: 'ড্রাইভিং লাইসেন্স ও বিআরটিএ সেবা (BRTA)',
     badge: 'লার্নার ও স্মার্ট কার্ড',
-    badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-300',
     icon: 'fa-id-card-clip',
     summary: 'বিআরটিএ সার্ভিস পোর্টালে লার্নার ড্রাইভিং লাইসেন্স আবেদন, মেডিকেল ফি ও পরীক্ষা স্লট বুকিং।',
     portal: 'bsp.brta.gov.bd',
@@ -271,8 +257,7 @@ const SERVICES_DATA = [
     id: 'job-apply',
     category: 'computer',
     title: 'চাকরি ও বিশ্ববিদ্যালয়ে ভর্তির অনলাইন আবেদন',
-    badge: 'কম্পিউটার সেবা',
-    badgeColor: 'bg-violet-100 text-violet-800 border-violet-300',
+    badge: 'টেলিটক ও অন্যান্য',
     icon: 'fa-user-graduate',
     summary: 'বিসিএস, প্রাথমিক শিক্ষক, সরকারি-বেসরকারি চাকরি এবং জাতীয় ও পাবলিক বিশ্ববিদ্যালয়ে ভর্তি আবেদন।',
     portal: 'বিভিন্ন সরকারি ও বিশ্ববিদ্যালয়ের পোর্টাল',
@@ -290,7 +275,6 @@ const SERVICES_DATA = [
     category: 'computer',
     title: 'স্কুল-কলেজ ও মাদ্রাসার ডিজিটাল পিভিসি (PVC) আইডি কার্ড ও ফিতা',
     badge: 'স্টুডিও ও প্রিন্টিং',
-    badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
     icon: 'fa-id-badge',
     summary: 'স্কুল, কলেজ, মাদ্রাসা ও যেকোনো প্রতিষ্ঠানের উন্নত মানের ডিজিটাল পিভিসি আইডি কার্ড, প্রিমিয়াম প্রিন্টেড ফিতা (Lanyard) ও কার্ড হোল্ডার তৈরি।',
     portal: 'fayzarcomputer.com',
@@ -308,7 +292,6 @@ const SERVICES_DATA = [
     category: 'computer',
     title: 'বাংলা ও ইংরেজি কম্পিউটার কম্পোজ',
     badge: 'কম্পিউটার কম্পোজ',
-    badgeColor: 'bg-sky-100 text-sky-800 border-sky-300',
     icon: 'fa-keyboard',
     summary: 'আবেদনপত্র, দরখাস্ত, সিভি (Curriculum Vitae), স্ট্যাম্প চুক্তিপত্র ও প্রশ্ন নির্ভুলভাবে কম্পোজ।',
     portal: 'ইন-শপ সার্ভিস',
@@ -325,1386 +308,245 @@ const SERVICES_DATA = [
     category: 'computer',
     title: 'ডিজিটাল ফটোস্ট্যাট ও কালার প্রিন্ট',
     badge: 'ফটোস্ট্যাট ও প্রিন্ট',
-    badgeColor: 'bg-yellow-100 text-yellow-800 border-yellow-300',
     icon: 'fa-print',
     summary: 'হাই-স্পিড ডিজিটাল ফটোকপি, অফসেট পেপারে নিখুঁত সাদাকালো ও লেজার কালার প্রিন্টিং।',
     portal: 'ইন-শপ সার্ভিস',
     govtFee: 'প্রযোজ্য নয়',
     serviceFee: 'প্রতি পৃষ্ঠা স্বল্পমূল্যে',
     duration: 'তাৎক্ষণিক',
-    documents: [
-      'যে ডকুমেন্ট বা পিডিএফ প্রিন্ট করতে চান'
-    ]
+    documents: ['যে ডকুমেন্ট বা পিডিএফ প্রিন্ট করতে চান']
   },
   {
     id: 'photo-studio',
     category: 'computer',
     title: 'স্টুডিও কোয়ালিটি ছবি প্রিন্ট ও লেমিনেটিং',
     badge: 'ডিজিটাল স্টুডিও',
-    badgeColor: 'bg-pink-100 text-pink-800 border-pink-300',
     icon: 'fa-camera-retro',
     summary: 'পাসপোর্ট সাইজ, স্ট্যাম্প সাইজ ও থ্রি-আর/ফোর-আর ছবি প্রিন্ট এবং ডকুমেন্টস হার্ড লেমিনেটিং।',
     portal: 'ইন-শপ সার্ভিস',
     govtFee: 'প্রযোজ্য নয়',
     serviceFee: 'সাইজ ও কপি অনুযায়ী নির্ধারিত',
     duration: '৫ মিনিটে ডেলিভারি',
-    documents: [
-      'ছবি বা সরাসরি দোকানে ছবি তোলার সুবিধা'
-    ]
+    documents: ['ছবি বা সরাসরি দোকানে ছবি তোলার সুবিধা']
   }
 ];
 
 // =========================================================================
-// ২. নোটিশ ও সার্কুলার ডাটাবেজ
+// ২. লাইভ নোটিশ ও সার্কুলার তালিকা (Full Notices Data)
 // =========================================================================
-const DEFAULT_NOTICES_DATA = [
+const ALL_NOTICES_DATA = [
   {
-    id: 'notice-railway-running',
+    id: 'job-dot-textiles-42',
     category: 'jobs',
     type: 'সরকারি চাকরি',
+    badge: 'চাকরি সার্কুলার',
+    title: 'বস্ত্র অধিদপ্তর (DOT) বিভিন্ন পদে নিয়োগ বিজ্ঞপ্তি',
+    dept: 'বস্ত্র ও পাট মন্ত্রণালয় / বস্ত্র অধিদপ্তর (DOT)',
+    posts: '৪২ জন (০৫টি ক্যাটাগরি)',
+    qualification: 'স্নাতক / ডিপ্লোমা / এইচএসসি / এসএসসি পাস',
+    deadline: '০৬ সেপ্টেম্বর ২০২৬',
+    govtFee: 'সরকারি ফি: ১১২ - ২২৩ ৳',
+    summary: 'dotr.teletalk.com.bd পোর্টালে অনলাইন আবেদন চলছে। বয়স ১৮-৩০ বছর।',
+    sourceUrl: 'http://dotr.teletalk.com.bd/'
+  },
+  {
+    id: 'job-bpdb-power-board',
+    category: 'jobs',
+    type: 'বিদ্যুৎ খাত চাকরি',
+    badge: 'চাকরি সার্কুলার',
+    title: 'বাংলাদেশ বিদ্যুৎ উন্নয়ন বোর্ড (BPDB) নিয়োগ বিজ্ঞপ্তি',
+    dept: 'বাংলাদেশ বিদ্যুৎ উন্নয়ন বোর্ড (BPDB)',
+    posts: '৩৫০+ জন',
+    qualification: 'বিএসসি ইঞ্জিনিয়ারিং / ডিপ্লোমা / স্নাতক / এইচএসসি',
+    deadline: 'বিজ্ঞপ্তি অনুযায়ী',
+    govtFee: 'সরকারি ফি: ৩০০ - ৫০০ ৳',
+    summary: 'bpdb.teletalk.com.bd পোর্টালে বিভিন্ন পদে অনলাইন আবেদন ও ফি জমা।',
+    sourceUrl: 'https://bpdb.teletalk.com.bd/'
+  },
+  {
+    id: 'job-primary-dpe',
+    category: 'jobs',
+    type: 'সরকারি চাকরি',
+    badge: 'চাকরি সার্কুলার',
+    title: 'সরকারি প্রাথমিক সহকারী শিক্ষক নিয়োগ ও আবেদন',
+    dept: 'প্রাথমিক ও গণশিক্ষা অধিদপ্তর (DPE)',
+    posts: '৩,৫০০+ জন',
+    deadline: 'চলমান আবেদন',
+    qualification: 'যেকোনো বিষয়ে স্নাতক/সমমান (ন্যূনতম ২য় বিভাগ/সিজিপিএ ২.২৫)',
+    govtFee: 'সরকারি ফি: ২২০ ৳',
+    summary: 'টেলিটকের মাধ্যমে dpe.teletalk.com.bd পোর্টালে রংপুর ও রাজশাহী সহ সকল বিভাগে আবেদন।',
+    sourceUrl: 'https://dpe.teletalk.com.bd/'
+  },
+  {
+    id: 'job-railway-1085',
+    category: 'jobs',
+    type: 'সরকারি চাকরি',
+    badge: 'চাকরি সার্কুলার',
     title: 'বাংলাদেশ রেলওয়ে সহকারী স্টেশন মাস্টার ও পয়েন্টসম্যান নিয়োগ',
-    org: 'বাংলাদেশ রেলওয়ে (BR)',
-    vacancies: '১০৮৫ জন',
-    deadline: 'চলতি মাসের ২৫ তারিখ',
-    daysLeft: 'জরুরি আবেদন',
-    badgeClass: 'notice-deadline-urgent',
-    qualification: 'স্নাতক / এইচএসসি / এসএসসি পাস',
-    fee: 'সরকারি ফি: ১১২ - ২২৩ ৳',
-    details: 'টেলিটক br.teletalk.com.bd পোর্টালে অনলাইন আবেদন চলছে। বয়স ১৮-৩০ বছর। দ্রুত আবেদন ফরম পূরণ ও ছবি/স্বাক্ষর আপলোডের জন্য যোগাযোগ করুন।',
-    sourceUrl: 'https://br.teletalk.com.bd',
-    pdfUrl: 'https://br.teletalk.com.bd'
+    dept: 'বাংলাদেশ রেলওয়ে (BR)',
+    posts: '১০৮৫ জন',
+    deadline: 'চলতি মাসের শেষ তারিখ',
+    qualification: 'এইচএসসি / এসএসসি / স্নাতক পাস পদ অনুযায়ী',
+    govtFee: 'সরকারি ফি: ১১২ - ২২৩ ৳',
+    summary: 'পয়েন্টসম্যান, খালাসি, সহকারী স্টেশন মাস্টার পদে অনলাইনে আবেদন চলছে।',
+    sourceUrl: 'https://br.teletalk.com.bd/'
   },
   {
-    id: 'notice-police-si-live',
+    id: 'phulbari-col-218',
+    category: 'college',
+    type: 'কলেজ ফরম ফিলাপ',
+    badge: 'ভর্তি ও পরীক্ষা',
+    title: 'ডিগ্রি ১ম বর্ষ পরীক্ষার ফরম পূরণ বিজ্ঞপ্তি',
+    dept: 'ফুলবাড়ী সরকারি কলেজ, দিনাজপুর',
+    posts: 'সকল নিয়মিত/অনিয়মিত পরীক্ষার্থী',
+    qualification: 'ডিগ্রি ১ম বর্ষ শিক্ষাবর্ষের শিক্ষার্থী',
+    deadline: 'চলমান সেশন',
+    govtFee: 'কলেজ ও বিশ্ববিদ্যালয় নির্ধারিত ফি',
+    summary: 'ফুলবাড়ী সরকারি কলেজের ডিগ্রি ১ম বর্ষের অনলাইন ফরম পূরণ ও ফি জমাদান সংক্রান্ত বিজ্ঞপ্তি।',
+    sourceUrl: 'https://www.phulbarigovtcollege.edu.bd/general_notice/218'
+  },
+  {
+    id: 'job-police-trc',
     category: 'jobs',
-    type: 'সরকারি চাকরি',
-    title: 'বাংলাদেশ পুলিশ সাব-ইন্সপেক্টর (SI) নিয়োগ ২০২৬',
-    org: 'বাংলাদেশ পুলিশ সদর দপ্তর',
-    vacancies: 'নির্দিষ্ট নয়',
+    type: 'প্রতিরক্ষা চাকরি',
+    badge: 'চাকরি সার্কুলার',
+    title: 'বাংলাদেশ পুলিশ ট্রেইনি রিক্রুট কনস্টেবল (TRC) নিয়োগ',
+    dept: 'বাংলাদেশ পুলিশ হেডকোয়ার্টার্স',
+    posts: '৪,০০০+ জন',
     deadline: 'বিজ্ঞপ্তি অনুযায়ী',
-    daysLeft: 'আবেদন চলছে',
-    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-    qualification: 'ন্যূনতম স্নাতক (ডিগ্রি/অনার্স)',
-    fee: 'সরকারি ফি: ৫৫০ ৳',
-    details: 'police.teletalk.com.bd এর মাধ্যমে আবেদন ফরম পূরণ, শারীরিক মাপের প্রস্তুতি এবং প্রবেশপত্র প্রিন্ট সেবা।',
-    sourceUrl: 'https://police.teletalk.com.bd',
-    pdfUrl: 'https://police.teletalk.com.bd'
-  },
-  {
-    id: 'notice-primary-dpe-job',
-    category: 'jobs',
-    type: 'সরকারি চাকরি',
-    title: 'প্রাথমিক সহকারী শিক্ষক নিয়োগ পরীক্ষা (রংপুর বিভাগ)',
-    org: 'প্রাথমিক শিক্ষা অধিদপ্তর (DPE)',
-    vacancies: '৩,৫০০+ জন',
-    deadline: 'প্রবেশপত্র ডাউনলোড চলমান',
-    daysLeft: 'এডমিট কার্ড লাইভ',
-    badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
-    qualification: 'স্নাতক / সমমান',
-    fee: 'প্রিন্ট চার্জ প্রযোজ্য',
-    details: 'dpe.teletalk.com.bd থেকে এডমিট কার্ড কালার প্রিন্ট ও পরীক্ষার নির্দেশিকা প্রদান করা হচ্ছে।',
-    sourceUrl: 'https://dpe.teletalk.com.bd',
-    pdfUrl: 'https://dpe.teletalk.com.bd'
-  },
-  {
-    id: 'notice-nu-degree-adm-26',
-    category: 'college',
-    type: 'ভর্তি বিজ্ঞপ্তি',
-    title: 'জাতীয় বিশ্ববিদ্যালয় ডিগ্রি (পাস) ও অনার্স ভর্তি কার্যক্রম',
-    org: 'জাতীয় বিশ্ববিদ্যালয় / ফুলবাড়ী সরকারি কলেজ',
-    vacancies: 'সকল আসন',
-    deadline: 'নির্ধারিত সময়সূচি অনুযায়ী',
-    daysLeft: 'ভর্তি ওপেন',
-    badgeClass: 'bg-purple-100 text-purple-800 border-purple-300',
-    qualification: 'এসএসসি ও এইচএসসি পাস',
-    fee: 'প্রাথমিক আবেদন ফি: ৩৫০ ৳',
-    details: 'app1.nu.edu.bd পোর্টালে ফুলবাড়ী সরকারি কলেজ সহ জাতীয় বিশ্ববিদ্যালয়ের সকল কলেজের ১ম মেধা তালিকায় আবেদন ও নিশ্চায়ন।',
-    sourceUrl: 'http://app1.nu.edu.bd',
-    pdfUrl: 'http://app1.nu.edu.bd'
-  },
-  {
-    id: 'notice-bteb-diploma-adm',
-    category: 'college',
-    type: 'ভর্তি বিজ্ঞপ্তি',
-    title: 'কারিগরি শিক্ষা বোর্ড ৪ বছর মেয়াদী ডিপ্লোমা ভর্তি',
-    org: 'বাংলাদেশ কারিগরি শিক্ষা বোর্ড (BTEB)',
-    vacancies: 'পলিটেকনিক আসনসমূহ',
-    deadline: 'চলমান কার্যক্রম',
-    daysLeft: 'আবেদন চলছে',
-    badgeClass: 'bg-indigo-100 text-indigo-800 border-indigo-300',
-    qualification: 'এসএসসি / দাখিল / সমমান',
-    fee: 'বোর্ড ফি: ১৬০ ৳',
-    details: 'btebadmission.gov.bd পোর্টালে সরকারি ও বেসরকারি পলিটেকনিক ইনস্টিটিউটে ভর্তির অনলাইন আবেদন ও কলেজ চয়েস।',
-    sourceUrl: 'http://btebadmission.gov.bd',
-    pdfUrl: 'http://btebadmission.gov.bd'
-  },
-  {
-    id: 'notice-du-admission-26',
-    category: 'college',
-    type: 'ভর্তি বিজ্ঞপ্তি',
-    title: 'ঢাকা বিশ্ববিদ্যালয় ও গুচ্ছ বিশ্ববিদ্যালয় স্নাতক ভর্তি পরীক্ষা',
-    org: 'বিশ্ববিদ্যালয় মঞ্জুরি কমিশন (UGC)',
-    vacancies: 'সকল ইউনিট',
-    deadline: 'বিজ্ঞপ্তি অনুযায়ী',
-    daysLeft: 'প্রস্তুতি ও আবেদন',
-    badgeClass: 'bg-rose-100 text-rose-800 border-rose-300',
-    qualification: 'এইচএসসি উত্তীর্ণ',
-    fee: 'ইউনিট ফি: ১,০০০ ৳',
-    details: 'ছবি সাইজিং, পেমেন্ট গেটওয়ে সম্পন্ন ও প্রবেশপত্র কালার প্রিন্ট সেবা।',
-    sourceUrl: 'https://admission.eis.du.ac.bd',
-    pdfUrl: 'https://admission.eis.du.ac.bd'
-  },
-  {
-    id: 'notice-army-sainik-26',
-    category: 'jobs',
-    type: 'সরকারি চাকরি',
-    title: 'বাংলাদেশ সেনাবাহিনী সৈনিক পদে পুরুষ ও মহিলা নিয়োগ',
-    org: 'বাংলাদেশ সেনাবাহিনী (Army)',
-    vacancies: 'নির্দিষ্ট নয়',
-    deadline: 'চলতি মাসের শেষ দিন',
-    daysLeft: 'আবেদন চলমান',
-    badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-    qualification: 'এসএসসি পাস (ন্যূনতম জিপিএ ৩.০০)',
-    fee: 'সরকারি ফি: ৩০০ ৳',
-    details: 'sainik.teletalk.com.bd এ এসএমএস ও অনলাইন আবেদন ফরম পূরণ।',
-    sourceUrl: 'https://sainik.teletalk.com.bd',
-    pdfUrl: 'https://sainik.teletalk.com.bd'
-  },
-  {
-    id: 'notice-brta-inspector-job',
-    category: 'jobs',
-    type: 'সরকারি চাকরি',
-    title: 'বিআরটিএ মোটরযান পরিদর্শক ও সহকারী পরিচালক নিয়োগ',
-    org: 'বাংলাদেশ সড়ক পরিবহন কর্তৃপক্ষ (BRTA)',
-    vacancies: '৬৪ জন',
-    deadline: 'বিজ্ঞপ্তি অনুযায়ী',
-    daysLeft: 'চলমান',
-    badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-    qualification: 'ডিপ্লোমা ইন অটোমোবাইল / ডিগ্রি',
-    fee: 'সরকারি ফি: ২২৩ ৳',
-    details: 'brta.teletalk.com.bd এ আবেদন সাবমিশন ও প্রবেশপত্র সংগ্রহ।',
-    sourceUrl: 'https://brta.teletalk.com.bd',
-    pdfUrl: 'https://brta.teletalk.com.bd'
-  },
-  {
-    id: 'notice-board-results-marksheet',
-    category: 'college',
-    type: 'ফলাফল ও মার্কশিট',
-    title: 'এসএসসি ও এইচএসসি পরীক্ষার মূল নম্বরপত্র ও সনদপত্র উত্তোলন',
-    org: 'দিনাজপুর শিক্ষা বোর্ড',
-    vacancies: 'সকল শিক্ষার্থী',
-    deadline: 'যে কোনো সময়',
-    daysLeft: 'সার্বক্ষণিক',
-    badgeClass: 'bg-teal-100 text-teal-800 border-teal-300',
-    qualification: 'পরীক্ষার্থীদের জন্য',
-    fee: 'প্রিন্ট চার্জ প্রযোজ্য',
-    details: 'রোল ও রেজিস্ট্রেশন নম্বর দিয়ে দ্রুততম সময়ে এডমিট কার্ড ও নম্বরপত্র কালার প্রিন্ট।'
+    qualification: 'এসএসসি / সমমান পাস (ন্যূনতম জিপিএ ২.৫)',
+    govtFee: 'সরকারি ফি: ১২০ ৳',
+    summary: 'অনলাইনে ট্রেইনি রিক্রুট কনস্টেবল (TRC) পদে আবেদন ও শারীরিক যোগ্যতার ফর্ম পূরণ।',
+    sourceUrl: 'https://police.teletalk.com.bd/'
   }
 ];
 
-function getActiveNotices() {
-  try {
-    const saved = localStorage.getItem('fayzar_notices_data');
-    if (saved) return JSON.parse(saved);
-  } catch (e) {
-    console.error(e);
-  }
-  return DEFAULT_NOTICES_DATA;
-}
+let allServices = ALL_SERVICES_DATA;
+let allNotices = ALL_NOTICES_DATA;
 
-function saveActiveNotices(data) {
-  try {
-    localStorage.setItem('fayzar_notices_data', JSON.stringify(data));
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-// =========================================================================
-// ৩. DOM Ready & Event Listeners
-// =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  initThemeToggle();
+  initTheme();
   initShopStatus();
-  renderServicesGrid('land', '', false);
-  initTabs();
-  initLiveSearch();
-  initLandCalculator();
-  initQuickOrderForm();
-  initFAQ();
-  initBackToTop();
-  initMobileDrawer();
-  
-  // Smart Tools Hub Modules
-  initNoticesBoard();
-  initPhotoResizer();
-  initAgeCalculator();
-  initLandConverter();
-  calculateDeedFees();
-  initExpressPrint();
-  initGoogleReviews();
-  
-  // Viewport-Driven Smart Auto-Play Engine (Runs ONLY the active visible section)
-  initViewportAutoPlayEngine();
-  
-  // Refresh shop status every 60s
-  setInterval(initShopStatus, 60000);
+  initMobileMenu();
+  loadDataAndRender();
+  initHeroSearch();
+  initToolsIfPresent();
+  initForms();
 });
 
-// Theme (Day / Night) Switcher (Silent, Smooth Toggle)
-function initThemeToggle() {
-  const toggleBtns = document.querySelectorAll('.theme-toggle-btn, #theme-toggle-btn');
-  
-  function updateTheme(isDark) {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('fayzar_theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('fayzar_theme', 'light');
-    }
-  }
+// =========================================================================
+// ৩. থিম কন্ট্রোলার (Light/Dark Theme)
+// =========================================================================
+function initTheme() {
+  const toggleBtn = document.getElementById('theme-toggle-btn');
+  if (!toggleBtn) return;
 
-  toggleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const isCurrentlyDark = document.documentElement.classList.contains('dark');
-      updateTheme(!isCurrentlyDark);
-    });
+  toggleBtn.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
   });
 }
 
 // =========================================================================
-// ৪. লাইভ শপ স্ট্যাটাস ট্র্যাকার
+// ৪. লাইভ দোকান খোলার সময়সূচী স্ট্যাটাস
 // =========================================================================
 function initShopStatus() {
   const statusBadge = document.getElementById('shop-status-badge');
-  const statusText = document.getElementById('shop-status-text');
-  const statusHeader = document.getElementById('header-shop-status');
-  
+  if (!statusBadge) return;
+
   const now = new Date();
-  const day = now.getDay();
+  const day = now.getDay(); // 0 = Sun, 5 = Fri, 6 = Sat
   const hour = now.getHours();
   const minute = now.getMinutes();
   const currentMinutes = hour * 60 + minute;
-  
+
   let isOpen = false;
-  let closingInfo = '';
-  
   if (day === 5) {
-    if (currentMinutes >= 16 * 60 && currentMinutes < 21 * 60) {
-      isOpen = true;
-      closingInfo = 'রাত ৯:০০ টা পর্যন্ত খোলা';
-    } else {
-      isOpen = false;
-      closingInfo = currentMinutes < 16 * 60 ? 'আজ বিকাল ৪:০০ টায় খুলবে' : 'আগামীকাল সকাল ১০:০০ টায় খুলবে';
-    }
+    // Friday: 4:00 PM (960 min) to 9:00 PM (1260 min)
+    isOpen = currentMinutes >= 960 && currentMinutes < 1260;
   } else {
-    if (currentMinutes >= 10 * 60 && currentMinutes < 21 * 60) {
-      isOpen = true;
-      closingInfo = 'রাত ৯:০০ টা পর্যন্ত খোলা';
-    } else {
-      isOpen = false;
-      closingInfo = currentMinutes < 10 * 60 ? 'আজ সকাল ১০:০০ টায় খুলবে' : (day === 4 ? 'আগামীকাল (শুক্রবার) বিকাল ৪:০০ টায় খুলবে' : 'আগামীকাল সকাল ১০:০০ টায় খুলবে');
-    }
+    // Sat - Thu: 10:00 AM (600 min) to 9:00 PM (1260 min)
+    isOpen = currentMinutes >= 600 && currentMinutes < 1260;
   }
 
   if (isOpen) {
-    if (statusBadge) {
-      statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300';
-      statusBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 status-dot-open"></span> এখন দোকান খোলা আছে (${closingInfo})`;
-    }
-    if (statusText) statusText.innerText = `এখন দোকান খোলা আছে • ${closingInfo}`;
-    if (statusHeader) {
-      statusHeader.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-300';
-      statusHeader.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> খোলা আছে (${closingInfo})`;
-    }
+    statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+    statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> দোকান খোলা আছে (রাত ৯টা পর্যন্ত)`;
   } else {
-    if (statusBadge) {
-      statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800 border border-rose-300';
-      statusBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-500 status-dot-closed"></span> এখন দোকান বন্ধ (${closingInfo})`;
-    }
-    if (statusText) statusText.innerText = `এখন দোকান বন্ধ • ${closingInfo}`;
-    if (statusHeader) {
-      statusHeader.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-300';
-      statusHeader.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> এখন বন্ধ (${closingInfo})`;
-    }
+    statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700';
+    statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span> দোকান এখন বন্ধ (সকাল ১০টায় খুলবে)`;
   }
 }
 
 // =========================================================================
+// ৪.১ লাইভ সার্চ সাজেস্ট কন্ট্রোলার (Homepage Hero Search)
 // =========================================================================
-// ৫. নোটিশ ও সার্কুলার বুলেটিন বোর্ড ডায়নামিক অটো-সাইকেল ইঞ্জিন (Zero-Blur Notice Carousel)
-// =========================================================================
-let currentNoticeFilter = 'jobs';
-let noticeCycleTimer = null;
-let noticeCycleIndex = 0;
-let isNoticeHovered = false;
-let isNoticeViewAllActive = false;
-let isNoticeSwitching = false;
-const NOTICE_CATEGORIES = ['jobs', 'college'];
-
-function cycleNextNoticeCategory() {
-  if (isNoticeHovered || isNoticeViewAllActive) return;
-  noticeCycleIndex = (noticeCycleIndex + 1) % NOTICE_CATEGORIES.length;
-  const nextCat = NOTICE_CATEGORIES[noticeCycleIndex];
-  updateNoticeTabUI(nextCat);
-  renderNotices(nextCat, true);
-}
-
-function updateNoticeTabUI(category) {
-  const tabBtns = document.querySelectorAll('.notice-tab-btn');
-  tabBtns.forEach(btn => {
-    const cat = btn.getAttribute('data-notice-category');
-    if (cat === category) {
-      btn.classList.add('active', 'bg-brandGreen', 'text-white');
-      btn.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-    } else {
-      btn.classList.remove('active', 'bg-brandGreen', 'text-white');
-      btn.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-    }
-  });
-}
-
-function startNoticesAutoCycle() {
-  if (noticeCycleTimer) return;
-  noticeCycleTimer = setInterval(cycleNextNoticeCategory, 3500);
-}
-
-function stopNoticesAutoCycle() {
-  if (noticeCycleTimer) {
-    clearInterval(noticeCycleTimer);
-    noticeCycleTimer = null;
-  }
-}
-
-async function initNoticesBoard() {
-  try {
-    const res = await fetch('data/notices.json');
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0 && !localStorage.getItem('fayzar_notices_data')) {
-        saveActiveNotices(data);
-      }
-    }
-  } catch (e) {}
-
-  currentNoticeFilter = 'jobs';
-  renderNotices('jobs', false);
-  
-  const tabBtns = document.querySelectorAll('.notice-tab-btn');
-  const container = document.getElementById('notices-cards-container');
-  const expandBtn = document.getElementById('toggle-notices-expand-btn');
-  const expandText = document.getElementById('toggle-notices-expand-text');
-
-  // Pause on hover
-  if (container) {
-    container.addEventListener('mouseenter', () => {
-      isNoticeHovered = true;
-    });
-    container.addEventListener('mouseleave', () => {
-      isNoticeHovered = false;
-    });
-  }
-
-  // Notice Tab Clicks
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const category = btn.getAttribute('data-notice-category');
-      
-      if (category === 'all') {
-        openViewAllNotices();
-        return;
-      }
-
-      if (isNoticeViewAllActive) {
-        closeViewAllNotices(false);
-      }
-
-      noticeCycleIndex = NOTICE_CATEGORIES.indexOf(category);
-      if (noticeCycleIndex === -1) noticeCycleIndex = 0;
-
-      updateNoticeTabUI(category);
-      renderNotices(category, true);
-
-      // Temporary pause for 8s
-      isNoticeHovered = true;
-      setTimeout(() => {
-        isNoticeHovered = false;
-      }, 8000);
-    });
-  });
-
-  function openViewAllNotices() {
-    isNoticeViewAllActive = true;
-    updateNoticeTabUI('all');
-    renderNotices('all', true);
-    if (expandText) expandText.innerHTML = `সংক্ষেপে দেখুন`;
-  }
-
-  function closeViewAllNotices(scrollBack = false) {
-    isNoticeViewAllActive = false;
-    if (expandText) expandText.innerHTML = `সকল নোটিশ দেখুন`;
-
-    const defaultCat = NOTICE_CATEGORIES[noticeCycleIndex] || 'jobs';
-    updateNoticeTabUI(defaultCat);
-    renderNotices(defaultCat, true);
-
-    if (scrollBack) {
-      const hub = document.getElementById('notices-hub');
-      if (hub) hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
-
-  if (expandBtn) {
-    expandBtn.addEventListener('click', () => {
-      if (!isNoticeViewAllActive) {
-        openViewAllNotices();
-      } else {
-        closeViewAllNotices(true);
-      }
-    });
-  }
-}
-
-function renderNotices(category = 'jobs', smoothTransition = true) {
-  const container = document.getElementById('notices-cards-container');
-  const cycleBadgeText = document.getElementById('notice-cycle-badge-text');
-  if (!container) return;
-  
-  currentNoticeFilter = category;
-  const allItems = getActiveNotices();
-  
-  // Update category badge counts
-  const jobCount = allItems.filter(n => n.category === 'jobs' || !n.category || n.category === 'admin').length;
-  const collegeCount = allItems.filter(n => n.category === 'college' || n.category === 'admission' || n.category === 'admissions' || n.category === 'results').length;
-  
-  const jobBadge = document.getElementById('site-job-badge');
-  if (jobBadge) jobBadge.innerText = jobCount;
-  
-  const collegeBadge = document.getElementById('site-college-badge');
-  if (collegeBadge) collegeBadge.innerText = collegeCount;
-  
-  let items = allItems;
-  if (category === 'jobs') {
-    items = allItems.filter(n => n.category === 'jobs' || !n.category || n.category === 'admin');
-  } else if (category === 'college') {
-    items = allItems.filter(n => n.category === 'college' || n.category === 'admission' || n.category === 'admissions' || n.category === 'results');
-  }
-
-  // Update notice status badge
-  if (cycleBadgeText) {
-    if (category === 'all' || isNoticeViewAllActive) {
-      cycleBadgeText.innerHTML = `🌟 <strong>সকল নোটিশ একসাথে:</strong> মোট ${items.length}টি নোটিশ`;
-    } else if (category === 'jobs') {
-      cycleBadgeText.innerHTML = `💼 <strong>চলমান ক্যাটাগরি:</strong> সরকারি চাকরি (${items.length}টির মধ্যে ৩টি প্রদর্শিত)`;
-    } else {
-      cycleBadgeText.innerHTML = `🎓 <strong>চলমান ক্যাটাগরি:</strong> স্কুল/কলেজ ও ভর্তি (${items.length}টির মধ্যে ৩টি প্রদর্শিত)`;
-    }
-  }
-
-  function generateNoticeMarkup() {
-    if (items.length === 0) {
-      return `
-        <div class="col-span-full py-10 text-center bg-white dark:bg-[#1b263b] rounded-2xl border border-slate-200 dark:border-slate-800">
-          <i class="fas fa-inbox text-slate-300 dark:text-slate-600 text-3xl mb-2"></i>
-          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">এই ক্যাটাগরিতে বর্তমানে কোনো নোটিশ নেই।</p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">প্রয়োজনে সরাসরি আমাদের দোকানে যোগাযোগ করুন।</p>
-        </div>
-      `;
-    }
-
-    // Display 3 compact and neat cards per category for sleek single-row layout
-    let displayItems = items;
-    if (!isNoticeViewAllActive && category !== 'all') {
-      displayItems = items.slice(0, 3);
-    }
-    
-    return displayItems.map((n) => `
-      <div class="notice-card-item bg-blue-50/40 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700/80 p-3.5 sm:p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between relative group">
-        <div>
-          <div class="flex items-center justify-between gap-1.5 mb-1.5">
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-              ${n.type}
-            </span>
-            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${n.badgeClass || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
-              <i class="fas fa-clock text-[8px] mr-1"></i> ${n.daysLeft || 'চলমান'}
-            </span>
-          </div>
-          
-          <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug line-clamp-1 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition" title="${n.title}">
-            ${n.title}
-          </h4>
-          <div class="text-xs font-semibold text-brandBlue dark:text-blue-400 mb-2 flex items-center justify-between gap-1">
-            <span class="truncate"><i class="fas fa-building text-amber-500 mr-1"></i> ${n.org}</span>
-            ${n.vacancies ? `<span class="bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-black shrink-0 border border-amber-200 dark:border-amber-800">পদ: ${n.vacancies}</span>` : ''}
-          </div>
-          
-          <div class="bg-slate-50 dark:bg-[#162035] px-2.5 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700/60 text-[11px] flex items-center justify-between mb-2.5">
-            <span class="text-slate-600 dark:text-slate-300 truncate max-w-[140px]" title="${n.qualification}">🎓 ${n.qualification}</span>
-            <span class="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">${n.fee}</span>
-          </div>
-        </div>
-        
-        <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-1.5">
-          <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">শেষ: <strong class="text-slate-800 dark:text-slate-200">${n.deadline}</strong></span>
-          <div class="flex items-center gap-1 shrink-0">
-            ${n.sourceUrl ? `
-              <a href="${n.sourceUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 transition flex items-center justify-center text-xs" title="অফিসিয়াল পোর্টাল">
-                <i class="fas fa-globe text-sky-600 dark:text-sky-400"></i>
-              </a>
-            ` : ''}
-            ${n.pdfUrl ? `
-              <a href="${n.pdfUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition flex items-center justify-center text-xs" title="সার্কুলার PDF">
-                <i class="fas fa-file-pdf text-rose-500"></i>
-              </a>
-            ` : ''}
-            <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${n.title}" (${n.org}) এর জন্য সরাসরি অনলাইনে আবেদন করতে চাচ্ছি।`)}" target="_blank" class="bg-brandGreen hover:bg-emerald-700 text-white font-bold text-xs px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs">
-              <i class="fab fa-whatsapp"></i> আবেদন
-            </a>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  if (smoothTransition && container.children.length > 0) {
-    if (isNoticeSwitching) return;
-    isNoticeSwitching = true;
-    container.classList.add('is-transitioning');
-    setTimeout(() => {
-      container.innerHTML = generateNoticeMarkup();
-      container.classList.remove('is-transitioning');
-      isNoticeSwitching = false;
-    }, 180);
-  } else {
-    container.innerHTML = generateNoticeMarkup();
-  }
-}
-
-// =========================================================================
-// ৬. টেলিটক ছবি ও সিগনেচার রিসাইজার ইঞ্জিন (300x300 & 300x80)
-// =========================================================================
-let currentResizerMode = 'photo';
-let uploadedImageSrc = null;
-
-function initPhotoResizer() {
-  const photoModeBtn = document.getElementById('resizer-photo-mode');
-  const sigModeBtn = document.getElementById('resizer-sig-mode');
-  const fileInput = document.getElementById('resizer-file-input');
-  const dropzone = document.getElementById('resizer-dropzone');
-  const downloadBtn = document.getElementById('resizer-download-btn');
-  
-  if (!photoModeBtn || !fileInput) return;
-  
-  photoModeBtn.addEventListener('click', () => {
-    currentResizerMode = 'photo';
-    photoModeBtn.classList.add('bg-brandGreen', 'text-white');
-    photoModeBtn.classList.remove('bg-white', 'text-slate-700');
-    sigModeBtn.classList.remove('bg-brandGreen', 'text-white');
-    sigModeBtn.classList.add('bg-white', 'text-slate-700');
-    document.getElementById('resizer-target-dim').innerText = '৩০০ x ৩০০ পিক্সেল (সর্বোচ্চ ১০০ KB)';
-    if (uploadedImageSrc) processImageToCanvas(uploadedImageSrc);
-  });
-
-  sigModeBtn.addEventListener('click', () => {
-    currentResizerMode = 'signature';
-    sigModeBtn.classList.add('bg-brandGreen', 'text-white');
-    sigModeBtn.classList.remove('bg-white', 'text-slate-700');
-    photoModeBtn.classList.remove('bg-brandGreen', 'text-white');
-    photoModeBtn.classList.add('bg-white', 'text-slate-700');
-    document.getElementById('resizer-target-dim').innerText = '৩০০ x ৮০ পিক্সেল (সর্বোচ্চ ৬০ KB)';
-    if (uploadedImageSrc) processImageToCanvas(uploadedImageSrc);
-  });
-
-  fileInput.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFileSelected(e.target.files[0]);
-    }
-  });
-
-  if (dropzone) {
-    dropzone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropzone.classList.add('dragover');
-    });
-    dropzone.addEventListener('dragleave', () => {
-      dropzone.classList.remove('dragover');
-    });
-    dropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('dragover');
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        handleFileSelected(e.dataTransfer.files[0]);
-      }
-    });
-  }
-
-  if (downloadBtn) {
-    downloadBtn.addEventListener('click', () => {
-      const canvas = document.getElementById('resizer-canvas');
-      if (!canvas) return;
-      
-      const link = document.createElement('a');
-      const filename = currentResizerMode === 'photo' ? 'teletalk_photo_300x300.jpg' : 'teletalk_signature_300x80.jpg';
-      link.download = filename;
-      link.href = canvas.toDataURL('image/jpeg', 0.92);
-      link.click();
-      showToast(`${filename} ডাউনলোড শুরু হয়েছে!`, 'success');
-    });
-  }
-}
-
-function handleFileSelected(file) {
-  if (!file.type.startsWith('image/')) {
-    showToast('অনুগ্রহ করে একটি ছবি বা ইমেজ ফাইল নির্বাচন করুন।', 'error');
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    uploadedImageSrc = event.target.result;
-    processImageToCanvas(uploadedImageSrc);
-    document.getElementById('resizer-output-box').classList.remove('hidden');
-    document.getElementById('resizer-placeholder-box').classList.add('hidden');
-    showToast('ছবি সফলভাবে রিসাইজ করা হয়েছে!', 'success');
-  };
-  reader.readAsDataURL(file);
-}
-
-function processImageToCanvas(src) {
-  const canvas = document.getElementById('resizer-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  
-  const img = new Image();
-  img.onload = () => {
-    const targetWidth = 300;
-    const targetHeight = currentResizerMode === 'photo' ? 300 : 80;
-    
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-    
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, targetWidth, targetHeight);
-    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-    
-    canvas.toBlob((blob) => {
-      const sizeKb = (blob.size / 1024).toFixed(1);
-      const infoElem = document.getElementById('resizer-info-text');
-      if (infoElem) {
-        const maxLimit = currentResizerMode === 'photo' ? '১০০ KB' : '৬০ KB';
-        infoElem.innerHTML = `আকার: <strong>${targetWidth}x${targetHeight} px</strong> | সাইজ: <strong>${sizeKb} KB</strong> (অনুমোদিত সীমা: ${maxLimit})`;
-      }
-    }, 'image/jpeg', 0.92);
-  };
-  img.src = src;
-}
-
-// =========================================================================
-// ৭. সরকারি চাকরির বয়স ও যোগ্যতা ক্যালকুলেটর ইঞ্জিন
-// =========================================================================
-function initAgeCalculator() {
-  const form = document.getElementById('age-calc-form');
-  const targetDateInput = document.getElementById('age-target-date');
-  
-  if (targetDateInput && !targetDateInput.value) {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    targetDateInput.value = `${yyyy}-${mm}-${dd}`;
-  }
-
-  if (form) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      calculateGovtJobAge();
-    });
-  }
-}
-
-function calculateGovtJobAge() {
-  const birthInput = document.getElementById('age-birth-date').value;
-  const targetInput = document.getElementById('age-target-date').value;
-  const resultBox = document.getElementById('age-result-box');
-  
-  if (!birthInput || !targetInput) {
-    showToast('অনুগ্রহ করে জন্মতারিখ ও বিজ্ঞপ্তির নির্দিষ্ট তারিখ দিন।', 'error');
-    return;
-  }
-  
-  const birthDate = new Date(birthInput);
-  const targetDate = new Date(targetInput);
-  
-  if (birthDate > targetDate) {
-    showToast('জন্মতারিখ বিজ্ঞপ্তির তারিখের চেয়ে বড় হতে পারে না!', 'error');
-    return;
-  }
-  
-  let years = targetDate.getFullYear() - birthDate.getFullYear();
-  let months = targetDate.getMonth() - birthDate.getMonth();
-  let days = targetDate.getDate() - birthDate.getDate();
-  
-  if (days < 0) {
-    months--;
-    const lastMonth = new Date(targetDate.getFullYear(), targetDate.getMonth(), 0);
-    days += lastMonth.getDate();
-  }
-  
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-  
-  const toBanglaNum = (n) => String(n).replace(/[0-9]/g, d => '০১২৩৪৫৬৭৮৯'[d]);
-  
-  document.getElementById('age-res-years').innerText = toBanglaNum(years);
-  document.getElementById('age-res-months').innerText = toBanglaNum(months);
-  document.getElementById('age-res-days').innerText = toBanglaNum(days);
-  
-  const isGeneralEligible = years >= 18 && (years < 30 || (years === 30 && months === 0 && days === 0));
-  const isQuotaEligible = years >= 18 && (years < 32 || (years === 32 && months === 0 && days === 0));
-  
-  const generalBadge = document.getElementById('age-general-badge');
-  const quotaBadge = document.getElementById('age-quota-badge');
-  
-  if (generalBadge) {
-    if (isGeneralEligible) {
-      generalBadge.className = 'px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center gap-1.5 border border-emerald-300';
-      generalBadge.innerHTML = `<i class="fas fa-check-circle text-emerald-600"></i> সাধারণ কোটায় আবেদনযোগ্য (১৮-৩০ বছর)`;
-    } else {
-      generalBadge.className = 'px-3 py-1.5 rounded-xl bg-rose-100 text-rose-800 font-extrabold text-xs flex items-center gap-1.5 border border-rose-300';
-      generalBadge.innerHTML = `<i class="fas fa-times-circle text-rose-600"></i> সাধারণ কোটায় বয়স উত্তীর্ণ / অপ্রাপ্ত`;
-    }
-  }
-
-  if (quotaBadge) {
-    if (isQuotaEligible) {
-      quotaBadge.className = 'px-3 py-1.5 rounded-xl bg-blue-100 text-blue-800 font-extrabold text-xs flex items-center gap-1.5 border border-blue-300';
-      quotaBadge.innerHTML = `<i class="fas fa-check-circle text-blue-600"></i> বীর মুক্তিযোদ্ধা / প্রতিবন্ধী কোটায় আবেদনযোগ্য (১৮-৩২ বছর)`;
-    } else {
-      quotaBadge.className = 'px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 border border-slate-200';
-      quotaBadge.innerHTML = `<i class="fas fa-info-circle text-slate-500"></i> কোটায় বয়সসীমা ৩২ বছর উত্তীর্ণ`;
-    }
-  }
-  
-  resultBox.classList.remove('hidden');
-}
-
-// =========================================================================
-// ৮. জমি পরিমাপ ও রূপান্তর ক্যালকুলেটর (Land Area Converter)
-// =========================================================================
-function initLandConverter() {
-  const shotokInput = document.getElementById('conv-shotok');
-  const kathaInput = document.getElementById('conv-katha');
-  const bighaInput = document.getElementById('conv-bigha');
-  const acreInput = document.getElementById('conv-acre');
-  const sqftInput = document.getElementById('conv-sqft');
-  
-  if (!shotokInput) return;
-  
-  function updateFromSqft(sqft) {
-    if (isNaN(sqft) || sqft < 0) sqft = 0;
-    shotokInput.value = (sqft / 435.6).toFixed(3);
-    kathaInput.value = (sqft / 718.74).toFixed(3);
-    bighaInput.value = (sqft / 14374.8).toFixed(3);
-    acreInput.value = (sqft / 43560).toFixed(4);
-    sqftInput.value = sqft.toFixed(2);
-  }
-
-  shotokInput.addEventListener('input', () => {
-    const val = parseFloat(shotokInput.value) || 0;
-    const sqft = val * 435.6;
-    kathaInput.value = (sqft / 718.74).toFixed(3);
-    bighaInput.value = (sqft / 14374.8).toFixed(3);
-    acreInput.value = (sqft / 43560).toFixed(4);
-    sqftInput.value = sqft.toFixed(2);
-  });
-
-  kathaInput.addEventListener('input', () => {
-    const val = parseFloat(kathaInput.value) || 0;
-    const sqft = val * 718.74;
-    shotokInput.value = (sqft / 435.6).toFixed(3);
-    bighaInput.value = (sqft / 14374.8).toFixed(3);
-    acreInput.value = (sqft / 43560).toFixed(4);
-    sqftInput.value = sqft.toFixed(2);
-  });
-
-  bighaInput.addEventListener('input', () => {
-    const val = parseFloat(bighaInput.value) || 0;
-    const sqft = val * 14374.8;
-    shotokInput.value = (sqft / 435.6).toFixed(3);
-    kathaInput.value = (sqft / 718.74).toFixed(3);
-    acreInput.value = (sqft / 43560).toFixed(4);
-    sqftInput.value = sqft.toFixed(2);
-  });
-
-  acreInput.addEventListener('input', () => {
-    const val = parseFloat(acreInput.value) || 0;
-    const sqft = val * 43560;
-    shotokInput.value = (sqft / 435.6).toFixed(3);
-    kathaInput.value = (sqft / 718.74).toFixed(3);
-    bighaInput.value = (sqft / 14374.8).toFixed(3);
-    sqftInput.value = sqft.toFixed(2);
-  });
-
-  sqftInput.addEventListener('input', () => {
-    const val = parseFloat(sqftInput.value) || 0;
-    updateFromSqft(val);
-  });
-}
-
-// =========================================================================
-// ৯. দলিল রেজিস্ট্রি ও স্ট্যাম্প ফি ক্যালকুলেটর ইঞ্জিন (Deed & Stamp Calculator)
-// =========================================================================
-function calculateDeedFees() {
-  const deedTypeElem = document.getElementById('deed-type');
-  const deedAreaElem = document.getElementById('deed-area');
-  const deedValElem = document.getElementById('deed-value');
-  
-  if (!deedTypeElem || !deedValElem) return;
-  
-  const deedType = deedTypeElem.value;
-  const area = deedAreaElem ? deedAreaElem.value : 'paurashava';
-  const val = parseFloat(deedValElem.value) || 0;
-  
-  let regFee = 0;
-  let stampFee = 0;
-  let localFee = 0;
-  let aitFee = 0;
-  let affidavit = 300;
-  let eFee = 350;
-  let badgeText = 'সাফ-কবলা দলিল';
-
-  if (deedType === 'saf-kabala') {
-    badgeText = 'সাফ-কবলা (বিক্রয় দলিল)';
-    regFee = Math.round(val * 0.01);
-    stampFee = Math.round(val * 0.015);
-    localFee = area === 'paurashava' ? Math.round(val * 0.03) : (area === 'city' ? Math.round(val * 0.03) : Math.round(val * 0.02));
-    aitFee = Math.round(val * 0.03);
-  } else if (deedType === 'heba') {
-    badgeText = 'হেবা / দানপত্র (রক্তের সম্পর্কে)';
-    regFee = 100;
-    stampFee = 200;
-    localFee = 0;
-    aitFee = 0;
-  } else if (deedType === 'partition') {
-    badgeText = 'বণ্টননামা দলিল (Partition)';
-    regFee = val > 500000 ? 2000 : (val > 100000 ? 1000 : 500);
-    stampFee = 50;
-    localFee = 0;
-    aitFee = 0;
-  } else if (deedType === 'mortgage') {
-    badgeText = 'ব্যাংক বন্ধকী দলিল (Mortgage)';
-    regFee = Math.round(val * 0.01);
-    stampFee = 2000;
-    localFee = 0;
-    aitFee = 0;
-  } else if (deedType === 'power') {
-    badgeText = 'আমমোক্তারনামা (Power of Attorney)';
-    regFee = 500;
-    stampFee = 1000;
-    localFee = 0;
-    aitFee = 0;
-  }
-
-  const total = regFee + stampFee + localFee + aitFee + affidavit + eFee;
-
-  const toBn = n => n.toLocaleString('bn-BD');
-
-  const badgeElem = document.getElementById('deed-type-badge');
-  if (badgeElem) badgeElem.innerText = badgeText;
-  
-  if (document.getElementById('fee-reg')) document.getElementById('fee-reg').innerText = toBn(regFee) + ' ৳';
-  if (document.getElementById('fee-stamp')) document.getElementById('fee-stamp').innerText = toBn(stampFee) + ' ৳';
-  if (document.getElementById('fee-local')) document.getElementById('fee-local').innerText = toBn(localFee) + ' ৳';
-  if (document.getElementById('fee-ait')) document.getElementById('fee-ait').innerText = toBn(aitFee) + ' ৳';
-  if (document.getElementById('fee-affidavit')) document.getElementById('fee-affidavit').innerText = toBn(affidavit) + ' ৳';
-  if (document.getElementById('fee-efee')) document.getElementById('fee-efee').innerText = toBn(eFee) + ' ৳';
-  if (document.getElementById('fee-total')) document.getElementById('fee-total').innerText = toBn(total) + ' ৳';
-}
-
-function getLiveServicesData() {
-  try {
-    const saved = localStorage.getItem('fayzar_services_data');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= 17) return parsed;
-    }
-  } catch(e) {}
-  return SERVICES_DATA;
-}
-
-// =========================================================================
-// ১০. এক্সপ্রেস প্রিন্ট ও ফাইল ড্রপ ইঞ্জিন (Express Print)
-// =========================================================================
-function initExpressPrint() {
-  const form = document.getElementById('express-print-form');
-  if (!form) return;
-  
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('exp-name').value.trim();
-    const phone = document.getElementById('exp-phone').value.trim();
-    const type = document.getElementById('exp-type').value;
-    const copies = document.getElementById('exp-copies').value || 1;
-    const notes = document.getElementById('exp-notes').value.trim();
-    
-    if (!name || !phone) {
-      showToast('অনুগ্রহ করে আপনার নাম ও মোবাইল নম্বর পূরণ করুন।', 'error');
-      return;
-    }
-    
-    const message = `*📄 ফয়জার কম্পিউটার - এক্সপ্রেস প্রিন্ট প্রি-অর্ডার*\n` +
-      `👤 গ্রাহকের নাম: ${name}\n` +
-      `📱 মোবাইল: ${phone}\n` +
-      `🖨️ প্রিন্ট টাইপ: ${type}\n` +
-      `📑 কপির সংখ্যা / পৃষ্ঠা: ${copies}\n` +
-      (notes ? `📝 নির্দেশাবলী: ${notes}\n` : '') +
-      `📎 আমি হোয়াটসঅ্যাপে আমার ফাইল/পিডিএফ এখনই পাঠাচ্ছি। অনুগ্রহ করে রেডি রাখবেন।`;
-      
-    const waUrl = `https://wa.me/8801717101919?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, '_blank');
-    showToast('হোয়াটসঅ্যাপে প্রিন্ট অর্ডার তৈরি হচ্ছে! ফাইলটি চ্যাটে এটাচ করুন।', 'success');
-  });
-}
-
-// =========================================================================
-// ১১. সেবাসমূহ ডায়নামিক স্বয়ংক্রিয় প্রদর্শনী ও ফিল্টার ইঞ্জিন (Zero-Blur Dynamic Carousel)
-// =========================================================================
-const SERVICE_CATEGORIES = [
-  { id: 'land', name: '🏛️ ভূমিসেবা' },
-  { id: 'online', name: '🌐 অনলাইন ও সরকারি সেবা' },
-  { id: 'computer', name: '💻 কম্পিউটার ও স্টুডিও' }
-];
-
-let autoCycleTimer = null;
-let autoCycleIndex = 0;
-let isAutoCyclePaused = false;
-let isViewAllActive = false;
-let isSwitchingServices = false;
-let currentServiceCategory = 'land';
-let currentServiceSearch = '';
-
-function renderServicesGrid(filterCategory = 'land', searchQuery = '', smoothTransition = true) {
-  const container = document.getElementById('services-grid-container');
-  const cycleBadgeText = document.getElementById('service-cycle-badge-text');
-  if (!container) return;
-  
-  currentServiceCategory = filterCategory;
-  currentServiceSearch = searchQuery;
-  
-  const allServices = getLiveServicesData();
-  let filtered = allServices;
-  
-  if (filterCategory !== 'all') {
-    filtered = filtered.filter(item => item.category === filterCategory);
-  }
-  
-  if (searchQuery.trim() !== '') {
-    const q = searchQuery.toLowerCase().trim();
-    filtered = filtered.filter(item => 
-      item.title.toLowerCase().includes(q) || 
-      item.summary.toLowerCase().includes(q) ||
-      (Array.isArray(item.documents) && item.documents.some(d => d.toLowerCase().includes(q)))
-    );
-  }
-
-  // Update cycle badge text
-  if (cycleBadgeText) {
-    if (filterCategory === 'all' || isViewAllActive) {
-      cycleBadgeText.innerHTML = `🌟 <strong>সকল সেবা একসাথে</strong> (${filtered.length} টি সেবা)`;
-    } else {
-      const catObj = SERVICE_CATEGORIES.find(c => c.id === filterCategory);
-      cycleBadgeText.innerHTML = `🔄 <strong>চলমান ক্যাটাগরি:</strong> ${catObj ? catObj.name : 'সেবাসমূহ'} (${filtered.length} টি সেবা)`;
-    }
-  }
-
-  function generateMarkup() {
-    if (filtered.length === 0) {
-      return `
-        <div class="col-span-full py-12 text-center bg-white dark:bg-[#1b263b] rounded-3xl border border-slate-200 dark:border-slate-700">
-          <i class="fas fa-search text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
-          <h4 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200">দুঃখিত, কোনো সেবা খুঁজে পাওয়া যায়নি!</h4>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">অন্য শব্দ দিয়ে অনুসন্ধান করুন অথবা সরাসরি আমাদের কল করুন।</p>
-          <a href="tel:01717101919" class="mt-4 inline-flex items-center gap-2 bg-brandGreen text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow hover:bg-emerald-700 transition">
-            <i class="fas fa-phone-alt"></i> 01717-101919
-          </a>
-        </div>
-      `;
-    }
-
-    let displayItems = filtered;
-    if (!isViewAllActive && currentServiceCategory !== 'all') {
-      displayItems = filtered.slice(0, 3);
-    }
-
-    return displayItems.map(item => {
-      const portalUrl = item.portal ? (item.portal.startsWith('http') ? item.portal : 'https://' + item.portal) : '';
-
-      return `
-        <div class="service-card-item bg-emerald-50/30 dark:bg-slate-800/90 rounded-3xl border border-slate-200/90 dark:border-slate-700/80 p-5 sm:p-6 shadow-sm hover:shadow-xl transition-shadow duration-200 flex flex-col justify-between group">
-          <div>
-            <!-- Card Header: Icon & Badges -->
-            <div class="flex items-start justify-between mb-4 gap-2">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-100 to-teal-50 dark:from-emerald-950/80 dark:to-teal-950/40 text-brandGreen dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs group-hover:scale-105 group-hover:bg-brandGreen group-hover:text-white transition duration-200">
-                <i class="fas ${item.icon || 'fa-landmark'}"></i>
-              </div>
-              <div class="flex flex-col items-end gap-1.5">
-                <span class="text-xs font-extrabold px-3 py-1 rounded-full border ${item.badgeColor || 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700'}">
-                  ${item.badge || 'ডিজিটাল সেবা'}
-                </span>
-                ${portalUrl ? `
-                  <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 px-2.5 py-0.5 rounded-lg border border-sky-200 dark:border-sky-800 transition flex items-center gap-1 font-mono shadow-xs truncate max-w-[150px]" title="অফিসিয়াল সরকারি পোর্টাল">
-                    <i class="fas fa-arrow-up-right-from-square text-[9px] text-sky-500"></i> <span class="truncate">${item.portal}</span>
-                  </a>
-                ` : ''}
-              </div>
-            </div>
-            
-            <!-- Service Title -->
-            <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-brandGreen dark:group-hover:text-emerald-400 transition leading-snug" title="${item.title}">
-              ${item.title}
-            </h3>
-            
-            <!-- Service Summary -->
-            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-4 leading-relaxed line-clamp-2">
-              ${item.summary}
-            </p>
-            
-            <!-- Service Fee & Duration Box -->
-            <div class="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-[#162035] p-3 rounded-2xl border border-slate-100 dark:border-slate-700/60 mb-4 text-xs">
-              <div>
-                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-hand-holding-dollar text-emerald-500 mr-1"></i>সার্ভিস চার্জ</span>
-                <strong class="text-emerald-600 dark:text-emerald-400 font-extrabold text-xs sm:text-sm">${item.serviceFee}</strong>
-              </div>
-              <div>
-                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-medium"><i class="fas fa-clock text-blue-500 mr-1"></i>সময়সীমা</span>
-                <strong class="text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm">${item.duration}</strong>
-              </div>
-            </div>
-
-            <!-- Documents Preview -->
-            ${Array.isArray(item.documents) && item.documents.length > 0 ? `
-              <div class="bg-emerald-50/60 dark:bg-emerald-950/30 px-3 py-2 rounded-xl border border-emerald-100/80 dark:border-emerald-900/40 mb-4 flex items-center gap-2 text-xs text-emerald-900 dark:text-emerald-300">
-                <i class="fas fa-file-shield text-emerald-600 dark:text-emerald-400 text-sm"></i>
-                <span class="truncate font-medium">প্রয়োজনীয় কাগজ: <strong>${item.documents[0]}</strong> সহ ${item.documents.length}টি নথি</span>
-              </div>
-            ` : ''}
-          </div>
-          
-          <!-- Action Buttons -->
-          <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-2 gap-2">
-            <button onclick="openServiceModal('${item.id}')" class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-800 dark:text-slate-200 hover:text-brandGreen dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-600 font-bold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs">
-              <i class="fas fa-list-check text-brandGreen dark:text-emerald-400"></i> বিস্তারিত
-            </button>
-            <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার ওয়েবসাইট থেকে "${item.title}" সেবাটি সম্পর্কে জানতে বা আবেদন করতে চাচ্ছি।`)}" target="_blank" class="w-full bg-brandGreen hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg">
-              <i class="fab fa-whatsapp text-sm"></i> আবেদন করুন
-            </a>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // Smooth zero-blur opacity cross-fade
-  if (smoothTransition && container.children.length > 0) {
-    if (isSwitchingServices) return;
-    isSwitchingServices = true;
-    container.classList.add('is-transitioning');
-    
-    setTimeout(() => {
-      container.innerHTML = generateMarkup();
-      container.classList.remove('is-transitioning');
-      isSwitchingServices = false;
-    }, 180);
-  } else {
-    container.innerHTML = generateMarkup();
-  }
-}
-
-function openServiceModal(serviceId) {
-  const services = getLiveServicesData();
-  const service = services.find(s => s.id === serviceId);
-  if (!service) return;
-
-  const portalUrl = service.portal ? (service.portal.startsWith('http') ? service.portal : 'https://' + service.portal) : '';
-
-  const modalBody = document.getElementById('modal-body-content');
-  if (!modalBody) return;
-
-  modalBody.innerHTML = `
-    <div class="p-6 sm:p-8 space-y-5 max-h-[85vh] overflow-y-auto custom-scrollbar">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-brandGreen flex items-center justify-center text-xl shadow-sm">
-            <i class="fas ${service.icon || 'fa-star'}"></i>
-          </div>
-          <div>
-            <span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full ${service.badgeColor || 'bg-emerald-100 text-emerald-800 border-emerald-300'}">
-              ${service.badge || 'ডিজিটাল সেবা'}
-            </span>
-            <h3 class="text-xl font-extrabold text-slate-900 mt-1">${service.title}</h3>
-          </div>
-        </div>
-        <button onclick="closeServiceModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-base transition">
-          <i class="fas fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-        <div class="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200/80">
-          <span class="text-amber-700 font-bold block mb-0.5"><i class="fas fa-coins text-amber-500 mr-1"></i> সরকারি ফি:</span>
-          <span class="text-slate-900 font-black text-sm">${service.govtFee}</span>
-        </div>
-        <div class="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-200/80">
-          <span class="text-emerald-700 font-bold block mb-0.5"><i class="fas fa-desktop text-emerald-600 mr-1"></i> কম্পিউটার সার্ভিস চার্জ:</span>
-          <span class="text-brandGreen font-black text-sm">${service.serviceFee}</span>
-        </div>
-        <div class="bg-blue-50/80 p-3.5 rounded-2xl border border-blue-200/80">
-          <span class="text-blue-700 font-bold block mb-0.5"><i class="fas fa-clock text-blue-500 mr-1"></i> আনুমানিক সময়:</span>
-          <span class="text-slate-900 font-black text-sm">${service.duration}</span>
-        </div>
-      </div>
-
-      ${portalUrl ? `
-        <div class="bg-gradient-to-r from-sky-50 via-sky-50 to-blue-50 p-4 rounded-2xl border border-sky-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center text-base shadow">
-              <i class="fas fa-globe"></i>
-            </div>
-            <div>
-              <div class="text-xs font-bold text-slate-800">অফিসিয়াল সরকারি ওয়েবসাইট / পোর্টাল:</div>
-              <div class="text-xs font-mono font-bold text-sky-700">${service.portal}</div>
-            </div>
-          </div>
-          <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md">
-            <span>সরাসরি পোর্টালে যান</span> <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
-      ` : ''}
-
-      <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
-        <h4 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-          <i class="fas fa-list-check text-brandGreen"></i> প্রয়োজনীয় কাগজপত্রের পূর্ণাঙ্গ তালিকা (${Array.isArray(service.documents) ? service.documents.length : 0} টি):
-        </h4>
-        <ul class="space-y-2 text-xs text-slate-700">
-          ${Array.isArray(service.documents) ? service.documents.map((doc, idx) => `
-            <li class="flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-100 shadow-sm">
-              <span class="w-5 h-5 rounded-full bg-emerald-100 text-brandGreen flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5">${idx + 1}</span>
-              <span class="font-medium">${doc}</span>
-            </li>
-          `).join('') : ''}
-        </ul>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-3 pt-2">
-        <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার ওয়েবসাইট থেকে "${service.title}" সেবাটি অনলাইনে করাতে চাচ্ছি। প্রয়োজনীয় ডকুমেন্টস রেডি আছে।`)}" target="_blank" class="flex-1 bg-brandGreen hover:bg-emerald-700 text-white font-extrabold py-3.5 px-5 rounded-2xl text-center text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
-          <i class="fab fa-whatsapp text-lg"></i> সরাসরি আবেদন সম্পন্ন করুন
-        </a>
-        <button onclick="closeServiceModal()" class="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition">
-          বন্ধ করুন
-        </button>
-      </div>
-    </div>
-  `;
-
-  const modal = document.getElementById('service-detail-modal');
-  if (modal) modal.classList.remove('hidden');
-}
-
-function closeServiceModal() {
-  const modal = document.getElementById('service-detail-modal');
-  if (modal) modal.classList.add('hidden');
-}
-
-const SERVICE_TAB_CATEGORIES = ['land', 'online', 'computer'];
-let isServicesHovered = false;
-
-function updateServiceTabUI(category) {
-  const tabs = document.querySelectorAll('.service-tab-btn');
-  tabs.forEach(t => {
-    const cat = t.getAttribute('data-category');
-    if (cat === category) {
-      t.classList.add('active', 'bg-brandGreen', 'text-white');
-      t.classList.remove('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-    } else {
-      t.classList.remove('active', 'bg-brandGreen', 'text-white');
-      t.classList.add('bg-white', 'dark:bg-[#1b263b]', 'text-slate-700', 'dark:text-slate-200');
-    }
-  });
-}
-
-function cycleNextServiceCategory() {
-  if (isServicesHovered || isViewAllActive || (currentServiceSearch && currentServiceSearch.trim() !== '')) return;
-  autoCycleIndex = (autoCycleIndex + 1) % SERVICE_TAB_CATEGORIES.length;
-  const nextCategory = SERVICE_TAB_CATEGORIES[autoCycleIndex];
-  updateServiceTabUI(nextCategory);
-  renderServicesGrid(nextCategory, '', true);
-}
-
-function startServicesAutoCycle() {
-  if (autoCycleTimer) return;
-  autoCycleTimer = setInterval(cycleNextServiceCategory, 3500);
-}
-
-function stopServicesAutoCycle() {
-  if (autoCycleTimer) {
-    clearInterval(autoCycleTimer);
-    autoCycleTimer = null;
-  }
-}
-
-function initTabs() {
-  const tabs = document.querySelectorAll('.service-tab-btn');
-  const gridContainer = document.getElementById('services-grid-container');
-  const expandBtn = document.getElementById('toggle-services-expand-btn');
-  const expandText = document.getElementById('toggle-services-expand-text');
-
-  // Pause on mouse hover so user can read / click peacefully
-  if (gridContainer) {
-    gridContainer.addEventListener('mouseenter', () => {
-      isServicesHovered = true;
-    });
-    gridContainer.addEventListener('mouseleave', () => {
-      isServicesHovered = false;
-    });
-  }
-
-  // Category Tab Clicks
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const category = tab.getAttribute('data-category');
-      
-      if (category === 'all') {
-        openViewAllServices();
-        return;
-      }
-      
-      // If user clicked a specific category tab
-      if (isViewAllActive) {
-        closeViewAllServices(false);
-      }
-      
-      autoCycleIndex = SERVICE_TAB_CATEGORIES.indexOf(category);
-      if (autoCycleIndex === -1) autoCycleIndex = 0;
-      
-      updateServiceTabUI(category);
-      renderServicesGrid(category, '', true);
-      
-      // Pause rotation temporarily for 8 seconds when clicked manually
-      isServicesHovered = true;
-      setTimeout(() => {
-        isServicesHovered = false;
-      }, 8000);
-    });
-  });
-
-  // Open "View All Services"
-  function openViewAllServices() {
-    isViewAllActive = true;
-    updateServiceTabUI('all');
-    renderServicesGrid('all', '', true);
-    if (expandText) expandText.innerHTML = `⏱️ সংক্ষেপে দেখুন (অটো-প্রদর্শনী চালু করুন)`;
-  }
-
-  function closeViewAllServices(scrollBack = false) {
-    isViewAllActive = false;
-    if (expandText) expandText.innerHTML = `👁️ সকল সেবা একসাথে দেখুন (১৪+ টি সেবা)`;
-    
-    const defaultCat = SERVICE_TAB_CATEGORIES[autoCycleIndex] || 'land';
-    updateServiceTabUI(defaultCat);
-    renderServicesGrid(defaultCat, '', true);
-    
-    if (scrollBack) {
-      const sec = document.getElementById('all-services');
-      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
-
-  // Expand Button Handler
-  if (expandBtn) {
-    expandBtn.addEventListener('click', () => {
-      if (!isViewAllActive) {
-        openViewAllServices();
-      } else {
-        closeViewAllServices(true);
-      }
-    });
-  }
-
-  // Smart Tools Tabs
-  const toolTabs = document.querySelectorAll('.tool-tab-btn');
-  toolTabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      toolTabs.forEach(b => {
-        b.classList.remove('active', 'bg-brandGreen', 'text-white');
-        b.classList.add('bg-white', 'text-slate-700');
-      });
-      btn.classList.add('active', 'bg-brandGreen', 'text-white');
-      btn.classList.remove('bg-white', 'text-slate-700');
-      
-      const target = btn.getAttribute('data-tool-target');
-      document.querySelectorAll('.tool-panel').forEach(panel => {
-        panel.classList.add('hidden');
-      });
-      const activePanel = document.getElementById(target);
-      if (activePanel) activePanel.classList.remove('hidden');
-    });
-  });
-}
-
-// =========================================================================
-// ১২. লাইভ সার্চ ইঞ্জিন
-// =========================================================================
-function initLiveSearch() {
+function initHeroSearch() {
   const searchInput = document.getElementById('hero-live-search');
   const suggestionsBox = document.getElementById('search-suggestions');
-  
   if (!searchInput || !suggestionsBox) return;
-  
+
   searchInput.addEventListener('input', (e) => {
     const val = e.target.value.trim().toLowerCase();
-    
-    if (val.length < 2) {
+    if (!val) {
       suggestionsBox.classList.add('hidden');
       suggestionsBox.innerHTML = '';
       return;
     }
-    
-    const allServices = getLiveServicesData();
-    const matches = allServices.filter(item => 
-      item.title.toLowerCase().includes(val) || 
-      item.summary.toLowerCase().includes(val) ||
-      (Array.isArray(item.documents) && item.documents.some(d => d.toLowerCase().includes(val)))
-    );
-    
-    if (matches.length > 0) {
-      suggestionsBox.innerHTML = matches.map(item => `
-        <div onclick="selectSearchResult('${item.id}')" class="p-3.5 hover:bg-emerald-50 dark:hover:bg-slate-800 cursor-pointer border-b border-gray-100 dark:border-slate-800 last:border-0 flex items-center justify-between group transition">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-brandGreen flex items-center justify-center text-sm">
-              <i class="fas ${item.icon}"></i>
-            </div>
-            <div>
-              <div class="text-sm font-bold text-gray-800 dark:text-slate-200 group-hover:text-brandGreen">${item.title}</div>
-              <div class="text-xs text-gray-500 dark:text-slate-400">${item.summary.substring(0, 50)}...</div>
-            </div>
-          </div>
-          <span class="text-xs font-semibold text-brandGold group-hover:underline flex items-center gap-1">
-            দেখুন <i class="fas fa-chevron-right text-[10px]"></i>
-          </span>
-        </div>
-      `).join('');
-      suggestionsBox.classList.remove('hidden');
-    } else {
+
+    const matchedServices = allServices.filter(s => s.title.toLowerCase().includes(val) || (s.summary && s.summary.toLowerCase().includes(val))).slice(0, 4);
+    const matchedNotices = allNotices.filter(n => n.title.toLowerCase().includes(val) || (n.summary && n.summary.toLowerCase().includes(val))).slice(0, 3);
+
+    if (matchedServices.length === 0 && matchedNotices.length === 0) {
       suggestionsBox.innerHTML = `
-        <div class="p-4 text-center text-xs text-gray-500 dark:text-slate-400">
-          কোনো ফলাফল পাওয়া যায়নি। সরাসরি কল করতে পারেন: <strong>01717-101919</strong>
+        <div class="p-4 text-xs font-bold text-slate-500 text-center">
+          "${e.target.value}" সম্পর্কিত কোনো সেবা বা নোটিশ পাওয়া যায়নি।
         </div>
       `;
       suggestionsBox.classList.remove('hidden');
+      return;
     }
+
+    let html = '<div class="divide-y divide-slate-100 dark:divide-slate-700 max-h-72 overflow-y-auto">';
+    if (matchedServices.length > 0) {
+      html += '<div class="bg-slate-50 dark:bg-slate-900/80 px-4 py-1.5 text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">সেবাসমূহ</div>';
+      matchedServices.forEach(s => {
+        html += `
+          <a href="services.html" class="flex items-center justify-between p-3 hover:bg-emerald-50 dark:hover:bg-slate-700/60 transition group">
+            <div class="flex items-center gap-2.5">
+              <i class="fas ${s.icon || 'fa-landmark'} text-emerald-600 text-xs"></i>
+              <div>
+                <div class="text-xs font-black text-slate-800 dark:text-slate-100 group-hover:text-emerald-600">${s.title}</div>
+                <div class="text-[10px] text-slate-500">${s.serviceFee || 'ফি দেখুন'}</div>
+              </div>
+            </div>
+            <i class="fas fa-chevron-right text-[10px] text-slate-400"></i>
+          </a>
+        `;
+      });
+    }
+
+    if (matchedNotices.length > 0) {
+      html += '<div class="bg-slate-50 dark:bg-slate-900/80 px-4 py-1.5 text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-wider">চলমান নোটিশ</div>';
+      matchedNotices.forEach(n => {
+        html += `
+          <a href="notices.html" class="flex items-center justify-between p-3 hover:bg-blue-50 dark:hover:bg-slate-700/60 transition group">
+            <div class="flex items-center gap-2.5">
+              <i class="fas fa-bullhorn text-blue-600 text-xs"></i>
+              <div>
+                <div class="text-xs font-black text-slate-800 dark:text-slate-100 group-hover:text-blue-600">${n.title}</div>
+                <div class="text-[10px] text-rose-500 font-bold">শেষ: ${n.deadline}</div>
+              </div>
+            </div>
+            <i class="fas fa-chevron-right text-[10px] text-slate-400"></i>
+          </a>
+        `;
+      });
+    }
+
+    html += '</div>';
+    suggestionsBox.innerHTML = html;
+    suggestionsBox.classList.remove('hidden');
   });
 
   document.addEventListener('click', (e) => {
@@ -1714,447 +556,2264 @@ function initLiveSearch() {
   });
 }
 
-function selectSearchResult(id) {
-  const suggestionsBox = document.getElementById('search-suggestions');
-  if (suggestionsBox) suggestionsBox.classList.add('hidden');
-  openServiceModal(id);
-}
-
 // =========================================================================
-// ১৩. ডিজিটাল ও ভূমিসেবা ক্যালকুলেটর ও চেকলিস্ট ডায়নামিক অটো-সাইকেল ইঞ্জিন
+// ৫. মোবাইল ড্রয়ার ও মেনু (স্মার্ট অটো-হাইড ও ৫ সেকেন্ড নিষ্ক্রিয়তায় স্বয়ংক্রিয় বন্ধ)
 // =========================================================================
-let calcCycleTimer = null;
-let calcCycleIndex = 0;
-let isCalcHovered = false;
-let isCalcSwitching = false;
-let orderedServicesList = [];
-
-function cycleNextLandCalcService() {
-  if (isCalcHovered || orderedServicesList.length === 0) return;
-  calcCycleIndex = (calcCycleIndex + 1) % orderedServicesList.length;
-  const nextService = orderedServicesList[calcCycleIndex];
-  if (nextService) {
-    const selectElem = document.getElementById('calc-service-select');
-    if (selectElem) selectElem.value = nextService.id;
-    updateLandCalculatorDisplay(nextService.id, true);
-  }
-}
-
-function startCalcAutoCycle() {
-  if (calcCycleTimer) return;
-  calcCycleTimer = setInterval(cycleNextLandCalcService, 4000);
-}
-
-function stopCalcAutoCycle() {
-  if (calcCycleTimer) {
-    clearInterval(calcCycleTimer);
-    calcCycleTimer = null;
-  }
-}
-
-function initLandCalculator() {
-  const selectElem = document.getElementById('calc-service-select');
-  const displayContainer = document.getElementById('calc-result-display');
-  if (!selectElem) return;
-  
-  const preferredOrder = [
-    'e-mutation',
-    'ld-tax',
-    'khatian',
-    'mouza-map',
-    'miss-case',
-    'e-passport',
-    'police-clearance',
-    'online-gd',
-    'nid-correct',
-    'nid-download',
-    'tin-cert',
-    'e-return',
-    'trade-lic',
-    'driving'
-  ];
-
-  const allServices = getLiveServicesData();
-  orderedServicesList = [];
-
-  preferredOrder.forEach(id => {
-    const found = allServices.find(s => s.id === id && s.category !== 'computer');
-    if (found) orderedServicesList.push(found);
-  });
-
-  allServices.forEach(s => {
-    if (s.category !== 'computer' && !orderedServicesList.some(item => item.id === s.id)) {
-      orderedServicesList.push(s);
-    }
-  });
-
-  selectElem.innerHTML = orderedServicesList.map(s => `
-    <option value="${s.id}">${s.title}</option>
-  `).join('');
-
-  // Pause on hover
-  if (displayContainer) {
-    displayContainer.addEventListener('mouseenter', () => {
-      isCalcHovered = true;
-    });
-    displayContainer.addEventListener('mouseleave', () => {
-      isCalcHovered = false;
-    });
-  }
-
-  // Pause on select focus
-  selectElem.addEventListener('focus', () => {
-    isCalcHovered = true;
-  });
-  selectElem.addEventListener('blur', () => {
-    isCalcHovered = false;
-  });
-
-  // User Manual Selection
-  selectElem.addEventListener('change', () => {
-    const idx = orderedServicesList.findIndex(s => s.id === selectElem.value);
-    if (idx !== -1) calcCycleIndex = idx;
-    updateLandCalculatorDisplay(selectElem.value, true);
-
-    // Pause for 10s on manual change
-    isCalcHovered = true;
-    setTimeout(() => {
-      isCalcHovered = false;
-    }, 10000);
-  });
-  
-  if (orderedServicesList.length > 0) {
-    calcCycleIndex = 0;
-    updateLandCalculatorDisplay(orderedServicesList[0].id, false);
-  }
-}
-
-function updateLandCalculatorDisplay(serviceId, smoothTransition = true) {
-  const services = getLiveServicesData();
-  const service = services.find(s => s.id === serviceId);
-  if (!service) return;
-
-  const displayContainer = document.getElementById('calc-result-display');
-  const badgeTextElem = document.getElementById('calc-cycle-badge-text');
-  const selectElem = document.getElementById('calc-service-select');
-  if (!displayContainer) return;
-
-  if (selectElem && selectElem.value !== serviceId) {
-    selectElem.value = serviceId;
-  }
-
-  if (badgeTextElem && orderedServicesList.length > 0) {
-    const currentIndex = orderedServicesList.findIndex(s => s.id === serviceId);
-    const displayIndex = currentIndex !== -1 ? currentIndex + 1 : 1;
-    badgeTextElem.innerHTML = `🔄 <strong>স্বয়ংক্রিয় সেবা নির্দেশিকা:</strong> ${service.title} (${displayIndex}/${orderedServicesList.length})`;
-  }
-
-  const portalUrl = service.portal ? (service.portal.startsWith('http') ? service.portal : 'https://' + service.portal) : '';
-  
-  function generateCalcMarkup() {
-    return `
-      <div class="bg-emerald-50/70 dark:bg-emerald-950/30 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-800">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div>
-            <span class="text-xs font-bold px-3 py-1 rounded-full bg-brandGreen text-white">${service.badge}</span>
-            <h4 class="text-xl font-bold text-gray-900 dark:text-slate-100 mt-2">${service.title}</h4>
-          </div>
-          ${portalUrl ? `
-            <div class="flex flex-col sm:items-end gap-1">
-              <span class="text-[11px] text-gray-500 dark:text-slate-400 font-bold">অফিসিয়াল পোর্টাল:</span>
-              <a href="${portalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition">
-                <i class="fas fa-globe text-[11px]"></i> <span>${service.portal}</span> <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
-              </a>
-            </div>
-          ` : ''}
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-          <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
-            <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-coins text-amber-500 mr-1"></i> সরকারি ফি:</div>
-            <div class="text-sm font-extrabold text-red-600 dark:text-rose-400">${service.govtFee}</div>
-          </div>
-          <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
-            <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-desktop text-brandGreen mr-1"></i> কম্পিউটার চার্জ:</div>
-            <div class="text-sm font-extrabold text-brandGreen dark:text-emerald-400">${service.serviceFee}</div>
-          </div>
-          <div class="bg-white dark:bg-[#1b263b] p-3.5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm">
-            <div class="text-xs text-gray-500 dark:text-slate-400 font-semibold mb-1"><i class="fas fa-clock text-blue-500 mr-1"></i> আনুমানিক সময়:</div>
-            <div class="text-sm font-extrabold text-gray-800 dark:text-slate-200">${service.duration}</div>
-          </div>
-        </div>
-        
-        <div class="bg-white dark:bg-[#1b263b] p-5 rounded-xl border border-emerald-100 dark:border-slate-700 shadow-sm mb-5">
-          <h5 class="text-sm font-bold text-gray-800 dark:text-slate-200 mb-3 flex items-center gap-2">
-            <i class="fas fa-tasks text-brandGreen"></i> সাথে যে যে কাগজপত্র আনতে হবে (চেকলিস্ট):
-          </h5>
-          <div class="space-y-2.5">
-            ${service.documents.map((doc, idx) => `
-              <label class="flex items-start gap-2.5 text-xs text-gray-700 dark:text-slate-300 cursor-pointer select-none" onclick="isCalcHovered = true; setTimeout(() => { isCalcHovered = false; }, 8000);">
-                <input type="checkbox" id="chk-${idx}" class="mt-0.5 w-4 h-4 rounded text-brandGreen focus:ring-brandGreen accent-emerald-600 cursor-pointer">
-                <span>${doc}</span>
-              </label>
-            `).join('')}
-          </div>
-        </div>
-        
-        <div class="flex flex-col sm:flex-row gap-3">
-          <a href="https://wa.me/8801717101919?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি ফয়জার কম্পিউটার থেকে "${service.title}" সেবাটির জন্য প্রয়োজনীয় কাগজপত্র প্রস্তুত করেছি। বিস্তারিত সাহায্য প্রয়োজন।`)}" target="_blank" class="flex-1 bg-brandGreen hover:bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl text-center text-sm shadow-md transition flex items-center justify-center gap-2">
-            <i class="fab fa-whatsapp text-lg"></i> হোয়াটসঅ্যাপে সরাসরি পরামর্শ নিন
-          </a>
-          <a href="tel:01717101919" class="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-gray-800 dark:text-slate-200 border border-gray-300 dark:border-slate-600 font-bold py-3 px-5 rounded-xl text-center text-sm shadow-sm transition flex items-center justify-center gap-2">
-            <i class="fas fa-phone-alt text-brandGreen"></i> 01717-101919
-          </a>
-        </div>
-      </div>
-    `;
-  }
-
-  if (smoothTransition && displayContainer.children.length > 0) {
-    if (isCalcSwitching) return;
-    isCalcSwitching = true;
-    displayContainer.classList.add('is-transitioning');
-    setTimeout(() => {
-      displayContainer.innerHTML = generateCalcMarkup();
-      displayContainer.classList.remove('is-transitioning');
-      isCalcSwitching = false;
-    }, 180);
-  } else {
-    displayContainer.innerHTML = generateCalcMarkup();
-  }
-}
-
-// =========================================================================
-// ১৩.১ স্মার্ট ভিউপোর্ট অটো-প্লে ইঞ্জিন (Active Section Viewport Auto-Play)
-// =========================================================================
-function initViewportAutoPlayEngine() {
-  if (!('IntersectionObserver' in window)) {
-    startServicesAutoCycle();
-    startNoticesAutoCycle();
-    startCalcAutoCycle();
-    return;
-  }
-
-  const sectionIds = ['land-guide', 'notices-hub', 'all-services'];
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const id = entry.target.id;
-
-      if (entry.isIntersecting) {
-        if (id === 'land-guide') {
-          startCalcAutoCycle();
-          stopNoticesAutoCycle();
-          stopServicesAutoCycle();
-        } else if (id === 'notices-hub') {
-          startNoticesAutoCycle();
-          stopCalcAutoCycle();
-          stopServicesAutoCycle();
-        } else if (id === 'all-services') {
-          startServicesAutoCycle();
-          stopCalcAutoCycle();
-          stopNoticesAutoCycle();
-        }
-      } else {
-        if (id === 'land-guide') {
-          stopCalcAutoCycle();
-        } else if (id === 'notices-hub') {
-          stopNoticesAutoCycle();
-        } else if (id === 'all-services') {
-          stopServicesAutoCycle();
-        }
-      }
-    });
-  }, {
-    threshold: 0.25,
-    rootMargin: '0px 0px -40px 0px'
-  });
-
-  sectionIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) observer.observe(el);
-  });
-}
-
-// =========================================================================
-// ১৪. অনলাইন সেবা অর্ডার ফর্ম
-// =========================================================================
-function initQuickOrderForm() {
-  const form = document.getElementById('quick-service-form');
-  if (!form) return;
-  
-  const select = document.getElementById('order-service-select');
-  const allServices = getLiveServicesData();
-  if (select) {
-    select.innerHTML = `<option value="">-- আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন --</option>` +
-      allServices.map(s => `<option value="${s.title}">${s.title}</option>`).join('');
-  }
-  
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('order-name').value.trim();
-    const phone = document.getElementById('order-phone').value.trim();
-    const service = document.getElementById('order-service-select').value;
-    const notes = document.getElementById('order-notes').value.trim();
-    
-    if (!name || !phone || !service) {
-      showToast('অনুগ্রহ করে নাম, ফোন নম্বর এবং সেবার নাম পূরণ করুন।', 'error');
-      return;
-    }
-    
-    const message = `*অনলাইন সেবা আবেদন / পরামর্শ রিকুয়েস্ট*\n` +
-      `👤 গ্রাহকের নাম: ${name}\n` +
-      `📱 মোবাইল নম্বর: ${phone}\n` +
-      `📌 প্রয়োজনীয় সেবা: ${service}\n` +
-      (notes ? `📝 অতিরিক্ত তথ্য/বিবরণ: ${notes}\n` : '') +
-      `🌐 Fayzar Computer Website থেকে প্রেরিত`;
-      
-    const waUrl = `https://wa.me/8801717101919?text=${encodeURIComponent(message)}`;
-    window.open(waUrl, '_blank');
-    showToast('হোয়াটসঅ্যাপে মেসেজ পাঠানো হচ্ছে...', 'success');
-  });
-}
-
-// =========================================================================
-// ১৫. সাধারণ জিজ্ঞাসা ও উত্তর (FAQ)
-// =========================================================================
-function initFAQ() {
-  const faqButtons = document.querySelectorAll('.faq-toggle');
-  faqButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const content = btn.nextElementSibling;
-      const icon = btn.querySelector('.faq-icon');
-      
-      const isOpen = !content.classList.contains('hidden');
-      
-      document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
-      document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
-      
-      if (!isOpen) {
-        content.classList.remove('hidden');
-        if (icon) icon.classList.add('rotate-180');
-      }
-    });
-  });
-}
-
-// =========================================================================
-// ১৬. টোস্ট নোটিফিকেশন ও ক্লিপবোর্ড কপি
-// =========================================================================
-function showToast(message, type = 'info') {
-  let toast = document.getElementById('toast-notification');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toast-notification';
-    toast.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-full text-white text-xs sm:text-sm font-bold shadow-2xl transition-all duration-300 flex items-center gap-2 pointer-events-none';
-    document.body.appendChild(toast);
-  }
-  
-  if (type === 'success') {
-    toast.style.backgroundColor = '#047857';
-    toast.innerHTML = `<i class="fas fa-check-circle text-yellow-300"></i> ${message}`;
-  } else if (type === 'error') {
-    toast.style.backgroundColor = '#dc2626';
-    toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-  } else {
-    toast.style.backgroundColor = '#1e293b';
-    toast.innerHTML = `<i class="fas fa-info-circle text-sky-400"></i> ${message}`;
-  }
-  
-  toast.classList.add('show');
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3500);
-}
-
-function copyToClipboard(text, label = 'তথ্য') {
-  navigator.clipboard.writeText(text).then(() => {
-    showToast(`${label} ক্লিপবোর্ডে কপি করা হয়েছে: ${text}`, 'success');
-  }).catch(() => {
-    showToast(`কপি করা সম্ভব হয়নি।`, 'error');
-  });
-}
-
-function initBackToTop() {
-  const btn = document.getElementById('back-to-top-btn');
-  if (!btn) return;
-  
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) {
-      btn.classList.remove('hidden');
-    } else {
-      btn.classList.add('hidden');
-    }
-  });
-  
-  btn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-}
-
-function initMobileDrawer() {
+function initMobileMenu() {
   const toggleBtn = document.getElementById('mobile-menu-toggle');
   const drawer = document.getElementById('mobile-drawer');
-  const closeBtn = document.getElementById('mobile-drawer-close');
-  
-  if (toggleBtn && drawer) {
-    toggleBtn.addEventListener('click', () => {
-      drawer.classList.toggle('hidden');
+  if (!toggleBtn || !drawer) return;
+
+  let autoHideTimeout = null;
+
+  function clearAutoHide() {
+    if (autoHideTimeout) {
+      clearTimeout(autoHideTimeout);
+      autoHideTimeout = null;
+    }
+  }
+
+  function startAutoHide() {
+    clearAutoHide();
+    // ব্যবহারকারী কোনো ক্লিক না করলে ৫ সেকেন্ড পর ড্রয়ার একা একাই বন্ধ হয়ে যাবে
+    autoHideTimeout = setTimeout(() => {
+      closeDrawer();
+    }, 5000);
+  }
+
+  function closeDrawer() {
+    clearAutoHide();
+    if (!drawer.classList.contains('hidden')) {
+      drawer.classList.add('hidden');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      const icon = toggleBtn.querySelector('i');
+      if (icon) {
+        icon.className = 'fas fa-bars text-base';
+      }
+    }
+  }
+
+  function openDrawer() {
+    drawer.classList.remove('hidden');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    const icon = toggleBtn.querySelector('i');
+    if (icon) {
+      icon.className = 'fas fa-times text-base text-rose-500';
+    }
+    startAutoHide();
+  }
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (drawer.classList.contains('hidden')) {
+      openDrawer();
+    } else {
+      closeDrawer();
+    }
+  });
+
+  // ড্রয়ারে মাউস রাখলে বা টাচ করলে ৫ সেকেন্ডের কাউন্টডাউন থামবে, বাইরে সরালে আবার শুরু হবে
+  drawer.addEventListener('mouseenter', clearAutoHide);
+  drawer.addEventListener('mouseleave', startAutoHide);
+  drawer.addEventListener('touchstart', clearAutoHide, { passive: true });
+  drawer.addEventListener('touchend', startAutoHide, { passive: true });
+
+  // ১. ড্রয়ারের ভেতরে যেকোনো লিংকে ক্লিক করলে সাথে সাথে বন্ধ হবে
+  drawer.querySelectorAll('a, button').forEach(link => {
+    link.addEventListener('click', () => {
+      closeDrawer();
+    });
+  });
+
+  // ২. ড্রয়ারের বাইরে পেজের যেকোনো ফাঁকা স্থানে ক্লিক বা টাচ করলে সাথে সাথে বন্ধ হবে
+  const handleOutsideClose = (e) => {
+    if (!drawer.contains(e.target) && !toggleBtn.contains(e.target)) {
+      closeDrawer();
+    }
+  };
+  document.addEventListener('click', handleOutsideClose);
+  document.addEventListener('touchstart', handleOutsideClose, { passive: true });
+  document.addEventListener('pointerdown', handleOutsideClose);
+
+  // ৩. ব্যবহারকারী পেজ স্ক্রোল করতে শুরু করলে সাথে সাথে বন্ধ হবে
+  window.addEventListener('scroll', () => {
+    if (!drawer.classList.contains('hidden')) {
+      closeDrawer();
+    }
+  }, { passive: true });
+
+  // ৪. কীবোর্ডের ESC চাপলে বন্ধ হবে
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeDrawer();
+    }
+  });
+
+  // ৫. স্ক্রিন বড় (ডেস্কটপ >= 1024px) হলে নিজে থেকে বন্ধ হয়ে যাবে
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024) {
+      closeDrawer();
+    }
+  });
+}
+
+// =========================================================================
+// ৬. ডেটা লোড ও ইনিশিয়ালাইজেশন
+// =========================================================================
+async function loadDataAndRender() {
+  try {
+    const sRes = await fetch('data/services.json');
+    if (sRes.ok) {
+      const fetchedServices = await sRes.json();
+      if (Array.isArray(fetchedServices) && fetchedServices.length > 0) {
+        allServices = fetchedServices;
+      }
+    }
+  } catch(e) {
+    allServices = ALL_SERVICES_DATA;
+  }
+
+  try {
+    const nRes = await fetch('data/notices.json');
+    if (nRes.ok) {
+      const fetchedNotices = await nRes.json();
+      if (Array.isArray(fetchedNotices) && fetchedNotices.length > 0) {
+        allNotices = fetchedNotices;
+      }
+    }
+  } catch(e) {
+    allNotices = ALL_NOTICES_DATA;
+  }
+
+  // সাইট কনফিগারেশন লোড (অ্যাডমিন প্যানেল থেকে সংরক্ষিত)
+  try {
+    const cfgRes = await fetch('data/site_config.json');
+    if (cfgRes.ok) {
+      const siteConfig = await cfgRes.json();
+      if (siteConfig && siteConfig.sections) {
+        if (siteConfig.sections.checklist === false) {
+          const chkSec = document.getElementById('home-checklist-section');
+          if (chkSec) chkSec.style.display = 'none';
+        }
+      }
+    }
+  } catch(e) {}
+
+  // Populate Dropdowns in forms
+  populateServiceSelects();
+
+  // Render on Homepage
+  renderHomepageComponents();
+
+  // Render on Services Page (All 19 Services)
+  renderServicesPage();
+
+  // Render on Notices Page
+  renderNoticesPage();
+}
+
+function populateServiceSelects() {
+  const selects = [
+    document.getElementById('order-service-select'),
+    document.getElementById('calc-service-select')
+  ];
+
+  selects.forEach(sel => {
+    if (!sel) return;
+    sel.innerHTML = allServices.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+  });
+}
+
+// Helpers for Category Color Badges
+function getServiceIconBg(category) {
+  if (category === 'land') return 'from-emerald-500 to-teal-700 text-white';
+  if (category === 'online') return 'from-blue-600 to-indigo-700 text-white';
+  return 'from-purple-600 to-indigo-800 text-white';
+}
+
+function getServiceBadgeClass(category) {
+  if (category === 'land') return 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
+  if (category === 'online') return 'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 border border-blue-300 dark:border-blue-800';
+  return 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800';
+}
+
+// Bangla Number formatting helper
+function toBanglaNumber(num) {
+  if (num === null || num === undefined) return '';
+  const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return String(num).replace(/\d/g, d => bnDigits[d]);
+}
+
+// Homepage Renderer with High-Contrast Rich Cards & Smooth Infinite Auto-Rotation
+// Homepage Renderer with Viewport-Aware Auto-Rotation & Card-Only Hover Pause
+function renderHomepageComponents() {
+  const noticeContainer = document.getElementById('home-notices-container');
+  const noticeSection = document.getElementById('home-notices-section');
+
+  const checklistSection = document.getElementById('home-checklist-section');
+  const calcSelect = document.getElementById('calc-service-select');
+  const calcResult = document.getElementById('calc-result-display');
+
+  const serviceContainer = document.getElementById('home-services-container');
+  const serviceSection = document.getElementById('home-services-section');
+
+  // =========================================================================
+  // ভিউপোর্ট ভিজিবিলিটি ডিটেক্টর (IntersectionObserver):
+  // ব্যবহারকারী যে সেকশনটি বর্তমানে স্ক্রিনে দেখছেন, শুধুমাত্র সেটিই অটো-রোটেট হবে।
+  // =========================================================================
+  let isNoticeInView = false;
+  let isChecklistInView = false;
+  let isServiceInView = false;
+
+  if ('IntersectionObserver' in window) {
+    const viewportObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.target === noticeSection) {
+          isNoticeInView = entry.isIntersecting;
+        } else if (entry.target === checklistSection) {
+          isChecklistInView = entry.isIntersecting;
+        } else if (entry.target === serviceSection) {
+          isServiceInView = entry.isIntersecting;
+        }
+      });
+    }, { threshold: 0.15 });
+
+    if (noticeSection) viewportObserver.observe(noticeSection);
+    if (checklistSection) viewportObserver.observe(checklistSection);
+    if (serviceSection) viewportObserver.observe(serviceSection);
+  } else {
+    isNoticeInView = true;
+    isChecklistInView = true;
+    isServiceInView = true;
+  }
+
+  // ==========================================
+  // ১. হিরো ব্যানারে কমপ্যাক্ট নোটিশ বুলেটিন
+  // ==========================================
+  if (noticeContainer && allNotices && allNotices.length > 0) {
+    const noticePageSize = 3;
+    const totalNoticePages = Math.ceil(allNotices.length / noticePageSize);
+    let currentNoticePage = 0;
+    let noticeAutoTimer = null;
+    let isNoticeCardHovered = false;
+
+    const noticeIndicator = document.getElementById('notice-page-indicator');
+    const noticeDotsContainer = document.getElementById('notice-dots-container');
+    const noticePrevBtn = document.getElementById('notice-prev-btn');
+    const noticeNextBtn = document.getElementById('notice-next-btn');
+
+    function updateNoticeCycleStatus(hovered) {
+      const statusEl = document.getElementById('notices-cycle-status');
+      if (!statusEl) return;
+      if (hovered) {
+        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span> বিরতি (নোটিশে মাউস)';
+        statusEl.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-400/40';
+      } else {
+        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 status-dot-open"></span> অটো-রোটেশন সচল';
+        statusEl.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-400/40';
+      }
+    }
+
+    function renderNoticesPage(pageIdx) {
+      currentNoticePage = (pageIdx + totalNoticePages) % totalNoticePages;
+      const start = currentNoticePage * noticePageSize;
+      let noticesToShow = allNotices.slice(start, start + noticePageSize);
+      
+      if (noticesToShow.length < noticePageSize && allNotices.length >= noticePageSize) {
+        const needed = noticePageSize - noticesToShow.length;
+        noticesToShow = noticesToShow.concat(allNotices.slice(0, needed));
+      }
+
+      noticeContainer.innerHTML = noticesToShow.map((n, idx) => {
+        const isJob = n.category === 'jobs';
+        return `
+          <div class="notice-card ${isJob ? 'card-accent-job' : 'card-accent-college'} p-3.5 sm:p-4 flex flex-col justify-between rotate-card-enter stagger-${idx + 1} bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-lg border border-white/20 dark:border-slate-700/60 rounded-2xl">
+            <div>
+              <div class="flex items-center justify-between gap-1.5 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${isJob ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white' : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'} shadow-xs">
+                  ${n.badge || (isJob ? 'চাকরি সার্কুলার' : 'স্কুল-কলেজ')}
+                </span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center gap-1">
+                  <i class="fas fa-clock text-[9px]"></i> শেষ: ${n.deadline}
+                </span>
+              </div>
+
+              <h3 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-snug mb-1 line-clamp-2">
+                ${n.title}
+              </h3>
+              <div class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 mb-2 flex items-center gap-1 truncate">
+                <i class="fas fa-building text-[9px]"></i> ${n.dept || n.org || 'সরকারি প্রতিষ্ঠান'}
+              </div>
+              <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed mb-3 line-clamp-2">${n.summary || n.details || ''}</p>
+            </div>
+
+            <a href="notices.html" class="w-full bg-slate-100 dark:bg-slate-700/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-800 dark:text-slate-100 font-extrabold text-[11px] py-1.5 px-3 rounded-xl transition flex items-center justify-between border border-slate-200 dark:border-slate-600 shadow-xs">
+              <span>বিস্তারিত ও আবেদন গাইড</span>
+              <i class="fas fa-arrow-right text-[10px]"></i>
+            </a>
+          </div>
+        `;
+      }).join('');
+
+      if (noticeIndicator) {
+        noticeIndicator.textContent = `${toBanglaNumber(currentNoticePage + 1)}/${toBanglaNumber(totalNoticePages)}`;
+      }
+
+      if (noticeDotsContainer) {
+        noticeDotsContainer.innerHTML = Array.from({ length: totalNoticePages }).map((_, i) => `
+          <button type="button" aria-label="স্লাইড ${i + 1}" class="h-1.5 rounded-full transition-all duration-300 ${i === currentNoticePage ? 'w-5 bg-amber-400' : 'w-1.5 bg-white/40 hover:bg-white/70'}" onclick="window.setHomeNoticePage(${i})"></button>
+        `).join('');
+      }
+    }
+
+    window.setHomeNoticePage = function(idx) {
+      renderNoticesPage(idx);
+      resetNoticeAutoTimer();
+    };
+
+    function nextNoticeSlide() {
+      renderNoticesPage(currentNoticePage + 1);
+    }
+
+    function prevNoticeSlide() {
+      renderNoticesPage(currentNoticePage - 1);
+    }
+
+    function startNoticeAutoTimer() {
+      clearInterval(noticeAutoTimer);
+      noticeAutoTimer = setInterval(() => {
+        // শুধুমাত্র ভিউপোর্টে দৃশ্যমান থাকলে এবং নোটিশ কার্ডের ওপর মাউস না থাকলে রোটেট হবে
+        if (isNoticeInView && !isNoticeCardHovered) {
+          nextNoticeSlide();
+        }
+      }, 3000);
+    }
+
+    function resetNoticeAutoTimer() {
+      startNoticeAutoTimer();
+    }
+
+    noticePrevBtn?.addEventListener('click', () => { prevNoticeSlide(); resetNoticeAutoTimer(); });
+    noticeNextBtn?.addEventListener('click', () => { nextNoticeSlide(); resetNoticeAutoTimer(); });
+
+    // শুধুমাত্র নোটিশ কার্ডের ওপর মাউস থাকলে বিরতি, অন্য কোথাও থাকলে অটো-রোটেট সচল থাকবে
+    noticeContainer.addEventListener('mouseover', (e) => {
+      if (e.target.closest('.notice-card')) {
+        isNoticeCardHovered = true;
+        updateNoticeCycleStatus(true);
+      }
+    });
+
+    noticeContainer.addEventListener('mouseout', (e) => {
+      const card = e.target.closest('.notice-card');
+      const nextCard = e.relatedTarget?.closest('.notice-card');
+      if (card && card !== nextCard) {
+        isNoticeCardHovered = false;
+        updateNoticeCycleStatus(false);
+      }
+    });
+
+    renderNoticesPage(0);
+    startNoticeAutoTimer();
+  }
+
+  // ==========================================
+  // ২. হোমপেজ চেকলিস্ট সেকশন (Auto-Rotating Checklist & Cost Calculator)
+  // কম্পিউটার ও স্টুডিও ক্যাটাগরির সেবাগুলোর চেকলিস্ট সম্পূর্ণ বন্ধ রাখা হয়েছে (শুধু সরকারি ভূমিসেবা ও অনলাইন নাগরিক সেবা রাখা)
+  // ==========================================
+  const checklistServices = (allServices || []).filter(s => s.category !== 'computer');
+
+  if (checklistSection && calcSelect && calcResult && checklistServices.length > 0) {
+    let currentChecklistIndex = 0;
+    let checklistAutoTimer = null;
+    let isChecklistCardHovered = false;
+
+    const checklistPrevBtn = document.getElementById('checklist-prev-btn');
+    const checklistNextBtn = document.getElementById('checklist-next-btn');
+    const checklistIndicator = document.getElementById('checklist-service-indicator');
+    const checklistCycleStatus = document.getElementById('checklist-cycle-status');
+
+    function updateChecklistStatus(hovered) {
+      if (!checklistCycleStatus) return;
+      if (hovered) {
+        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (বক্সে মাউস)';
+        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
+      } else {
+        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
+        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
+      }
+    }
+
+    // ড্রপডাউনে শুধুমাত্র ভূমিসেবা ও অনলাইন সেবা রাখা (কম্পিউটার ও স্টুডিও সেবা বাদ)
+    calcSelect.innerHTML = checklistServices.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+
+    function renderChecklist(serviceId) {
+      const s = checklistServices.find(item => item.id === serviceId) || checklistServices[0];
+      if (!s) return;
+
+      currentChecklistIndex = checklistServices.findIndex(item => item.id === s.id);
+      if (currentChecklistIndex === -1) currentChecklistIndex = 0;
+
+      calcSelect.value = s.id;
+
+      if (checklistIndicator) {
+        checklistIndicator.textContent = `সেবা ${toBanglaNumber(currentChecklistIndex + 1)}/${toBanglaNumber(checklistServices.length)}`;
+      }
+
+      calcResult.innerHTML = `
+        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4 fade-in">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="text-slate-500 dark:text-slate-400 text-[11px] block font-bold">সরকারি রাজস্ব ফি:</span>
+              <strong class="text-sm text-slate-900 dark:text-white block mt-1">${s.govtFee || 'সরকারি নিয়ম অনুযায়ী'}</strong>
+            </div>
+            <div class="bg-emerald-50/50 dark:bg-emerald-950/40 p-3.5 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 shadow-xs">
+              <span class="text-emerald-700 dark:text-emerald-400 text-[11px] block font-bold">দোকানের সার্ভিস চার্জ:</span>
+              <strong class="text-sm text-emerald-800 dark:text-emerald-300 block mt-1">${s.serviceFee || '৫০ - ১০০ ৳'}</strong>
+            </div>
+            <div class="bg-amber-50/50 dark:bg-amber-950/40 p-3.5 rounded-2xl border-2 border-amber-200 dark:border-amber-800 shadow-xs">
+              <span class="text-amber-700 dark:text-amber-400 text-[11px] block font-bold">প্রক্রিয়াকরণ সময়:</span>
+              <strong class="text-sm text-amber-800 dark:text-amber-300 block mt-1">${s.duration || 'তাৎক্ষণিক'}</strong>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border-2 border-emerald-100 dark:border-slate-700 shadow-xs">
+            <h4 class="text-xs font-black text-slate-900 dark:text-white mb-2.5 flex items-center gap-2">
+              <i class="fas fa-clipboard-check text-emerald-600 text-sm"></i> যা যা সাথে আনতে হবে (প্রয়োজনীয় কাগজপত্র):
+            </h4>
+            <ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+              ${(s.documents || []).map(doc => `
+                <li class="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl">
+                  <i class="fas fa-check-circle text-emerald-600 mt-0.5 text-xs"></i>
+                  <span class="font-semibold">${doc}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20${encodeURIComponent(s.title)}%20সেবাটি%20নিতে%20চাচ্ছি।" target="_blank" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md glow-btn-primary transition">
+              <i class="fab fa-whatsapp text-sm"></i> হোয়াটসঅ্যাপে সরাসরি এই সেবা নিন
+            </a>
+            <a href="tel:01717101919" class="w-full sm:w-auto bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 font-extrabold px-4 py-3 rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600 transition">
+              <i class="fas fa-phone-alt text-emerald-600"></i> কল করুন: 01717-101919
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function nextChecklist() {
+      currentChecklistIndex = (currentChecklistIndex + 1) % checklistServices.length;
+      renderChecklist(checklistServices[currentChecklistIndex].id);
+    }
+
+    function prevChecklist() {
+      currentChecklistIndex = (currentChecklistIndex - 1 + checklistServices.length) % checklistServices.length;
+      renderChecklist(checklistServices[currentChecklistIndex].id);
+    }
+
+    function startChecklistAutoTimer() {
+      clearInterval(checklistAutoTimer);
+      checklistAutoTimer = setInterval(() => {
+        if (isChecklistInView && !isChecklistCardHovered) {
+          nextChecklist();
+        }
+      }, 3000);
+    }
+
+    function resetChecklistAutoTimer() {
+      startChecklistAutoTimer();
+    }
+
+    calcSelect.addEventListener('change', (e) => {
+      renderChecklist(e.target.value);
+      resetChecklistAutoTimer();
+    });
+
+    checklistPrevBtn?.addEventListener('click', () => { prevChecklist(); resetChecklistAutoTimer(); });
+    checklistNextBtn?.addEventListener('click', () => { nextChecklist(); resetChecklistAutoTimer(); });
+
+    calcSelect.addEventListener('mouseenter', () => {
+      isChecklistCardHovered = true;
+      updateChecklistStatus(true);
+    });
+    calcSelect.addEventListener('mouseleave', () => {
+      isChecklistCardHovered = false;
+      updateChecklistStatus(false);
+    });
+    calcSelect.addEventListener('focus', () => {
+      isChecklistCardHovered = true;
+      updateChecklistStatus(true);
+    });
+    calcSelect.addEventListener('blur', () => {
+      isChecklistCardHovered = false;
+      updateChecklistStatus(false);
+    });
+
+    calcResult.addEventListener('mouseenter', () => {
+      isChecklistCardHovered = true;
+      updateChecklistStatus(true);
+    });
+    calcResult.addEventListener('mouseleave', () => {
+      isChecklistCardHovered = false;
+      updateChecklistStatus(false);
+    });
+
+    renderChecklist(checklistServices[0]?.id);
+    startChecklistAutoTimer();
+  }
+
+  // ==========================================
+  // ৩. হোমপেজ সেবা সমূহ (সার্চ, ক্যাটাগরি ফিল্টার ও অটো-রোটেশন সার্কেল)
+  // ==========================================
+  if (serviceContainer && allServices && allServices.length > 0) {
+    const serviceBatchSize = 3;
+    let activeHomeCategory = 'all';
+    let homeSearchQuery = '';
+    let currentServiceBatch = 0;
+    let serviceAutoTimer = null;
+    let isServiceCardHovered = false;
+    let isSearchBoxFocused = false;
+
+    const serviceIndicator = document.getElementById('service-batch-indicator');
+    const serviceDotsContainer = document.getElementById('service-dots-container');
+    const servicePrevBtn = document.getElementById('service-prev-btn');
+    const serviceNextBtn = document.getElementById('service-next-btn');
+    const servicesCycleStatus = document.getElementById('services-cycle-status');
+    const homeSearchInput = document.getElementById('home-service-search-input');
+    const homeTabBtns = document.querySelectorAll('.home-service-tab-btn');
+
+    function updateServiceCycleStatus(hovered) {
+      if (!servicesCycleStatus) return;
+      if (hovered) {
+        servicesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (সেবা কার্ডে মাউস)';
+        servicesCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
+      } else {
+        servicesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
+        servicesCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
+      }
+    }
+
+    // Update Category Badges Count
+    const landCount = allServices.filter(s => s.category === 'land').length;
+    const onlineCount = allServices.filter(s => s.category === 'online').length;
+    const computerCount = allServices.filter(s => s.category === 'computer').length;
+
+    const countLandEl = document.getElementById('home-count-land');
+    const countOnlineEl = document.getElementById('home-count-online');
+    const countComputerEl = document.getElementById('home-count-computer');
+    const countAllEl = document.getElementById('home-count-all');
+
+    if (countLandEl) countLandEl.textContent = toBanglaNumber(landCount);
+    if (countOnlineEl) countOnlineEl.textContent = toBanglaNumber(onlineCount);
+    if (countComputerEl) countComputerEl.textContent = toBanglaNumber(computerCount);
+    if (countAllEl) countAllEl.textContent = toBanglaNumber(allServices.length);
+
+    function getFilteredServices() {
+      let list = allServices;
+      if (activeHomeCategory !== 'all') {
+        list = list.filter(s => s.category === activeHomeCategory);
+      }
+      if (homeSearchQuery.trim()) {
+        const q = homeSearchQuery.toLowerCase();
+        list = list.filter(s => s.title.toLowerCase().includes(q) || (s.summary && s.summary.toLowerCase().includes(q)));
+      }
+      return list;
+    }
+
+    function renderServiceBatch(batchIdx) {
+      const filtered = getFilteredServices();
+      const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
+      currentServiceBatch = (batchIdx + totalBatches) % totalBatches;
+      
+      const start = currentServiceBatch * serviceBatchSize;
+      const end = Math.min(start + serviceBatchSize, filtered.length);
+      const servicesToShow = filtered.slice(start, end);
+
+      if (filtered.length === 0) {
+        serviceContainer.innerHTML = `
+          <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
+            <i class="fas fa-search text-4xl text-slate-400 mb-3"></i>
+            <p class="text-xs font-extrabold text-slate-500">কোনো সেবা পাওয়া যায়নি।</p>
+          </div>
+        `;
+        if (serviceIndicator) serviceIndicator.textContent = '০ টি সেবা';
+        if (serviceDotsContainer) serviceDotsContainer.innerHTML = '';
+        return;
+      }
+
+      serviceContainer.innerHTML = servicesToShow.map((s, idx) => `
+        <div class="service-card card-accent-${s.category || 'land'} p-5 sm:p-6 flex flex-col justify-between rotate-card-enter stagger-${(idx % 6) + 1}">
+          <div>
+            <div class="flex items-center gap-3.5 mb-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${getServiceIconBg(s.category)} shadow-md flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas ${s.icon || 'fa-landmark'}"></i>
+              </div>
+              <div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${getServiceBadgeClass(s.category)}">
+                  ${s.badge || 'ডিজিটাল সেবা'}
+                </span>
+                <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug mt-1">${s.title}</h3>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">${s.summary || ''}</p>
+            
+            <div class="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-900/90 dark:to-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1.5 text-xs mb-4">
+              <div class="text-slate-800 dark:text-slate-200 font-semibold flex justify-between">
+                <span class="text-slate-500 dark:text-slate-400">সরকারি ফি:</span>
+                <strong class="text-slate-900 dark:text-white text-right">${s.govtFee || 'নির্ধারিত ফি'}</strong>
+              </div>
+              <div class="text-emerald-800 dark:text-emerald-300 font-extrabold flex justify-between pt-1 border-t border-slate-200 dark:border-slate-700">
+                <span>দোকান চার্জ:</span>
+                <span class="bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded text-emerald-800 dark:text-emerald-300">${s.serviceFee || '৫০ - ১০০ ৳'}</span>
+              </div>
+            </div>
+          </div>
+
+          <a href="services.html" class="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+            <span>কাগজপত্রের চেকলিস্ট দেখুন</span>
+            <i class="fas fa-arrow-right text-[11px]"></i>
+          </a>
+        </div>
+      `).join('');
+
+      if (serviceIndicator) {
+        serviceIndicator.textContent = `সেবা ${toBanglaNumber(start + 1)}-${toBanglaNumber(end)} / ${toBanglaNumber(filtered.length)}`;
+      }
+
+      if (serviceDotsContainer) {
+        serviceDotsContainer.innerHTML = Array.from({ length: totalBatches }).map((_, i) => `
+          <button type="button" aria-label="ব্যাচ ${i + 1}" class="h-2 rounded-full transition-all duration-300 ${i === currentServiceBatch ? 'w-7 bg-emerald-600 dark:bg-emerald-400' : 'w-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" onclick="window.setHomeServiceBatch(${i})"></button>
+        `).join('');
+      }
+    }
+
+    window.setHomeServiceBatch = function(idx) {
+      renderServiceBatch(idx);
+      resetServiceAutoTimer();
+    };
+
+    function nextServiceBatch() {
+      const filtered = getFilteredServices();
+      const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
+      renderServiceBatch((currentServiceBatch + 1) % totalBatches);
+    }
+
+    function prevServiceBatch() {
+      const filtered = getFilteredServices();
+      const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
+      renderServiceBatch((currentServiceBatch - 1 + totalBatches) % totalBatches);
+    }
+
+    function startServiceAutoTimer() {
+      clearInterval(serviceAutoTimer);
+      serviceAutoTimer = setInterval(() => {
+        // শুধুমাত্র ভিউপোর্টে দৃশ্যমান থাকলে এবং সেবা কার্ডের ওপর মাউস না থাকলে রোটেট হবে
+        if (isServiceInView && !isServiceCardHovered && !isSearchBoxFocused) {
+          nextServiceBatch();
+        }
+      }, 3000);
+    }
+
+    function resetServiceAutoTimer() {
+      startServiceAutoTimer();
+    }
+
+    servicePrevBtn?.addEventListener('click', () => { prevServiceBatch(); resetServiceAutoTimer(); });
+    serviceNextBtn?.addEventListener('click', () => { nextServiceBatch(); resetServiceAutoTimer(); });
+
+    // Category Tabs click listeners
+    homeTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        homeTabBtns.forEach(b => {
+          b.className = 'home-service-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold border bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition shadow-xs flex items-center gap-1.5';
+        });
+        btn.className = 'home-service-tab-btn active px-4 py-2.5 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-md transition flex items-center gap-1.5';
+        activeHomeCategory = btn.dataset.homeCategory || 'all';
+        renderServiceBatch(0);
+        resetServiceAutoTimer();
+      });
+    });
+
+    // Search Input listener
+    if (homeSearchInput) {
+      homeSearchInput.addEventListener('input', (e) => {
+        homeSearchQuery = e.target.value;
+        renderServiceBatch(0);
+        resetServiceAutoTimer();
+      });
+      homeSearchInput.addEventListener('focus', () => {
+        isSearchBoxFocused = true;
+        updateServiceCycleStatus(true);
+      });
+      homeSearchInput.addEventListener('blur', () => {
+        isSearchBoxFocused = false;
+        updateServiceCycleStatus(false);
+      });
+    }
+
+    // শুধুমাত্র সেবা কার্ডের ওপর মাউস নিলে বিরতি, ফাঁকা অংশে বা বাইরে থাকলে অটো-রোটেট চলবে
+    serviceContainer.addEventListener('mouseover', (e) => {
+      if (e.target.closest('.service-card')) {
+        isServiceCardHovered = true;
+        updateServiceCycleStatus(true);
+      }
+    });
+
+    serviceContainer.addEventListener('mouseout', (e) => {
+      const card = e.target.closest('.service-card');
+      const nextCard = e.relatedTarget?.closest('.service-card');
+      if (card && card !== nextCard) {
+        isServiceCardHovered = false;
+        updateServiceCycleStatus(false);
+      }
+    });
+
+    renderServiceBatch(0);
+    startServiceAutoTimer();
+  }
+}
+function renderServicesPage() {
+  const gridContainer = document.getElementById('services-grid-container');
+  const calcSelect = document.getElementById('calc-service-select');
+  const calcResult = document.getElementById('calc-result-display');
+  const searchInput = document.getElementById('service-search-input');
+  const countBadge = document.getElementById('count-all-services');
+  if (!gridContainer) return;
+
+  const landCount = allServices.filter(s => s.category === 'land').length;
+  const onlineCount = allServices.filter(s => s.category === 'online').length;
+  const computerCount = allServices.filter(s => s.category === 'computer').length;
+
+  const countLand = document.getElementById('count-land-services');
+  const countOnline = document.getElementById('count-online-services');
+  const countComputer = document.getElementById('count-computer-services');
+  const countAll = document.getElementById('count-all-services');
+
+  if (countLand) countLand.textContent = toBanglaNumber(landCount);
+  if (countOnline) countOnline.textContent = toBanglaNumber(onlineCount);
+  if (countComputer) countComputer.textContent = toBanglaNumber(computerCount);
+  if (countAll) countAll.textContent = toBanglaNumber(allServices.length);
+
+  function renderGrid(filterCategory = 'all', searchQuery = '') {
+    let list = allServices;
+    if (filterCategory !== 'all') {
+      list = list.filter(s => s.category === filterCategory);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(s => s.title.toLowerCase().includes(q) || (s.summary && s.summary.toLowerCase().includes(q)));
+    }
+
+    if (list.length === 0) {
+      gridContainer.innerHTML = `
+        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
+          <i class="fas fa-search text-4xl text-slate-400 mb-3"></i>
+          <p class="text-xs font-extrabold text-slate-500">কোনো সেবা পাওয়া যায়নি।</p>
+        </div>
+      `;
+      return;
+    }
+
+    gridContainer.innerHTML = list.map(s => `
+      <div class="service-card card-accent-${s.category || 'land'} p-5 sm:p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3.5 mb-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${getServiceIconBg(s.category)} shadow-md flex items-center justify-center text-xl flex-shrink-0">
+              <i class="fas ${s.icon || 'fa-layer-group'}"></i>
+            </div>
+            <div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${getServiceBadgeClass(s.category)}">
+                ${s.badge || 'জনপ্রিয় সেবা'}
+              </span>
+              <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug mt-1">${s.title}</h3>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">${s.summary || ''}</p>
+          
+          <div class="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-900/90 dark:to-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1.5 text-xs mb-4">
+            <div class="text-slate-800 dark:text-slate-200 font-semibold flex justify-between">
+              <span class="text-slate-500 dark:text-slate-400">সরকারি রাজস্ব ফি:</span>
+              <strong class="text-slate-900 dark:text-white text-right">${s.govtFee || 'নির্ধারিত'}</strong>
+            </div>
+            <div class="text-emerald-800 dark:text-emerald-300 font-extrabold flex justify-between pt-1 border-t border-slate-200 dark:border-slate-700">
+              <span>কম্পিউটার চার্জ:</span>
+              <span class="bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded text-emerald-800 dark:text-emerald-300">${s.serviceFee || '৫০-১০০৳'}</span>
+            </div>
+            <div class="text-slate-700 dark:text-slate-300 font-semibold flex justify-between pt-1 border-t border-slate-200 dark:border-slate-700">
+              <span class="text-slate-500 dark:text-slate-400">সময়কাল:</span>
+              <span class="text-amber-700 dark:text-amber-400 font-bold">${s.duration || 'তাৎক্ষণিক'}</span>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="openServiceModal('${s.id}')" class="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+          <i class="fas fa-list-check"></i> <span>কাগজপত্র ও বিস্তারিত গাইড</span>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // Category Tab Filters
+  document.querySelectorAll('.service-tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.service-tab-btn').forEach(b => {
+        b.className = 'service-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition shadow-xs';
+      });
+      btn.className = 'service-tab-btn active px-4 py-2.5 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-md transition';
+      renderGrid(btn.dataset.category, searchInput ? searchInput.value : '');
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const activeBtn = document.querySelector('.service-tab-btn.active');
+      const cat = activeBtn ? activeBtn.dataset.category : 'all';
+      renderGrid(cat, e.target.value);
     });
   }
-  if (closeBtn && drawer) {
-    closeBtn.addEventListener('click', () => {
-      drawer.classList.add('hidden');
+
+  // Cost & Checklist Calculator Selector
+  if (calcSelect && calcResult) {
+    function updateCalcResult(serviceId) {
+      const s = allServices.find(item => item.id === serviceId) || allServices[0];
+      if (!s) return;
+
+      calcResult.innerHTML = `
+        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="text-slate-500 dark:text-slate-400 text-[11px] block font-bold">সরকারি রাজস্ব ফি:</span>
+              <strong class="text-sm text-slate-900 dark:text-white block mt-1">${s.govtFee || 'সরকারি নিয়ম অনুযায়ী'}</strong>
+            </div>
+            <div class="bg-emerald-50/50 dark:bg-emerald-950/40 p-3.5 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 shadow-xs">
+              <span class="text-emerald-700 dark:text-emerald-400 text-[11px] block font-bold">দোকানের সার্ভিস চার্জ:</span>
+              <strong class="text-sm text-emerald-800 dark:text-emerald-300 block mt-1">${s.serviceFee || '৫০ - ১০০ ৳'}</strong>
+            </div>
+            <div class="bg-amber-50/50 dark:bg-amber-950/40 p-3.5 rounded-2xl border-2 border-amber-200 dark:border-amber-800 shadow-xs">
+              <span class="text-amber-700 dark:text-amber-400 text-[11px] block font-bold">প্রক্রিয়াকরণ সময়:</span>
+              <strong class="text-sm text-amber-800 dark:text-amber-300 block mt-1">${s.duration || 'তাৎক্ষণিক'}</strong>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border-2 border-emerald-100 dark:border-slate-700 shadow-xs">
+            <h4 class="text-xs font-black text-slate-900 dark:text-white mb-2.5 flex items-center gap-2">
+              <i class="fas fa-clipboard-check text-emerald-600 text-sm"></i> যা যা সাথে আনতে হবে (প্রয়োজনীয় কাগজপত্র):
+            </h4>
+            <ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+              ${(s.documents || []).map(doc => `
+                <li class="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl">
+                  <i class="fas fa-check-circle text-emerald-600 mt-0.5 text-xs"></i>
+                  <span class="font-semibold">${doc}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 pt-2">
+            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20${encodeURIComponent(s.title)}%20সেবাটি%20নিতে%20চাচ্ছি。" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-3 rounded-xl text-xs flex items-center gap-2 shadow-md glow-btn-primary">
+              <i class="fab fa-whatsapp text-sm"></i> হোয়াটসঅ্যাপে সরাসরি এই সেবা নিন
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    calcSelect.addEventListener('change', (e) => updateCalcResult(e.target.value));
+    updateCalcResult(allServices[0]?.id);
+  }
+
+  const activeTabBtn = document.querySelector('.service-tab-btn.active');
+  renderGrid(activeTabBtn ? activeTabBtn.dataset.category : 'all');
+}
+
+// Notices Page Renderer
+// Notices Page Renderer with Category Auto-Cycle
+function renderNoticesPage() {
+  const noticesContainer = document.getElementById('notices-cards-container');
+  const searchInput = document.getElementById('notice-search-input');
+  if (!noticesContainer) return;
+
+  const categories = ['college', 'jobs', 'all'];
+  const catNames = {
+    'college': 'স্কুল-কলেজ সংক্রান্ত নোটিশ',
+    'jobs': 'চাকুরির সার্কুলার',
+    'all': 'সকল নোটিশ'
+  };
+
+  let currentCategory = 'college';
+  let categoryCycleTimer = null;
+  let isNoticeUserInteracted = false;
+
+  function renderNotices(category = 'college', searchQuery = '') {
+    currentCategory = category;
+    let list = allNotices;
+    
+    if (category === 'college') {
+      list = list.filter(n => n.category === 'college' || n.category === 'admissions' || n.category === 'results');
+    } else if (category === 'jobs') {
+      list = list.filter(n => n.category === 'jobs');
+    }
+
+    if (searchQuery && searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(n => n.title.toLowerCase().includes(q) || (n.dept && n.dept.toLowerCase().includes(q)) || (n.org && n.org.toLowerCase().includes(q)));
+    }
+
+    // Update Badge Counts
+    const jobCount = allNotices.filter(n => n.category === 'jobs').length;
+    const collegeCount = allNotices.filter(n => n.category === 'college' || n.category === 'admissions' || n.category === 'results').length;
+    const jb = document.getElementById('site-job-badge');
+    const cb = document.getElementById('site-college-badge');
+    const ab = document.getElementById('site-all-badge');
+    if (jb) jb.textContent = toBanglaNumber(jobCount);
+    if (cb) cb.textContent = toBanglaNumber(collegeCount);
+    if (ab) ab.textContent = toBanglaNumber(allNotices.length);
+
+    if (list.length === 0) {
+      noticesContainer.innerHTML = `
+        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md rotate-card-enter">
+          <i class="fas fa-search text-4xl text-slate-400 mb-3"></i>
+          <p class="text-xs font-extrabold text-slate-500">কোনো নোটিশ পাওয়া যায়নি।</p>
+        </div>
+      `;
+      return;
+    }
+
+    noticesContainer.innerHTML = list.map((n, idx) => {
+      const isJob = n.category === 'jobs';
+      return `
+        <div class="notice-card ${isJob ? 'card-accent-job' : 'card-accent-college'} p-5 sm:p-6 flex flex-col justify-between rotate-card-enter stagger-${(idx % 6) + 1}">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="px-3 py-1 rounded-full text-[10px] font-extrabold ${isJob ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-xs' : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xs'}">
+                ${n.badge || (isJob ? 'চাকরি সার্কুলার' : 'স্কুল-কলেজ নোটিশ')}
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center gap-1">
+                <i class="fas fa-calendar-alt text-[10px]"></i> শেষ: ${n.deadline}
+              </span>
+            </div>
+
+            <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug mb-1">
+              ${n.title}
+            </h3>
+            <div class="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-2 flex items-center gap-1">
+              <i class="fas fa-building text-[10px]"></i> ${n.dept || n.org || 'সরকারি প্রতিষ্ঠান'}
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">${n.summary || n.details || ''}</p>
+          </div>
+
+          <div class="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+            <button onclick="openNoticeModal('${n.id}')" class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-extrabold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700">
+              <i class="fas fa-eye"></i> বিস্তারিত দেখুন
+            </button>
+            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20${encodeURIComponent(n.title)}%20এর%20জন্য%20অনলাইন%20আবেদন%20করতে%20চাচ্ছি。" target="_blank" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-extrabold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md">
+              <i class="fab fa-whatsapp"></i> সরাসরি আবেদন পাঠান
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function updateTabButtons(selectedCat) {
+    document.querySelectorAll('.notice-tab-btn').forEach(b => {
+      if (b.dataset.noticeCategory === selectedCat) {
+        b.className = 'notice-tab-btn active px-4 py-2.5 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-md transition flex items-center gap-1.5';
+      } else {
+        b.className = 'notice-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold border bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition shadow-xs flex items-center gap-1.5';
+      }
     });
+
+    const indicatorEl = document.getElementById('category-cycle-indicator');
+    if (indicatorEl) {
+      indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> ক্যাটাগরি: ${catNames[selectedCat] || selectedCat} (অটো-পরিবর্তন)`;
+    }
+  }
+
+  // Filter tab buttons click
+  document.querySelectorAll('.notice-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      isNoticeUserInteracted = true;
+      const cat = btn.dataset.noticeCategory;
+      updateTabButtons(cat);
+      renderNotices(cat, searchInput ? searchInput.value : '');
+
+      const indicatorEl = document.getElementById('category-cycle-indicator');
+      if (indicatorEl) {
+        indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500"></span> ফিল্টার সিলেক্টেড: ${catNames[cat] || cat}`;
+      }
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      isNoticeUserInteracted = true;
+      const activeBtn = document.querySelector('.notice-tab-btn.active');
+      const cat = activeBtn ? activeBtn.dataset.noticeCategory : 'college';
+      renderNotices(cat, e.target.value);
+    });
+  }
+
+  // Category Auto-Cycle Timer (Advances category every 5 seconds)
+  let catCycleIndex = 0;
+  categoryCycleTimer = setInterval(() => {
+    if (!isNoticeUserInteracted) {
+      catCycleIndex = (catCycleIndex + 1) % categories.length;
+      const nextCat = categories[catCycleIndex];
+      updateTabButtons(nextCat);
+      renderNotices(nextCat, searchInput ? searchInput.value : '');
+    }
+  }, 3000);
+
+  // Pause on hover
+  noticesContainer.addEventListener('mouseenter', () => {
+    isNoticeUserInteracted = true;
+  });
+
+  updateTabButtons('college');
+  renderNotices('college');
+}
+
+// Modal Handlers
+window.openServiceModal = function(serviceId) {
+  const s = allServices.find(item => item.id === serviceId);
+  const modal = document.getElementById('service-modal');
+  const title = document.getElementById('modal-service-title');
+  const body = document.getElementById('modal-service-body');
+  if (!modal || !s) return;
+
+  title.textContent = s.title;
+  body.innerHTML = `
+    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-normal">${s.summary || ''}</p>
+    
+    <div class="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-900 dark:to-slate-800/80 p-4 rounded-2xl space-y-2 text-xs border border-slate-200 dark:border-slate-700">
+      <div><strong>সরকারি ফি:</strong> <span class="font-bold text-slate-900 dark:text-white">${s.govtFee || 'নির্ধারিত'}</span></div>
+      <div><strong>দোকানের চার্জ:</strong> <span class="font-bold text-emerald-600">${s.serviceFee || '৫০-১০০৳'}</span></div>
+      <div><strong>আনুমানিক সময়:</strong> <span class="font-bold text-amber-600">${s.duration || 'তাৎক্ষণিক'}</span></div>
+    </div>
+
+    <div>
+      <h4 class="font-bold text-slate-900 dark:text-white mb-2">প্রয়োজনীয় কাগজপত্রের তালিকা:</h4>
+      <ul class="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+        ${(s.documents || []).map(d => `<li class="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl"><i class="fas fa-check-circle text-emerald-600 mt-0.5 text-xs"></i> <span>${d}</span></li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+      <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20${encodeURIComponent(s.title)}%20সেবাটি%20নিতে%20চাচ্ছি。" target="_blank" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md">
+        <i class="fab fa-whatsapp text-base"></i> হোয়াটসঅ্যাপে সরাসরি আবেদন শুরু করুন
+      </a>
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+};
+
+window.openNoticeModal = function(noticeId) {
+  const n = allNotices.find(item => item.id === noticeId);
+  const modal = document.getElementById('notice-modal');
+  const title = document.getElementById('modal-notice-title');
+  const badge = document.getElementById('modal-notice-badge');
+  const body = document.getElementById('modal-notice-body');
+  if (!modal || !n) return;
+
+  title.textContent = n.title;
+  badge.textContent = n.dept || n.org || 'সরকারি বিজ্ঞপ্তি';
+  badge.className = 'px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800';
+  
+  body.innerHTML = `
+    <div class="flex items-center justify-between bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-900 dark:to-slate-800 p-3.5 rounded-2xl text-xs border border-slate-200 dark:border-slate-700">
+      <span><strong>আবেদনের শেষ তারিখ:</strong> <span class="text-rose-600 font-extrabold">${n.deadline}</span></span>
+      <span><strong>পদসংখ্যা:</strong> <span class="text-slate-900 dark:text-white font-bold">${n.posts || n.vacancies || 'উল্লেখিত'}</span></span>
+    </div>
+
+    <div class="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl">
+      <strong>প্রয়োজনীয় যোগ্যতা:</strong> ${n.qualification || 'বিজ্ঞপ্তি দেখুন'}
+    </div>
+
+    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${n.summary || n.details || ''}</p>
+
+    <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+      <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20${encodeURIComponent(n.title)}%20বিজ্ঞপ্তির%20আবেদন%20করতে%20চাচ্ছি。" target="_blank" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md">
+        <i class="fab fa-whatsapp text-base"></i> হোয়াটসঅ্যাপে ডকুমেন্টস পাঠিয়ে আবেদন করুন
+      </a>
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+};
+
+// Modal Close Listeners
+document.getElementById('service-modal-close')?.addEventListener('click', () => {
+  document.getElementById('service-modal').classList.add('hidden');
+  document.getElementById('service-modal').classList.remove('flex');
+});
+document.getElementById('notice-modal-close')?.addEventListener('click', () => {
+  document.getElementById('notice-modal').classList.add('hidden');
+  document.getElementById('notice-modal').classList.remove('flex');
+});
+
+// =========================================================================
+// ৭. স্মার্ট টুলস স্যুট কন্ট্রোলার (tools.html)
+// =========================================================================
+function initToolsIfPresent() {
+  const tabButtons = document.querySelectorAll('.tool-switch-btn');
+  if (!tabButtons || tabButtons.length === 0) return;
+
+  const BASE_BTN_CLASSES = "tool-switch-btn w-10 h-10 sm:w-11 sm:h-11 lg:w-full lg:h-auto mx-auto lg:mx-0 p-0 lg:p-3 rounded-xl lg:rounded-2xl transition-all flex items-center justify-center lg:justify-between gap-3 group relative cursor-pointer";
+  const ACTIVE_CLASSES = "active shadow-md bg-emerald-600 text-white border-2 border-emerald-600 tool-featured-highlight";
+  const INACTIVE_CLASSES = "bg-white dark:bg-[#1a263d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600/80 hover:bg-slate-100 dark:hover:bg-[#23324f] shadow-2xs";
+
+  function switchToolTab(tabKey) {
+    tabButtons.forEach(btn => {
+      const isHighlighted = btn.dataset.toolTab === 'text';
+      if (btn.dataset.toolTab === tabKey) {
+        btn.className = `${BASE_BTN_CLASSES} ${ACTIVE_CLASSES} ${isHighlighted ? 'tool-featured-highlight' : ''}`;
+      } else {
+        btn.className = `${BASE_BTN_CLASSES} ${INACTIVE_CLASSES}`;
+      }
+    });
+
+    document.querySelectorAll('.tool-content-panel').forEach(p => p.classList.add('hidden'));
+    const targetPanel = document.getElementById(`panel-${tabKey}`);
+    if (targetPanel) {
+      targetPanel.classList.remove('hidden');
+      if (window.innerWidth < 1024) {
+        targetPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchToolTab(btn.dataset.toolTab);
+    });
+  });
+
+  // Read URL query parameter: ?tab=resizer/text/age/land (Defaults to 'text'!)
+  // If ?tab=math is passed, gracefully map to 'text' for unified converter
+  const urlParams = new URLSearchParams(window.location.search);
+  let activeTabParam = urlParams.get('tab');
+  if (activeTabParam === 'math') activeTabParam = 'text';
+  if (activeTabParam && ['resizer', 'text', 'age', 'land'].includes(activeTabParam)) {
+    switchToolTab(activeTabParam);
+  } else {
+    switchToolTab('text');
+  }
+
+  // --- Tool 1: Photo & Signature Resizer ---
+  initResizerEngine();
+
+  // --- Tool 2: Unified Smart Office & Question Paper Converter Wizard ---
+  initUnifiedConverterEngine();
+
+  // --- Tool 3: Job Age Calculator Engine ---
+  initAgeCalcEngine();
+
+  // --- Tool 4: Land Area & Deed Calculator ---
+  initLandCalculatorEngine();
+}
+
+// 1. Resizer Engine
+function initResizerEngine() {
+  const photoModeBtn = document.getElementById('resizer-photo-mode');
+  const sigModeBtn = document.getElementById('resizer-sig-mode');
+  const fileInput = document.getElementById('resizer-file-input');
+  const canvas = document.getElementById('resizer-canvas');
+  const outputBox = document.getElementById('resizer-output-box');
+  const placeholderBox = document.getElementById('resizer-placeholder-box');
+  const infoText = document.getElementById('resizer-info-text');
+  const downloadBtn = document.getElementById('resizer-download-btn');
+  const targetDimText = document.getElementById('resizer-target-dim');
+
+  if (!photoModeBtn || !fileInput) return;
+
+  let currentMode = 'photo'; // 'photo' = 300x300, 'sig' = 300x80
+  let uploadedImage = null;
+
+  photoModeBtn.addEventListener('click', () => {
+    currentMode = 'photo';
+    photoModeBtn.className = 'py-2.5 px-3 rounded-xl font-extrabold text-xs bg-emerald-600 text-white transition flex items-center justify-center gap-1 shadow-sm';
+    sigModeBtn.className = 'py-2.5 px-3 rounded-xl font-bold text-xs bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition flex items-center justify-center gap-1';
+    targetDimText.textContent = '৩০০ x ৩০০ পিক্সেল (সর্বোচ্চ ১০০ KB)';
+    if (uploadedImage) processImage();
+  });
+
+  sigModeBtn.addEventListener('click', () => {
+    currentMode = 'sig';
+    sigModeBtn.className = 'py-2.5 px-3 rounded-xl font-extrabold text-xs bg-emerald-600 text-white transition flex items-center justify-center gap-1 shadow-sm';
+    photoModeBtn.className = 'py-2.5 px-3 rounded-xl font-bold text-xs bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition flex items-center justify-center gap-1';
+    targetDimText.textContent = '৩০০ x ৮০ পিক্সেল (সর্বোচ্চ ৬০ KB)';
+    if (uploadedImage) processImage();
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        uploadedImage = img;
+        processImage();
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function processImage() {
+    if (!uploadedImage) return;
+    const targetW = 300;
+    const targetH = currentMode === 'photo' ? 300 : 80;
+
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, targetW, targetH);
+    ctx.drawImage(uploadedImage, 0, 0, targetW, targetH);
+
+    placeholderBox.classList.add('hidden');
+    outputBox.classList.remove('hidden');
+
+    infoText.textContent = `সাইজ: ${targetW} x ${targetH} পিক্সেল | টেলিটক কমপ্লায়েন্ট`;
+
+    downloadBtn.onclick = () => {
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `Teletalk_${currentMode === 'photo' ? 'Photo_300x300' : 'Signature_300x80'}_${Date.now()}.jpg`;
+      a.click();
+    };
   }
 }
 
 // =========================================================================
-// গুগল রিভিউ ডাইনামিক রেন্ডারিং (Google Reviews)
+// ২. অল-ইন-ওয়ান অফিস ও প্রশ্নপত্র কনভার্টার ইঞ্জিন (Smart 3-Step Wizard)
 // =========================================================================
-function initGoogleReviews() {
-  const container = document.getElementById('google-reviews-container');
-  if (!container) return;
+function initUnifiedConverterEngine() {
+  // Sub-tabs: Wizard File vs Live Text
+  const subtabFileBtn = document.getElementById('wizard-subtab-file-btn');
+  const subtabTextBtn = document.getElementById('wizard-subtab-text-btn');
+  const subpanelFile = document.getElementById('wizard-subpanel-file');
+  const subpanelText = document.getElementById('wizard-subpanel-text');
 
-  const reviews = [
-    {
-      name: 'IMRAN CHOWDHURY',
-      avatar: 'https://ui-avatars.com/api/?name=Imran+Chowdhury&background=random&color=fff',
-      meta: 'Local Guide · 96 reviews',
-      rating: 4,
-      time: '2 years ago',
-      text: 'Services are very satisfactory. Behaviour is fantastic. Photocopies, typing and printing services are available here.'
-    },
-    {
-      name: 'Md Sharol Hossain',
-      avatar: 'https://ui-avatars.com/api/?name=Md+Sharol+Hossain&background=random&color=fff',
-      meta: '2 reviews',
-      rating: 5,
-      time: '2 years ago',
-      text: 'Nice work. Those person is very experienced. Thank you'
+  subtabFileBtn?.addEventListener('click', () => {
+    subtabFileBtn.className = 'px-4 py-2 rounded-xl bg-emerald-600 text-white shadow-xs transition flex items-center gap-1.5 font-black';
+    subtabTextBtn.className = 'px-4 py-2 rounded-xl text-slate-700 dark:text-slate-300 hover:text-emerald-600 transition flex items-center gap-1.5 font-bold';
+    subpanelFile?.classList.remove('hidden');
+    subpanelText?.classList.add('hidden');
+  });
+
+  subtabTextBtn?.addEventListener('click', () => {
+    subtabTextBtn.className = 'px-4 py-2 rounded-xl bg-emerald-600 text-white shadow-xs transition flex items-center gap-1.5 font-black';
+    subtabFileBtn.className = 'px-4 py-2 rounded-xl text-slate-700 dark:text-slate-300 hover:text-emerald-600 transition flex items-center gap-1.5 font-bold';
+    subpanelText?.classList.remove('hidden');
+    subpanelFile?.classList.add('hidden');
+  });
+
+  // --- Wizard Step Containers ---
+  const step1Box = document.getElementById('wizard-step-1');
+  const step2Box = document.getElementById('wizard-step-2');
+  const step3Box = document.getElementById('wizard-step-3');
+
+  // Step 1: Dropzone Elements
+  const wizardDropZone = document.getElementById('wizardDropZone');
+  const wizardFileInput = document.getElementById('wizardFileInput');
+  const wizardBrowseBtn = document.getElementById('wizardBrowseBtn');
+
+  // Step 2: Pre-scan Overview & Options
+  const scanFileIconBox = document.getElementById('scanFileIconBox');
+  const scanFileName = document.getElementById('scanFileName');
+  const scanFileSize = document.getElementById('scanFileSize');
+  const scanFileTypeLabel = document.getElementById('scanFileTypeLabel');
+  const scanHighlightsBox = document.getElementById('scanHighlightsBox');
+  const wizardChangeFileBtn = document.getElementById('wizardChangeFileBtn');
+
+  // Step 2 State & Interactive Elements
+  let selectedTargetDirection = 'all_bijoy';
+  let selectedUnicodeFont = 'Nikosh';
+
+  const wizardConvertMathCheckbox = document.getElementById('wizardConvertMathCheckbox');
+  const optBtnBijoy = document.getElementById('optBtnBijoy');
+  const optBtnUnicode = document.getElementById('optBtnUnicode');
+  const unicodeFontSubgroup = document.getElementById('unicodeFontSubgroup');
+  const subFontNikosh = document.getElementById('subFontNikosh');
+  const subFontKalpurush = document.getElementById('subFontKalpurush');
+  const subFontNikoshCheck = document.getElementById('subFontNikoshCheck');
+  const subFontKalpurushCheck = document.getElementById('subFontKalpurushCheck');
+
+  const wordActionButtonsContainer = document.getElementById('wordActionButtonsContainer');
+  const actionConvertDocBtn = document.getElementById('actionConvertDocBtn');
+  const actionConvertDocxBtn = document.getElementById('actionConvertDocxBtn');
+  const nonWordActionContainer = document.getElementById('nonWordActionContainer');
+  const actionConvertGenericBtn = document.getElementById('actionConvertGenericBtn');
+  const genericActionBtnText = document.getElementById('genericActionBtnText');
+
+  // Step 3: Progress & Results
+  const wizardProgressCard = document.getElementById('wizardProgressCard');
+  const wizardProgressTitle = document.getElementById('wizardProgressTitle');
+  const wizardProgressStatus = document.getElementById('wizardProgressStatus');
+  const wizardProgressPctText = document.getElementById('wizardProgressPctText');
+  const wizardProgressBar = document.getElementById('wizardProgressBar');
+
+  const wizardResultCard = document.getElementById('wizardResultCard');
+  const wizardResultFileName = document.getElementById('wizardResultFileName');
+  const wizardResultStatsBadge = document.getElementById('wizardResultStatsBadge');
+  const wizardResultDetails = document.getElementById('wizardResultDetails');
+  const wizardPreviewBox = document.getElementById('wizardPreviewBox');
+  const wizardPreviewContent = document.getElementById('wizardPreviewContent');
+
+  const wizardDlDocxBtn = document.getElementById('wizardDlDocxBtn');
+  const wizardDlDocBtn = document.getElementById('wizardDlDocBtn');
+  const wizardDlXlsxBtn = document.getElementById('wizardDlXlsxBtn');
+  const wizardDlPptxBtn = document.getElementById('wizardDlPptxBtn');
+  const wizardConvertAnotherBtn = document.getElementById('wizardConvertAnotherBtn');
+
+  let currentScanResult = null;
+
+  // --- Step 1 Events ---
+  wizardBrowseBtn?.addEventListener('click', () => wizardFileInput?.click());
+
+  if (wizardDropZone) {
+    ['dragenter', 'dragover'].forEach(name => {
+      wizardDropZone.addEventListener(name, (e) => {
+        e.preventDefault();
+        wizardDropZone.classList.add('file-dropzone-active');
+      });
+    });
+    ['dragleave', 'drop'].forEach(name => {
+      wizardDropZone.addEventListener(name, (e) => {
+        e.preventDefault();
+        wizardDropZone.classList.remove('file-dropzone-active');
+      });
+    });
+    wizardDropZone.addEventListener('drop', async (e) => {
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        await initiateFileScan(files[0]);
+      }
+    });
+  }
+
+  wizardFileInput?.addEventListener('change', async (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      await initiateFileScan(e.target.files[0]);
+      wizardFileInput.value = '';
     }
-  ];
+  });
 
-  container.innerHTML = reviews.map(r => `
-    <div class="bg-white/10 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-white/20 text-white shadow-lg flex flex-col justify-between hover:bg-white/15 transition h-full">
-      <div>
-        <div class="flex items-center gap-3 mb-3">
-          <img src="${r.avatar}" alt="${r.name}" class="w-10 h-10 rounded-full border border-white/30 object-cover">
-          <div>
-            <h4 class="font-bold text-sm sm:text-base leading-tight">${r.name}</h4>
-            <span class="text-[10px] sm:text-xs text-emerald-100/80">${r.meta}</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 mb-2">
-          <div class="flex items-center text-amber-300 text-xs">
-            ${Array(r.rating).fill('<i class="fas fa-star"></i>').join('')}${Array(5 - r.rating).fill('<i class="far fa-star text-emerald-200/50"></i>').join('')}
-          </div>
-          <span class="text-[10px] text-emerald-100/70">${r.time}</span>
-        </div>
-        <p class="text-xs sm:text-sm text-emerald-50 leading-relaxed line-clamp-4">
-          "${r.text}"
-        </p>
-      </div>
-    </div>
-  `).join('');
+  wizardChangeFileBtn?.addEventListener('click', resetToStep1);
+  wizardConvertAnotherBtn?.addEventListener('click', resetToStep1);
+
+  function resetToStep1() {
+    currentScanResult = null;
+    step1Box?.classList.remove('hidden');
+    step2Box?.classList.add('hidden');
+    step3Box?.classList.add('hidden');
+    wizardProgressCard?.classList.add('hidden');
+    wizardResultCard?.classList.add('hidden');
+  }
+
+  // --- Pre-Scan Function (Instant in-memory analysis) ---
+  async function initiateFileScan(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const validExtensions = ['docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt'];
+    if (!validExtensions.includes(ext)) {
+      alert(`ফরম্যাট সমর্থিত নয়: ${file.name}\n(শুধুমাত্র .docx, .doc, .xlsx, .xls, .pptx, .ppt ফাইল সমর্থিত)`);
+      return;
+    }
+
+    try {
+      const scanResult = await preScanDocumentFile(file, ext);
+      currentScanResult = scanResult;
+      renderStep2Options(scanResult);
+    } catch (err) {
+      console.error('File scan error', err);
+      alert('ফাইলটি বিশ্লেষণ করতে সমস্যা হয়েছে: ' + err.message);
+    }
+  }
+
+  async function preScanDocumentFile(file, ext) {
+    const buffer = await file.arrayBuffer();
+    const isWord = ['docx', 'doc'].includes(ext);
+    const isExcel = ['xlsx', 'xls'].includes(ext);
+    const isPpt = ['pptx', 'ppt'].includes(ext);
+    const isDocBinary = ext === 'doc';
+
+    let hasMath = false;
+    let isMixed = false;
+    let isUnicode = false;
+    let isBijoy = false;
+    let hasEnglish = false;
+    let extractedText = '';
+
+    if (ext === 'docx' && typeof JSZip !== 'undefined') {
+      try {
+        const zip = await JSZip.loadAsync(buffer);
+        const docXmlFile = zip.file('word/document.xml') || zip.file('word\\document.xml') || Object.values(zip.files).find(f => f.name.replace(/\\/g, '/') === 'word/document.xml');
+        if (docXmlFile) {
+          const docXml = await docXmlFile.async('string');
+          
+          // Math Detection: OMML, MathType, LaTeX patterns
+          if (
+            docXml.includes('<m:oMath') ||
+            docXml.includes('<m:oMathPara') ||
+            docXml.includes('MathType') ||
+            docXml.includes('w:object') ||
+            /\$[^\$\r\n]+\$/.test(docXml)
+          ) {
+            hasMath = true;
+          }
+
+          // Text content analysis
+          const textMatches = docXml.match(/<w:t[^>]*>([^<]+)<\/w:t>/g) || [];
+          extractedText = textMatches.map(m => m.replace(/<[^>]+>/g, '')).join(' ');
+
+          const hasBanglaUnicode = /[\u0980-\u09FF]/.test(extractedText);
+          const hasEnglishWords = /[A-Za-z]{3,}/.test(extractedText);
+          const hasBijoyFont = docXml.includes('SutonnyMJ') || docXml.includes('Sutonny');
+          const hasBijoyChars = /[AvwK‡©Ö«¯æ™—]/.test(extractedText);
+
+          if (hasBanglaUnicode) isUnicode = true;
+          if (hasBijoyFont || (hasBijoyChars && !hasBanglaUnicode)) isBijoy = true;
+          if ((hasBanglaUnicode || isBijoy) && hasEnglishWords) {
+            isMixed = true;
+            hasEnglish = true;
+          }
+        }
+      } catch (e) {
+        console.warn('Docx scan warning', e);
+      }
+    } else if (isExcel && typeof JSZip !== 'undefined') {
+      try {
+        const zip = await JSZip.loadAsync(buffer);
+        const sharedStrFile = zip.file('xl/sharedStrings.xml');
+        if (sharedStrFile) {
+          const xml = await sharedStrFile.async('string');
+          if (/[\u0980-\u09FF]/.test(xml)) isUnicode = true;
+          if (xml.includes('SutonnyMJ')) isBijoy = true;
+          if (/[A-Za-z]{3,}/.test(xml)) isMixed = true;
+        }
+      } catch (e) {
+        console.warn('Excel scan warning', e);
+      }
+    } else if (isPpt && typeof JSZip !== 'undefined') {
+      try {
+        const zip = await JSZip.loadAsync(buffer);
+        const slide1 = zip.file('ppt/slides/slide1.xml');
+        if (slide1) {
+          const xml = await slide1.async('string');
+          if (/[\u0980-\u09FF]/.test(xml)) isUnicode = true;
+          if (xml.includes('SutonnyMJ')) isBijoy = true;
+        }
+      } catch (e) {
+        console.warn('PPT scan warning', e);
+      }
+    } else if (isDocBinary) {
+      isBijoy = true; // Legacy .doc files in Bangladesh are predominantly Bijoy (SutonnyMJ)
+      try {
+        const dec = new TextDecoder('utf-8', { fatal: false });
+        const raw = dec.decode(buffer);
+        if (/[\u0980-\u09FF]/.test(raw)) {
+          isUnicode = true;
+          isBijoy = false;
+        } else if (raw.includes('SutonnyMJ') || /[AvwK‡©Ö«¯æ™—]/.test(raw)) {
+          isBijoy = true;
+        }
+      } catch (e) {
+        console.warn('Doc scan warning', e);
+      }
+    }
+
+    return {
+      file,
+      buffer,
+      ext,
+      isWord,
+      isExcel,
+      isPpt,
+      isDocBinary,
+      hasMath,
+      isMixed,
+      isUnicode,
+      isBijoy,
+      hasEnglish,
+      extractedText
+    };
+  }
+
+  // --- Step 2: Render Smart Options based on pre-scan ---
+  function renderStep2Options(scan) {
+    step1Box?.classList.add('hidden');
+    step2Box?.classList.remove('hidden');
+    step3Box?.classList.add('hidden');
+
+    if (scanFileName) scanFileName.textContent = scan.file.name;
+    if (scanFileSize) scanFileSize.textContent = `${(scan.file.size / 1024).toFixed(1)} KB`;
+
+    let fileTypeLabel = 'ওয়ার্ড ডকুমেন্ট (.docx)';
+    let iconHtml = '<i class="fa-solid fa-file-word text-blue-400"></i>';
+
+    if (scan.isDocBinary) {
+      fileTypeLabel = 'ওয়ার্ড ৯৭-২০০৩ ডকুমেন্ট (.doc)';
+      iconHtml = '<i class="fa-solid fa-file-lines text-cyan-400"></i>';
+    } else if (scan.isExcel) {
+      fileTypeLabel = 'মাইক্রোসফট এক্সেল শিট (.xlsx)';
+      iconHtml = '<i class="fa-solid fa-file-excel text-emerald-400"></i>';
+    } else if (scan.isPpt) {
+      fileTypeLabel = 'পাওয়ারপয়েন্ট স্লাইড (.pptx)';
+      iconHtml = '<i class="fa-solid fa-file-powerpoint text-amber-400"></i>';
+    } else if (scan.hasMath) {
+      fileTypeLabel = 'গণিত ও প্রশ্নপত্র ওয়ার্ড ফাইল (.docx)';
+      iconHtml = '<i class="fa-solid fa-square-root-variable text-indigo-300"></i>';
+    }
+
+    if (scanFileTypeLabel) scanFileTypeLabel.textContent = fileTypeLabel;
+    if (scanFileIconBox) scanFileIconBox.innerHTML = iconHtml;
+
+    // Badges
+    const badges = [];
+    if (scan.hasMath) {
+      badges.push(`
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 font-black shadow-xs">
+          <i class="fa-solid fa-square-root-variable text-indigo-600"></i> গণিত সমীকরণ ও প্রশ্নপত্র শনাক্ত!
+        </span>
+      `);
+    }
+    if (scan.isMixed) {
+      badges.push(`
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-extrabold shadow-xs">
+          <i class="fa-solid fa-shuffle text-amber-600"></i> মিক্সড টেক্সট (ইংরেজি ও বাংলা মিশ্রিত)
+        </span>
+      `);
+    }
+    if (scan.isUnicode) {
+      badges.push(`
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
+          <i class="fa-solid fa-globe text-emerald-600"></i> ইউনিকোড বাংলা টেক্সট
+        </span>
+      `);
+    }
+    if (scan.isBijoy) {
+      badges.push(`
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold">
+          <i class="fa-solid fa-font text-blue-600"></i> বিজয় (SutonnyMJ) টেক্সট
+        </span>
+      `);
+    }
+    if (scan.isExcel) {
+      badges.push(`
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold">
+          <i class="fa-solid fa-table-cells text-emerald-600"></i> সকল সেল ও ফর্মুলা সুরক্ষিত থাকবে
+        </span>
+      `);
+    }
+    if (scan.isPpt) {
+      badges.push(`
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">
+          <i class="fa-solid fa-file-powerpoint text-amber-600"></i> স্লাইড ফরম্যাটিং অবিকৃত থাকবে
+        </span>
+      `);
+    }
+    if (badges.length === 0) {
+      badges.push(`
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold">
+          <i class="fa-solid fa-circle-check text-emerald-600"></i> সাধারণ ডকুমেন্ট রূপান্তর প্রস্তুত
+        </span>
+      `);
+    }
+
+    if (scanHighlightsBox) scanHighlightsBox.innerHTML = badges.join('');
+
+    // Pre-select based on file content:
+    if (scan.isBijoy && !scan.isUnicode) {
+      // If Bijoy file: auto-select Unicode and reveal Nikosh/Kalpurush font sub-buttons
+      updateTargetSelectionUI('all_unicode');
+      updateSubFontUI('Nikosh');
+    } else {
+      // If Unicode (or default): auto-select Bijoy, keep font sub-buttons hidden
+      updateTargetSelectionUI('all_bijoy');
+    }
+
+    // Toggle Word (.doc/.docx) vs Non-Word buttons
+    if (scan.isWord) {
+      wordActionButtonsContainer?.classList.remove('hidden');
+      nonWordActionContainer?.classList.add('hidden');
+    } else {
+      wordActionButtonsContainer?.classList.add('hidden');
+      nonWordActionContainer?.classList.remove('hidden');
+      if (genericActionBtnText) {
+        genericActionBtnText.textContent = scan.isExcel ? '.xlsx এক্সেল ফাইল কনভার্ট ও ডাউনলোড' : '.pptx স্লাইড কনভার্ট ও ডাউনলোড';
+      }
+    }
+
+    step2Box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // --- Target & Sub-font Toggles ---
+  function updateTargetSelectionUI(dir) {
+    selectedTargetDirection = dir;
+    if (dir === 'all_bijoy') {
+      optBtnBijoy?.classList.remove('border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+      optBtnBijoy?.classList.add('border-emerald-500', 'bg-emerald-50/80', 'dark:bg-emerald-950/50', 'text-emerald-900', 'dark:text-emerald-100', 'shadow-md');
+
+      optBtnUnicode?.classList.remove('border-blue-500', 'bg-blue-50/80', 'dark:bg-blue-950/50', 'text-blue-900', 'dark:text-blue-100', 'shadow-md');
+      optBtnUnicode?.classList.add('border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+
+      unicodeFontSubgroup?.classList.add('hidden');
+    } else {
+      optBtnUnicode?.classList.remove('border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+      optBtnUnicode?.classList.add('border-blue-500', 'bg-blue-50/80', 'dark:bg-blue-950/50', 'text-blue-900', 'dark:text-blue-100', 'shadow-md');
+
+      optBtnBijoy?.classList.remove('border-emerald-500', 'bg-emerald-50/80', 'dark:bg-emerald-950/50', 'text-emerald-900', 'dark:text-emerald-100', 'shadow-md');
+      optBtnBijoy?.classList.add('border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300');
+
+      unicodeFontSubgroup?.classList.remove('hidden');
+      updateSubFontUI(selectedUnicodeFont);
+    }
+  }
+
+  function updateSubFontUI(font) {
+    selectedUnicodeFont = font;
+    if (font === 'Nikosh') {
+      subFontNikosh?.classList.remove('border-slate-300', 'dark:border-slate-600', 'bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      subFontNikosh?.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-950', 'text-blue-700', 'dark:text-blue-300', 'font-black');
+      subFontNikoshCheck?.classList.remove('hidden');
+
+      subFontKalpurush?.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-950', 'text-blue-700', 'dark:text-blue-300', 'font-black');
+      subFontKalpurush?.classList.add('border-slate-300', 'dark:border-slate-600', 'bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      subFontKalpurushCheck?.classList.add('hidden');
+    } else {
+      subFontKalpurush?.classList.remove('border-slate-300', 'dark:border-slate-600', 'bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      subFontKalpurush?.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-950', 'text-blue-700', 'dark:text-blue-300', 'font-black');
+      subFontKalpurushCheck?.classList.remove('hidden');
+
+      subFontNikosh?.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-950', 'text-blue-700', 'dark:text-blue-300', 'font-black');
+      subFontNikosh?.classList.add('border-slate-300', 'dark:border-slate-600', 'bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      subFontNikoshCheck?.classList.add('hidden');
+    }
+  }
+
+  optBtnBijoy?.addEventListener('click', () => updateTargetSelectionUI('all_bijoy'));
+  optBtnUnicode?.addEventListener('click', () => updateTargetSelectionUI('all_unicode'));
+  subFontNikosh?.addEventListener('click', () => updateSubFontUI('Nikosh'));
+  subFontKalpurush?.addEventListener('click', () => updateSubFontUI('Kalpurush'));
+
+  // Direct 1-Click Action Buttons (.doc and .docx)
+  actionConvertDocBtn?.addEventListener('click', async () => {
+    if (!currentScanResult) return;
+    await executeWizardConversion(currentScanResult, 'doc');
+  });
+
+  actionConvertDocxBtn?.addEventListener('click', async () => {
+    if (!currentScanResult) return;
+    await executeWizardConversion(currentScanResult, 'docx');
+  });
+
+  actionConvertGenericBtn?.addEventListener('click', async () => {
+    if (!currentScanResult) return;
+    await executeWizardConversion(currentScanResult, 'generic');
+  });
+
+  // Sleek Instant Download Alert Elements
+  const instantDownloadAlert = document.getElementById('instantDownloadAlert');
+  const instantDownloadTitle = document.getElementById('instantDownloadTitle');
+  const instantDownloadSubtitle = document.getElementById('instantDownloadSubtitle');
+  const closeDownloadAlertBtn = document.getElementById('closeDownloadAlertBtn');
+  let alertTimeout = null;
+
+  closeDownloadAlertBtn?.addEventListener('click', () => {
+    instantDownloadAlert?.classList.add('hidden');
+    if (alertTimeout) clearTimeout(alertTimeout);
+  });
+
+  // --- Step 3: Perform Conversion & Direct Browser Auto-Download ---
+  async function executeWizardConversion(scan, requestedFormat = 'docx') {
+    const activeBtn = requestedFormat === 'doc' ? actionConvertDocBtn : (requestedFormat === 'docx' ? actionConvertDocxBtn : actionConvertGenericBtn);
+    const origBtnHtml = activeBtn ? activeBtn.innerHTML : '';
+
+    if (activeBtn) {
+      activeBtn.disabled = true;
+      activeBtn.classList.add('opacity-80', 'cursor-wait');
+      activeBtn.innerHTML = '<div class="flex items-center justify-center gap-2 text-xs sm:text-sm font-black py-1"><i class="fa-solid fa-circle-notch fa-spin text-base"></i> <span>রূপান্তর ও ডাউনলোড হচ্ছে...</span></div>';
+    }
+
+    const direction = selectedTargetDirection;
+    const targetFont = selectedTargetDirection === 'all_unicode' ? selectedUnicodeFont : 'SutonnyMJ';
+    const preserveMath = wizardConvertMathCheckbox ? wizardConvertMathCheckbox.checked : true;
+
+    const options = {
+      direction,
+      targetFont,
+      convertNumbers: false,
+      numberFormat: 'keep',
+      convertHeaders: true,
+      convertFootnotes: true,
+      convertComments: true,
+      preserveMath
+    };
+
+    try {
+      let docxBlob = null;
+      let docBlob = null;
+      let xlsxBlob = null;
+      let pptxBlob = null;
+
+      const baseName = scan.file.name.replace(/\.[^/.]+$/, '');
+      const modeSuffix = direction === 'all_unicode' ? 'Unicode' : 'Bijoy_SutonnyMJ';
+      let downloadedFileName = '';
+
+      if (scan.ext === 'docx') {
+        if (typeof DocxHandler === 'undefined') throw new Error('DocxHandler ইঞ্জিন লোড হয়নি');
+        const handler = new DocxHandler(options);
+        const res = await handler.convertDocx(scan.buffer, options);
+        docxBlob = res.blob || res.convertedBlob;
+
+        if (requestedFormat === 'doc') {
+          if (typeof DocxToDocConverter !== 'undefined') {
+            const docRes = await new DocxToDocConverter().convertDocxToDoc(docxBlob, options);
+            docBlob = docRes.blob || docRes.convertedBlob;
+          }
+          downloadedFileName = `${baseName}_${modeSuffix}.doc`;
+          triggerAutoDownload(docBlob || docxBlob, downloadedFileName);
+        } else {
+          downloadedFileName = `${baseName}_${modeSuffix}.docx`;
+          triggerAutoDownload(docxBlob, downloadedFileName);
+        }
+
+      } else if (scan.ext === 'doc') {
+        if (typeof DocBinaryEngine !== 'undefined') {
+          const res = (typeof DocBinaryEngine.convertDoc === 'function')
+            ? await DocBinaryEngine.convertDoc(scan.buffer, options)
+            : await DocBinaryEngine.convertDocFile(scan.file, options);
+          docxBlob = res.docxBlob || res.blob;
+          docBlob = res.docBlob;
+        } else {
+          throw new Error('DocBinaryEngine লোড হয়নি');
+        }
+
+        if (requestedFormat === 'doc') {
+          if (!docBlob && docxBlob && typeof DocxToDocConverter !== 'undefined') {
+            try {
+              const docRes = await new DocxToDocConverter().convertDocxToDoc(docxBlob, options);
+              docBlob = docRes.blob || docRes.convertedBlob;
+            } catch (e) {
+              console.warn('Doc conversion fallback', e);
+            }
+          }
+          downloadedFileName = `${baseName}_${modeSuffix}.doc`;
+          triggerAutoDownload(docBlob || docxBlob, downloadedFileName);
+        } else {
+          downloadedFileName = `${baseName}_${modeSuffix}.docx`;
+          triggerAutoDownload(docxBlob || docBlob, downloadedFileName);
+        }
+
+      } else if (scan.isExcel) {
+        if (typeof XlsxHandler !== 'undefined') {
+          const res = await XlsxHandler.convertXlsx(scan.buffer, options);
+          xlsxBlob = res.blob;
+          downloadedFileName = `${baseName}_${modeSuffix}.xlsx`;
+          triggerAutoDownload(xlsxBlob, downloadedFileName);
+        } else {
+          throw new Error('XlsxHandler লোড হয়নি');
+        }
+
+      } else if (scan.isPpt) {
+        if (typeof PptxHandler !== 'undefined') {
+          const res = await PptxHandler.convertPptx(scan.buffer, options);
+          pptxBlob = res.blob;
+          downloadedFileName = `${baseName}_${modeSuffix}.pptx`;
+          triggerAutoDownload(pptxBlob, downloadedFileName);
+        } else {
+          throw new Error('PptxHandler লোড হয়নি');
+        }
+      }
+
+      // Show sleek floating success alert
+      if (instantDownloadAlert) {
+        if (instantDownloadTitle) instantDownloadTitle.textContent = `${downloadedFileName} ডাউনলোড সম্পন্ন হয়েছে!`;
+        if (instantDownloadSubtitle) instantDownloadSubtitle.textContent = `ফাইলটি সরাসরি ব্রাউজারে সেভ হয়েছে। প্রয়োজনে অন্য ফরম্যাটেও রূপান্তর করতে পারেন।`;
+        instantDownloadAlert.classList.remove('hidden');
+
+        if (alertTimeout) clearTimeout(alertTimeout);
+        alertTimeout = setTimeout(() => {
+          instantDownloadAlert.classList.add('hidden');
+        }, 7000);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert('রূপান্তর ব্যর্থ হয়েছে: ' + err.message);
+    } finally {
+      if (activeBtn) {
+        activeBtn.disabled = false;
+        activeBtn.classList.remove('opacity-80', 'cursor-wait');
+        activeBtn.innerHTML = origBtnHtml;
+      }
+    }
+  }
+
+  function triggerAutoDownload(blob, filename) {
+    if (!blob) {
+      console.warn('triggerAutoDownload: Blob is empty');
+      return;
+    }
+    try {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        if (document.body.contains(a)) {
+          document.body.removeChild(a);
+        }
+        window.URL.revokeObjectURL(url);
+      }, 1500);
+    } catch (e) {
+      console.warn('Auto download error', e);
+    }
+  }
+
+  function populateResultUI(scan, options, docxBlob, docBlob, xlsxBlob, pptxBlob, stats, preview) {
+    const baseName = scan.file.name.replace(/\.[^/.]+$/, '');
+    const modeSuffix = options.direction === 'all_unicode' ? 'Unicode' : 'Bijoy_SutonnyMJ';
+
+    if (wizardResultFileName) {
+      wizardResultFileName.textContent = `${baseName}_Converted`;
+    }
+
+    // Stats Details
+    if (wizardResultDetails) {
+      const statsList = [];
+      if (stats.paragraphs || stats.totalParagraphs) statsList.push(`<span><i class="fa-solid fa-paragraph text-emerald-600 mr-1"></i>${toBanglaNumber(stats.paragraphs || stats.totalParagraphs)} প্যারাগ্রাফ</span>`);
+      if (stats.cells) statsList.push(`<span><i class="fa-solid fa-table-cells text-emerald-600 mr-1"></i>${toBanglaNumber(stats.cells)} সেল</span>`);
+      if (stats.slides) statsList.push(`<span><i class="fa-solid fa-file-powerpoint text-amber-600 mr-1"></i>${toBanglaNumber(stats.slides)} স্লাইড</span>`);
+      if (stats.words || stats.totalWords) statsList.push(`<span><i class="fa-solid fa-font text-blue-600 mr-1"></i>${toBanglaNumber(stats.words || stats.totalWords)} শব্দ</span>`);
+      if (scan.hasMath && options.preserveMath) {
+        statsList.push(`<span class="text-indigo-600 dark:text-indigo-400 font-bold"><i class="fa-solid fa-check mr-1"></i>গণিত সমীকরণ অক্ষুণ্ণ</span>`);
+      }
+      wizardResultDetails.innerHTML = statsList.join(' • ');
+    }
+
+    // Preview
+    if (preview && preview.convertedSample && preview.convertedSample.length && wizardPreviewContent) {
+      wizardPreviewContent.textContent = preview.convertedSample.slice(0, 8).join('\n\n');
+      if (options.direction === 'all_unicode') {
+        wizardPreviewContent.classList.remove('font-sutonny');
+      } else {
+        wizardPreviewContent.classList.add('font-sutonny');
+      }
+      wizardPreviewBox?.classList.remove('hidden');
+    } else {
+      wizardPreviewBox?.classList.add('hidden');
+    }
+
+    // Download Buttons Setup
+    [wizardDlDocxBtn, wizardDlDocBtn, wizardDlXlsxBtn, wizardDlPptxBtn].forEach(b => b?.classList.add('hidden'));
+
+    if (scan.isWord) {
+      if (docxBlob && (!wizardOutputFormat || wizardOutputFormat.value !== 'doc')) {
+        wizardDlDocxBtn?.classList.remove('hidden');
+        wizardDlDocxBtn.onclick = () => downloadBlob(docxBlob, `${baseName}_${modeSuffix}.docx`);
+      }
+      if (docBlob && (!wizardOutputFormat || wizardOutputFormat.value !== 'docx')) {
+        wizardDlDocBtn?.classList.remove('hidden');
+        wizardDlDocBtn.onclick = () => downloadBlob(docBlob, `${baseName}_${modeSuffix}_Word2003.doc`);
+      }
+    } else if (scan.isExcel && xlsxBlob) {
+      wizardDlXlsxBtn?.classList.remove('hidden');
+      wizardDlXlsxBtn.onclick = () => downloadBlob(xlsxBlob, `${baseName}_${modeSuffix}.xlsx`);
+    } else if (scan.isPpt && pptxBlob) {
+      wizardDlPptxBtn?.classList.remove('hidden');
+      wizardDlPptxBtn.onclick = () => downloadBlob(pptxBlob, `${baseName}_${modeSuffix}.pptx`);
+    }
+  }
+
+  // --- Live Text Converter Logic ---
+  const sourceTextArea = document.getElementById('sourceTextArea');
+  const targetTextArea = document.getElementById('targetTextArea');
+  const textModeAutoBtn = document.getElementById('textModeAutoBtn');
+  const textModeU2BBtn = document.getElementById('textModeU2BBtn');
+  const textModeB2UBtn = document.getElementById('textModeB2UBtn');
+  const swapTextBtn = document.getElementById('swapTextBtn');
+  const clearTextBtn = document.getElementById('clearTextBtn');
+  const copyConvertedTextBtn = document.getElementById('copyConvertedTextBtn');
+  const downloadTextDocxBtn = document.getElementById('downloadTextDocxBtn');
+  const downloadTextDocBtn = document.getElementById('downloadTextDocBtn');
+
+  let currentTextMode = 'auto'; // 'auto', 'u2b', 'b2u'
+
+  function updateModeButtons() {
+    [textModeAutoBtn, textModeU2BBtn, textModeB2UBtn].forEach(btn => {
+      if (!btn) return;
+      btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-emerald-600 transition';
+    });
+    if (currentTextMode === 'auto' && textModeAutoBtn) textModeAutoBtn.className = 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow-xs transition';
+    if (currentTextMode === 'u2b' && textModeU2BBtn) textModeU2BBtn.className = 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow-xs transition';
+    if (currentTextMode === 'b2u' && textModeB2UBtn) textModeB2UBtn.className = 'px-3 py-1.5 rounded-lg bg-emerald-600 text-white shadow-xs transition';
+  }
+
+  textModeAutoBtn?.addEventListener('click', () => { currentTextMode = 'auto'; updateModeButtons(); performConvert(); });
+  textModeU2BBtn?.addEventListener('click', () => { currentTextMode = 'u2b'; updateModeButtons(); performConvert(); });
+  textModeB2UBtn?.addEventListener('click', () => { currentTextMode = 'b2u'; updateModeButtons(); performConvert(); });
+
+  swapTextBtn?.addEventListener('click', () => {
+    if (!sourceTextArea || !targetTextArea) return;
+    const src = sourceTextArea.value;
+    const tgt = targetTextArea.value;
+    sourceTextArea.value = tgt;
+    if (currentTextMode === 'u2b') currentTextMode = 'b2u';
+    else if (currentTextMode === 'b2u') currentTextMode = 'u2b';
+    updateModeButtons();
+    performConvert();
+  });
+
+  clearTextBtn?.addEventListener('click', () => {
+    if (sourceTextArea) sourceTextArea.value = '';
+    if (targetTextArea) targetTextArea.value = '';
+    updateStats();
+  });
+
+  copyConvertedTextBtn?.addEventListener('click', async () => {
+    const val = targetTextArea ? targetTextArea.value : '';
+    if (!val) return;
+    try {
+      await navigator.clipboard.writeText(val);
+      alert('কনভার্ট করা টেক্সট কপি হয়েছে!');
+    } catch(e) {
+      targetTextArea.select();
+      document.execCommand('copy');
+      alert('কনভার্ট করা টেক্সট কপি হয়েছে!');
+    }
+  });
+
+  function performConvert() {
+    if (!sourceTextArea || !targetTextArea) return;
+    const input = sourceTextArea.value;
+    if (!input) {
+      targetTextArea.value = '';
+      updateStats();
+      return;
+    }
+
+    if (typeof BanglaConverter === 'undefined') return;
+
+    let output = '';
+    let isU2B = true;
+
+    if (currentTextMode === 'u2b') {
+      output = BanglaConverter.unicodeToBijoy(input);
+      isU2B = true;
+    } else if (currentTextMode === 'b2u') {
+      output = BanglaConverter.bijoyToUnicode(input);
+      isU2B = false;
+    } else {
+      isU2B = BanglaConverter.hasBengaliText(input);
+      output = isU2B ? BanglaConverter.unicodeToBijoy(input) : BanglaConverter.bijoyToUnicode(input);
+    }
+
+    if (isU2B) {
+      sourceTextArea.classList.remove('font-sutonny');
+      targetTextArea.classList.add('font-sutonny');
+    } else {
+      sourceTextArea.classList.add('font-sutonny');
+      targetTextArea.classList.remove('font-sutonny');
+    }
+
+    targetTextArea.value = output;
+    updateStats();
+  }
+
+  function updateStats() {
+    if (!sourceTextArea) return;
+    const srcVal = sourceTextArea.value;
+    const tgtVal = targetTextArea ? targetTextArea.value : '';
+    const srcStats = document.getElementById('sourceStats');
+    const tgtStats = document.getElementById('targetStats');
+
+    if (srcStats) {
+      const srcWords = srcVal.trim() ? srcVal.trim().split(/\s+/).length : 0;
+      srcStats.textContent = `${toBanglaNumber(srcWords)} শব্দ | ${toBanglaNumber(srcVal.length)} বর্ণ`;
+    }
+    if (tgtStats) {
+      const tgtWords = tgtVal.trim() ? tgtVal.trim().split(/\s+/).length : 0;
+      tgtStats.textContent = `${toBanglaNumber(tgtWords)} শব্দ | ${toBanglaNumber(tgtVal.length)} বর্ণ`;
+    }
+  }
+
+  sourceTextArea?.addEventListener('input', performConvert);
+
+  // Direct DOCX download
+  downloadTextDocxBtn?.addEventListener('click', async () => {
+    const text = targetTextArea ? targetTextArea.value : '';
+    if (!text.trim() || typeof DocxHandler === 'undefined') return;
+    const isU2B = (currentTextMode === 'u2b') || (currentTextMode === 'auto' && BanglaConverter.hasBengaliText(sourceTextArea.value));
+    const fontName = isU2B ? 'SutonnyMJ' : 'Kalpurush';
+    try {
+      const docxBlob = await DocxHandler.createDocxFromText(text, fontName, isU2B);
+      downloadBlob(docxBlob, `Text_${isU2B ? 'Bijoy_SutonnyMJ' : 'Unicode'}_${Date.now()}.docx`);
+    } catch(err) {
+      console.error(err);
+    }
+  });
+
+  // Direct Word 2003 DOC download
+  downloadTextDocBtn?.addEventListener('click', () => {
+    const text = targetTextArea ? targetTextArea.value : '';
+    if (!text.trim() || typeof DocxHandler === 'undefined') return;
+    const isU2B = (currentTextMode === 'u2b') || (currentTextMode === 'auto' && BanglaConverter.hasBengaliText(sourceTextArea.value));
+    const fontName = isU2B ? 'SutonnyMJ' : 'Kalpurush';
+    const docBlob = DocxHandler.createDocFromText(text, fontName, isU2B);
+    downloadBlob(docBlob, `Text_${isU2B ? 'SutonnyMJ' : 'Unicode'}_Word2003_${Date.now()}.doc`);
+  });
+
+  // Converter Feedback Form Handler
+  const converterFeedbackForm = document.getElementById('converterFeedbackForm');
+  const fbStatusMsg = document.getElementById('fbStatusMsg');
+  const fbSubmitBtn = document.getElementById('fbSubmitBtn');
+
+  converterFeedbackForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('fbUserName')?.value.trim();
+    const contact = document.getElementById('fbUserContact')?.value.trim();
+    const category = document.getElementById('fbCategory')?.value;
+    const message = document.getElementById('fbUserMessage')?.value.trim();
+
+    if (!name || !contact || !message) return;
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('fayzar_converter_feedbacks') || '[]');
+      existing.push({
+        name,
+        contact,
+        category,
+        message,
+        date: new Date().toISOString()
+      });
+      localStorage.setItem('fayzar_converter_feedbacks', JSON.stringify(existing));
+    } catch(err) {
+      console.warn('Feedback save warning', err);
+    }
+
+    if (fbStatusMsg) {
+      fbStatusMsg.classList.remove('hidden');
+    }
+    if (fbSubmitBtn) {
+      fbSubmitBtn.disabled = true;
+      fbSubmitBtn.innerHTML = '<i class="fa-solid fa-check"></i> পাঠানো হয়েছে';
+    }
+
+    setTimeout(() => {
+      converterFeedbackForm.reset();
+      if (fbSubmitBtn) {
+        fbSubmitBtn.disabled = false;
+        fbSubmitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> মতামত পাঠান';
+      }
+      setTimeout(() => fbStatusMsg?.classList.add('hidden'), 4500);
+    }, 1800);
+  });
+}
+
+
+
+// 4. Age Calculator Engine
+function initAgeCalcEngine() {
+  const ageForm = document.getElementById('age-calc-form');
+  const birthInput = document.getElementById('age-birth-date');
+  const targetInput = document.getElementById('age-target-date');
+  const resultBox = document.getElementById('age-result-box');
+  const resYears = document.getElementById('age-res-years');
+  const resMonths = document.getElementById('age-res-months');
+  const resDays = document.getElementById('age-res-days');
+  const badgeDiv = document.getElementById('age-general-badge');
+
+  if (!ageForm) return;
+
+  // Set default target date to today
+  if (targetInput && !targetInput.value) {
+    targetInput.value = new Date().toISOString().split('T')[0];
+  }
+
+  ageForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const bDate = new Date(birthInput.value);
+    const tDate = new Date(targetInput.value);
+
+    if (isNaN(bDate) || isNaN(tDate) || bDate > tDate) {
+      alert('সঠিক জন্ম ও নির্ধারিত তারিখ প্রদান করুন!');
+      return;
+    }
+
+    let years = tDate.getFullYear() - bDate.getFullYear();
+    let months = tDate.getMonth() - bDate.getMonth();
+    let days = tDate.getDate() - bDate.getDate();
+
+    if (days < 0) {
+      months--;
+      const prevMonth = new Date(tDate.getFullYear(), tDate.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    resYears.textContent = years;
+    resMonths.textContent = months;
+    resDays.textContent = days;
+
+    const isGeneralEligible = years >= 18 && (years < 32 || (years === 32 && months === 0 && days === 0));
+    badgeDiv.innerHTML = isGeneralEligible
+      ? `<div class="p-3 rounded-2xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold flex items-center gap-2"><i class="fas fa-check-circle text-emerald-600 text-sm"></i> সরকারি চাকরির সাধারণ বয়সসীমা (১৮–৩২ বছর) অনুযায়ী আপনি আবেদনের যোগ্য।</div>`
+      : `<div class="p-3 rounded-2xl bg-rose-100 text-rose-900 border border-rose-300 text-xs font-bold flex items-center gap-2"><i class="fas fa-exclamation-circle text-rose-600 text-sm"></i> আপনার বয়স সাধারণ চাকরির নির্ধারিত সীমা অতিক্রম করেছে বা অপ্রাপ্তবয়স্ক।</div>`;
+
+    resultBox.classList.remove('hidden');
+  });
+}
+
+// 5. Land Area & Deed Calculator Engine
+function initLandCalculatorEngine() {
+  const cShotok = document.getElementById('conv-shotok');
+  const cKatha = document.getElementById('conv-katha');
+  const cBigha = document.getElementById('conv-bigha');
+  const cAcre = document.getElementById('conv-acre');
+
+  if (!cShotok) return;
+
+  cShotok.addEventListener('input', () => {
+    const val = parseFloat(cShotok.value) || 0;
+    cKatha.value = (val / 1.65).toFixed(3);
+    cBigha.value = (val / 33).toFixed(3);
+    cAcre.value = (val / 100).toFixed(3);
+  });
+
+  cKatha.addEventListener('input', () => {
+    const val = parseFloat(cKatha.value) || 0;
+    const shotok = val * 1.65;
+    cShotok.value = shotok.toFixed(3);
+    cBigha.value = (shotok / 33).toFixed(3);
+    cAcre.value = (shotok / 100).toFixed(3);
+  });
+}
+
+window.calculateDeedFees = function() {
+  const deedValInput = document.getElementById('deed-value');
+  const deedArea = document.getElementById('deed-area')?.value || 'paurashava';
+  const feeReg = document.getElementById('fee-reg');
+  const feeStamp = document.getElementById('fee-stamp');
+  const feeLocal = document.getElementById('fee-local');
+  const feeAit = document.getElementById('fee-ait');
+  const feeTotal = document.getElementById('fee-total');
+
+  if (!deedValInput || !feeReg) return;
+  const val = parseFloat(deedValInput.value) || 0;
+
+  const reg = Math.round(val * 0.01);
+  const stamp = Math.round(val * 0.015);
+  const local = Math.round(val * 0.03);
+  const ait = Math.round(val * 0.03);
+  const total = reg + stamp + local + ait + 650; // incl court fee / affidavit
+
+  feeReg.textContent = `${reg.toLocaleString('bn-BD')} ৳`;
+  feeStamp.textContent = `${stamp.toLocaleString('bn-BD')} ৳`;
+  feeLocal.textContent = `${local.toLocaleString('bn-BD')} ৳`;
+  feeAit.textContent = `${ait.toLocaleString('bn-BD')} ৳`;
+  feeTotal.textContent = `${total.toLocaleString('bn-BD')} ৳`;
+};
+
+// Forms Helper
+function initForms() {
+  const quickForm = document.getElementById('quick-service-form');
+  if (quickForm) {
+    quickForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('order-name').value;
+      const phone = document.getElementById('order-phone').value;
+      const service = document.getElementById('order-service-select').selectedOptions[0].text;
+      const notes = document.getElementById('order-notes')?.value || '';
+
+      const msg = `আসসালামু আলাইকুম, আমি অনলাইন সার্ভিস নিতে চাচ্ছি।\n\nনাম: ${name}\nমোবাইল: ${phone}\nপ্রয়োজনীয় সেবা: ${service}\nবিবরণ: ${notes}`;
+      const url = `https://wa.me/8801717101919?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    });
+  }
+
+  // যোগাযোগ সেকশনের গ্রাহক মতামত ও মন্তব্য ফর্ম হ্যান্ডলার (Customer Feedback Form)
+  const contactFeedbackForm = document.getElementById('contactFeedbackForm');
+  const contactFbStatusMsg = document.getElementById('contactFbStatusMsg');
+  const contactFbSubmitBtn = document.getElementById('contactFbSubmitBtn');
+
+  if (contactFeedbackForm) {
+    contactFeedbackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('contactFbUserName')?.value.trim();
+      const contact = document.getElementById('contactFbUserContact')?.value.trim();
+      const category = document.getElementById('contactFbCategory')?.value;
+      const message = document.getElementById('contactFbUserMessage')?.value.trim();
+
+      if (!name || !contact || !message) return;
+
+      try {
+        const fbPayload = { name, contact, category, message, rating: 5 };
+        fetch('/api/submit-feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(fbPayload)
+        }).catch(() => {});
+
+        const existing = JSON.parse(localStorage.getItem('fayzar_contact_feedbacks') || '[]');
+        existing.push({
+          name,
+          contact,
+          category,
+          message,
+          date: new Date().toISOString()
+        });
+        localStorage.setItem('fayzar_contact_feedbacks', JSON.stringify(existing));
+      } catch(err) {
+        console.warn('Contact feedback storage warning', err);
+      }
+
+      if (contactFbStatusMsg) {
+        contactFbStatusMsg.classList.remove('hidden');
+      }
+      if (contactFbSubmitBtn) {
+        contactFbSubmitBtn.disabled = true;
+        contactFbSubmitBtn.innerHTML = '<i class="fa-solid fa-check"></i> পাঠানো হয়েছে';
+      }
+
+      setTimeout(() => {
+        contactFeedbackForm.reset();
+        if (contactFbSubmitBtn) {
+          contactFbSubmitBtn.disabled = false;
+          contactFbSubmitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> মতামত পাঠান';
+        }
+        setTimeout(() => contactFbStatusMsg?.classList.add('hidden'), 4500);
+      }, 1800);
+    });
+  }
+}
+
+// Utility Blob Downloader
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
