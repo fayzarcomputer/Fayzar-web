@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার - নিয়োগ আবেদন ফর্ম (টেলিটক ডেমো)</title>
+  <style>
+    :root {
+      --primary: #065f46;
+      --bg: #f8fafc;
+      --border: #cbd5e1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+    body { background: var(--bg); color: #0f172a; padding: 25px 15px; }
+    .container { max-width: 900px; margin: 0 auto; background: #fff; border: 2px solid #065f46; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden; }
+    .header { background: #065f46; color: #fff; text-align: center; padding: 18px; border-bottom: 3px solid #f59e0b; }
+    .header h1 { font-size: 18px; margin-bottom: 4px; }
+    .header p { font-size: 12px; opacity: 0.9; }
+    .notice-bar { background: #ecfdf5; border-bottom: 1px solid #a7f3d0; padding: 10px 16px; font-size: 12px; color: #065f46; font-weight: bold; }
+    .form-body { padding: 25px; }
+    .section-title { background: #e2e8f0; padding: 7px 12px; font-size: 13px; font-weight: bold; color: #1e293b; border-left: 4px solid #065f46; margin: 20px 0 12px 0; }
+    .section-title:first-child { margin-top: 0; }
+    table.form-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 12px; }
+    table.form-table td { padding: 7px 8px; vertical-align: middle; border: 1px solid #e2e8f0; }
+    table.form-table td.lbl { width: 25%; font-weight: 600; background: #f8fafc; color: #334155; }
+    table.form-table td.inp { width: 75%; }
+    input[type="text"], input[type="tel"], input[type="email"], input[type="number"], select {
+      width: 100%; padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px;
+    }
+    input:focus, select:focus { outline: 2px solid #059669; border-color: transparent; }
+    .radio-group { display: flex; gap: 15px; align-items: center; }
+    .dob-group { display: flex; gap: 8px; }
+    .dob-group select { width: 33.33%; }
+    table.edu-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 5px; }
+    table.edu-table th, table.edu-table td { border: 1px solid #cbd5e1; padding: 6px 5px; text-align: center; }
+    table.edu-table th { background: #f1f5f9; color: #334155; font-weight: bold; }
+    .submit-bar { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e2e8f0; }
+    .btn-submit { background: #065f46; color: white; border: none; padding: 10px 30px; font-size: 14px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+    .btn-submit:hover { background: #047857; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>বাংলাদেশ সড়ক ও জনপথ অধিদপ্তর</h1>
+      <p>নিয়োগ বিজ্ঞপ্তি ও অনলাইন আবেদন পত্র (টেলিটক ডেমো ফর্ম)</p>
+    </div>
+
+    <div class="notice-bar" style="display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
+      <div>
+        💡 <strong>নির্দেশিকা:</strong> ব্রাউজারের উপরে <strong>"ফয়জার জব অটো-ফিল"</strong> এক্সটেনশন আইকনে ক্লিক করে <strong>"১-ক্লিকে ফর্ম পূরণ করুন"</strong> চাপুন অথবা সরাসরি পাশের বাটনে ক্লিক করুন:
+      </div>
+      <button type="button" id="btn-inpage-demo" style="background: #059669; color: #fff; border: none; padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+        ⚡ ১-ক্লিকে সরাসরি ডেমো ফিল করুন
+      </button>
+    </div>
+
+    <form id="job-application-form" class="form-body" onsubmit="event.preventDefault(); alert('ডেমো আবেদন সফলভাবে জমা হয়েছে!');">
+      
+      <!-- ১. ব্যক্তিগত বিবরণ -->
+      <div class="section-title">১. প্রার্থীর ব্যক্তিগত বিবরণ (Personal Information)</div>
+      <table class="form-table">
+        <tr>
+          <td class="lbl">প্রার্থীর নাম (English):</td>
+          <td class="inp"><input type="text" name="applicant_name" id="applicant_name" placeholder="Applicant's Name in Block Letters"></td>
+        </tr>
+        <tr>
+          <td class="lbl">প্রার্থীর নাম (বাংলা):</td>
+          <td class="inp"><input type="text" name="applicant_name_bn" id="applicant_name_bn" placeholder="প্রার্থীর নাম বাংলায়"></td>
+        </tr>
+        <tr>
+          <td class="lbl">পিতার নাম (Father's Name):</td>
+          <td class="inp"><input type="text" name="father_name" id="father_name" placeholder="Father's Name"></td>
+        </tr>
+        <tr>
+          <td class="lbl">মাতার নাম (Mother's Name):</td>
+          <td class="inp"><input type="text" name="mother_name" id="mother_name" placeholder="Mother's Name"></td>
+        </tr>
+        <tr>
+          <td class="lbl">জন্ম তারিখ (Date of Birth):</td>
+          <td class="inp">
+            <div class="dob-group">
+              <select name="dob_day" id="dob_day">
+                <option value="">দিন</option>
+                <option value="01">01</option><option value="05">05</option><option value="10">10</option>
+                <option value="15">15</option><option value="20">20</option><option value="25">25</option>
+              </select>
+              <select name="dob_month" id="dob_month">
+                <option value="">মাস</option>
+                <option value="01">Jan</option><option value="02">Feb</option><option value="05">May</option>
+                <option value="08">Aug</option><option value="12">Dec</option>
+              </select>
+              <select name="dob_year" id="dob_year">
+                <option value="">সাল</option>
+                <option value="1995">1995</option><option value="1998">1998</option><option value="2000">2000</option>
+              </select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl">লিঙ্গ (Gender):</td>
+          <td class="inp">
+            <div class="radio-group">
+              <label><input type="radio" name="gender" value="Male"> পুরুষ (Male)</label>
+              <label><input type="radio" name="gender" value="Female"> মহিলা (Female)</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl">জাতীয় পরিচয়পত্র নং (NID):</td>
+          <td class="inp"><input type="text" name="nid_no" id="nid_no" placeholder="National ID Number"></td>
+        </tr>
+        <tr>
+          <td class="lbl">ধর্ম (Religion):</td>
+          <td class="inp">
+            <select name="religion" id="religion">
+              <option value="Islam">Islam</option>
+              <option value="Hinduism">Hinduism</option>
+              <option value="Christianity">Christianity</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl">বৈবাহিক অবস্থা (Marital Status):</td>
+          <td class="inp">
+            <select name="marital_status" id="marital_status">
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl">কোটা (Quota):</td>
+          <td class="inp">
+            <select name="quota" id="quota">
+              <option value="Non-Quota">Non-Quota (সাধারণ)</option>
+              <option value="Freedom Fighter Child">Freedom Fighter (মুক্তিযোদ্ধা কোটা)</option>
+              <option value="Physical Handicapped">Physical Handicapped (প্রতিবন্ধী)</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl">মোবাইল নম্বর (Mobile No):</td>
+          <td class="inp"><input type="tel" name="mobile_no" id="mobile_no" placeholder="017xxxxxxxx"></td>
+        </tr>
+        <tr>
+          <td class="lbl">ইমেইল (Email):</td>
+          <td class="inp"><input type="email" name="email_address" id="email_address" placeholder="email@example.com"></td>
+        </tr>
+      </table>
+
+      <!-- ২. ঠিকানা -->
+      <div class="section-title">২. ঠিকানা (Address Details)</div>
+      <table class="form-table">
+        <tr>
+          <td class="lbl" style="width: 50%;"><strong>বর্তমান ঠিকানা (Present Address)</strong></td>
+          <td class="lbl" style="width: 50%;"><strong>স্থায়ী ঠিকানা (Permanent Address)</strong></td>
+        </tr>
+        <tr>
+          <td>
+            <label style="display:block; margin-bottom: 3px;">Care of:</label>
+            <input type="text" name="present_care_of" id="present_care_of" placeholder="Care of">
+            <label style="display:block; margin: 6px 0 3px 0;">গ্রাম / রাস্তা / বাসা:</label>
+            <input type="text" name="present_village" id="present_village" placeholder="Village / Road">
+            <label style="display:block; margin: 6px 0 3px 0;">জেলা (District):</label>
+            <input type="text" name="present_district" id="present_district" placeholder="District">
+            <label style="display:block; margin: 6px 0 3px 0;">উপজেলা / থানা:</label>
+            <input type="text" name="present_upazila" id="present_upazila" placeholder="Upazila">
+            <label style="display:block; margin: 6px 0 3px 0;">পোস্ট কোড:</label>
+            <input type="text" name="present_post_code" id="present_post_code" placeholder="Post Code">
+          </td>
+          <td>
+            <label style="display:block; margin-bottom: 3px;">Care of:</label>
+            <input type="text" name="permanent_care_of" id="permanent_care_of" placeholder="Care of">
+            <label style="display:block; margin: 6px 0 3px 0;">গ্রাম / রাস্তা / বাসা:</label>
+            <input type="text" name="permanent_village" id="permanent_village" placeholder="Village / Road">
+            <label style="display:block; margin: 6px 0 3px 0;">জেলা (District):</label>
+            <input type="text" name="permanent_district" id="permanent_district" placeholder="District">
+            <label style="display:block; margin: 6px 0 3px 0;">উপজেলা / থানা:</label>
+            <input type="text" name="permanent_upazila" id="permanent_upazila" placeholder="Upazila">
+            <label style="display:block; margin: 6px 0 3px 0;">পোস্ট কোড:</label>
+            <input type="text" name="permanent_post_code" id="permanent_post_code" placeholder="Post Code">
+          </td>
+        </tr>
+      </table>
+
+      <!-- ৩. শিক্ষাগত যোগ্যতা -->
+      <div class="section-title">৩. শিক্ষাগত যোগ্যতা (Academic Qualifications)</div>
+      <table class="edu-table">
+        <thead>
+          <tr>
+            <th>পরীক্ষা (Examination)</th>
+            <th>বোর্ড / বিশ্ববিদ্যালয়</th>
+            <th>রোল নং (Roll)</th>
+            <th>রেজি নং (Reg)</th>
+            <th>গ্রুপ / বিষয়</th>
+            <th>ফলাফল (GPA/CGPA)</th>
+            <th>পাসের সাল</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" name="ssc_exam" id="ssc_exam" value="S.S.C"></td>
+            <td><input type="text" name="ssc_board" id="ssc_board" placeholder="Board"></td>
+            <td><input type="text" name="ssc_roll" id="ssc_roll" placeholder="Roll"></td>
+            <td><input type="text" name="ssc_reg" id="ssc_reg" placeholder="Reg"></td>
+            <td><input type="text" name="ssc_group" id="ssc_group" placeholder="Group"></td>
+            <td><input type="text" name="ssc_gpa" id="ssc_gpa" placeholder="GPA"></td>
+            <td><input type="text" name="ssc_year" id="ssc_year" placeholder="Year"></td>
+          </tr>
+          <tr>
+            <td><input type="text" name="hsc_exam" id="hsc_exam" value="H.S.C"></td>
+            <td><input type="text" name="hsc_board" id="hsc_board" placeholder="Board"></td>
+            <td><input type="text" name="hsc_roll" id="hsc_roll" placeholder="Roll"></td>
+            <td><input type="text" name="hsc_reg" id="hsc_reg" placeholder="Reg"></td>
+            <td><input type="text" name="hsc_group" id="hsc_group" placeholder="Group"></td>
+            <td><input type="text" name="hsc_gpa" id="hsc_gpa" placeholder="GPA"></td>
+            <td><input type="text" name="hsc_year" id="hsc_year" placeholder="Year"></td>
+          </tr>
+          <tr>
+            <td><input type="text" name="grad_exam" id="grad_exam" placeholder="Graduation"></td>
+            <td><input type="text" name="grad_institute" id="grad_institute" placeholder="Institute / Univ"></td>
+            <td>-</td>
+            <td>-</td>
+            <td><input type="text" name="grad_subject" id="grad_subject" placeholder="Subject"></td>
+            <td><input type="text" name="grad_result" id="grad_result" placeholder="CGPA"></td>
+            <td><input type="text" name="grad_year" id="grad_year" placeholder="Year"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="submit-bar">
+        <button type="submit" class="btn-submit">আবেদন সম্পন্ন করুন (Submit Application)</button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Content Scripts loaded directly so extension page and web page always have listeners -->
+  <script src="content/dom-inspector.js"></script>
+  <script src="content/content-script.js"></script>
+  <script>
+    // Direct in-page test button
+    document.getElementById('btn-inpage-demo')?.addEventListener('click', () => {
+      chrome.storage.local.get(['fayzar_profiles', 'fayzar_settings'], (data) => {
+        const profiles = data.fayzar_profiles || [];
+        const settings = data.fayzar_settings || {};
+        const active = profiles.find(p => p.id === settings.activeProfileId) || profiles[0];
+        
+        if (active) {
+          // Trigger autofill via internal message
+          window.postMessage({ type: 'FAYZAR_AUTOFILL_LOCAL', profile: active }, '*');
+        } else {
+          alert('কোনো প্রার্থী প্রোফাইল সংরক্ষিত নেই!');
+        }
+      });
+    });
+
+    // In-page fallback listener
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.type === 'FAYZAR_AUTOFILL_LOCAL') {
+        const fakeRequest = { action: 'AUTOFILL_FORM', profileData: e.data.profile };
+        // Dispatch to content script listener
+        chrome.runtime?.sendMessage?.(fakeRequest);
+        // Or directly call content script logic via DOM event
+        window.dispatchEvent(new CustomEvent('fayzar_autofill_event', { detail: e.data.profile }));
+      }
+    });
+  </script>
+</body>
+</html>
