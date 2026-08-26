@@ -190,13 +190,38 @@ async function initAdminSuite() {
   }
 
   try {
-    // ৬. চাকরি প্রার্থী ডাটাবেজ লোড
+    // ৬. চাকরি প্রার্থী ডাটাবেজ লোড (লোকাল + ফায়ারবেস ক্লাউড ইউজার)
     const cRes = await fetch('/api/candidates');
     if (cRes.ok) {
       candidatesList = await cRes.json();
     } else {
       const cLocal = await fetch('data/candidates.json');
       if (cLocal.ok) candidatesList = await cLocal.json();
+    }
+
+    if (typeof FayzarFirebaseClient !== 'undefined') {
+      try {
+        const uRes = await FayzarFirebaseClient.getAllUsersForAdmin();
+        if (uRes.success && uRes.users) {
+          for (const u of uRes.users) {
+            const fRes = await FayzarFirebaseClient.getUserFiles(u.mobile);
+            if (fRes.success && fRes.files) {
+              fRes.files.forEach(f => {
+                if (!candidatesList.some(c => c.id === f.id)) {
+                  candidatesList.push({
+                    ...f,
+                    isCloud: true,
+                    userMobile: u.mobile,
+                    userName: u.name
+                  });
+                }
+              });
+            }
+          }
+        }
+      } catch (fbErr) {
+        console.warn('Firebase admin load:', fbErr);
+      }
     }
   } catch (e) {
     candidatesList = [];
