@@ -1093,6 +1093,22 @@ function importBackupFile(event) {
   reader.readAsText(file);
 }
 
+async function syncToGitHubFromAdmin() {
+  if (!confirm('আপনি কি এই মুহূর্তের সমস্ত ফাইল ও আপডেট ১-ক্লিকে গিটহাবে লাইভ করতে চান?')) return;
+  showToast('গিটহাবে আপডেট পাঠানো হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...', 'info');
+
+  try {
+    const res = await fetch('/api/sync-github', { method: 'POST' });
+    if (res.ok) {
+      showToast('গিটহাব সিঙ্ক সফলভাবে শুরু হয়েছে! কিছুক্ষণের মধ্যে লাইভ সাইট আপডেট হয়ে যাবে।', 'success');
+    } else {
+      showToast('সার্ভার সিঙ্কে সমস্যা হয়েছে। ফোল্ডারের sync-to-github.bat চালান।', 'warning');
+    }
+  } catch (err) {
+    showToast('অফলাইন মোড। fayzar-computer-v2 ফোল্ডারের sync-to-github.bat ফাইলে ডাবল-ক্লিক করুন।', 'info');
+  }
+}
+
 // স্ক্রিপ্ট এক্সিকিউশন
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth();
