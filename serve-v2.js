@@ -122,6 +122,18 @@ const server = http.createServer(async (req, res) => {
           return sendJson(res, 200, { success: true, message: 'Feedback submitted successfully', feedback: newEntry });
         }
 
+        if (reqPath === '/api/sync-github') {
+          const { exec } = require('child_process');
+          exec('powershell.exe -NoProfile -ExecutionPolicy Bypass -File "sync-to-github.ps1"', { cwd: __dirname }, (error, stdout, stderr) => {
+            if (error) {
+              console.error('GitHub Sync Error:', error);
+            } else {
+              console.log('GitHub Sync Completed successfully');
+            }
+          });
+          return sendJson(res, 200, { success: true, message: 'গিটহাব সিঙ্ক শুরু হয়েছে, ব্যাকগ্রাউন্ডে আপলোড সম্পন্ন হচ্ছে।' });
+        }
+
         if (reqPath === '/api/import-backup') {
           if (payload.notices) fs.writeFileSync(path.join(DATA_DIR, 'notices.json'), JSON.stringify(payload.notices, null, 2), 'utf8');
           if (payload.services) fs.writeFileSync(path.join(DATA_DIR, 'services.json'), JSON.stringify(payload.services, null, 2), 'utf8');
