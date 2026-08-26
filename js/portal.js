@@ -21,9 +21,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function togglePortalPinVisibility() {
-  const input = document.getElementById('p-login-pin');
-  const icon = document.getElementById('p-pin-eye');
+function switchAuthMode(mode) {
+  const loginTab = document.getElementById('tab-btn-auth-login');
+  const regTab = document.getElementById('tab-btn-auth-register');
+  const loginForm = document.getElementById('portal-login-form');
+  const regForm = document.getElementById('portal-register-form');
+  if (!loginTab || !regTab || !loginForm || !regForm) return;
+
+  if (mode === 'register') {
+    regTab.className = 'py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 bg-emerald-600 text-white shadow-md';
+    loginTab.className = 'py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white';
+    loginForm.classList.add('hidden');
+    regForm.classList.remove('hidden');
+  } else {
+    loginTab.className = 'py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 bg-emerald-600 text-white shadow-md';
+    regTab.className = 'py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white';
+    regForm.classList.add('hidden');
+    loginForm.classList.remove('hidden');
+  }
+}
+
+function togglePortalPinVisibility(inputId = 'p-login-pin', iconId = 'p-pin-eye') {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
   if (!input || !icon) return;
 
   if (input.type === 'password') {
@@ -32,6 +52,56 @@ function togglePortalPinVisibility() {
   } else {
     input.type = 'password';
     icon.className = 'fas fa-eye';
+  }
+}
+
+async function handlePortalRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('p-reg-name').value.trim();
+  const mobile = document.getElementById('p-reg-mobile').value.trim();
+  const pin = document.getElementById('p-reg-pin').value.trim();
+  const pinConfirm = document.getElementById('p-reg-pin-confirm').value.trim();
+  const errBox = document.getElementById('p-reg-error');
+  const submitBtn = document.getElementById('btn-reg-submit');
+
+  errBox.classList.add('hidden');
+
+  const cleanMobile = mobile.replace(/[^0-9]/g, '');
+  if (cleanMobile.length < 11) {
+    errBox.textContent = 'সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন!';
+    errBox.classList.remove('hidden');
+    return;
+  }
+  if (pin.length < 4) {
+    errBox.textContent = 'কমপক্ষে ৪ ডিজিটের গোপন পিন নম্বর দিন!';
+    errBox.classList.remove('hidden');
+    return;
+  }
+  if (pin !== pinConfirm) {
+    errBox.textContent = 'উভয় পিন নম্বর একই হতে হবে!';
+    errBox.classList.remove('hidden');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> অ্যাকাউন্ট তৈরি হচ্ছে...';
+
+  try {
+    const res = await FayzarFirebaseClient.registerOrLogin(cleanMobile, pin, name);
+    if (res.success) {
+      currentUser = res.user;
+      localStorage.setItem('fayzar_portal_user', JSON.stringify(currentUser));
+      showDashboardView();
+    } else {
+      errBox.textContent = res.error || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে!';
+      errBox.classList.remove('hidden');
+    }
+  } catch (err) {
+    errBox.textContent = 'সার্ভার ত্রুটি: ' + err.message;
+    errBox.classList.remove('hidden');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span>🚀 নতুন একাউন্ট তৈরি করুন</span>';
   }
 }
 
