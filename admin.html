@@ -219,6 +219,13 @@
           <span id="tab-badge-feedbacks" class="text-[9px] px-1.5 py-0.2 rounded-full bg-rose-950 text-rose-300 border border-rose-500/40">0</span>
         </button>
 
+        <!-- ট্যাব ৮: চাকরি প্রার্থী ডাটাবেজ (এক্সটেনশন সিঙ্ক) -->
+        <button id="tab-btn-candidates" onclick="switchAdminTab('candidates')" class="p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition flex flex-col items-center justify-center gap-1 text-center font-bold text-xs relative">
+          <i class="fas fa-users-viewfinder text-sm text-lime-400"></i>
+          <span>চাকরি প্রার্থী</span>
+          <span id="tab-badge-candidates" class="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-800 text-lime-300 border border-lime-500/30">0</span>
+        </button>
+
         <!-- ট্যাব ৮: ব্যাকআপ ও রিস্টোর -->
         <button id="tab-btn-backup" onclick="switchAdminTab('backup')" class="p-2.5 rounded-xl text-slate-300 hover:bg-slate-800 transition flex flex-col items-center justify-center gap-1 text-center font-bold text-xs">
           <i class="fas fa-database text-sm text-purple-400"></i>
@@ -716,6 +723,45 @@
 
       </div>
 
+      <!-- =====================================================================
+           প্যানেল ৮: চাকরি প্রার্থী কন্ট্রোল সেন্টার (এক্সটেনশন অটো-সিঙ্ক)
+           ===================================================================== -->
+      <div id="panel-candidates" class="admin-tab-panel hidden space-y-6">
+        
+        <!-- Header Controls -->
+        <div class="glass-card rounded-3xl p-6 shadow-xl border border-slate-700/80 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-2xl bg-lime-500/20 text-lime-400 flex items-center justify-center text-xl">
+                <i class="fas fa-users-viewfinder"></i>
+              </span>
+              <div>
+                <h3 class="text-lg font-black text-white">চাকরি প্রার্থী কন্ট্রোল সেন্টার</h3>
+                <p class="text-xs text-slate-400">সকল পিসির এক্সটেনশনের জন্য কেন্দ্রীয় প্রার্থী ডাটাবেজ</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+            <!-- Search -->
+            <div class="relative w-full sm:w-64">
+              <input type="text" id="admin-candidates-search" oninput="renderAdminCandidates(this.value)" placeholder="প্রার্থীর নাম, মোবাইল বা এনআইডি..." class="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-lime-500">
+              <i class="fas fa-search absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+            </div>
+
+            <button onclick="openCandidateModal()" class="bg-gradient-to-r from-lime-600 to-emerald-600 hover:from-lime-500 hover:to-emerald-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg">
+              <i class="fas fa-user-plus"></i> <span>নতুন প্রার্থী যুক্ত করুন</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Candidates List Grid -->
+        <div id="admin-candidates-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Rendered via js/admin.js -->
+        </div>
+
+      </div>
+
     </main>
 
     <!-- Footer -->
@@ -735,6 +781,203 @@
   <!-- =========================================================================
        ৩. ইন্টারেক্টিভ মডালসমূহ (Modals)
        ========================================================================= -->
+
+  <!-- চাকরি প্রার্থী এডিট / অ্যাড মোডাল -->
+  <div id="admin-candidate-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full glass-card rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-700 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar text-white">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 id="admin-candidate-modal-title" class="text-base font-black text-white flex items-center gap-2">
+          <i class="fas fa-user-gear text-lime-400"></i> প্রার্থীর পূর্ণাঙ্গ আবেদন তথ্য
+        </h3>
+        <button onclick="closeCandidateModal()" class="text-slate-400 hover:text-white transition text-lg"><i class="fas fa-times"></i></button>
+      </div>
+
+      <form id="admin-candidate-form" onsubmit="handleCandidateSubmit(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="ac-edit-id">
+
+        <!-- Tab Nav -->
+        <div class="flex border-b border-slate-800 gap-2 pb-2 overflow-x-auto">
+          <button type="button" onclick="switchCandidateModalTab('personal')" id="btn-ac-tab-personal" class="px-3.5 py-1.5 rounded-xl bg-lime-600 text-white font-bold">১. ব্যক্তিগত তথ্য</button>
+          <button type="button" onclick="switchCandidateModalTab('address')" id="btn-ac-tab-address" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">২. ঠিকানা</button>
+          <button type="button" onclick="switchCandidateModalTab('education')" id="btn-ac-tab-education" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">৩. শিক্ষাগত যোগ্যতা</button>
+          <button type="button" onclick="switchCandidateModalTab('other')" id="btn-ac-tab-other" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">৪. কোটা ও দক্ষতা</button>
+        </div>
+
+        <!-- Tab 1: Personal -->
+        <div id="ac-tab-personal" class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">প্রোফাইল শিরোনাম *</label>
+              <input type="text" id="ac-name" required placeholder="যেমন: মো: আব্দুর রহিম (অফিস সহকারী)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">প্রার্থীর নাম (English - Block Letters) *</label>
+              <input type="text" id="ac-applicant-name" required placeholder="MD. ABDUR RAHIM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">প্রার্থীর নাম (বাংলা)</label>
+              <input type="text" id="ac-applicant-name-bn" placeholder="মো: আব্দুর রহিম" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">মোবাইল নম্বর *</label>
+              <input type="tel" id="ac-mobile" required placeholder="01717101919" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">পিতার নাম (English) *</label>
+              <input type="text" id="ac-father-name" required placeholder="MD. ABDUL KARIM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">পিতার নাম (বাংলা)</label>
+              <input type="text" id="ac-father-name-bn" placeholder="মো: আব্দুল করিম" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">মাতার নাম (English) *</label>
+              <input type="text" id="ac-mother-name" required placeholder="RAHIMA BEGUM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">মাতার নাম (বাংলা)</label>
+              <input type="text" id="ac-mother-name-bn" placeholder="রহিমা বেগম" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">জাতীয় পরিচয়পত্র নম্বর (NID)</label>
+              <input type="text" id="ac-nid" placeholder="১০ বা ১৭ ডিজিটের এনআইডি" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-lime-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">জন্মতারিখ (দিন/মাস/সাল) *</label>
+              <div class="grid grid-cols-3 gap-2">
+                <input type="number" id="ac-dob-day" placeholder="দিন" min="1" max="31" required class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-center text-white">
+                <input type="number" id="ac-dob-month" placeholder="মাস" min="1" max="12" required class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-center text-white">
+                <input type="number" id="ac-dob-year" placeholder="সাল" min="1950" max="2030" required class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-center text-white">
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">লিঙ্গ (Gender) *</label>
+              <select id="ac-gender" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                <option value="Male">পুরুষ (Male)</option>
+                <option value="Female">মহিলা (Female)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">ধর্ম ও রক্তের গ্রুপ</label>
+              <div class="grid grid-cols-2 gap-2">
+                <select id="ac-religion" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-white">
+                  <option value="Islam">Islam</option>
+                  <option value="Hinduism">Hinduism</option>
+                </select>
+                <select id="ac-blood" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-white">
+                  <option value="A+">A+</option><option value="B+">B+</option><option value="O+">O+</option><option value="AB+">AB+</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Address -->
+        <div id="ac-tab-address" class="hidden space-y-3">
+          <h4 class="text-xs font-black text-lime-400 border-b border-slate-800 pb-1">বর্তমান ঠিকানা</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">Care of:</label>
+              <input type="text" id="ac-pr-care" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-slate-400 mb-1">গ্রাম / রাস্তা / বাসা:</label>
+              <input type="text" id="ac-pr-village" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">জেলা (District):</label>
+              <input type="text" id="ac-pr-dist" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">উপজেলা / থানা:</label>
+              <input type="text" id="ac-pr-thana" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">পোস্ট কোড:</label>
+              <input type="text" id="ac-pr-code" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+          </div>
+          <div class="pt-2">
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-lime-400">
+              <input type="checkbox" id="ac-same-address" checked onchange="document.getElementById('ac-perm-block').style.display = this.checked ? 'none' : 'grid'"> বর্তমান ও স্থায়ী ঠিকানা একই
+            </label>
+          </div>
+          <div id="ac-perm-block" style="display: none;" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">স্থায়ী Care of:</label>
+              <input type="text" id="ac-pm-care" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-slate-400 mb-1">স্থায়ী গ্রাম/রাস্তা:</label>
+              <input type="text" id="ac-pm-village" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Education -->
+        <div id="ac-tab-education" class="hidden space-y-4">
+          <!-- SSC -->
+          <div>
+            <h4 class="text-xs font-black text-lime-400 mb-2">এসএসসি / সমমান</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <input type="text" id="ac-ssc-board" placeholder="বোর্ড (Dinajpur)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-ssc-roll" placeholder="রোল নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-ssc-reg" placeholder="রেজি নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-ssc-gpa" placeholder="জিপিএ (5.00)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-ssc-year" placeholder="পাসের সাল" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+            </div>
+          </div>
+          <!-- HSC -->
+          <div>
+            <h4 class="text-xs font-black text-lime-400 mb-2">এইচএসসি / সমমান</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <input type="text" id="ac-hsc-board" placeholder="বোর্ড" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-hsc-roll" placeholder="রোল নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-hsc-reg" placeholder="রেজি নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-hsc-gpa" placeholder="জিপিএ" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-hsc-year" placeholder="পাসের সাল" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+            </div>
+          </div>
+          <!-- Graduation -->
+          <div>
+            <h4 class="text-xs font-black text-lime-400 mb-2">স্নাতক / অনার্স</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+              <input type="text" id="ac-grad-exam" placeholder="ডিগ্রি (Honours / B.Sc)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-grad-inst" placeholder="বিশ্ববিদ্যালয়" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-grad-sub" placeholder="বিষয়" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="ac-grad-gpa" placeholder="সিজিপিএ" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Other -->
+        <div id="ac-tab-other" class="hidden space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">কোটা (Quota)</label>
+              <select id="ac-quota" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                <option value="Non-Quota">সাধারণ (Non-Quota)</option>
+                <option value="Freedom Fighter Child">মুক্তিযোদ্ধা সন্তান</option>
+                <option value="Physical Handicapped">প্রতিবন্ধী</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">টাইপিং গতি (ইংরেজি / বাংলা WPM)</label>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="number" id="ac-typing-en" placeholder="En WPM (30)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                <input type="number" id="ac-typing-bn" placeholder="Bn WPM (25)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeCandidateModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition">বাতিল</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-lime-600 hover:bg-lime-500 text-white font-extrabold shadow-lg transition">সংরক্ষণ করুন</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- নোটিশ এডিট / অ্যাড মোডাল -->
   <div id="notice-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
