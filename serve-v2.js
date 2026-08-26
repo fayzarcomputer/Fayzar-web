@@ -105,6 +105,12 @@ const server = http.createServer(async (req, res) => {
           return sendJson(res, 200, { success: true, message: 'Converter dictionary saved successfully', count: payload.length });
         }
 
+        if (reqPath === '/api/save-candidates' || reqPath === '/api/candidates') {
+          const listToSave = Array.isArray(payload) ? payload : (payload.profiles || []);
+          fs.writeFileSync(path.join(DATA_DIR, 'candidates.json'), JSON.stringify(listToSave, null, 2), 'utf8');
+          return sendJson(res, 200, { success: true, message: 'Candidates saved successfully', count: listToSave.length });
+        }
+
         if (reqPath === '/api/submit-feedback') {
           const list = safeReadJson(path.join(DATA_DIR, 'feedbacks.json'), []);
           const newEntry = {
@@ -158,6 +164,11 @@ const server = http.createServer(async (req, res) => {
         if (reqPath === '/api/dictionary') {
           const dict = safeReadJson(path.join(DATA_DIR, 'converter_dict.json'), []);
           return sendJson(res, 200, dict);
+        }
+
+        if (reqPath === '/api/candidates') {
+          const list = safeReadJson(path.join(DATA_DIR, 'candidates.json'), []);
+          return sendJson(res, 200, list);
         }
 
         if (reqPath === '/api/export-backup') {
