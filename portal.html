@@ -106,21 +106,32 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- 1. LOGIN / REGISTER VIEW (Shown when logged out) -->
-    <div id="portal-login-view" class="max-w-md mx-auto my-8">
+    <div id="portal-login-view" class="max-w-md mx-auto my-6">
       <div class="glass-card rounded-3xl p-7 sm:p-8 shadow-2xl border border-slate-800 relative overflow-hidden">
-        <div class="text-center space-y-3 mb-6">
+        
+        <!-- Brand Badge -->
+        <div class="text-center space-y-2 mb-6">
           <span class="w-14 h-14 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white flex items-center justify-center text-2xl shadow-xl shadow-emerald-500/20">
-            <i class="fas fa-cloud-arrow-up"></i>
+            <i class="fas fa-user-astronaut"></i>
           </span>
-          <h2 class="text-xl font-black text-white">চাকরি প্রার্থী লগইন ও রেজিস্ট্রেশন</h2>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            আপনার মোবাইল নম্বর ও ৪ ডিজিটের গোপন পিন দিয়ে লগইন করুন। নতুন ইউজার হলে স্বয়ংক্রিয়ভাবে অ্যাকাউন্ট তৈরি হয়ে যাবে।
-          </p>
+          <h2 class="text-xl font-black text-white">চাকরি প্রার্থী পোর্টাল</h2>
+          <p class="text-xs text-slate-400">আপনার ব্যক্তিগত চাকরির ফাইল ও ছবি-স্বাক্ষর ক্লাউডে নিরাপদ রাখুন</p>
         </div>
 
+        <!-- Distinct Mode Switcher Tabs -->
+        <div class="grid grid-cols-2 gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl mb-6">
+          <button type="button" id="tab-btn-auth-login" onclick="switchAuthMode('login')" class="py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 bg-emerald-600 text-white shadow-md">
+            <i class="fas fa-key"></i> <span>লগইন করুন</span>
+          </button>
+          <button type="button" id="tab-btn-auth-register" onclick="switchAuthMode('register')" class="py-2.5 rounded-xl font-black text-xs transition flex items-center justify-center gap-2 text-slate-400 hover:text-white">
+            <i class="fas fa-user-plus"></i> <span>নতুন রেজিস্ট্রেশন</span>
+          </button>
+        </div>
+
+        <!-- FORM A: LOGIN FORM -->
         <form id="portal-login-form" onsubmit="handlePortalLogin(event)" class="space-y-4 text-xs">
           <div>
-            <label class="block font-bold text-slate-300 mb-1.5">১১ ডিজিটের মোবাইল নম্বর *</label>
+            <label class="block font-bold text-slate-300 mb-1.5">আপনার মোবাইল নম্বর *</label>
             <div class="relative">
               <input type="tel" id="p-login-mobile" required placeholder="01717101919" maxlength="11" class="w-full pl-9 pr-3 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 focus:outline-none transition">
               <i class="fas fa-mobile-screen absolute left-3.5 top-3.5 text-slate-500"></i>
@@ -132,23 +143,77 @@
             <div class="relative">
               <input type="password" id="p-login-pin" required placeholder="••••" maxlength="6" class="w-full pl-9 pr-10 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white font-mono text-sm tracking-widest focus:border-emerald-500 focus:outline-none transition">
               <i class="fas fa-key absolute left-3.5 top-3.5 text-slate-500"></i>
-              <button type="button" onclick="togglePortalPinVisibility()" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-white">
+              <button type="button" onclick="togglePortalPinVisibility('p-login-pin', 'p-pin-eye')" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-white">
                 <i id="p-pin-eye" class="fas fa-eye"></i>
               </button>
             </div>
-            <p class="text-[10px] text-slate-500 mt-1">মনে রাখার মতো ৪ সংখ্যার গোপন পিন দিন (যেমন: 1234)</p>
           </div>
 
           <div id="p-login-error" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs font-semibold"></div>
 
           <button type="submit" id="btn-login-submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black text-sm shadow-xl shadow-emerald-600/20 transition flex items-center justify-center gap-2">
-            <span>লগইন / প্রবেশ করুন</span>
+            <span>লগইন করুন</span>
             <i class="fas fa-arrow-right"></i>
           </button>
+
+          <div class="text-center pt-2">
+            <button type="button" onclick="switchAuthMode('register')" class="text-xs text-emerald-400 hover:underline font-bold">
+              একাউন্ট নেই? এখানে ক্লিক করে নতুন রেজিস্ট্রেশন করুন
+            </button>
+          </div>
+        </form>
+
+        <!-- FORM B: REGISTER FORM -->
+        <form id="portal-register-form" onsubmit="handlePortalRegister(event)" class="hidden space-y-4 text-xs">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1.5">প্রার্থীর পুরো নাম (বাংলা বা ইংরেজি) *</label>
+            <div class="relative">
+              <input type="text" id="p-reg-name" required placeholder="যেমন: মো: আব্দুর রহিম" class="w-full pl-9 pr-3 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white text-sm focus:border-emerald-500 focus:outline-none transition">
+              <i class="fas fa-user absolute left-3.5 top-3.5 text-slate-500"></i>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-300 mb-1.5">১১ ডিজিটের মোবাইল নম্বর *</label>
+            <div class="relative">
+              <input type="tel" id="p-reg-mobile" required placeholder="01717101919" maxlength="11" class="w-full pl-9 pr-3 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 focus:outline-none transition">
+              <i class="fas fa-mobile-screen absolute left-3.5 top-3.5 text-slate-500"></i>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">এই নম্বরটি আপনার একাউন্ট আইডি হিসেবে ব্যবহৃত হবে</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">৪ সংখ্যার পিন *</label>
+              <div class="relative">
+                <input type="password" id="p-reg-pin" required placeholder="••••" maxlength="6" class="w-full pl-8 pr-2 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white font-mono text-sm tracking-widest focus:border-emerald-500 focus:outline-none transition">
+                <i class="fas fa-lock absolute left-3 top-3.5 text-slate-500 text-xs"></i>
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">পিন নিশ্চিত করুন *</label>
+              <div class="relative">
+                <input type="password" id="p-reg-pin-confirm" required placeholder="••••" maxlength="6" class="w-full pl-8 pr-2 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white font-mono text-sm tracking-widest focus:border-emerald-500 focus:outline-none transition">
+                <i class="fas fa-check absolute left-3 top-3.5 text-slate-500 text-xs"></i>
+              </div>
+            </div>
+          </div>
+
+          <div id="p-reg-error" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs font-semibold"></div>
+
+          <button type="submit" id="btn-reg-submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-black text-sm shadow-xl shadow-teal-600/20 transition flex items-center justify-center gap-2">
+            <span>🚀 নতুন একাউন্ট তৈরি করুন</span>
+          </button>
+
+          <div class="text-center pt-2">
+            <button type="button" onclick="switchAuthMode('login')" class="text-xs text-slate-400 hover:text-white font-bold">
+              ইতিমধ্যে একাউন্ট আছে? এখানে লগইন করুন
+            </button>
+          </div>
         </form>
 
         <div class="mt-6 pt-4 border-t border-slate-800/80 text-center text-[11px] text-slate-500">
-          🔒 আপনার ব্যক্তিগত তথ্য, ছবি ও স্বাক্ষর ক্লাউডে সুরক্ষিত থাকবে।
+          🔒 আপনার ব্যক্তিগত তথ্য, ছবি ও স্বাক্ষর ক্লাউডে সম্পূর্ণ সুরক্ষিত।
         </div>
       </div>
     </div>
