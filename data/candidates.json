@@ -1,0 +1,22 @@
+[
+  {
+    "updatedAt": "2026-08-26T12:05:24.1562285Z",
+    "name": "মো: আব্দুর রহিম (অফিস সহকারী)",
+    "id": "cand_001",
+    "semanticMap": {
+      "mobile_no": "01717101919",
+      "applicant_name_bn": "মো: আব্দুর রহিম",
+      "applicant_name": "MD. ABDUR RAHIM"
+    }
+  },
+  {
+    "updatedAt": "2026-08-26T12:05:24.2656101Z",
+    "name": "মোছা: ফাতেমা খাতুন (নার্সিং অফিসার)",
+    "id": "cand_002",
+    "semanticMap": {
+      "mobile_no": "01799887766",
+      "applicant_name_bn": "মোছা: ফাতেমা খাতুন",
+      "applicant_name": "FATEMA KHATUN"
+    }
+  }
+]
