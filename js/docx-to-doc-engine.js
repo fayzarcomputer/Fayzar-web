@@ -44,7 +44,11 @@
       }, options);
 
       opts.onProgress(5, "ডকুমেন্ট প্যাকেজ লোড ও আনপ্যাক করা হচ্ছে...");
-      const zip = await JSZip.loadAsync(file);
+      let fileData = file;
+      if (typeof Blob !== 'undefined' && file instanceof Blob) {
+        fileData = await file.arrayBuffer();
+      }
+      const zip = await JSZip.loadAsync(fileData);
 
       opts.onProgress(20, "ডকুমেন্ট রিলেশন ও ইমেজ মেটাডাটা প্রসেস হচ্ছে...");
       const relsMap = await this._parseRelationships(zip);
@@ -76,6 +80,7 @@
       return {
         originalName: file.name || 'document.docx',
         outputFileName: outputFileName,
+        blob: docBlob,
         convertedBlob: docBlob,
         preview: parsedBody.preview,
         stats: {
@@ -418,6 +423,8 @@
 
       let runsHtml = [];
       const childNodes = pNode.childNodes;
+      let inField = false;
+      let fieldCode = "";
 
       for (let i = 0; i < childNodes.length; i++) {
         const child = childNodes[i];
@@ -426,6 +433,51 @@
         const childName = child.localName || child.nodeName.split(':').pop();
 
         if (childName === 'r') {
+          const fldCharNode = child.querySelector("fldChar");
+          const instrTextNode = child.querySelector("instrText");
+
+          if (fldCharNode) {
+            const type = fldCharNode.getAttribute("w:fldCharType") || fldCharNode.getAttribute("fldCharType");
+            if (type === "begin") {
+              inField = true;
+              fieldCode = "";
+              continue;
+            } else if (type === "end") {
+              if (inField) {
+                const cleanEq = fieldCode.trim();
+                const tokens = (typeof EquationConverter !== 'undefined' && typeof EquationConverter.tokenizeEqCode === 'function')
+                  ? EquationConverter.tokenizeEqCode(cleanEq)
+                  : [{ text: cleanEq, italic: false, isScript: false }];
+
+                let innerHtml = "";
+                for (let k = 0; k < tokens.length; k++) {
+                  const tok = tokens[k];
+                  const fontStyle = tok.italic ? 'font-style:italic;' : 'font-style:normal;';
+                  const fontSize = tok.isScript ? 'font-size:8.0pt;mso-bidi-font-size:8.0pt;' : '';
+                  innerHtml += `<span style="font-family:'Times New Roman',Arial,serif;${fontStyle}${fontSize}">${this._escapeHtml(tok.text)}</span>`;
+                }
+
+                const fieldHtml = `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>${innerHtml} <span style='mso-element:field-end'></span></span><![endif]-->`;
+                runsHtml.push(fieldHtml);
+                inField = false;
+                fieldCode = "";
+                runCount++;
+                continue;
+              }
+            } else if (type === "separate") {
+              continue;
+            }
+          }
+
+          if (inField) {
+            if (instrTextNode) {
+              fieldCode += instrTextNode.textContent || "";
+            } else {
+              fieldCode += child.textContent || "";
+            }
+            continue;
+          }
+
           const rData = this._parseRun(child, inheritedStyle, styleResolver, mediaMap, opts);
           runsHtml.push(rData.html);
           textContent += rData.text;
@@ -562,6 +614,31 @@
         rStyles.push(`mso-highlight:${bgColor}`);
       }
 
+      // Extract Text Content
+      let textContent = "";
+      let htmlContent = "";
+      const textNodes = rNode.querySelectorAll("t, tab, br");
+
+      for (let t of textNodes) {
+        const tName = t.localName || t.nodeName.split(':').pop();
+        if (tName === 't') {
+          textContent += t.textContent || "";
+          htmlContent += this._escapeHtml(t.textContent || "");
+        } else if (tName === 'tab') {
+          textContent += "\t";
+          htmlContent += '<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+        } else if (tName === 'br') {
+          textContent += "\n";
+          htmlContent += '<br/>\n';
+        }
+      }
+
+      // Ensure SutonnyMJ / Bijoy font family is preserved with full fidelity for Word 2003 (.doc)
+      // Only default to Times New Roman/Cambria if no specific font was specified
+      if (!fontFamily) {
+        fontFamily = opts.preserveSutonny ? 'SutonnyMJ' : 'Times New Roman';
+      }
+
       // Font family declarations
       rStyles.push(`font-family:'${fontFamily}',SutonnyMJ,Arial,sans-serif`);
       rStyles.push(`mso-ascii-font-family:'${fontFamily}'`);
@@ -582,23 +659,7 @@
         }
       }
 
-      let textContent = "";
-      const textNodes = rNode.querySelectorAll("t, tab, br");
-
-      for (let t of textNodes) {
-        const tName = t.localName || t.nodeName.split(':').pop();
-        if (tName === 't') {
-          textContent += t.textContent || "";
-        } else if (tName === 'tab') {
-          textContent += "\t";
-        } else if (tName === 'br') {
-          textContent += "\n";
-        }
-      }
-
-      let escapedText = this._escapeHtml(textContent)
-        .replace(/\t/g, '<span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')
-        .replace(/\n/g, '<br/>');
+      let escapedText = htmlContent;
 
       const styleAttr = rStyles.length > 0 ? ` style="${rStyles.join(';')}"` : '';
       const html = `${imagesHtml}<span${styleAttr}>${escapedText}</span>`;
@@ -610,11 +671,34 @@
     }
 
     _parseTable(tblNode, styleResolver, mediaMap, opts) {
+      const tblPr = tblNode.querySelector("tblPr");
+      let hasBorders = false;
+      if (tblPr) {
+        const tblBorders = tblPr.querySelector("tblBorders");
+        if (tblBorders) {
+          const borders = tblBorders.querySelectorAll("top, left, bottom, right, insideH, insideV");
+          for (let b of Array.from(borders)) {
+            const val = b.getAttribute("w:val") || b.getAttribute("val");
+            if (val && val !== 'none' && val !== 'nil') {
+              hasBorders = true;
+              break;
+            }
+          }
+        }
+        const tblStyle = tblPr.querySelector("tblStyle");
+        if (tblStyle) {
+          const styleVal = (tblStyle.getAttribute("w:val") || tblStyle.getAttribute("val") || '').toLowerCase();
+          if (styleVal.includes('grid') || styleVal.includes('tablegrid') || styleVal.includes('border')) {
+            hasBorders = true;
+          }
+        }
+      }
+
       let tblStyles = [
         'border-collapse:collapse',
         'mso-table-layout-alt:fixed',
-        'border:solid windowtext 1.0pt',
-        'mso-border-alt:solid windowtext .5pt',
+        hasBorders ? 'border:solid windowtext 1.0pt' : 'border:none',
+        hasBorders ? 'mso-border-alt:solid windowtext .5pt' : 'mso-border-alt:none',
         'mso-padding-alt:0in 5.4pt 0in 5.4pt',
         'width:100%'
       ];
@@ -632,8 +716,8 @@
           const tcNode = cells[c];
           let tcStyles = [
             'padding:3.5pt 5.5pt',
-            'border:solid windowtext 1.0pt',
-            'mso-border-alt:solid windowtext .5pt',
+            hasBorders ? 'border:solid windowtext 1.0pt' : 'border:none',
+            hasBorders ? 'mso-border-alt:solid windowtext .5pt' : 'mso-border-alt:none',
             'vertical-align:top'
           ];
           let colSpanAttr = '';
@@ -846,12 +930,18 @@ ${parsedBody.bodyHtml}
   }
 
   const docxToDocEngine = new DocxToDocConverter();
+  DocxToDocConverter.convertDocxToDoc = (docxInput, opts) => docxToDocEngine.convertDocxToDoc(docxInput, opts);
 
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = docxToDocEngine;
-  } else {
+  if (typeof window !== 'undefined') {
+    window.DocxToDocConverter = DocxToDocConverter;
+    window.docxToDocEngine = docxToDocEngine;
+  }
+  if (typeof global !== 'undefined') {
     global.DocxToDocConverter = DocxToDocConverter;
     global.docxToDocEngine = docxToDocEngine;
   }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DocxToDocConverter;
+  }
 
-})(typeof window !== 'undefined' ? window : global);
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));
