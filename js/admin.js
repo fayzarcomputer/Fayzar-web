@@ -9,6 +9,7 @@ let servicesList = [];
 let siteConfig = {};
 let feedbacksList = [];
 let dictionaryList = [];
+let candidatesList = [];
 
 let currentNoticeFilter = 'all';
 let currentServiceFilter = 'all';
@@ -188,6 +189,19 @@ async function initAdminSuite() {
     dictionaryList = [];
   }
 
+  try {
+    // ৬. চাকরি প্রার্থী ডাটাবেজ লোড
+    const cRes = await fetch('/api/candidates');
+    if (cRes.ok) {
+      candidatesList = await cRes.json();
+    } else {
+      const cLocal = await fetch('data/candidates.json');
+      if (cLocal.ok) candidatesList = await cLocal.json();
+    }
+  } catch (e) {
+    candidatesList = [];
+  }
+
   // কাউন্টার ও ব্যাজ আপডেট
   updateDashboardMetrics();
   populateSiteConfigForm();
@@ -221,13 +235,14 @@ function updateDashboardMetrics() {
   document.getElementById('tab-badge-dict').textContent = dictionaryList.length;
   document.getElementById('tab-badge-feedbacks').textContent = fbPending > 0 ? `${fbPending} নতুন` : fbTotal;
   document.getElementById('checklist-selected-count').textContent = chkCount;
+  const cBadge = document.getElementById('tab-badge-candidates'); if (cBadge) cBadge.textContent = candidatesList.length;
 }
 
 // ৫. ট্যাব পরিবর্তন লজিক
 // =========================================================================
 function switchAdminTab(tabName) {
   currentAdminTab = tabName;
-  const tabs = ['dashboard', 'site', 'notices', 'services', 'checklist', 'tools', 'feedbacks', 'backup'];
+  const tabs = ['dashboard', 'site', 'notices', 'services', 'checklist', 'tools', 'feedbacks', 'candidates', 'backup'];
 
   tabs.forEach(t => {
     const btn = document.getElementById(`tab-btn-${t}`);
@@ -1091,6 +1106,343 @@ function importBackupFile(event) {
     }
   };
   reader.readAsText(file);
+}
+
+// =========================================================================
+// চাকরি প্রার্থী কন্ট্রোল সেন্টার ফাংশনসমূহ (Job Candidates Manager)
+// =========================================================================
+function renderAdminCandidates(query = '') {
+  const container = document.getElementById('admin-candidates-list');
+  if (!container) return;
+
+  let list = candidatesList;
+  const q = (query || '').trim().toLowerCase();
+
+  if (q) {
+    list = list.filter(c => {
+      const m = c.semanticMap || {};
+      const str = `${c.name} ${m.applicant_name} ${m.applicant_name_bn} ${m.mobile_no} ${m.nid_no}`.toLowerCase();
+      return str.includes(q);
+    });
+  }
+
+  const cBadge = document.getElementById('tab-badge-candidates');
+  if (cBadge) cBadge.textContent = candidatesList.length;
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-16 text-center glass-card rounded-3xl border border-slate-700/80 p-8">
+        <i class="fas fa-users-slash text-4xl text-slate-500 mb-3"></i>
+        <h4 class="text-base font-bold text-slate-300">কোনো চাকরি প্রার্থী পাওয়া যায়নি</h4>
+        <p class="text-xs text-slate-500 mt-1">নতুন প্রার্থী যোগ করতে উপরের "নতুন প্রার্থী যুক্ত করুন" বোতামে চাপুন।</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = list.map(c => {
+    const m = c.semanticMap || {};
+    const name = m.applicant_name || c.name;
+    const nameBn = m.applicant_name_bn || '';
+    const mobile = m.mobile_no || '-';
+    const nid = m.nid_no || '-';
+    const dob = m.dob_day ? `${m.dob_day}/${m.dob_month}/${m.dob_year}` : (m.dob_full || '-');
+    const ssc = m.ssc_exam ? `SSC (${m.ssc_board || ''} - ${m.ssc_gpa || ''})` : '';
+    const hsc = m.hsc_exam ? `HSC (${m.hsc_board || ''} - ${m.hsc_gpa || ''})` : '';
+
+    return `
+      <div class="glass-card rounded-3xl p-5 border border-slate-700 hover:border-lime-500/50 transition-all duration-300 flex flex-col justify-between space-y-4">
+        <div>
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <div>
+              <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-400 text-[10px] font-black">প্রার্থী প্রোফাইল</span>
+              <h4 class="text-sm font-black text-white mt-1">${c.name}</h4>
+              <p class="text-xs text-slate-400 font-semibold">${nameBn}</p>
+            </div>
+            <a href="https://wa.me/88${mobile.replace(/[^0-9]/g, '')}" target="_blank" title="হোয়াটসঅ্যাপে মেসেজ পাঠান" class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center text-xs transition">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+          </div>
+
+          <div class="bg-slate-900/80 rounded-2xl p-3 border border-slate-800 space-y-1.5 text-xs text-slate-300">
+            <div class="flex justify-between"><span class="text-slate-500">পিতার নাম:</span> <strong>${m.father_name || m.father_name_bn || '-'}</strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">মোবাইল:</span> <strong class="text-lime-400 font-mono">${mobile}</strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">এনআইডি:</span> <strong class="font-mono">${nid}</strong></div>
+            <div class="flex justify-between"><span class="text-slate-500">জন্মতারিখ:</span> <strong>${dob}</strong></div>
+            <div class="flex justify-between border-t border-slate-800 pt-1 text-[11px]"><span class="text-slate-500">যোগ্যতা:</span> <span class="text-amber-400 font-bold">${[ssc, hsc].filter(Boolean).join(', ') || 'উল্লেখ নেই'}</span></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-800">
+          <button onclick="printCandidateBiodata('${c.id}')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs flex items-center gap-1.5 transition">
+            <i class="fas fa-print text-blue-400"></i> প্রিন্ট
+          </button>
+          <div class="flex items-center gap-1.5">
+            <button onclick="openCandidateModal('${c.id}')" class="px-3 py-1.5 rounded-xl bg-lime-600/20 hover:bg-lime-600 text-lime-300 hover:text-white font-bold text-xs flex items-center gap-1 transition">
+              <i class="fas fa-edit"></i> এডিট
+            </button>
+            <button onclick="deleteCandidate('${c.id}')" class="px-2.5 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-600 text-rose-400 hover:text-white font-bold text-xs transition" title="মুছে ফেলুন">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function switchCandidateModalTab(tabKey) {
+  const tabs = ['personal', 'address', 'education', 'other'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`btn-ac-tab-${t}`);
+    const box = document.getElementById(`ac-tab-${t}`);
+    if (t === tabKey) {
+      btn.className = 'px-3.5 py-1.5 rounded-xl bg-lime-600 text-white font-bold';
+      box.classList.remove('hidden');
+    } else {
+      btn.className = 'px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700';
+      box.classList.add('hidden');
+    }
+  });
+}
+
+function openCandidateModal(candId = null) {
+  const modal = document.getElementById('admin-candidate-modal');
+  const form = document.getElementById('admin-candidate-form');
+  const title = document.getElementById('admin-candidate-modal-title');
+  if (!modal || !form) return;
+
+  form.reset();
+  switchCandidateModalTab('personal');
+
+  if (candId) {
+    const c = candidatesList.find(item => item.id === candId);
+    if (!c) return;
+    document.getElementById('ac-edit-id').value = c.id;
+    title.innerHTML = `<i class="fas fa-user-pen text-lime-400"></i> প্রার্থী তথ্য সম্পাদন: ${c.name}`;
+
+    const m = c.semanticMap || {};
+    document.getElementById('ac-name').value = c.name || '';
+    document.getElementById('ac-applicant-name').value = m.applicant_name || '';
+    document.getElementById('ac-applicant-name-bn').value = m.applicant_name_bn || '';
+    document.getElementById('ac-mobile').value = m.mobile_no || '';
+    document.getElementById('ac-father-name').value = m.father_name || '';
+    document.getElementById('ac-father-name-bn').value = m.father_name_bn || '';
+    document.getElementById('ac-mother-name').value = m.mother_name || '';
+    document.getElementById('ac-mother-name-bn').value = m.mother_name_bn || '';
+    document.getElementById('ac-nid').value = m.nid_no || '';
+    document.getElementById('ac-dob-day').value = m.dob_day || '';
+    document.getElementById('ac-dob-month').value = m.dob_month || '';
+    document.getElementById('ac-dob-year').value = m.dob_year || '';
+    document.getElementById('ac-gender').value = m.gender || 'Male';
+
+    // Address
+    document.getElementById('ac-pr-care').value = m.present_care_of || '';
+    document.getElementById('ac-pr-village').value = m.present_village || '';
+    document.getElementById('ac-pr-dist').value = m.present_district || '';
+    document.getElementById('ac-pr-thana').value = m.present_upazila || '';
+    document.getElementById('ac-pr-code').value = m.present_post_code || '';
+
+    // SSC
+    document.getElementById('ac-ssc-board').value = m.ssc_board || '';
+    document.getElementById('ac-ssc-roll').value = m.ssc_roll || '';
+    document.getElementById('ac-ssc-reg').value = m.ssc_reg || '';
+    document.getElementById('ac-ssc-gpa').value = m.ssc_gpa || '';
+    document.getElementById('ac-ssc-year').value = m.ssc_year || '';
+
+    // HSC
+    document.getElementById('ac-hsc-board').value = m.hsc_board || '';
+    document.getElementById('ac-hsc-roll').value = m.hsc_roll || '';
+    document.getElementById('ac-hsc-reg').value = m.hsc_reg || '';
+    document.getElementById('ac-hsc-gpa').value = m.hsc_gpa || '';
+    document.getElementById('ac-hsc-year').value = m.hsc_year || '';
+
+    // Grad
+    document.getElementById('ac-grad-exam').value = m.grad_exam || '';
+    document.getElementById('ac-grad-inst').value = m.grad_institute || '';
+    document.getElementById('ac-grad-sub').value = m.grad_subject || '';
+    document.getElementById('ac-grad-gpa').value = m.grad_result || m.grad_cgpa || '';
+  } else {
+    document.getElementById('ac-edit-id').value = '';
+    title.innerHTML = `<i class="fas fa-user-plus text-lime-400"></i> নতুন প্রার্থী যুক্ত করুন`;
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function closeCandidateModal() {
+  document.getElementById('admin-candidate-modal')?.classList.add('hidden');
+}
+
+async function handleCandidateSubmit(e) {
+  e.preventDefault();
+  const editId = document.getElementById('ac-edit-id').value;
+  const profileName = document.getElementById('ac-name').value.trim();
+
+  const semanticMap = {
+    applicant_name: document.getElementById('ac-applicant-name').value.trim(),
+    applicant_name_bn: document.getElementById('ac-applicant-name-bn').value.trim(),
+    mobile_no: document.getElementById('ac-mobile').value.trim(),
+    confirm_mobile: document.getElementById('ac-mobile').value.trim(),
+    father_name: document.getElementById('ac-father-name').value.trim(),
+    father_name_bn: document.getElementById('ac-father-name-bn').value.trim(),
+    mother_name: document.getElementById('ac-mother-name').value.trim(),
+    mother_name_bn: document.getElementById('ac-mother-name-bn').value.trim(),
+    nid_no: document.getElementById('ac-nid').value.trim(),
+    dob_day: document.getElementById('ac-dob-day').value.trim(),
+    dob_month: document.getElementById('ac-dob-month').value.trim(),
+    dob_year: document.getElementById('ac-dob-year').value.trim(),
+    dob_full: `${document.getElementById('ac-dob-year').value}-${document.getElementById('ac-dob-month').value}-${document.getElementById('ac-dob-day').value}`,
+    gender: document.getElementById('ac-gender').value,
+    religion: document.getElementById('ac-religion')?.value || 'Islam',
+    blood_group: document.getElementById('ac-blood')?.value || 'B+',
+    quota: document.getElementById('ac-quota')?.value || 'Non-Quota',
+
+    // Address
+    present_care_of: document.getElementById('ac-pr-care').value.trim(),
+    present_village: document.getElementById('ac-pr-village').value.trim(),
+    present_district: document.getElementById('ac-pr-dist').value.trim(),
+    present_upazila: document.getElementById('ac-pr-thana').value.trim(),
+    present_post_code: document.getElementById('ac-pr-code').value.trim(),
+
+    // SSC
+    ssc_exam: 'S.S.C',
+    ssc_board: document.getElementById('ac-ssc-board').value.trim(),
+    ssc_roll: document.getElementById('ac-ssc-roll').value.trim(),
+    ssc_reg: document.getElementById('ac-ssc-reg').value.trim(),
+    ssc_gpa: document.getElementById('ac-ssc-gpa').value.trim(),
+    ssc_year: document.getElementById('ac-ssc-year').value.trim(),
+
+    // HSC
+    hsc_exam: 'H.S.C',
+    hsc_board: document.getElementById('ac-hsc-board').value.trim(),
+    hsc_roll: document.getElementById('ac-hsc-roll').value.trim(),
+    hsc_reg: document.getElementById('ac-hsc-reg').value.trim(),
+    hsc_gpa: document.getElementById('ac-hsc-gpa').value.trim(),
+    hsc_year: document.getElementById('ac-hsc-year').value.trim(),
+
+    // Grad
+    grad_exam: document.getElementById('ac-grad-exam').value.trim(),
+    grad_institute: document.getElementById('ac-grad-inst').value.trim(),
+    grad_subject: document.getElementById('ac-grad-sub').value.trim(),
+    grad_result: document.getElementById('ac-grad-gpa').value.trim()
+  };
+
+  if (editId) {
+    const idx = candidatesList.findIndex(c => c.id === editId);
+    if (idx !== -1) {
+      candidatesList[idx].name = profileName;
+      candidatesList[idx].updatedAt = new Date().toISOString();
+      candidatesList[idx].semanticMap = semanticMap;
+    }
+  } else {
+    candidatesList.unshift({
+      id: 'cand_' + Date.now(),
+      name: profileName,
+      updatedAt: new Date().toISOString(),
+      semanticMap: semanticMap
+    });
+  }
+
+  // Save to server
+  try {
+    const res = await fetch('/api/candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(candidatesList)
+    });
+    if (res.ok) {
+      showToast('প্রার্থী সফলভাবে সংরক্ষিত হয়েছে! সকল পিসির এক্সটেনশনে সিঙ্ক হবে।', 'success');
+    }
+  } catch (err) {
+    showToast('অফলাইন মোডে লোকালভাবে সেভ হয়েছে।', 'warning');
+  }
+
+  closeCandidateModal();
+  renderAdminCandidates();
+}
+
+async function deleteCandidate(candId) {
+  const c = candidatesList.find(item => item.id === candId);
+  if (!c) return;
+
+  if (!confirm(`আপনি কি সত্যিই "${c.name}" প্রার্থীর সমস্ত তথ্য মুছে ফেলতে চান?`)) return;
+
+  candidatesList = candidatesList.filter(item => item.id !== candId);
+
+  try {
+    await fetch('/api/candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(candidatesList)
+    });
+    showToast('প্রার্থী প্রোফাইল মুছে ফেলা হয়েছে।', 'info');
+  } catch (err) {
+    showToast('সার্ভার অফলাইন!', 'error');
+  }
+
+  renderAdminCandidates();
+}
+
+function printCandidateBiodata(candId) {
+  const c = candidatesList.find(item => item.id === candId);
+  if (!c) return;
+
+  const m = c.semanticMap || {};
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="bn">
+    <head>
+      <meta charset="UTF-8">
+      <title>প্রার্থী আবেদন সারাংশ — ${c.name}</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 30px; font-size: 13px; color: #111; line-height: 1.5; }
+        .header { text-align: center; border-bottom: 2px solid #065f46; padding-bottom: 12px; margin-bottom: 20px; }
+        h1 { margin: 0; font-size: 20px; color: #065f46; }
+        .sub { margin: 4px 0 0 0; font-size: 12px; color: #555; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        td, th { border: 1px solid #ccc; padding: 7px 10px; }
+        th { background: #f0fdf4; font-weight: bold; text-align: left; }
+        .sec { background: #e2e8f0; font-weight: bold; padding: 6px 10px; margin-top: 15px; border-left: 4px solid #065f46; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট — চাকরির আবেদন সারাংশ</h1>
+        <p class="sub">ফুলবাড়ী, দিনাজপুর • মোবাইল: 01717-101919</p>
+      </div>
+
+      <div class="sec">১. ব্যক্তিগত তথ্য (Personal Details)</div>
+      <table>
+        <tr><th width="30%">প্রার্থীর নাম (English)</th><td>${m.applicant_name || '-'}</td></tr>
+        <tr><th>প্রার্থীর নাম (বাংলা)</th><td>${m.applicant_name_bn || '-'}</td></tr>
+        <tr><th>পিতার নাম</th><td>${m.father_name || m.father_name_bn || '-'}</td></tr>
+        <tr><th>মাতার নাম</th><td>${m.mother_name || m.mother_name_bn || '-'}</td></tr>
+        <tr><th>জন্মতারিখ</th><td>${m.dob_day ? `${m.dob_day}/${m.dob_month}/${m.dob_year}` : (m.dob_full || '-')}</td></tr>
+        <tr><th>জাতীয় পরিচয়পত্র (NID)</th><td>${m.nid_no || '-'}</td></tr>
+        <tr><th>মোবাইল নম্বর</th><td>${m.mobile_no || '-'}</td></tr>
+        <tr><th>লিঙ্গ ও ধর্ম</th><td>${m.gender || 'Male'}, ${m.religion || 'Islam'}</td></tr>
+      </table>
+
+      <div class="sec">২. ঠিকানা (Address)</div>
+      <table>
+        <tr><th>বর্তমান ঠিকানা</th><td>Care of: ${m.present_care_of || ''}, গ্রাম: ${m.present_village || ''}, উপজেলা: ${m.present_upazila || ''}, জেলা: ${m.present_district || ''} - ${m.present_post_code || ''}</td></tr>
+      </table>
+
+      <div class="sec">৩. শিক্ষাগত যোগ্যতা (Education)</div>
+      <table>
+        <tr><th>পরীক্ষা</th><th>বোর্ড/প্রতিষ্ঠান</th><th>রোল নং</th><th>রেজি নং</th><th>ফলাফল</th><th>পাসের সাল</th></tr>
+        <tr><td>${m.ssc_exam || 'S.S.C'}</td><td>${m.ssc_board || '-'}</td><td>${m.ssc_roll || '-'}</td><td>${m.ssc_reg || '-'}</td><td>${m.ssc_gpa || '-'}</td><td>${m.ssc_year || '-'}</td></tr>
+        <tr><td>${m.hsc_exam || 'H.S.C'}</td><td>${m.hsc_board || '-'}</td><td>${m.hsc_roll || '-'}</td><td>${m.hsc_reg || '-'}</td><td>${m.hsc_gpa || '-'}</td><td>${m.hsc_year || '-'}</td></tr>
+        ${m.grad_exam ? `<tr><td>${m.grad_exam}</td><td>${m.grad_institute || '-'}</td><td>-</td><td>-</td><td>${m.grad_result || '-'}</td><td>${m.grad_year || '-'}</td></tr>` : ''}
+      </table>
+
+      <script>window.print();</script>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
 }
 
 async function syncToGitHubFromAdmin() {
