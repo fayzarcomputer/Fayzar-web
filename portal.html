@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ডিজিটাল জব ও আবেদন পোর্টাল — ফয়জার কম্পিউটার</title>
+  <meta name="description" content="আপনার চাকরির আবেদনের তথ্য, পাসপোর্ট ছবি ও স্বাক্ষর ক্লাউডে নিরাপদ রাখুন এবং ১-ক্লিকে যেকোনো চাকরির আবেদন ফর্ম পূরণ করুন।">
+  <link rel="canonical" href="https://fayzarcomputer.com/portal.html">
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          },
+          fontFamily: {
+            sans: ['"Hind Siliguri"', 'Outfit', 'sans-serif'],
+            display: ['Outfit', '"Hind Siliguri"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #34d399 0%, #38bdf8 50%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-[#030712] text-slate-100 font-sans min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white relative overflow-x-hidden">
+
+  <!-- Glow effects -->
+  <div class="fixed top-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="fixed top-1/3 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <!-- Header Navigation -->
+  <header class="sticky top-0 z-40 bg-[#030712]/85 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition">
+          F
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-black text-white leading-tight">ফয়জার কম্পিউটার</h1>
+          <p class="text-[10px] text-emerald-400 font-semibold tracking-wider">ডিজিটাল জব ও আবেদন পোর্টাল</p>
+        </div>
+      </a>
+
+      <!-- Menu Links -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-bold text-slate-300">
+        <a href="index.html" class="hover:text-emerald-400 transition">হোমপেজ</a>
+        <a href="services.html" class="hover:text-emerald-400 transition">সেবাসমূহ</a>
+        <a href="notices.html" class="hover:text-emerald-400 transition">নোটিশ</a>
+        <a href="tools.html" class="hover:text-emerald-400 transition">কনভার্টার ও টুলস</a>
+        <a href="portal.html" class="text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1.5 rounded-xl font-black flex items-center gap-1.5">
+          <i class="fas fa-user-astronaut"></i> <span>জব পোর্টাল</span>
+        </a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <div id="auth-nav-status" class="text-xs">
+          <!-- Populated by JS -->
+        </div>
+        <a href="admin.html" target="_blank" title="মাস্টার এডমিন প্যানেল" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition text-xs border border-slate-700">
+          <i class="fas fa-lock"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- 1. LOGIN / REGISTER VIEW (Shown when logged out) -->
+    <div id="portal-login-view" class="max-w-md mx-auto my-8">
+      <div class="glass-card rounded-3xl p-7 sm:p-8 shadow-2xl border border-slate-800 relative overflow-hidden">
+        <div class="text-center space-y-3 mb-6">
+          <span class="w-14 h-14 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white flex items-center justify-center text-2xl shadow-xl shadow-emerald-500/20">
+            <i class="fas fa-cloud-arrow-up"></i>
+          </span>
+          <h2 class="text-xl font-black text-white">চাকরি প্রার্থী লগইন ও রেজিস্ট্রেশন</h2>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            আপনার মোবাইল নম্বর ও ৪ ডিজিটের গোপন পিন দিয়ে লগইন করুন। নতুন ইউজার হলে স্বয়ংক্রিয়ভাবে অ্যাকাউন্ট তৈরি হয়ে যাবে।
+          </p>
+        </div>
+
+        <form id="portal-login-form" onsubmit="handlePortalLogin(event)" class="space-y-4 text-xs">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1.5">১১ ডিজিটের মোবাইল নম্বর *</label>
+            <div class="relative">
+              <input type="tel" id="p-login-mobile" required placeholder="01717101919" maxlength="11" class="w-full pl-9 pr-3 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white font-mono text-sm focus:border-emerald-500 focus:outline-none transition">
+              <i class="fas fa-mobile-screen absolute left-3.5 top-3.5 text-slate-500"></i>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-300 mb-1.5">৪ ডিজিটের গোপন পিন (PIN) *</label>
+            <div class="relative">
+              <input type="password" id="p-login-pin" required placeholder="••••" maxlength="6" class="w-full pl-9 pr-10 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl text-white font-mono text-sm tracking-widest focus:border-emerald-500 focus:outline-none transition">
+              <i class="fas fa-key absolute left-3.5 top-3.5 text-slate-500"></i>
+              <button type="button" onclick="togglePortalPinVisibility()" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-white">
+                <i id="p-pin-eye" class="fas fa-eye"></i>
+              </button>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-1">মনে রাখার মতো ৪ সংখ্যার গোপন পিন দিন (যেমন: 1234)</p>
+          </div>
+
+          <div id="p-login-error" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs font-semibold"></div>
+
+          <button type="submit" id="btn-login-submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black text-sm shadow-xl shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+            <span>লগইন / প্রবেশ করুন</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="mt-6 pt-4 border-t border-slate-800/80 text-center text-[11px] text-slate-500">
+          🔒 আপনার ব্যক্তিগত তথ্য, ছবি ও স্বাক্ষর ক্লাউডে সুরক্ষিত থাকবে।
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. DASHBOARD VIEW (Shown when logged in) -->
+    <div id="portal-dashboard-view" class="hidden space-y-6">
+
+      <!-- Candidate Header Banner -->
+      <div class="glass-card rounded-3xl p-6 sm:p-7 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-2xl font-black shadow-lg">
+            <span id="p-dash-avatar">U</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 id="p-dash-name" class="text-lg font-black text-white">ব্যবহারকারীর নাম</h2>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">অনলাইন প্রোফাইল</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              মোবাইল: <span id="p-dash-mobile" class="font-mono text-emerald-400 font-bold">017XXXXXXXX</span> • 
+              সংরক্ষিত ফাইল: <span id="p-dash-files-count" class="text-white font-bold">০টি</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
+          <button onclick="openProfileModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-lg transition flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i> <span>নতুন ফাইল তৈরি করুন</span>
+          </button>
+          <button onclick="openExtensionGuideModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs border border-slate-700 transition flex items-center gap-1.5">
+            <i class="fas fa-puzzle-piece text-cyan-400"></i> <span>এক্সটেনশন গাইড</span>
+          </button>
+          <button onclick="handlePortalLogout()" class="px-3 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 font-bold text-xs border border-rose-500/30 transition" title="লগআউট">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Notice Bar: Multi-File Info -->
+      <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs text-slate-300 flex items-start gap-3">
+        <i class="fas fa-info-circle text-emerald-400 text-base mt-0.5"></i>
+        <div>
+          <strong class="text-white">রোবোফর্ম স্টাইল মাল্টি-ফাইল সুবিধা:</strong> আপনি বিভিন্ন চাকরির পদের জন্য (যেমন: <em>অফিস সহকারী, ড্রাইভার, ব্যাংক অফিসার, ডিপ্লোমা</em>) আলাদা আলাদা নামে ফাইল সেভ করে রাখতে পারেন। চাকুরির আবেদনের সময় ব্রাউজার এক্সটেনশন থেকে যেকোনো একটি ফাইল সিলেক্ট করলেই সেই ফাইলের তথ্য ও ছবি-স্বাক্ষর ১-ক্লিকে পূরণ হয়ে যাবে!
+        </div>
+      </div>
+
+      <!-- Files Grid -->
+      <div id="p-files-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- =========================================================================
+       ৩. প্রোফাইল ফাইল তৈরি / এডিট মোডাল (Multi-Step Tabs + Photo & Signature)
+       ========================================================================= -->
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full glass-card rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-700 space-y-4 max-h-[92vh] overflow-y-auto custom-scrollbar text-white">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 id="profile-modal-title" class="text-base font-black text-white flex items-center gap-2">
+            <i class="fas fa-file-signature text-emerald-400"></i> নতুন চাকরির ফাইল তৈরি
+          </h3>
+          <p class="text-[11px] text-slate-400">এই ফাইলের তথ্যাবলী ক্লাউডে সংরক্ষিত হবে এবং এক্সটেনশনে পাওয়া যাবে</p>
+        </div>
+        <button onclick="closeProfileModal()" class="text-slate-400 hover:text-white transition text-lg"><i class="fas fa-times"></i></button>
+      </div>
+
+      <form id="profile-form" onsubmit="handleProfileSubmit(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="pf-edit-id">
+
+        <!-- Tabs Navigation -->
+        <div class="flex border-b border-slate-800 gap-2 pb-2 overflow-x-auto custom-scrollbar">
+          <button type="button" onclick="switchProfileModalTab('basic')" id="btn-pf-tab-basic" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-bold shrink-0">১. মূল তথ্য</button>
+          <button type="button" onclick="switchProfileModalTab('address')" id="btn-pf-tab-address" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 shrink-0">২. ঠিকানা</button>
+          <button type="button" onclick="switchProfileModalTab('education')" id="btn-pf-tab-education" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 shrink-0">৩. শিক্ষাগত যোগ্যতা</button>
+          <button type="button" onclick="switchProfileModalTab('media')" id="btn-pf-tab-media" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 shrink-0 flex items-center gap-1">
+            <i class="fas fa-camera text-cyan-400"></i> <span>৪. ছবি ও স্বাক্ষর</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: BASIC INFO -->
+        <div id="pf-tab-basic" class="space-y-3">
+          <div class="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/30">
+            <label class="block font-bold text-emerald-300 mb-1">ফাইলের নাম / পদবি সারসংক্ষেপ *</label>
+            <input type="text" id="pf-title" required placeholder="যেমন: আমার তথ্য - অফিস সহকারী (এইচএসসি)" class="w-full bg-slate-900 border border-emerald-500/40 rounded-xl px-3 py-2 text-white font-bold focus:border-emerald-400 focus:outline-none">
+            <span class="text-[10px] text-slate-400">এক্সটেনশনে এই নামেই আপনি ফাইলটি খুঁজে পাবেন</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">প্রার্থীর নাম (English - ক্যাপিটাল লেটার) *</label>
+              <input type="text" id="pf-applicant-name" required placeholder="MD. ABDUR RAHIM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase focus:border-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">প্রার্থীর নাম (বাংলা)</label>
+              <input type="text" id="pf-applicant-name-bn" placeholder="মো: আব্দুর রহিম" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">পিতার নাম (English) *</label>
+              <input type="text" id="pf-father-name" required placeholder="MD. ABDUL KARIM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase focus:border-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">মাতার নাম (English) *</label>
+              <input type="text" id="pf-mother-name" required placeholder="RAHIMA BEGUM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase focus:border-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">জাতীয় পরিচয়পত্র নম্বর (NID)</label>
+              <input type="text" id="pf-nid" placeholder="১০ বা ১৭ ডিজিটের এনআইডি" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:border-emerald-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">জন্মতারিখ (দিন/মাস/সাল) *</label>
+              <div class="grid grid-cols-3 gap-2">
+                <input type="number" id="pf-dob-day" placeholder="দিন" min="1" max="31" required class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-center text-white font-mono">
+                <input type="number" id="pf-dob-month" placeholder="মাস" min="1" max="12" required class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-center text-white font-mono">
+                <input type="number" id="pf-dob-year" placeholder="সাল" min="1950" max="2030" required class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-center text-white font-mono">
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">লিঙ্গ (Gender) *</label>
+              <select id="pf-gender" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+                <option value="Male">পুরুষ (Male)</option>
+                <option value="Female">মহিলা (Female)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">ধর্ম ও রক্তের গ্রুপ</label>
+              <div class="grid grid-cols-2 gap-2">
+                <select id="pf-religion" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-white">
+                  <option value="Islam">Islam</option>
+                  <option value="Hinduism">Hinduism</option>
+                  <option value="Christianity">Christianity</option>
+                  <option value="Buddhism">Buddhism</option>
+                </select>
+                <select id="pf-blood" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-2 text-white">
+                  <option value="B+">B+</option><option value="A+">A+</option><option value="O+">O+</option><option value="AB+">AB+</option>
+                  <option value="B-">B-</option><option value="A-">A-</option><option value="O-">O-</option><option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: ADDRESS -->
+        <div id="pf-tab-address" class="hidden space-y-3">
+          <h4 class="text-xs font-black text-emerald-400 border-b border-slate-800 pb-1">বর্তমান ঠিকানা (Present Address)</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">Care of:</label>
+              <input type="text" id="pf-pr-care" placeholder="পিতা বা অভিভাবকের নাম" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-slate-400 mb-1">গ্রাম / রাস্তা / বাসা নং:</label>
+              <input type="text" id="pf-pr-village" placeholder="গ্রাম/মহল্লা" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">জেলা (District):</label>
+              <input type="text" id="pf-pr-dist" placeholder="Dinajpur" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">উপজেলা / থানা:</label>
+              <input type="text" id="pf-pr-thana" placeholder="Fulbari" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-400 mb-1">পোস্ট কোড:</label>
+              <input type="text" id="pf-pr-code" placeholder="5260" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: EDUCATION -->
+        <div id="pf-tab-education" class="hidden space-y-4">
+          <!-- SSC -->
+          <div>
+            <h4 class="text-xs font-black text-emerald-400 mb-1.5">এসএসসি / দাখিল / সমমান (S.S.C)</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <input type="text" id="pf-ssc-board" placeholder="বোর্ড (Dinajpur)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="pf-ssc-roll" placeholder="রোল নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+              <input type="text" id="pf-ssc-reg" placeholder="রেজি নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+              <input type="text" id="pf-ssc-gpa" placeholder="জিপিএ (5.00)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+              <input type="text" id="pf-ssc-year" placeholder="পাসের সাল (2018)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+            </div>
+          </div>
+          <!-- HSC -->
+          <div>
+            <h4 class="text-xs font-black text-emerald-400 mb-1.5">এইচএসসি / আলিম / সমমান (H.S.C)</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <input type="text" id="pf-hsc-board" placeholder="বোর্ড" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="pf-hsc-roll" placeholder="রোল নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+              <input type="text" id="pf-hsc-reg" placeholder="রেজি নং" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+              <input type="text" id="pf-hsc-gpa" placeholder="জিপিএ" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+              <input type="text" id="pf-hsc-year" placeholder="পাসের সাল (2020)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+            </div>
+          </div>
+          <!-- Graduation -->
+          <div>
+            <h4 class="text-xs font-black text-emerald-400 mb-1.5">স্নাতক / অনার্স / ডিগ্রি (Graduation)</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+              <input type="text" id="pf-grad-exam" placeholder="পরীক্ষা (Honours / Degree / B.Sc)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="pf-grad-inst" placeholder="বিশ্ববিদ্যালয় / কলেজ" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="pf-grad-sub" placeholder="বিষয় (যেমন: Economics)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs">
+              <input type="text" id="pf-grad-gpa" placeholder="সিজিপিএ (যেমন: 3.45)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2 text-white text-xs font-mono">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: PHOTO & SIGNATURE (Canvas 300x300 and 300x80 Auto-Resize) -->
+        <div id="pf-tab-media" class="hidden space-y-4">
+          <div class="p-3 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 text-[11px] text-cyan-300 flex items-center gap-2">
+            <i class="fas fa-magic text-cyan-400"></i>
+            <span>স্বয়ংক্রিয় প্রসেসিং: যেকোনো ছবি বা স্বাক্ষর আপলোড করলেই তা স্বয়ংক্রিয়ভাবে সরকারি নিয়মানুযায়ী ৩০০×৩০০ ও ৩০০×৮০ পিক্সেল সাইজে কনভার্ট হয়ে যাবে।</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Photo Box -->
+            <div class="glass-card rounded-2xl p-4 border border-slate-700 space-y-3 text-center">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-300">পাসপোর্ট সাইজ ছবি</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40">৩০০ × ৩০০ px</span>
+              </div>
+              <div class="w-32 h-32 mx-auto rounded-xl border-2 border-dashed border-slate-600 flex items-center justify-center overflow-hidden bg-slate-900 relative group">
+                <img id="pf-photo-preview" src="" alt="Photo" class="w-full h-full object-cover hidden">
+                <div id="pf-photo-placeholder" class="text-slate-500 flex flex-col items-center gap-1">
+                  <i class="fas fa-camera text-2xl"></i>
+                  <span class="text-[10px]">ছবি সিলেক্ট করুন</span>
+                </div>
+              </div>
+              <input type="file" id="pf-photo-input" accept="image/*" class="hidden" onchange="processImageUpload(event, 'photo')">
+              <button type="button" onclick="document.getElementById('pf-photo-input').click()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-600 transition flex items-center justify-center gap-1.5">
+                <i class="fas fa-upload text-emerald-400"></i> ছবি আপলোড করুন
+              </button>
+              <input type="hidden" id="pf-photo-base64">
+            </div>
+
+            <!-- Signature Box -->
+            <div class="glass-card rounded-2xl p-4 border border-slate-700 space-y-3 text-center">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-300">স্বাক্ষর (Signature)</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/40">৩০০ × ৮০ px</span>
+              </div>
+              <div class="w-48 h-20 mx-auto rounded-xl border-2 border-dashed border-slate-600 flex items-center justify-center overflow-hidden bg-white relative group">
+                <img id="pf-sig-preview" src="" alt="Signature" class="w-full h-full object-contain hidden">
+                <div id="pf-sig-placeholder" class="text-slate-500 flex flex-col items-center gap-1">
+                  <i class="fas fa-signature text-2xl"></i>
+                  <span class="text-[10px]">স্বাক্ষর সিলেক্ট করুন</span>
+                </div>
+              </div>
+              <input type="file" id="pf-sig-input" accept="image/*" class="hidden" onchange="processImageUpload(event, 'sig')">
+              <button type="button" onclick="document.getElementById('pf-sig-input').click()" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-600 transition flex items-center justify-center gap-1.5">
+                <i class="fas fa-upload text-cyan-400"></i> স্বাক্ষর আপলোড করুন
+              </button>
+              <input type="hidden" id="pf-sig-base64">
+            </div>
+
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeProfileModal()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition">বাতিল</button>
+          <button type="submit" id="btn-save-profile" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black shadow-lg shadow-emerald-600/20 transition flex items-center gap-2">
+            <i class="fas fa-cloud-arrow-up"></i> <span>ফাইল সংরক্ষণ করুন</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Extension Setup Guide Modal -->
+  <div id="guide-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="max-w-xl w-full glass-card rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-700 space-y-4 text-white">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-base font-black text-white flex items-center gap-2">
+          <i class="fas fa-puzzle-piece text-cyan-400"></i> ব্রাউজার এক্সটেনশন ইনস্টলেশন নির্দেশিকা
+        </h3>
+        <button onclick="document.getElementById('guide-modal').classList.add('hidden')" class="text-slate-400 hover:text-white transition"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+        <p>আপনার পিসিতে বা ল্যাপটপে এক্সটেনশন ব্যবহার করে ১-ক্লিকে চাকরির আবেদন ফর্ম পূরণ করতে নিচের ৩টি সহজ ধাপ অনুসরণ করুন:</p>
+        
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+          <div class="font-bold text-white flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-emerald-500 text-black flex items-center justify-center text-[10px] font-black">১</span>
+            <span>এক্সটেনশন ফোল্ডারটি ডাউনলোড করুন</span>
+          </div>
+          <p class="text-[11px] text-slate-400 pl-7">ফয়জার কম্পিউটার থেকে সরাসরি এক্সটেনশন ফাইল সংগ্রহ করুন অথবা দোকানে আসলে এক ক্লিকে নিয়ে নিন।</p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+          <div class="font-bold text-white flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-cyan-500 text-black flex items-center justify-center text-[10px] font-black">২</span>
+            <span>ক্রোম ব্রাউজারে যুক্ত করুন</span>
+          </div>
+          <p class="text-[11px] text-slate-400 pl-7">ব্রাউজারে <code>chrome://extensions</code> লিখে যান, <strong>Developer mode</strong> চালু করুন এবং <strong>Load unpacked</strong> দিয়ে ফোল্ডারটি সিলেক্ট করুন।</p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+          <div class="font-bold text-white flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px] font-black">৩</span>
+            <span>মোবাইল নম্বর ও পিন দিয়ে লগইন করুন</span>
+          </div>
+          <p class="text-[11px] text-slate-400 pl-7">এক্সটেনশনে আপনার মোবাইল নম্বর ও ৪ ডিজিটের পিন দিলেই আপনার সকল ফাইল ও ছবি-স্বাক্ষর লোড হয়ে যাবে!</p>
+        </div>
+      </div>
+
+      <div class="pt-2 text-right">
+        <button onclick="document.getElementById('guide-modal').classList.add('hidden')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition">ঠিক আছে</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-[#02050e] border-t border-slate-800/80 py-6 text-center text-xs text-slate-500 mt-12">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট © ২০২৬ • ফুলবাড়ী, দিনাজপুর।</div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <a href="index.html" class="hover:text-emerald-400 transition">হোমপেজ</a>
+        <a href="services.html" class="hover:text-emerald-400 transition">সেবাসমূহ</a>
+        <a href="tools.html" class="hover:text-emerald-400 transition">কনভার্টার</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/fayzar-firebase-client.js"></script>
+  <script src="js/portal.js"></script>
+</body>
+</html>
