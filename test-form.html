@@ -49,16 +49,16 @@
 
     <div class="notice-bar" style="display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap;">
       <div>
-        💡 <strong>নির্দেশিকা:</strong> ব্রাউজারের উপরে <strong>"ফয়জার জব অটো-ফিল"</strong> এক্সটেনশন আইকনে ক্লিক করে <strong>"১-ক্লিকে ফর্ম পূরণ করুন"</strong> চাপুন অথবা সরাসরি পাশের বাটনে ক্লিক করুন:
+        💡 <strong>নির্দেশিকা:</strong> ব্রাউজারের উপরে <strong>"ফয়জার অটো-ফিল"</strong> এক্সটেনশন আইকনে ক্লিক করে <strong>"১-ক্লিকে ফর্ম পূরণ করুন"</strong> চাপুন অথবা সরাসরি পাশের বাটনে ক্লিক করুন:
       </div>
       <button type="button" id="btn-inpage-demo" style="background: #059669; color: #fff; border: none; padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
         ⚡ ১-ক্লিকে সরাসরি ডেমো ফিল করুন
       </button>
     </div>
 
-    <form id="job-application-form" class="form-body" onsubmit="event.preventDefault(); alert('ডেমো আবেদন সফলভাবে জমা হয়েছে!');">
+    <form id="job-application-form" class="form-body">
       
-      <!-- ১. ব্যক্তিগত বিবরণ -->
+      <!-- ১. প্রার্থীর ব্যক্তিগত বিবরণ -->
       <div class="section-title">১. প্রার্থীর ব্যক্তিগত বিবরণ (Personal Information)</div>
       <table class="form-table">
         <tr>
@@ -74,8 +74,16 @@
           <td class="inp"><input type="text" name="father_name" id="father_name" placeholder="Father's Name"></td>
         </tr>
         <tr>
+          <td class="lbl">পিতার নাম (বাংলা):</td>
+          <td class="inp"><input type="text" name="father_name_bn" id="father_name_bn" placeholder="পিতার নাম বাংলায়"></td>
+        </tr>
+        <tr>
           <td class="lbl">মাতার নাম (Mother's Name):</td>
           <td class="inp"><input type="text" name="mother_name" id="mother_name" placeholder="Mother's Name"></td>
+        </tr>
+        <tr>
+          <td class="lbl">মাতার নাম (বাংলা):</td>
+          <td class="inp"><input type="text" name="mother_name_bn" id="mother_name_bn" placeholder="মাতার নাম বাংলায়"></td>
         </tr>
         <tr>
           <td class="lbl">জন্ম তারিখ (Date of Birth):</td>
@@ -83,17 +91,15 @@
             <div class="dob-group">
               <select name="dob_day" id="dob_day">
                 <option value="">দিন</option>
-                <option value="01">01</option><option value="05">05</option><option value="10">10</option>
-                <option value="15">15</option><option value="20">20</option><option value="25">25</option>
+                <option value="01">01</option><option value="05">05</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option>
               </select>
               <select name="dob_month" id="dob_month">
                 <option value="">মাস</option>
-                <option value="01">Jan</option><option value="02">Feb</option><option value="05">May</option>
-                <option value="08">Aug</option><option value="12">Dec</option>
+                <option value="01">01 - Jan</option><option value="05">05 - May</option><option value="10">10 - Oct</option><option value="12">12 - Dec</option>
               </select>
               <select name="dob_year" id="dob_year">
                 <option value="">সাল</option>
-                <option value="1995">1995</option><option value="1998">1998</option><option value="2000">2000</option>
+                <option value="1995">1995</option><option value="1998">1998</option><option value="2000">2000</option><option value="2002">2002</option>
               </select>
             </div>
           </td>
@@ -117,6 +123,7 @@
             <select name="religion" id="religion">
               <option value="Islam">Islam</option>
               <option value="Hinduism">Hinduism</option>
+              <option value="Buddhism">Buddhism</option>
               <option value="Christianity">Christianity</option>
             </select>
           </td>
@@ -135,68 +142,71 @@
           <td class="inp">
             <select name="quota" id="quota">
               <option value="Non-Quota">Non-Quota (সাধারণ)</option>
-              <option value="Freedom Fighter Child">Freedom Fighter (মুক্তিযোদ্ধা কোটা)</option>
-              <option value="Physical Handicapped">Physical Handicapped (প্রতিবন্ধী)</option>
+              <option value="Freedom Fighter">Freedom Fighter (মুক্তিযোদ্ধা)</option>
+              <option value="Orphan">Orphan & Physically Handicapped</option>
             </select>
           </td>
         </tr>
         <tr>
           <td class="lbl">মোবাইল নম্বর (Mobile No):</td>
-          <td class="inp"><input type="tel" name="mobile_no" id="mobile_no" placeholder="017xxxxxxxx"></td>
+          <td class="inp"><input type="tel" name="mobile_no" id="mobile_no" placeholder="017XXXXXXXX"></td>
         </tr>
         <tr>
-          <td class="lbl">ইমেইল (Email):</td>
-          <td class="inp"><input type="email" name="email_address" id="email_address" placeholder="email@example.com"></td>
+          <td class="lbl">ইমেইল ঠিকানা (Email):</td>
+          <td class="inp"><input type="email" name="email_address" id="email_address" placeholder="example@gmail.com"></td>
+        </tr>
+        <tr>
+          <td class="lbl">প্রার্থীর রঙিন ছবি (300x300):</td>
+          <td class="inp"><input type="file" name="photo" id="photo" accept="image/*"></td>
+        </tr>
+        <tr>
+          <td class="lbl">প্রার্থীর স্বাক্ষর (300x80):</td>
+          <td class="inp"><input type="file" name="signature" id="signature" accept="image/*"></td>
         </tr>
       </table>
 
-      <!-- ২. ঠিকানা -->
-      <div class="section-title">২. ঠিকানা (Address Details)</div>
+      <!-- ২. যোগাযোগের ঠিকানা -->
+      <div class="section-title">২. যোগাযোগের ঠিকানা (Address Information)</div>
       <table class="form-table">
         <tr>
-          <td class="lbl" style="width: 50%;"><strong>বর্তমান ঠিকানা (Present Address)</strong></td>
-          <td class="lbl" style="width: 50%;"><strong>স্থায়ী ঠিকানা (Permanent Address)</strong></td>
+          <td class="lbl">বর্তমান ঠিকানা (Care of):</td>
+          <td class="inp"><input type="text" name="present_care_of" id="present_care_of" placeholder="Care of (পিতা/অভিভাবক)"></td>
         </tr>
         <tr>
-          <td>
-            <label style="display:block; margin-bottom: 3px;">Care of:</label>
-            <input type="text" name="present_care_of" id="present_care_of" placeholder="Care of">
-            <label style="display:block; margin: 6px 0 3px 0;">গ্রাম / রাস্তা / বাসা:</label>
-            <input type="text" name="present_village" id="present_village" placeholder="Village / Road">
-            <label style="display:block; margin: 6px 0 3px 0;">জেলা (District):</label>
-            <input type="text" name="present_district" id="present_district" placeholder="District">
-            <label style="display:block; margin: 6px 0 3px 0;">উপজেলা / থানা:</label>
-            <input type="text" name="present_upazila" id="present_upazila" placeholder="Upazila">
-            <label style="display:block; margin: 6px 0 3px 0;">পোস্ট কোড:</label>
-            <input type="text" name="present_post_code" id="present_post_code" placeholder="Post Code">
-          </td>
-          <td>
-            <label style="display:block; margin-bottom: 3px;">Care of:</label>
-            <input type="text" name="permanent_care_of" id="permanent_care_of" placeholder="Care of">
-            <label style="display:block; margin: 6px 0 3px 0;">গ্রাম / রাস্তা / বাসা:</label>
-            <input type="text" name="permanent_village" id="permanent_village" placeholder="Village / Road">
-            <label style="display:block; margin: 6px 0 3px 0;">জেলা (District):</label>
-            <input type="text" name="permanent_district" id="permanent_district" placeholder="District">
-            <label style="display:block; margin: 6px 0 3px 0;">উপজেলা / থানা:</label>
-            <input type="text" name="permanent_upazila" id="permanent_upazila" placeholder="Upazila">
-            <label style="display:block; margin: 6px 0 3px 0;">পোস্ট কোড:</label>
-            <input type="text" name="permanent_post_code" id="permanent_post_code" placeholder="Post Code">
+          <td class="lbl">গ্রাম / রাস্তা / বাড়ি:</td>
+          <td class="inp"><input type="text" name="present_village" id="present_village" placeholder="Village / Road / House"></td>
+        </tr>
+        <tr>
+          <td class="lbl">জেলা (District):</td>
+          <td class="inp"><input type="text" name="present_district" id="present_district" placeholder="District"></td>
+        </tr>
+        <tr>
+          <td class="lbl">উপজেলা / থানা (Upazila):</td>
+          <td class="inp"><input type="text" name="present_upazila" id="present_upazila" placeholder="Upazila / Thana"></td>
+        </tr>
+        <tr>
+          <td class="lbl">পোস্ট অফিস ও কোড:</td>
+          <td class="inp">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" name="present_post_office" id="present_post_office" placeholder="Post Office" style="width: 65%;">
+              <input type="text" name="present_post_code" id="present_post_code" placeholder="Post Code" style="width: 35%;">
+            </div>
           </td>
         </tr>
       </table>
 
       <!-- ৩. শিক্ষাগত যোগ্যতা -->
-      <div class="section-title">৩. শিক্ষাগত যোগ্যতা (Academic Qualifications)</div>
+      <div class="section-title">৩. শিক্ষাগত যোগ্যতা (Educational Qualifications)</div>
       <table class="edu-table">
         <thead>
           <tr>
-            <th>পরীক্ষা (Examination)</th>
+            <th>পরীক্ষার নাম</th>
             <th>বোর্ড / বিশ্ববিদ্যালয়</th>
-            <th>রোল নং (Roll)</th>
-            <th>রেজি নং (Reg)</th>
-            <th>গ্রুপ / বিষয়</th>
+            <th>রোল নম্বর</th>
+            <th>রেজিস্ট্রেশন নং</th>
+            <th>বিভাগ / গ্রুপ</th>
             <th>ফলাফল (GPA/CGPA)</th>
-            <th>পাসের সাল</th>
+            <th>পাসের সন</th>
           </tr>
         </thead>
         <tbody>
@@ -218,15 +228,6 @@
             <td><input type="text" name="hsc_gpa" id="hsc_gpa" placeholder="GPA"></td>
             <td><input type="text" name="hsc_year" id="hsc_year" placeholder="Year"></td>
           </tr>
-          <tr>
-            <td><input type="text" name="grad_exam" id="grad_exam" placeholder="Graduation"></td>
-            <td><input type="text" name="grad_institute" id="grad_institute" placeholder="Institute / Univ"></td>
-            <td>-</td>
-            <td>-</td>
-            <td><input type="text" name="grad_subject" id="grad_subject" placeholder="Subject"></td>
-            <td><input type="text" name="grad_result" id="grad_result" placeholder="CGPA"></td>
-            <td><input type="text" name="grad_year" id="grad_year" placeholder="Year"></td>
-          </tr>
         </tbody>
       </table>
 
@@ -237,36 +238,9 @@
     </form>
   </div>
 
-  <!-- Content Scripts loaded directly so extension page and web page always have listeners -->
+  <!-- Content Scripts & Handler (Zero inline scripts, 100% CSP compliant) -->
   <script src="content/dom-inspector.js"></script>
   <script src="content/content-script.js"></script>
-  <script>
-    // Direct in-page test button
-    document.getElementById('btn-inpage-demo')?.addEventListener('click', () => {
-      chrome.storage.local.get(['fayzar_profiles', 'fayzar_settings'], (data) => {
-        const profiles = data.fayzar_profiles || [];
-        const settings = data.fayzar_settings || {};
-        const active = profiles.find(p => p.id === settings.activeProfileId) || profiles[0];
-        
-        if (active) {
-          // Trigger autofill via internal message
-          window.postMessage({ type: 'FAYZAR_AUTOFILL_LOCAL', profile: active }, '*');
-        } else {
-          alert('কোনো প্রার্থী প্রোফাইল সংরক্ষিত নেই!');
-        }
-      });
-    });
-
-    // In-page fallback listener
-    window.addEventListener('message', (e) => {
-      if (e.data && e.data.type === 'FAYZAR_AUTOFILL_LOCAL') {
-        const fakeRequest = { action: 'AUTOFILL_FORM', profileData: e.data.profile };
-        // Dispatch to content script listener
-        chrome.runtime?.sendMessage?.(fakeRequest);
-        // Or directly call content script logic via DOM event
-        window.dispatchEvent(new CustomEvent('fayzar_autofill_event', { detail: e.data.profile }));
-      }
-    });
-  </script>
+  <script src="test-form.js"></script>
 </body>
 </html>
