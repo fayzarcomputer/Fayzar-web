@@ -1,6 +1,7 @@
 {
   "version": "2.0.0",
-  "name": "Fayzar Job AutoFill",
+  "name": "Fayzar AutoFill",
+  "title": "ফয়জার অটো-ফিল",
   "updateUrl": "https://fayzarcomputer.github.io/downloads/Fayzar-AutoFill-Setup.exe",
   "zipUrl": "https://fayzarcomputer.github.io/downloads/fayzar-job-autofill.zip",
   "releaseDate": "2026-08-27",
