@@ -105,6 +105,51 @@
   <!-- Main Content -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+    <!-- =========================================================================
+         ফয়জার জব অটো-ফিল এক্সটেনশন ডাউনলোড ও ফিচার শোকেস ব্যানার
+         ========================================================================= -->
+    <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl border border-emerald-500/30 relative overflow-hidden mb-8 bg-gradient-to-br from-slate-900/95 via-[#064e3b]/35 to-slate-900/95">
+      <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
+        <div class="space-y-3 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black">
+            <i class="fas fa-bolt text-amber-400"></i>
+            <span>ফয়জার জব অটো-ফিল এক্সটেনশন v2.0</span>
+            <span class="px-1.5 py-0.5 rounded bg-emerald-400 text-black text-[9px] font-black uppercase tracking-wider">রিলিজ</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight">
+            ১-ক্লিকে যেকোনো চাকরির ফর্ম ও ছবি পূরণ করুন!
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            টেলিটক (Teletalk) ও সকল সরকারি চাকরির আবেদনে বারবার নাম, ঠিকানা, তথ্য টাইপ করার ঝামেলা শেষ। ছবি (৩০০x৩০০) ও স্বাক্ষর (৩০০x৮০) সহ সকল তথ্য সেকেন্ডের মধ্যে নির্ভুলভাবে পূরণ হবে।
+          </p>
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-1 text-xs text-slate-300">
+            <div class="flex items-center gap-1.5 text-emerald-400 font-bold"><i class="fas fa-shield-halved"></i> ১০০% ফ্রি ও নিরাপদ</div>
+            <div class="flex items-center gap-1.5 text-cyan-400 font-bold"><i class="fas fa-image"></i> ছবি ও স্বাক্ষর অটো-অ্যাটাচ</div>
+            <div class="flex items-center gap-1.5 text-amber-400 font-bold"><i class="fas fa-cloud-arrow-down"></i> অনলাইন ও অফলাইন মোড</div>
+            <div class="flex items-center gap-1.5 text-indigo-400 font-bold"><i class="fas fa-language"></i> বাংলা ও ইংরেজি অটো-ম্যাপিং</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row lg:flex-col items-center gap-3 w-full sm:w-auto shrink-0">
+          <a href="downloads/Fayzar-AutoFill-Setup.exe" download="Fayzar-AutoFill-Setup.exe" class="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black font-black text-sm shadow-xl shadow-emerald-500/25 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2.5">
+            <i class="fas fa-download text-base"></i>
+            <span>১-ক্লিক ইনস্টলার ডাউনলোড</span>
+            <span class="text-[10px] bg-black/20 text-black px-2 py-0.5 rounded-md font-mono font-black">.EXE (৬৬ KB)</span>
+          </a>
+          <div class="flex items-center gap-2 w-full justify-center">
+            <button onclick="openExtensionGuideModal()" class="px-4 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 transition flex items-center gap-1.5">
+              <i class="fas fa-circle-question text-cyan-400"></i>
+              <span>ইনস্টল ও আন-ইনস্টল গাইড</span>
+            </button>
+            <a href="downloads/fayzar-job-autofill.zip" download="fayzar-job-autofill.zip" class="px-3 py-2 rounded-xl bg-slate-800/60 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs border border-slate-700/60 transition" title="ম্যানুয়াল জিপ ফাইল">
+              <i class="fas fa-file-zipper"></i> ZIP
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 1. LOGIN / REGISTER VIEW (Shown when logged out) -->
     <div id="portal-login-view" class="max-w-md mx-auto my-6">
       <div class="glass-card rounded-3xl p-7 sm:p-8 shadow-2xl border border-slate-800 relative overflow-hidden">
@@ -491,40 +536,62 @@
     <div class="max-w-xl w-full glass-card rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-700 space-y-4 text-white">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base font-black text-white flex items-center gap-2">
-          <i class="fas fa-puzzle-piece text-cyan-400"></i> ব্রাউজার এক্সটেনশন ইনস্টলেশন নির্দেশিকা
+          <i class="fas fa-puzzle-piece text-cyan-400"></i> ব্রাউজার এক্সটেনশন ডাউনলোড ও ইনস্টল নির্দেশিকা
         </h3>
         <button onclick="document.getElementById('guide-modal').classList.add('hidden')" class="text-slate-400 hover:text-white transition"><i class="fas fa-times"></i></button>
       </div>
 
       <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-        <p>আপনার পিসিতে বা ল্যাপটপে এক্সটেনশন ব্যবহার করে ১-ক্লিকে চাকরির আবেদন ফর্ম পূরণ করতে নিচের ৩টি সহজ ধাপ অনুসরণ করুন:</p>
+        <p class="text-slate-300">যেকোনো উইন্ডোজ পিসি বা ল্যাপটপে এক্সটেনশনটি ব্যবহার করার ২টি সহজ নিয়ম:</p>
         
-        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-          <div class="font-bold text-white flex items-center gap-2">
-            <span class="w-5 h-5 rounded-full bg-emerald-500 text-black flex items-center justify-center text-[10px] font-black">১</span>
-            <span>এক্সটেনশন ফোল্ডারটি ডাউনলোড করুন</span>
+        <!-- Method A: Recommended 1-Click Installer -->
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 to-emerald-950/40 border-2 border-emerald-500/40 space-y-3">
+          <div class="font-bold text-white flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-emerald-400 text-black flex items-center justify-center text-xs font-black">★</span>
+              <span class="text-sm font-black text-emerald-300">পদ্ধতি ১: ১-ক্লিক অটো ইনস্টলার (.EXE) — সবচেয়ে সহজ</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500 text-black font-black">সুপারফাস্ট</span>
           </div>
-          <p class="text-[11px] text-slate-400 pl-7">ফয়জার কম্পিউটার থেকে সরাসরি এক্সটেনশন ফাইল সংগ্রহ করুন অথবা দোকানে আসলে এক ক্লিকে নিয়ে নিন।</p>
+          
+          <div class="space-y-2 text-[11px] text-slate-300 pl-4 border-l-2 border-emerald-500/30">
+            <p><strong>ধাপ ১:</strong> নিচের বোতামে ক্লিক করে <code>Fayzar-AutoFill-Setup.exe</code> ফাইলটি ডাউনলোড করে ওপেন করুন।</p>
+            <p><strong>ধাপ ২:</strong> <strong>"🚀 ১-ক্লিকে ইনস্টল / আপডেট করুন"</strong> বোতামে ক্লিক করলেই ৩ সেকেন্ডে সেটআপ সম্পন্ন হয়ে যাবে।</p>
+            <p><strong>ধাপ ৩:</strong> ডেক্সটপে স্বয়ংক্রিয়ভাবে তৈরি হওয়া <strong>"Google Chrome - Fayzar AutoFill"</strong> শর্টকাটে ক্লিক করলেই এক্সটেনশনটি রেডি অবস্থায় চালু হয়ে যাবে!</p>
+          </div>
+
+          <div class="pt-1 flex flex-wrap items-center gap-2.5">
+            <a href="downloads/Fayzar-AutoFill-Setup.exe" download="Fayzar-AutoFill-Setup.exe" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-black text-xs shadow-lg shadow-emerald-600/20 transition">
+              <i class="fas fa-download"></i> <span>ডাউনলোড ইনস্টলার (.EXE)</span>
+            </a>
+            <span class="text-[10px] text-emerald-400 font-semibold">কোনো কোডিং বা ব্রাউজার সেটিংস পরিবর্তন ছাড়া!</span>
+          </div>
         </div>
 
-        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-          <div class="font-bold text-white flex items-center gap-2">
-            <span class="w-5 h-5 rounded-full bg-cyan-500 text-black flex items-center justify-center text-[10px] font-black">২</span>
-            <span>ক্রোম ব্রাউজারে যুক্ত করুন</span>
+        <!-- Uninstallation Info -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+          <div class="font-bold text-white flex items-center gap-2 text-xs">
+            <i class="fas fa-trash-can text-rose-400"></i>
+            <span>আন-ইনস্টল (Uninstall) করার নিয়ম:</span>
           </div>
-          <p class="text-[11px] text-slate-400 pl-7">ব্রাউজারে <code>chrome://extensions</code> লিখে যান, <strong>Developer mode</strong> চালু করুন এবং <strong>Load unpacked</strong> দিয়ে ফোল্ডারটি সিলেক্ট করুন।</p>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            যেকোনো সময় <strong>Windows Settings > Apps</strong> (বা Control Panel)-এ গিয়ে সাধারণ সফটওয়্যারের মতোই <strong>"Uninstall"</strong> চাপলে এটি এক ক্লিকে সম্পূর্ণ মুছে যাবে। অথবা ইনস্টলার ফাইলটি ওপেন করে <strong>"🗑️ আন-ইনস্টল"</strong> বাটনে ক্লিক করলেও সাথে সাথে মুছে যাবে।
+          </p>
         </div>
 
-        <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-          <div class="font-bold text-white flex items-center gap-2">
-            <span class="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px] font-black">৩</span>
-            <span>মোবাইল নম্বর ও পিন দিয়ে লগইন করুন</span>
-          </div>
-          <p class="text-[11px] text-slate-400 pl-7">এক্সটেনশনে আপনার মোবাইল নম্বর ও ৪ ডিজিটের পিন দিলেই আপনার সকল ফাইল ও ছবি-স্বাক্ষর লোড হয়ে যাবে!</p>
+        <!-- Method B: Manual Unpacked ZIP fallback -->
+        <div class="p-3 rounded-2xl bg-slate-900/50 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between gap-3">
+          <span>ম্যানুয়ালভাবে জিপ ব্যবহার করতে চাইলে:</span>
+          <a href="downloads/fayzar-job-autofill.zip" download="fayzar-job-autofill.zip" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold hover:text-white transition flex items-center gap-1.5 shrink-0">
+            <i class="fas fa-file-zipper text-amber-400"></i> <span>ম্যানুয়াল জিপ (.ZIP)</span>
+          </a>
         </div>
       </div>
 
-      <div class="pt-2 text-right">
+      <div class="pt-2 flex items-center justify-between border-t border-slate-800">
+        <span class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
+          <i class="fas fa-check"></i> যেকোনো চাকরির সাইটে গিয়ে ১-ক্লিকেই ফর্ম ও ছবি পূরণ করুন!
+        </span>
         <button onclick="document.getElementById('guide-modal').classList.add('hidden')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition">ঠিক আছে</button>
       </div>
     </div>
