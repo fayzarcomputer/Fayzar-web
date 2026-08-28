@@ -1,6 +1,7 @@
 /**
- * Fayzar Cloud Client (Firebase Firestore REST Engine)
- * Works seamlessly in Web Browsers, Node.js, and Chrome Extension MV3
+ * Fayzar Cloud Client (Firebase Firestore REST Engine v2.5)
+ * Seamlessly manages Users, Candidate Files, Customer Feedbacks, and Global Settings.
+ * Compatible with Web Browsers, Node.js, and Chrome Extension MV3.
  */
 
 const FayzarFirebaseClient = {
@@ -45,6 +46,7 @@ const FayzarFirebaseClient = {
     const result = { id: doc.name ? doc.name.split('/').pop() : '' };
     
     function parseValue(v) {
+      if (!v) return null;
       if (v.stringValue !== undefined) return v.stringValue;
       if (v.integerValue !== undefined) return parseInt(v.integerValue, 10);
       if (v.doubleValue !== undefined) return parseFloat(v.doubleValue);
@@ -123,7 +125,8 @@ const FayzarFirebaseClient = {
 
   // 2. Get All Files of a User
   async getUserFiles(mobile) {
-    const cleanMobile = mobile.replace(/[^0-9]/g, '');
+    const cleanMobile = (mobile || '').replace(/[^0-9]/g, '');
+    if (!cleanMobile) return { success: false, files: [] };
     const colUrl = `${this.baseUrl}/users/${cleanMobile}/files?key=${this.apiKey}`;
 
     try {
@@ -133,7 +136,7 @@ const FayzarFirebaseClient = {
         throw new Error(`HTTP ${res.status}`);
       }
       const data = await res.json();
-      const files = (data.documents || []).map(doc => this.fromFirestoreDoc(doc));
+      const files = (data.documents || []).map(doc => this.fromFirestoreDoc(doc)).filter(Boolean);
       return { success: true, files };
     } catch (err) {
       return { success: false, error: err.message, files: [] };
@@ -142,7 +145,7 @@ const FayzarFirebaseClient = {
 
   // 3. Save or Update a User's File
   async saveUserFile(mobile, fileData) {
-    const cleanMobile = mobile.replace(/[^0-9]/g, '');
+    const cleanMobile = (mobile || '').replace(/[^0-9]/g, '');
     const fileId = fileData.id || ('file_' + Date.now());
     const docUrl = `${this.baseUrl}/users/${cleanMobile}/files/${fileId}?key=${this.apiKey}`;
 
@@ -170,7 +173,7 @@ const FayzarFirebaseClient = {
 
   // 4. Delete a User's File
   async deleteUserFile(mobile, fileId) {
-    const cleanMobile = mobile.replace(/[^0-9]/g, '');
+    const cleanMobile = (mobile || '').replace(/[^0-9]/g, '');
     const docUrl = `${this.baseUrl}/users/${cleanMobile}/files/${fileId}?key=${this.apiKey}`;
 
     try {
@@ -191,10 +194,113 @@ const FayzarFirebaseClient = {
       const res = await fetch(colUrl);
       if (!res.ok) return { success: false, users: [] };
       const data = await res.json();
-      const users = (data.documents || []).map(doc => this.fromFirestoreDoc(doc));
+      const users = (data.documents || []).map(doc => this.fromFirestoreDoc(doc)).filter(Boolean);
       return { success: true, users };
     } catch (err) {
       return { success: false, users: [], error: err.message };
+    }
+  },
+
+  // 6. Customer Feedback: Submit Feedback (Website / Mobile / Portal)
+  async submitFeedback(feedbackData) {
+    const fbId = feedbackData.id || ('fb_' + Date.now());
+    const docUrl = `${this.baseUrl}/feedbacks/${fbId}?key=${this.apiKey}`;
+
+    const docBody = {
+      id: fbId,
+      name: feedbackData.name || 'গ্রাহক',
+      contact: feedbackData.contact || '',
+      category: feedbackData.category || 'সাধারণ মতামত',
+      message: feedbackData.message || '',
+      rating: Number(feedbackData.rating || 5),
+      status: feedbackData.status || 'pending',
+      date: feedbackData.date || new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch(docUrl, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: this.toFirestoreFields(docBody) })
+      });
+      if (res.ok) {
+        return { success: true, feedback: docBody };
+      }
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+    return { success: false, error: 'ফিডব্যাক ক্লাউডে সংরক্ষণ করা যায়নি' };
+  },
+
+  // 7. Customer Feedback: Get All Feedbacks
+  async getAllFeedbacks() {
+    const colUrl = `${this.baseUrl}/feedbacks?key=${this.apiKey}`;
+    try {
+      const res = await fetch(colUrl);
+      if (!res.ok) return { success: false, feedbacks: [] };
+      const data = await res.json();
+      const feedbacks = (data.documents || []).map(doc => this.fromFirestoreDoc(doc)).filter(Boolean);
+      return { success: true, feedbacks };
+    } catch (err) {
+      return { success: false, feedbacks: [], error: err.message };
+    }
+  },
+
+  // 8. Customer Feedback: Update Status (Approved / Pending)
+  async updateFeedbackStatus(fbId, status = 'approved') {
+    const docUrl = `${this.baseUrl}/feedbacks/${fbId}?updateMask.fieldPaths=status&key=${this.apiKey}`;
+    try {
+      const res = await fetch(docUrl, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { status: { stringValue: status } } })
+      });
+      return { success: res.ok };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  // 9. Customer Feedback: Delete Feedback
+  async deleteFeedback(fbId) {
+    const docUrl = `${this.baseUrl}/feedbacks/${fbId}?key=${this.apiKey}`;
+    try {
+      const res = await fetch(docUrl, { method: 'DELETE' });
+      return { success: res.ok };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  // 10. Global Candidates Cloud Sync
+  async saveGlobalCandidate(candData) {
+    const candId = candData.id || ('cand_' + Date.now());
+    const docUrl = `${this.baseUrl}/candidates/${candId}?key=${this.apiKey}`;
+    candData.id = candId;
+    candData.updatedAt = new Date().toISOString();
+
+    try {
+      const res = await fetch(docUrl, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: this.toFirestoreFields(candData) })
+      });
+      return { success: res.ok, candidate: candData };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  },
+
+  async getAllGlobalCandidates() {
+    const colUrl = `${this.baseUrl}/candidates?key=${this.apiKey}`;
+    try {
+      const res = await fetch(colUrl);
+      if (!res.ok) return { success: false, candidates: [] };
+      const data = await res.json();
+      const candidates = (data.documents || []).map(doc => this.fromFirestoreDoc(doc)).filter(Boolean);
+      return { success: true, candidates };
+    } catch (err) {
+      return { success: false, candidates: [], error: err.message };
     }
   }
 };
