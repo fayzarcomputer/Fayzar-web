@@ -1672,6 +1672,10 @@ function initToolsIfPresent() {
   const INACTIVE_CLASSES = "bg-white dark:bg-[#1a263d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600/80 hover:bg-slate-100 dark:hover:bg-[#23324f] shadow-2xs";
 
   const TAB_ICON_STYLES = {
+    'ai-ocr': {
+      active: "bg-white/25 text-white",
+      inactive: "bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"
+    },
     text: {
       active: "bg-white/25 text-white",
       inactive: "bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400"
@@ -1693,7 +1697,7 @@ function initToolsIfPresent() {
   function switchToolTab(tabKey) {
     tabButtons.forEach(btn => {
       const tab = btn.dataset.toolTab;
-      const isHighlighted = tab === 'text';
+      const isHighlighted = tab === 'text' || tab === 'ai-ocr';
       const iconBadge = btn.querySelector('.tool-tab-icon-badge');
 
       if (tab === tabKey) {
@@ -1725,12 +1729,13 @@ function initToolsIfPresent() {
     });
   });
 
-  // Read URL query parameter: ?tab=resizer/text/age/land (Defaults to 'text'!)
+  // Read URL query parameter: ?tab=resizer/text/age/land/ai-ocr (Defaults to 'text'!)
   // If ?tab=math is passed, gracefully map to 'text' for unified converter
   const urlParams = new URLSearchParams(window.location.search);
   let activeTabParam = urlParams.get('tab');
   if (activeTabParam === 'math') activeTabParam = 'text';
-  if (activeTabParam && ['resizer', 'text', 'age', 'land'].includes(activeTabParam)) {
+  if (activeTabParam === 'ocr') activeTabParam = 'ai-ocr';
+  if (activeTabParam && ['resizer', 'text', 'age', 'land', 'ai-ocr'].includes(activeTabParam)) {
     switchToolTab(activeTabParam);
   } else {
     switchToolTab('text');
