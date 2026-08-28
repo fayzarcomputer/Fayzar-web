@@ -2790,7 +2790,7 @@ function initForms() {
   const contactFbSubmitBtn = document.getElementById('contactFbSubmitBtn');
 
   if (contactFeedbackForm) {
-    contactFeedbackForm.addEventListener('submit', (e) => {
+    contactFeedbackForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('contactFbUserName')?.value.trim();
       const contact = document.getElementById('contactFbUserContact')?.value.trim();
@@ -2799,22 +2799,38 @@ function initForms() {
 
       if (!name || !contact || !message) return;
 
+      const fbPayload = {
+        id: 'fb_' + Date.now(),
+        name,
+        contact,
+        category,
+        message,
+        rating: 5,
+        status: 'pending',
+        date: new Date().toISOString()
+      };
+
+      if (contactFbSubmitBtn) {
+        contactFbSubmitBtn.disabled = true;
+        contactFbSubmitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
+      }
+
       try {
-        const fbPayload = { name, contact, category, message, rating: 5 };
+        // 1. Try Firebase Cloud Save
+        if (typeof FayzarFirebaseClient !== 'undefined' && FayzarFirebaseClient.submitFeedback) {
+          await FayzarFirebaseClient.submitFeedback(fbPayload).catch(() => {});
+        }
+
+        // 2. Try Node Backend Save
         fetch('/api/submit-feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(fbPayload)
         }).catch(() => {});
 
+        // 3. Save to LocalStorage for offline & instant admin panel visibility
         const existing = JSON.parse(localStorage.getItem('fayzar_contact_feedbacks') || '[]');
-        existing.push({
-          name,
-          contact,
-          category,
-          message,
-          date: new Date().toISOString()
-        });
+        existing.unshift(fbPayload);
         localStorage.setItem('fayzar_contact_feedbacks', JSON.stringify(existing));
       } catch(err) {
         console.warn('Contact feedback storage warning', err);
@@ -2824,8 +2840,7 @@ function initForms() {
         contactFbStatusMsg.classList.remove('hidden');
       }
       if (contactFbSubmitBtn) {
-        contactFbSubmitBtn.disabled = true;
-        contactFbSubmitBtn.innerHTML = '<i class="fa-solid fa-check"></i> পাঠানো হয়েছে';
+        contactFbSubmitBtn.innerHTML = '<i class="fa-solid fa-check"></i> সফলভাবে গৃহীত হয়েছে';
       }
 
       setTimeout(() => {
