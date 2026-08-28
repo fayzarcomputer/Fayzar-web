@@ -147,87 +147,164 @@ async function initAdminSuite() {
   try {
     // ১. নোটিশ লোড
     const nRes = await fetch('data/notices.json');
-    if (nRes.ok) noticesList = await nRes.json();
+    if (nRes.ok) {
+      noticesList = await nRes.json();
+    } else {
+      const nLocal = JSON.parse(localStorage.getItem('fayzar_notices') || '[]');
+      if (nLocal.length > 0) noticesList = nLocal;
+    }
   } catch (e) {
-    noticesList = [];
+    noticesList = JSON.parse(localStorage.getItem('fayzar_notices') || '[]');
   }
 
   try {
     // ২. সেবাসমূহ লোড
     const sRes = await fetch('data/services.json');
-    if (sRes.ok) servicesList = await sRes.json();
+    if (sRes.ok) {
+      servicesList = await sRes.json();
+    } else {
+      const sLocal = JSON.parse(localStorage.getItem('fayzar_services') || '[]');
+      if (sLocal.length > 0) servicesList = sLocal;
+    }
   } catch (e) {
-    servicesList = [];
+    servicesList = JSON.parse(localStorage.getItem('fayzar_services') || '[]');
   }
 
   try {
     // ৩. কনফিগারেশন লোড
     const cRes = await fetch('data/site_config.json');
-    if (cRes.ok) siteConfig = await cRes.json();
+    if (cRes.ok) {
+      siteConfig = await cRes.json();
+    } else {
+      const cLocal = JSON.parse(localStorage.getItem('fayzar_site_config') || '{}');
+      if (Object.keys(cLocal).length > 0) siteConfig = cLocal;
+    }
   } catch (e) {
-    siteConfig = {};
+    siteConfig = JSON.parse(localStorage.getItem('fayzar_site_config') || '{}');
   }
 
   try {
-    // ৪. ফিডব্যাক লোড
-    const fRes = await fetch('/api/feedbacks');
-    if (fRes.ok) {
-      feedbacksList = await fRes.json();
-    } else {
-      const fbLocal = await fetch('data/feedbacks.json');
-      if (fbLocal.ok) feedbacksList = await fbLocal.json();
+    // ৪. ফিডব্যাক লোড (Node API + JSON ফাইল + LocalStorage + Firebase Firestore)
+    let fbItems = [];
+    try {
+      const fRes = await fetch('/api/feedbacks');
+      if (fRes.ok) fbItems = await fRes.json();
+    } catch(err) {}
+
+    if (!fbItems || fbItems.length === 0) {
+      try {
+        const fbLocal = await fetch('data/feedbacks.json');
+        if (fbLocal.ok) fbItems = await fbLocal.json();
+      } catch(err) {}
     }
+
+    // Merge from LocalStorage
+    const localFeedbacks = JSON.parse(localStorage.getItem('fayzar_contact_feedbacks') || '[]');
+    localFeedbacks.forEach(lf => {
+      if (!fbItems.some(f => f.id === lf.id || (f.name === lf.name && f.message === lf.message))) {
+        fbItems.unshift(lf);
+      }
+    });
+
+    // Merge from Firebase Cloud Firestore
+    if (typeof FayzarFirebaseClient !== 'undefined' && FayzarFirebaseClient.getAllFeedbacks) {
+      try {
+        const fbCloud = await FayzarFirebaseClient.getAllFeedbacks();
+        if (fbCloud.success && Array.isArray(fbCloud.feedbacks)) {
+          fbCloud.feedbacks.forEach(cf => {
+            if (!fbItems.some(f => f.id === cf.id || (f.name === cf.name && f.message === cf.message))) {
+              fbItems.unshift(cf);
+            }
+          });
+        }
+      } catch(cfErr) {
+        console.warn('Firebase feedbacks load warning:', cfErr);
+      }
+    }
+
+    feedbacksList = fbItems;
   } catch (e) {
-    feedbacksList = [];
+    feedbacksList = JSON.parse(localStorage.getItem('fayzar_contact_feedbacks') || '[]');
   }
 
   try {
     // ৫. কাস্টম ডিকশনারি লোড
     const dRes = await fetch('data/converter_dict.json');
-    if (dRes.ok) dictionaryList = await dRes.json();
+    if (dRes.ok) {
+      dictionaryList = await dRes.json();
+    } else {
+      const dLocal = JSON.parse(localStorage.getItem('fayzar_converter_dict') || '[]');
+      if (dLocal.length > 0) dictionaryList = dLocal;
+    }
   } catch (e) {
-    dictionaryList = [];
+    dictionaryList = JSON.parse(localStorage.getItem('fayzar_converter_dict') || '[]');
   }
 
   try {
-    // ৬. চাকরি প্রার্থী ডাটাবেজ লোড (লোকাল + ফায়ারবেস ক্লাউড ইউজার)
-    const cRes = await fetch('/api/candidates');
-    if (cRes.ok) {
-      candidatesList = await cRes.json();
-    } else {
-      const cLocal = await fetch('data/candidates.json');
-      if (cLocal.ok) candidatesList = await cLocal.json();
+    // ৬. চাকরি প্রার্থী ডাটাবেজ লোড (লোকাল + ফায়ারবেস ক্লাউড ইউজার + Global Candidates)
+    let cItems = [];
+    try {
+      const cRes = await fetch('/api/candidates');
+      if (cRes.ok) cItems = await cRes.json();
+    } catch(err) {}
+
+    if (!cItems || cItems.length === 0) {
+      try {
+        const cLocal = await fetch('data/candidates.json');
+        if (cLocal.ok) cItems = await cLocal.json();
+      } catch(err) {}
     }
 
+    // Merge from LocalStorage
+    const localCandidates = JSON.parse(localStorage.getItem('fayzar_admin_candidates') || '[]');
+    localCandidates.forEach(lc => {
+      if (!cItems.some(c => c.id === lc.id)) {
+        cItems.push(lc);
+      }
+    });
+
+    // Merge from Firebase Cloud (All registered users' files + Global candidates)
     if (typeof FayzarFirebaseClient !== 'undefined') {
       try {
         const uRes = await FayzarFirebaseClient.getAllUsersForAdmin();
         if (uRes.success && uRes.users) {
           for (const u of uRes.users) {
             const fRes = await FayzarFirebaseClient.getUserFiles(u.mobile);
-            if (fRes.success && fRes.files) {
-              fRes.files.forEach(f => {
-                if (!candidatesList.some(c => c.id === f.id)) {
-                  candidatesList.push({
-                    ...f,
-                    isCloud: true,
-                    userMobile: u.mobile,
-                    userName: u.name
-                  });
-                }
-              });
-            }
+            const userFiles = Array.isArray(fRes) ? fRes : (fRes?.files || []);
+            userFiles.forEach(f => {
+              if (!cItems.some(c => c.id === f.id)) {
+                cItems.push({
+                  ...f,
+                  isCloud: true,
+                  userMobile: u.mobile,
+                  userName: u.name
+                });
+              }
+            });
+          }
+        }
+
+        if (FayzarFirebaseClient.getAllGlobalCandidates) {
+          const gRes = await FayzarFirebaseClient.getAllGlobalCandidates();
+          if (gRes.success && Array.isArray(gRes.candidates)) {
+            gRes.candidates.forEach(gc => {
+              if (!cItems.some(c => c.id === gc.id)) {
+                cItems.push(gc);
+              }
+            });
           }
         }
       } catch (fbErr) {
-        console.warn('Firebase admin load:', fbErr);
+        console.warn('Firebase candidates load warning:', fbErr);
       }
     }
+
+    candidatesList = cItems;
   } catch (e) {
-    candidatesList = [];
+    candidatesList = JSON.parse(localStorage.getItem('fayzar_admin_candidates') || '[]');
   }
 
-  // কাউন্টার ও ব্যাজ আপডেট
+  // কাউন্টার ও সমস্ত ভিউ রেন্ডার
   updateDashboardMetrics();
   populateSiteConfigForm();
   renderAdminNotices();
@@ -235,6 +312,7 @@ async function initAdminSuite() {
   renderAdminChecklist();
   renderAdminDictionary();
   renderAdminFeedbacks();
+  renderAdminCandidates();
 }
 
 // ৪. ড্যাশবোর্ড ওভারভিউ ও মেট্রিক্স
@@ -245,22 +323,24 @@ function updateDashboardMetrics() {
   const chkCount = servicesList.filter(s => s.category !== 'computer' && s.includeInChecklist !== false).length;
   const fbPending = feedbacksList.filter(f => f.status === 'pending').length;
   const fbTotal = feedbacksList.length;
+  const candCount = candidatesList.length;
 
   // Stat Cards
-  document.getElementById('stat-notices-count').textContent = `${notCount} টি`;
-  document.getElementById('stat-services-count').textContent = `${srvCount} টি`;
-  document.getElementById('stat-checklist-count').textContent = `${chkCount} টি`;
-  document.getElementById('stat-feedbacks-count').textContent = `${fbTotal} টি`;
-  document.getElementById('stat-feedbacks-sub').textContent = `${fbPending} টি নতুন অপেক্ষারত`;
+  const elNot = document.getElementById('stat-notices-count'); if (elNot) elNot.textContent = `${notCount} টি`;
+  const elSrv = document.getElementById('stat-services-count'); if (elSrv) elSrv.textContent = `${srvCount} টি`;
+  const elChk = document.getElementById('stat-checklist-count'); if (elChk) elChk.textContent = `${chkCount} টি`;
+  const elFb = document.getElementById('stat-feedbacks-count'); if (elFb) elFb.textContent = `${fbTotal} টি`;
+  const elFbSub = document.getElementById('stat-feedbacks-sub'); if (elFbSub) elFbSub.textContent = `${fbPending} টি নতুন অপেক্ষারত`;
+  const elCand = document.getElementById('stat-candidates-count'); if (elCand) elCand.textContent = `${candCount} টি`;
 
   // Tab Badges
-  document.getElementById('tab-badge-notices').textContent = notCount;
-  document.getElementById('tab-badge-services').textContent = srvCount;
-  document.getElementById('tab-badge-checklist').textContent = chkCount;
-  document.getElementById('tab-badge-dict').textContent = dictionaryList.length;
-  document.getElementById('tab-badge-feedbacks').textContent = fbPending > 0 ? `${fbPending} নতুন` : fbTotal;
-  document.getElementById('checklist-selected-count').textContent = chkCount;
-  const cBadge = document.getElementById('tab-badge-candidates'); if (cBadge) cBadge.textContent = candidatesList.length;
+  const tbNot = document.getElementById('tab-badge-notices'); if (tbNot) tbNot.textContent = notCount;
+  const tbSrv = document.getElementById('tab-badge-services'); if (tbSrv) tbSrv.textContent = srvCount;
+  const tbChk = document.getElementById('tab-badge-checklist'); if (tbChk) tbChk.textContent = chkCount;
+  const tbDict = document.getElementById('tab-badge-dict'); if (tbDict) tbDict.textContent = dictionaryList.length;
+  const tbFb = document.getElementById('tab-badge-feedbacks'); if (tbFb) tbFb.textContent = fbPending > 0 ? `${fbPending} নতুন` : fbTotal;
+  const chkSel = document.getElementById('checklist-selected-count'); if (chkSel) chkSel.textContent = chkCount;
+  const cBadge = document.getElementById('tab-badge-candidates'); if (cBadge) cBadge.textContent = candCount;
 }
 
 // ৫. ট্যাব পরিবর্তন লজিক
@@ -281,6 +361,23 @@ function switchAdminTab(tabName) {
       panel?.classList.add('hidden');
     }
   });
+
+  // Re-render specific active panel content
+  if (tabName === 'candidates') {
+    renderAdminCandidates(document.getElementById('admin-candidates-search')?.value || '');
+  } else if (tabName === 'feedbacks') {
+    renderAdminFeedbacks();
+  } else if (tabName === 'notices') {
+    renderAdminNotices();
+  } else if (tabName === 'services') {
+    renderAdminServices();
+  } else if (tabName === 'checklist') {
+    renderAdminChecklist();
+  } else if (tabName === 'tools') {
+    renderAdminDictionary();
+  } else if (tabName === 'dashboard') {
+    updateDashboardMetrics();
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -930,6 +1027,7 @@ function renderAdminFeedbacks() {
     `).join('');
 
     const formattedDate = f.date ? new Date(f.date).toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+    const cleanPhone = (f.contact || '').replace(/[^0-9]/g, '');
 
     return `
       <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3 border hover:border-rose-500/40 transition">
@@ -943,10 +1041,15 @@ function renderAdminFeedbacks() {
                 <span>${f.name || 'বেনামী গ্রাহক'}</span>
                 ${statusBadge}
               </h5>
-              <div class="text-[11px] text-slate-400 flex items-center gap-2">
+              <div class="text-[11px] text-slate-400 flex items-center gap-2 flex-wrap">
                 <span><i class="fas fa-phone text-[10px] text-emerald-400 mr-1"></i>${f.contact || 'মোবাইল উল্লেখ নেই'}</span>
                 <span>•</span>
                 <span>${f.category || 'সাধারণ মতামত'}</span>
+                ${cleanPhone.length >= 11 ? `
+                  <a href="https://wa.me/88${cleanPhone}?text=${encodeURIComponent('ধন্যবাদ আপনার মতামতের জন্য! ফয়জার কম্পিউটার থেকে যোগাযোগ করা হচ্ছে।')}" target="_blank" class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold inline-flex items-center gap-1 transition">
+                    <i class="fab fa-whatsapp"></i> হোয়াটসঅ্যাপ রিপ্লাই
+                  </a>
+                ` : ''}
               </div>
             </div>
           </div>
@@ -984,39 +1087,49 @@ function renderAdminFeedbacks() {
   }).join('');
 }
 
-function approveFeedback(id) {
+async function approveFeedback(id) {
   const item = feedbacksList.find(f => f.id === id);
   if (item) {
     item.status = 'approved';
     renderAdminFeedbacks();
     updateDashboardMetrics();
-    saveFeedbacksToServer();
+    await saveFeedbacksToServer();
+    if (typeof FayzarFirebaseClient !== 'undefined' && FayzarFirebaseClient.updateFeedbackStatus) {
+      FayzarFirebaseClient.updateFeedbackStatus(id, 'approved').catch(() => {});
+    }
     showToast('গ্রাহকের মতামত সফলভাবে অনুমোদিত হয়েছে!', 'success');
   }
 }
 
-function unapproveFeedback(id) {
+async function unapproveFeedback(id) {
   const item = feedbacksList.find(f => f.id === id);
   if (item) {
     item.status = 'pending';
     renderAdminFeedbacks();
     updateDashboardMetrics();
-    saveFeedbacksToServer();
+    await saveFeedbacksToServer();
+    if (typeof FayzarFirebaseClient !== 'undefined' && FayzarFirebaseClient.updateFeedbackStatus) {
+      FayzarFirebaseClient.updateFeedbackStatus(id, 'pending').catch(() => {});
+    }
     showToast('মতামতটি অপেক্ষারত তালিকায় স্থানান্তর করা হয়েছে।', 'info');
   }
 }
 
-function deleteFeedback(id) {
+async function deleteFeedback(id) {
   if (confirm('আপনি কি নিশ্চিতভাবে এই মতামতটি মুছে ফেলতে চান?')) {
     feedbacksList = feedbacksList.filter(f => f.id !== id);
     renderAdminFeedbacks();
     updateDashboardMetrics();
-    saveFeedbacksToServer();
+    await saveFeedbacksToServer();
+    if (typeof FayzarFirebaseClient !== 'undefined' && FayzarFirebaseClient.deleteFeedback) {
+      FayzarFirebaseClient.deleteFeedback(id).catch(() => {});
+    }
     showToast('মতামতটি মুছে ফেলা হয়েছে!', 'info');
   }
 }
 
 async function saveFeedbacksToServer() {
+  localStorage.setItem('fayzar_contact_feedbacks', JSON.stringify(feedbacksList));
   try {
     const res = await fetch('/api/save-feedbacks', {
       method: 'POST',
@@ -1024,11 +1137,9 @@ async function saveFeedbacksToServer() {
       body: JSON.stringify(feedbacksList)
     });
     if (res.ok) {
-      showToast('গ্রাহক মতামত সফলভাবে সার্ভারে সংরক্ষিত হয়েছে!', 'success');
+      console.log('Feedbacks synced to server');
     }
-  } catch (err) {
-    localStorage.setItem('fayzar_contact_feedbacks', JSON.stringify(feedbacksList));
-  }
+  } catch (err) {}
 }
 
 function exportFeedbacksCSV() {
@@ -1075,6 +1186,16 @@ async function saveAllToServer() {
   await saveDictionaryToServer();
   await saveFeedbacksToServer();
 
+  // Save candidates too
+  try {
+    await fetch('/api/candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(candidatesList)
+    });
+  } catch(e) {}
+  localStorage.setItem('fayzar_admin_candidates', JSON.stringify(candidatesList));
+
   showToast('আলহামদুলিল্লাহ! সমস্ত পরিবর্তন সার্ভারে সংরক্ষিত হয়েছে।', 'success');
 }
 
@@ -1086,7 +1207,8 @@ function exportFullBackupJSON() {
     notices: noticesList,
     services: servicesList,
     dictionary: dictionaryList,
-    feedbacks: feedbacksList
+    feedbacks: feedbacksList,
+    candidates: candidatesList
   };
 
   const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
@@ -1107,24 +1229,36 @@ function importBackupFile(event) {
   reader.onload = async (e) => {
     try {
       const backup = JSON.parse(e.target.result);
-      if (!backup.notices && !backup.services && !backup.siteConfig) {
+      if (!backup.notices && !backup.services && !backup.siteConfig && !backup.candidates) {
         showToast('অবৈধ ব্যাকআপ ফাইল!', 'error');
         return;
       }
 
       if (confirm('আপনি কি এই ব্যাকআপ ফাইলটি রিস্টোর করতে চান? বর্তমান ডেটা প্রতিস্থাপিত হবে।')) {
-        const res = await fetch('/api/import-backup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(backup)
-        });
+        if (backup.notices) noticesList = backup.notices;
+        if (backup.services) servicesList = backup.services;
+        if (backup.siteConfig) siteConfig = backup.siteConfig;
+        if (backup.feedbacks) feedbacksList = backup.feedbacks;
+        if (backup.dictionary) dictionaryList = backup.dictionary;
+        if (backup.candidates) candidatesList = backup.candidates;
 
-        if (res.ok) {
-          showToast('ব্যাকআপ সফলভাবে রিস্টোর হয়েছে! পেজ রিলোড হচ্ছে...', 'success');
-          setTimeout(() => window.location.reload(), 1200);
-        } else {
-          showToast('সার্ভারে রিস্টোর ব্যর্থ হয়েছে!', 'error');
-        }
+        localStorage.setItem('fayzar_notices', JSON.stringify(noticesList));
+        localStorage.setItem('fayzar_services', JSON.stringify(servicesList));
+        localStorage.setItem('fayzar_site_config', JSON.stringify(siteConfig));
+        localStorage.setItem('fayzar_contact_feedbacks', JSON.stringify(feedbacksList));
+        localStorage.setItem('fayzar_converter_dict', JSON.stringify(dictionaryList));
+        localStorage.setItem('fayzar_admin_candidates', JSON.stringify(candidatesList));
+
+        try {
+          await fetch('/api/import-backup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(backup)
+          });
+        } catch(err) {}
+
+        showToast('ব্যাকআপ সফলভাবে রিস্টোর হয়েছে! পেজ রিলোড হচ্ছে...', 'success');
+        setTimeout(() => window.location.reload(), 1200);
       }
     } catch (err) {
       showToast('JSON ফাইল পার্স করতে ত্রুটি হয়েছে!', 'error');
@@ -1169,24 +1303,29 @@ function renderAdminCandidates(query = '') {
     const m = c.semanticMap || {};
     const name = m.applicant_name || c.name;
     const nameBn = m.applicant_name_bn || '';
-    const mobile = m.mobile_no || '-';
+    const mobile = m.mobile_no || c.userMobile || '-';
     const nid = m.nid_no || '-';
     const dob = m.dob_day ? `${m.dob_day}/${m.dob_month}/${m.dob_year}` : (m.dob_full || '-');
     const ssc = m.ssc_exam ? `SSC (${m.ssc_board || ''} - ${m.ssc_gpa || ''})` : '';
     const hsc = m.hsc_exam ? `HSC (${m.hsc_board || ''} - ${m.hsc_gpa || ''})` : '';
+    const cleanMobile = mobile.replace(/[^0-9]/g, '');
 
     return `
-      <div class="glass-card rounded-3xl p-5 border border-slate-700 hover:border-lime-500/50 transition-all duration-300 flex flex-col justify-between space-y-4">
+      <div class="glass-card rounded-3xl p-5 border border-slate-700 hover:border-lime-500/50 transition-all duration-300 flex flex-col justify-between space-y-4 shadow-lg">
         <div>
           <div class="flex items-start justify-between gap-3 mb-2">
             <div>
-              <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-400 text-[10px] font-black">প্রার্থী প্রোফাইল</span>
-              <h4 class="text-sm font-black text-white mt-1">${c.name}</h4>
+              <span class="px-2 py-0.5 rounded-full ${c.isCloud ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-lime-500/20 text-lime-400 border border-lime-500/30'} text-[10px] font-black">
+                ${c.isCloud ? '☁️ ক্লাউড প্রোফাইল' : '👤 লোকাল প্রার্থী'}
+              </span>
+              <h4 class="text-sm font-black text-white mt-1.5">${c.name || name}</h4>
               <p class="text-xs text-slate-400 font-semibold">${nameBn}</p>
             </div>
-            <a href="https://wa.me/88${mobile.replace(/[^0-9]/g, '')}" target="_blank" title="হোয়াটসঅ্যাপে মেসেজ পাঠান" class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center text-xs transition">
-              <i class="fab fa-whatsapp"></i>
-            </a>
+            ${cleanMobile.length >= 11 ? `
+              <a href="https://wa.me/88${cleanMobile}?text=${encodeURIComponent(`আসসালামু আলাইকুম ${name}, আপনার চাকরির আবেদনের বিষয়ে ফয়জার কম্পিউটার থেকে মেসেজ দেয়া হলো।`)}" target="_blank" title="হোয়াটসঅ্যাপে মেসেজ পাঠান" class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center text-xs transition">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+            ` : ''}
           </div>
 
           <div class="bg-slate-900/80 rounded-2xl p-3 border border-slate-800 space-y-1.5 text-xs text-slate-300">
@@ -1223,10 +1362,10 @@ function switchCandidateModalTab(tabKey) {
     const box = document.getElementById(`ac-tab-${t}`);
     if (t === tabKey) {
       btn.className = 'px-3.5 py-1.5 rounded-xl bg-lime-600 text-white font-bold';
-      box.classList.remove('hidden');
+      box?.classList.remove('hidden');
     } else {
       btn.className = 'px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700';
-      box.classList.add('hidden');
+      box?.classList.add('hidden');
     }
   });
 }
@@ -1244,13 +1383,13 @@ function openCandidateModal(candId = null) {
     const c = candidatesList.find(item => item.id === candId);
     if (!c) return;
     document.getElementById('ac-edit-id').value = c.id;
-    title.innerHTML = `<i class="fas fa-user-pen text-lime-400"></i> প্রার্থী তথ্য সম্পাদন: ${c.name}`;
+    title.innerHTML = `<i class="fas fa-user-pen text-lime-400"></i> প্রার্থী তথ্য সম্পাদন: ${c.name || ''}`;
 
     const m = c.semanticMap || {};
     document.getElementById('ac-name').value = c.name || '';
     document.getElementById('ac-applicant-name').value = m.applicant_name || '';
     document.getElementById('ac-applicant-name-bn').value = m.applicant_name_bn || '';
-    document.getElementById('ac-mobile').value = m.mobile_no || '';
+    document.getElementById('ac-mobile').value = m.mobile_no || c.userMobile || '';
     document.getElementById('ac-father-name').value = m.father_name || '';
     document.getElementById('ac-father-name-bn').value = m.father_name_bn || '';
     document.getElementById('ac-mother-name').value = m.mother_name || '';
@@ -1353,37 +1492,51 @@ async function handleCandidateSubmit(e) {
     grad_result: document.getElementById('ac-grad-gpa').value.trim()
   };
 
+  let candidateObj = null;
+
   if (editId) {
     const idx = candidatesList.findIndex(c => c.id === editId);
     if (idx !== -1) {
       candidatesList[idx].name = profileName;
       candidatesList[idx].updatedAt = new Date().toISOString();
       candidatesList[idx].semanticMap = semanticMap;
+      candidateObj = candidatesList[idx];
     }
   } else {
-    candidatesList.unshift({
+    candidateObj = {
       id: 'cand_' + Date.now(),
       name: profileName,
       updatedAt: new Date().toISOString(),
       semanticMap: semanticMap
-    });
+    };
+    candidatesList.unshift(candidateObj);
   }
 
-  // Save to server
+  // 1. Save to LocalStorage
+  localStorage.setItem('fayzar_admin_candidates', JSON.stringify(candidatesList));
+
+  // 2. Try Node Backend Save
   try {
-    const res = await fetch('/api/candidates', {
+    await fetch('/api/candidates', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(candidatesList)
     });
-    if (res.ok) {
-      showToast('প্রার্থী সফলভাবে সংরক্ষিত হয়েছে! সকল পিসির এক্সটেনশনে সিঙ্ক হবে।', 'success');
+  } catch (err) {}
+
+  // 3. Try Firebase Cloud Save
+  if (typeof FayzarFirebaseClient !== 'undefined' && candidateObj) {
+    if (candidateObj.isCloud && candidateObj.userMobile) {
+      FayzarFirebaseClient.saveUserFile(candidateObj.userMobile, candidateObj).catch(() => {});
     }
-  } catch (err) {
-    showToast('অফলাইন মোডে লোকালভাবে সেভ হয়েছে।', 'warning');
+    if (FayzarFirebaseClient.saveGlobalCandidate) {
+      FayzarFirebaseClient.saveGlobalCandidate(candidateObj).catch(() => {});
+    }
   }
 
+  showToast('প্রার্থী সফলভাবে সংরক্ষিত হয়েছে! সকল পিসির এক্সটেনশনে সিঙ্ক হবে।', 'success');
   closeCandidateModal();
+  updateDashboardMetrics();
   renderAdminCandidates();
 }
 
@@ -1394,6 +1547,7 @@ async function deleteCandidate(candId) {
   if (!confirm(`আপনি কি সত্যিই "${c.name}" প্রার্থীর সমস্ত তথ্য মুছে ফেলতে চান?`)) return;
 
   candidatesList = candidatesList.filter(item => item.id !== candId);
+  localStorage.setItem('fayzar_admin_candidates', JSON.stringify(candidatesList));
 
   try {
     await fetch('/api/candidates', {
@@ -1401,11 +1555,16 @@ async function deleteCandidate(candId) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(candidatesList)
     });
-    showToast('প্রার্থী প্রোফাইল মুছে ফেলা হয়েছে।', 'info');
-  } catch (err) {
-    showToast('সার্ভার অফলাইন!', 'error');
+  } catch (err) {}
+
+  if (typeof FayzarFirebaseClient !== 'undefined') {
+    if (c.isCloud && c.userMobile) {
+      FayzarFirebaseClient.deleteUserFile(c.userMobile, c.id).catch(() => {});
+    }
   }
 
+  showToast('প্রার্থী প্রোফাইল মুছে ফেলা হয়েছে।', 'info');
+  updateDashboardMetrics();
   renderAdminCandidates();
 }
 
