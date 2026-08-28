@@ -260,42 +260,51 @@
           </div>
         </div>
 
-        <!-- 4 Key Metric Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-blue-500">
+        <!-- 5 Key Metric Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div onclick="switchAdminTab('notices')" class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-blue-500 cursor-pointer hover:border-blue-400 transition">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-400">মোট সক্রিয় নোটিশ</span>
+              <span class="text-xs font-bold text-slate-400">সক্রিয় নোটিশ</span>
               <span class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm"><i class="fas fa-bullhorn"></i></span>
             </div>
             <div id="stat-notices-count" class="text-2xl sm:text-3xl font-black text-white mt-2">0 টি</div>
-            <div class="text-[11px] text-blue-300 font-semibold mt-1">চাকরি ও কলেজ নোটিশ</div>
+            <div class="text-[11px] text-blue-300 font-semibold mt-1">চাকরি ও কলেজ</div>
           </div>
 
-          <div class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-emerald-500">
+          <div onclick="switchAdminTab('services')" class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-emerald-500 cursor-pointer hover:border-emerald-400 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-slate-400">মোট সেবাসমূহ</span>
               <span class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm"><i class="fas fa-layer-group"></i></span>
             </div>
             <div id="stat-services-count" class="text-2xl sm:text-3xl font-black text-white mt-2">0 টি</div>
-            <div class="text-[11px] text-emerald-300 font-semibold mt-1">ভূমিসেবা, অনলাইন ও স্টুডিও</div>
+            <div class="text-[11px] text-emerald-300 font-semibold mt-1">ভূমি ও অনলাইন</div>
           </div>
 
-          <div class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-teal-500">
+          <div onclick="switchAdminTab('checklist')" class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-teal-500 cursor-pointer hover:border-teal-400 transition">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-400">চেকলিস্ট অন্তর্ভুক্ত</span>
+              <span class="text-xs font-bold text-slate-400">চেকলিস্ট সেবা</span>
               <span class="w-9 h-9 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm"><i class="fas fa-clipboard-check"></i></span>
             </div>
             <div id="stat-checklist-count" class="text-2xl sm:text-3xl font-black text-white mt-2">0 টি</div>
-            <div class="text-[11px] text-teal-300 font-semibold mt-1">হোমপেজে ঘূর্ণায়মান চেকলিস্ট</div>
+            <div class="text-[11px] text-teal-300 font-semibold mt-1">ঘূর্ণায়মান চেকলিস্ট</div>
           </div>
 
-          <div class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-rose-500">
+          <div onclick="switchAdminTab('feedbacks')" class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-rose-500 cursor-pointer hover:border-rose-400 transition">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-400">গ্রাহক মতামত ও রিভিউ</span>
+              <span class="text-xs font-bold text-slate-400">গ্রাহক মতামত</span>
               <span class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-sm"><i class="fas fa-comments"></i></span>
             </div>
             <div id="stat-feedbacks-count" class="text-2xl sm:text-3xl font-black text-white mt-2">0 টি</div>
-            <div id="stat-feedbacks-sub" class="text-[11px] text-rose-300 font-semibold mt-1">যাচাই-বাছাইয়ের অপেক্ষায়</div>
+            <div id="stat-feedbacks-sub" class="text-[11px] text-rose-300 font-semibold mt-1">অপেক্ষারত মতামত</div>
+          </div>
+
+          <div onclick="switchAdminTab('candidates')" class="glass-card rounded-2xl p-4 sm:p-5 border-l-4 border-lime-500 cursor-pointer hover:border-lime-400 transition col-span-2 sm:col-span-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-400">চাকরি প্রার্থী</span>
+              <span class="w-9 h-9 rounded-xl bg-lime-500/20 text-lime-400 flex items-center justify-center text-sm"><i class="fas fa-users-viewfinder"></i></span>
+            </div>
+            <div id="stat-candidates-count" class="text-2xl sm:text-3xl font-black text-lime-300 mt-2">0 টি</div>
+            <div class="text-[11px] text-lime-400 font-semibold mt-1">এক্সটেনশন ডেটাবেজ</div>
           </div>
         </div>
 
