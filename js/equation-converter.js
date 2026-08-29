@@ -34,7 +34,6 @@
 
       // 0.2 Pre-sanitize LaTeX escape characters so Word never confuses them with EQ field switches
       s = s.replace(/\\%/g, '%');
-      // LaTeX tie / non-breaking space (~) and \sim used between quantity and unit -> space
       s = s.replace(/\\sim\b/g, ' ');
       s = s.replace(/~/g, ' ');
       s = s.replace(/\\\$/g, '$');
@@ -44,8 +43,11 @@
       s = s.replace(/\\\{/g, '{');
       s = s.replace(/\\\}/g, '}');
 
-      // 1. Process \text{...} / \mathrm{...} blocks:
-      s = s.replace(/\\(?:text|mathrm|textmd|textbf|textit)\{([^{}]+)\}/g, function(match, inner) {
+      // 0.3 Pre-space trig and standard functions when directly followed by backslash command or letters (e.g. \sin\theta -> \sin \theta)
+      s = s.replace(/\\(sin|cos|tan|cot|sec|csc|ln|log|arcsin|arccos|arctan|sinh|cosh|tanh|coth|lim|det|min|max|deg)(?=\\[a-zA-Z]|[a-zA-Z0-9])/g, '\\$1 ');
+
+      // 1. Process \text{...} / \mathrm{...} / \textbf{...} blocks:
+      s = s.replace(/\\(?:text|mathrm|textmd|textbf|textit|mbox)\{([^{}]+)\}/g, function(match, inner) {
         let trimmed = inner.trim();
         let converted = trimmed;
         if (isU2B && typeof BanglaConverter !== 'undefined' && BanglaConverter.hasBengaliText(trimmed)) {
@@ -100,6 +102,16 @@
       let i = 0;
 
       while (i < str.length) {
+        // Skip quoted text strings so Bijoy underscores/carets inside words are never treated as LaTeX sub/superscripts
+        if (str[i] === '"') {
+          let endQ = str.indexOf('"', i + 1);
+          if (endQ !== -1) {
+            result += str.substring(i, endQ + 1);
+            i = endQ + 1;
+            continue;
+          }
+        }
+
         // Check for \frac, \dfrac, \tfrac
         if (str.startsWith('\\frac', i) || str.startsWith('\\dfrac', i) || str.startsWith('\\tfrac', i)) {
           let macroLen = str.startsWith('\\frac', i) ? 5 : 6;
@@ -238,6 +250,19 @@
      */
     static _convertSymbols(s) {
       const symbolMap = [
+        // Logic & Implications
+        [/\\implies\b|\\Longrightarrow\b/g, '\u21D2'],
+        [/\\iff\b|\\Longleftrightarrow\b/g, '\u21D4'],
+        [/\\Rightarrow\b/g, '\u21D2'],
+        [/\\rightarrow\b|\\to\b/g, '\u2192'],
+        [/\\leftarrow\b|\\gets\b/g, '\u2190'],
+        [/\\Leftarrow\b/g, '\u21D0'],
+        [/\\leftrightarrow\b/g, '\u2194'],
+        [/\\Leftrightarrow\b/g, '\u21D4'],
+        [/\\therefore\b/g, '\u2234'],
+        [/\\because\b/g, '\u2235'],
+
+        // Number Sets
         [/\\in\b/g, '\u2208'],
         [/\\notin\b/g, '\u2209'],
         [/\\mathbb\{N\}|\\mathbf\{N\}|\b\\mathbb N\b/g, 'N'],
@@ -245,6 +270,8 @@
         [/\\mathbb\{Z\}|\\mathbf\{Z\}|\b\\mathbb Z\b/g, 'Z'],
         [/\\mathbb\{Q\}|\\mathbf\{Q\}|\b\\mathbb Q\b/g, 'Q'],
         [/\\mathbb\{C\}|\\mathbf\{C\}|\b\\mathbb C\b/g, 'C'],
+
+        // Arithmetic & Relations
         [/\\times\b/g, '\u00D7'],
         [/\\div\b/g, '\u00F7'],
         [/\\pm\b/g, '\u00B1'],
@@ -254,6 +281,7 @@
         [/\\neq\b|\\ne\b/g, '\u2260'],
         [/\\approx\b/g, '\u2248'],
         [/\\equiv\b/g, '\u2261'],
+        [/\\cong\b/g, '\u2245'],
         [/\\propto\b/g, '\u221D'],
         [/\\infty\b/g, '\u221E'],
         [/\\subset\b/g, '\u2282'],
@@ -264,29 +292,56 @@
         [/\\cap\b/g, '\u2229'],
         [/\\forall\b/g, '\u2200'],
         [/\\exists\b/g, '\u2203'],
-        [/\\rightarrow\b|\\to\b/g, '\u2192'],
-        [/\\Rightarrow\b/g, '\u21D2'],
-        [/\\leftarrow\b/g, '\u2190'],
-        [/\\Leftarrow\b/g, '\u21D0'],
-        [/\\leftrightarrow\b/g, '\u2194'],
-        [/\\Leftrightarrow\b/g, '\u21D4'],
         [/\\cdot\b/g, '\u00B7'],
         [/\\cdots\b/g, '\u00B7\u00B7\u00B7'],
         [/\\ldots\b/g, '...'],
+
+        // Greek Letters (Lowercase)
         [/\\alpha\b/g, '\u03B1'],
         [/\\beta\b/g, '\u03B2'],
         [/\\gamma\b/g, '\u03B3'],
         [/\\delta\b/g, '\u03B4'],
-        [/\\theta\b/g, '\u03B8'],
+        [/\\epsilon\b|\\varepsilon\b/g, '\u03B5'],
+        [/\\zeta\b/g, '\u03B6'],
+        [/\\eta\b/g, '\u03B7'],
+        [/\\theta\b|\\vartheta\b/g, '\u03B8'],
+        [/\\iota\b/g, '\u03B9'],
+        [/\\kappa\b/g, '\u03BA'],
         [/\\lambda\b/g, '\u03BB'],
         [/\\mu\b/g, '\u03BC'],
+        [/\\nu\b/g, '\u03BD'],
+        [/\\xi\b/g, '\u03BE'],
         [/\\pi\b/g, '\u03C0'],
+        [/\\rho\b/g, '\u03C1'],
         [/\\sigma\b/g, '\u03C3'],
-        [/\\phi\b/g, '\u03C6'],
+        [/\\tau\b/g, '\u03C4'],
+        [/\\upsilon\b/g, '\u03C5'],
+        [/\\phi\b|\\varphi\b/g, '\u03C6'],
+        [/\\chi\b/g, '\u03C7'],
+        [/\\psi\b/g, '\u03C8'],
         [/\\omega\b/g, '\u03C9'],
+
+        // Greek Letters (Uppercase)
+        [/\\Gamma\b/g, '\u0393'],
         [/\\Delta\b/g, '\u0394'],
+        [/\\Theta\b/g, '\u0398'],
+        [/\\Lambda\b/g, '\u039B'],
+        [/\\Xi\b/g, '\u039E'],
+        [/\\Pi\b/g, '\u03A0'],
         [/\\Sigma\b/g, '\u03A3'],
+        [/\\Upsilon\b/g, '\u03A5'],
+        [/\\Phi\b/g, '\u03A6'],
+        [/\\Psi\b/g, '\u03A8'],
         [/\\Omega\b/g, '\u03A9'],
+
+        // Trigonometry & Standard Math Functions
+        [/\\arcsin\b/g, 'arcsin'],
+        [/\\arccos\b/g, 'arccos'],
+        [/\\arctan\b/g, 'arctan'],
+        [/\\sinh\b/g, 'sinh'],
+        [/\\cosh\b/g, 'cosh'],
+        [/\\tanh\b/g, 'tanh'],
+        [/\\coth\b/g, 'coth'],
         [/\\sin\b/g, 'sin'],
         [/\\cos\b/g, 'cos'],
         [/\\tan\b/g, 'tan'],
@@ -295,12 +350,17 @@
         [/\\csc\b/g, 'csc'],
         [/\\ln\b/g, 'ln'],
         [/\\log\b/g, 'log'],
+        [/\\lim\b/g, 'lim'],
         [/\\deg\b/g, '\u00B0'],
         [/\\triangle\b/g, '\u0394'],
+        [/\\angle\b/g, '\u2220'],
+        [/\\perp\b/g, '\u22A5'],
+        [/\\parallel\b/g, '\u2225'],
+
+        // Spacing & Formatting
         [/\\quad\b/g, '  '],
         [/\\qquad\b/g, '    '],
-        [/\\,/g, ' '],
-        [/\\;/g, ' '],
+        [/\\,|\\;|\\:/g, ' '],
         [/\\!/g, ''],
         [/\\sim\b/g, ' '],
         [/~/g, ' '],
@@ -315,18 +375,13 @@
       return s;
     }
 
-
-
     /**
      * Tokenizes an EQ field code into segments with individual italic formatting and script font sizing.
-     * Math variables (letters) => italic: true
-     * Numbers (1, 2, 3...), Operators (+, -, =, <, >), Functions (sin, cos, tan), Keywords (EQ, \F, \R, \S) => italic: false
-     * Superscripts / Subscripts inside \S\up4(...) / \S\do4(...) => isScript: true (small 8pt font size)
      */
     static tokenizeEqCode(eqCode) {
       if (!eqCode) return [];
       const tokens = [];
-      const tokenRegex = /(".*?"|'.*?')|(\\(?:S\\)?(?:up|do)\d*\()|(\bEQ\b|\\(?:F|R|S|B|A|I|D|X|up\d*|do\d*)\b)|(\))|(\b(?:sin|cos|tan|cot|sec|csc|ln|log|lim|det|min|max|exp|mod|gcd|deg)\b)|(\d+(?:\.\d+)?)|([a-zA-Z])|([^a-zA-Z0-9"'\\]+|\S)/g;
+      const tokenRegex = /(".*?"|'.*?')|(\\(?:S\\)?(?:up|do)\d*\()|(\bEQ\b|\\(?:F|R|S|B|A|I|D|X|up\d*|do\d*)\b)|(\))|(\b(?:sin|cos|tan|cot|sec|csc|ln|log|lim|det|min|max|exp|mod|gcd|deg|arcsin|arccos|arctan|sinh|cosh|tanh|coth)\b)|(\d+(?:\.\d+)?)|([a-zA-Z])|([\u0370-\u03FF\u2190-\u21FF\u2200-\u22FF\u00B0\u00D7\u00F7\u00B1\u2213\u2264\u2265\u2260\u2248\u2261\u21D2\u21D4])|([^a-zA-Z0-9"'\\]+|\S)/g;
 
       let scriptDepth = 0;
       let match;
@@ -334,8 +389,8 @@
       while ((match = tokenRegex.exec(eqCode)) !== null) {
         const text = match[0];
         if (match[1]) {
-          // Quoted string
-          tokens.push({ text: text, italic: false, isScript: scriptDepth > 0 });
+          // Quoted string (e.g. "অথবা", "cm")
+          tokens.push({ text: text, italic: false, isScript: scriptDepth > 0, isQuotedText: true });
         } else if (match[2]) {
           // Script macro start e.g. \S\up4(
           tokens.push({ text: text, italic: false, isScript: false });
@@ -360,8 +415,11 @@
         } else if (match[7]) {
           // English variable letters: x, y, p, f, A, B, C...
           tokens.push({ text: text, italic: true, isScript: scriptDepth > 0 });
+        } else if (match[8]) {
+          // Greek & Math Symbols: θ, α, β, ⇒, ≤, ≥, ° ...
+          tokens.push({ text: text, italic: false, isScript: scriptDepth > 0 });
         } else {
-          // Operators, spaces, symbols
+          // Operators, spaces, punctuation
           tokens.push({ text: text, italic: false, isScript: scriptDepth > 0 });
         }
       }
@@ -371,10 +429,12 @@
         const t = tokens[k];
         if (merged.length > 0 && 
             merged[merged.length - 1].italic === t.italic && 
-            merged[merged.length - 1].isScript === t.isScript) {
+            merged[merged.length - 1].isScript === t.isScript &&
+            !merged[merged.length - 1].isQuotedText &&
+            !t.isQuotedText) {
           merged[merged.length - 1].text += t.text;
         } else {
-          merged.push({ text: t.text, italic: t.italic, isScript: t.isScript });
+          merged.push({ text: t.text, italic: t.italic, isScript: t.isScript, isQuotedText: !!t.isQuotedText });
         }
       }
       return merged;
@@ -383,8 +443,10 @@
     /**
      * Constructs OpenXML Word Run elements for a Word EQ Field.
      */
-    static createOpenXmlEqRuns(xmlDoc, eqCode, originalRPr) {
+    static createOpenXmlEqRuns(xmlDoc, eqCode, originalRPr, isU2B, targetFontName) {
       const runs = [];
+      if (typeof isU2B === 'undefined') isU2B = true;
+      const bengaliFont = targetFontName || (isU2B ? 'SutonnyMJ' : 'Kalpurush');
 
       const baseSzVal = (function() {
         if (originalRPr) {
@@ -398,18 +460,27 @@
       })();
       const scriptSzVal = Math.round(baseSzVal * 0.67); // 8pt (16 half-points)
 
-      const makeMathRPr = (isItalic, isScript) => {
+      const makeMathRPr = (isItalic, isScript, isBengaliText) => {
         let rPr = originalRPr ? originalRPr.cloneNode(true) : xmlDoc.createElement("w:rPr");
         let rFonts = rPr.querySelector("rFonts");
         if (!rFonts) {
           rFonts = xmlDoc.createElement("w:rFonts");
           rPr.appendChild(rFonts);
         }
-        rFonts.setAttribute("w:ascii", "Times New Roman");
-        rFonts.setAttribute("w:hAnsi", "Times New Roman");
-        rFonts.setAttribute("w:cs", "Times New Roman");
-        rFonts.setAttribute("w:eastAsia", "Times New Roman");
-        rFonts.setAttribute("w:hint", "default");
+
+        if (isBengaliText) {
+          rFonts.setAttribute("w:ascii", bengaliFont);
+          rFonts.setAttribute("w:hAnsi", bengaliFont);
+          rFonts.setAttribute("w:cs", bengaliFont);
+          rFonts.setAttribute("w:eastAsia", bengaliFont);
+          rFonts.setAttribute("w:hint", isU2B ? "ascii" : "cs");
+        } else {
+          rFonts.setAttribute("w:ascii", "Times New Roman");
+          rFonts.setAttribute("w:hAnsi", "Times New Roman");
+          rFonts.setAttribute("w:cs", "Times New Roman");
+          rFonts.setAttribute("w:eastAsia", "Times New Roman");
+          rFonts.setAttribute("w:hint", "default");
+        }
 
         // Small 8pt font size for superscripts / subscripts, 12pt for base
         const targetSz = (isScript ? scriptSzVal : baseSzVal).toString();
@@ -434,7 +505,7 @@
         }
 
         // Apply Italics ONLY if isItalic is true (English variable letters)
-        if (isItalic) {
+        if (isItalic && !isBengaliText) {
           const iTag = xmlDoc.createElement("w:i");
           const iCsTag = xmlDoc.createElement("w:iCs");
           rPr.appendChild(iTag);
@@ -446,8 +517,8 @@
           lang = xmlDoc.createElement("w:lang");
           rPr.appendChild(lang);
         }
-        lang.setAttribute("w:val", "en-US");
-        lang.setAttribute("w:bidi", "en-US");
+        lang.setAttribute("w:val", isBengaliText ? (isU2B ? "en-US" : "bn-BD") : "en-US");
+        lang.setAttribute("w:bidi", isBengaliText ? (isU2B ? "en-US" : "bn-BD") : "en-US");
 
         const csTags = Array.from(rPr.querySelectorAll("cs, rtl"));
         for (let j = 0; j < csTags.length; j++) {
@@ -459,7 +530,7 @@
 
       // 1. Begin field
       const r1 = xmlDoc.createElement("w:r");
-      r1.appendChild(makeMathRPr(false, false));
+      r1.appendChild(makeMathRPr(false, false, false));
       const fld1 = xmlDoc.createElement("w:fldChar");
       fld1.setAttribute("w:fldCharType", "begin");
       r1.appendChild(fld1);
@@ -472,8 +543,9 @@
       for (let k = 0; k < tokens.length; k++) {
         const t = tokens[k];
         if (!t.text) continue;
+        const isBn = t.isQuotedText && typeof BanglaConverter !== 'undefined' && (BanglaConverter.hasBengaliText(t.text) || isU2B);
         const r = xmlDoc.createElement("w:r");
-        r.appendChild(makeMathRPr(t.italic, t.isScript));
+        r.appendChild(makeMathRPr(t.italic, t.isScript, isBn));
         const instr = xmlDoc.createElement("w:instrText");
         instr.setAttribute("xml:space", "preserve");
         instr.textContent = t.text;
@@ -483,7 +555,7 @@
 
       // 3. End field
       const r3 = xmlDoc.createElement("w:r");
-      r3.appendChild(makeMathRPr(false, false));
+      r3.appendChild(makeMathRPr(false, false, false));
       const fld3 = xmlDoc.createElement("w:fldChar");
       fld3.setAttribute("w:fldCharType", "end");
       r3.appendChild(fld3);
@@ -575,9 +647,10 @@
 
     /**
      * Strips math delimiters and cleans LaTeX escapes for simple math/quantities/units.
-     * E.g. "$90\%$" -> "90%", "$40\sim m$" -> "40~m", "$40$" -> "40"
+     * E.g. "$90\%$" -> "90%", "$40\sim m$" -> "40~m", "$40$" -> "40", "$B - \cos\theta = 0$" -> "B - cos θ = 0"
      */
-    static sanitizeSimpleMath(latex) {
+    static sanitizeSimpleMath(latex, isU2B) {
+      if (typeof isU2B === 'undefined') isU2B = true;
       if (!latex) return "";
       let s = latex.trim();
       if (s.startsWith('$$') && s.endsWith('$$')) s = s.slice(2, -2).trim();
@@ -585,8 +658,12 @@
       else if (s.startsWith('\\[') && s.endsWith('\\]')) s = s.slice(2, -2).trim();
       else if (s.startsWith('\\(') && s.endsWith('\\)')) s = s.slice(2, -2).trim();
 
+      // 1. Pre-convert degree & angle
+      s = s.replace(/\\angle\b/g, '\u2220');
+      s = s.replace(/\^\s*\\circ\b|\^\{\s*\\circ\s*\}|\\circ\b|\\degree\b|\^\{\s*\u00B0\s*\}|\^\u00B0/g, '\u00B0');
+
+      // 2. Pre-sanitize escapes
       s = s.replace(/\\%/g, '%');
-      // LaTeX non-breaking space (~) and \sim used between quantity and unit -> space
       s = s.replace(/\\sim\b/g, ' ');
       s = s.replace(/~/g, ' ');
       s = s.replace(/\\\$/g, '$');
@@ -595,16 +672,35 @@
       s = s.replace(/\\#/g, '#');
       s = s.replace(/\\\{/g, '{');
       s = s.replace(/\\\}/g, '}');
-      s = s.replace(/\\times\b/g, '\u00D7');
-      s = s.replace(/\\pm\b/g, '\u00B1');
-      s = s.replace(/\\mp\b/g, '\u2213');
-      s = s.replace(/\\circ\b|\\degree\b/g, '\u00B0');
-      s = s.replace(/\\quad\b/g, '  ');
-      s = s.replace(/\\qquad\b/g, '    ');
-      s = s.replace(/\\,|\\;|\\:/g, ' ');
-      s = s.replace(/\\!/g, '');
 
-      return s;
+      // 3. Pre-space functions e.g. \sin\theta -> \sin \theta, \cos p -> \cos p
+      s = s.replace(/\\(sin|cos|tan|cot|sec|csc|ln|log|arcsin|arccos|arctan|sinh|cosh|tanh|coth|lim|det|min|max|deg)(?=\\[a-zA-Z]|[a-zA-Z0-9])/g, '\\$1 ');
+
+      // 4. Process \text{...} / \mathrm{...}
+      s = s.replace(/\\(?:text|mathrm|textmd|textbf|textit|mbox)\{([^{}]+)\}/g, function(match, inner) {
+        let trimmed = inner.trim();
+        let converted = trimmed;
+        if (isU2B && typeof BanglaConverter !== 'undefined' && BanglaConverter.hasBengaliText(trimmed)) {
+          converted = BanglaConverter.unicodeToBijoy(trimmed, { convertNumbers: false });
+        }
+        return ' ' + converted + ' ';
+      });
+
+      // 5. Convert superscripts & subscripts if simple
+      s = s.replace(/\^2\b|\^\{2\}/g, '\u00B2');
+      s = s.replace(/\^3\b|\^\{3\}/g, '\u00B3');
+      s = s.replace(/\^1\b|\^\{1\}/g, '\u00B9');
+      s = s.replace(/\^0\b|\^\{0\}/g, '\u2070');
+      s = s.replace(/\^n\b|\^\{n\}/g, '\u207F');
+
+      // 6. Convert symbols & trig
+      s = this._convertSymbols(s);
+
+      // 7. Strip leftover backslashes from common structures
+      s = s.replace(/\\left\s*([(\[{|])|\\right\s*([)\]}|])/g, '$1$2');
+      s = s.replace(/\\/g, '');
+
+      return s.replace(/\s+/g, ' ').trim();
     }
 
     /**
@@ -612,30 +708,54 @@
      */
     static tokenizeSimpleMath(str) {
       if (!str) return [];
-      const regex = /(\d+(?:\.\d+)?%?)|([a-zA-Z]+)|([^a-zA-Z0-9]+)/g;
+      const regex = /(\b(?:sin|cos|tan|cot|sec|csc|ln|log|lim|det|min|max|exp|deg|arcsin|arccos|arctan|sinh|cosh|tanh|coth)\b)|(\d+(?:\.\d+)?%?)|([a-zA-Z])|([\u0980-\u09FF]+)|([\u0370-\u03FF\u2190-\u21FF\u2200-\u22FF\u00B0\u00D7\u00F7\u00B1\u2213\u2264\u2265\u2260\u2248\u2261\u21D2\u21D4\u2234\u2235\u00B2\u00B3\u00B9\u2070\u207F\u2220\u22A5\u2225]+)|([^a-zA-Z0-9\s]+|\s+)/g;
       const tokens = [];
       let m;
-      const knownUnits = /^(kg|gm|mg|ms|cm|mm|km|nm|Hz|kHz|MHz|GHz|rad|deg|mol|cd|dB|eV|keV|MeV|GeV|kW|MW|GW|mA|uA|muA|pF|nF|uF|muF|sec|min|hr)$/i;
 
       while ((m = regex.exec(str)) !== null) {
         if (m[1]) {
+          // Functions: sin, cos, tan...
           tokens.push({ text: m[1], italic: false });
         } else if (m[2]) {
-          const isUnit = knownUnits.test(m[2]);
-          tokens.push({ text: m[2], italic: !isUnit });
+          // Numbers
+          tokens.push({ text: m[2], italic: false });
         } else if (m[3]) {
-          tokens.push({ text: m[3], italic: false });
+          // Math variable letters (x, y, p, A, B, C...)
+          tokens.push({ text: m[3], italic: true });
+        } else if (m[4]) {
+          // Bengali characters
+          tokens.push({ text: m[4], italic: false, isBengali: true });
+        } else if (m[5]) {
+          // Greek & Math symbols
+          tokens.push({ text: m[5], italic: false });
+        } else if (m[6]) {
+          // Operators, spaces, punctuation
+          tokens.push({ text: m[6], italic: false });
         }
       }
-      return tokens;
+
+      const merged = [];
+      for (let k = 0; k < tokens.length; k++) {
+        const t = tokens[k];
+        if (merged.length > 0 && 
+            merged[merged.length - 1].italic === t.italic && 
+            !!merged[merged.length - 1].isBengali === !!t.isBengali) {
+          merged[merged.length - 1].text += t.text;
+        } else {
+          merged.push({ text: t.text, italic: t.italic, isBengali: !!t.isBengali });
+        }
+      }
+      return merged;
     }
 
     /**
      * Creates clean, standard OpenXML runs for simple math numbers, units, and symbols.
      * Prevents Word EQ Field "Error!" on non-switch inputs like "$90\%$", "$40$", "$40~m$".
      */
-    static createSimpleMathRuns(xmlDoc, latex, originalRPr) {
-      const clean = this.sanitizeSimpleMath(latex);
+    static createSimpleMathRuns(xmlDoc, latex, originalRPr, isU2B, targetFontName) {
+      if (typeof isU2B === 'undefined') isU2B = true;
+      const bengaliFont = targetFontName || (isU2B ? 'SutonnyMJ' : 'Kalpurush');
+      const clean = this.sanitizeSimpleMath(latex, isU2B);
       const runs = [];
       if (!clean) return runs;
 
@@ -650,15 +770,26 @@
           rFonts = xmlDoc.createElement("w:rFonts");
           rPr.appendChild(rFonts);
         }
-        rFonts.setAttribute("w:ascii", "Times New Roman");
-        rFonts.setAttribute("w:hAnsi", "Times New Roman");
-        rFonts.setAttribute("w:cs", "Times New Roman");
+
+        const hasBn = tok.isBengali || (typeof BanglaConverter !== 'undefined' && (BanglaConverter.hasBengaliText(tok.text) || (isU2B && BanglaConverter.isBijoyString && BanglaConverter.isBijoyString(tok.text))));
+
+        if (hasBn) {
+          rFonts.setAttribute("w:ascii", bengaliFont);
+          rFonts.setAttribute("w:hAnsi", bengaliFont);
+          rFonts.setAttribute("w:cs", bengaliFont);
+          rFonts.setAttribute("w:hint", isU2B ? "ascii" : "cs");
+        } else {
+          rFonts.setAttribute("w:ascii", "Times New Roman");
+          rFonts.setAttribute("w:hAnsi", "Times New Roman");
+          rFonts.setAttribute("w:cs", "Times New Roman");
+          rFonts.setAttribute("w:hint", "default");
+        }
 
         // Remove any existing italic
         const existingI = Array.from(rPr.querySelectorAll("i, iCs"));
         for (let j = 0; j < existingI.length; j++) rPr.removeChild(existingI[j]);
 
-        if (tok.italic) {
+        if (tok.italic && !hasBn) {
           rPr.appendChild(xmlDoc.createElement("w:i"));
           rPr.appendChild(xmlDoc.createElement("w:iCs"));
         }
