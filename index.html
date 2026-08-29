@@ -13,6 +13,10 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://fayzarcomputer.com/">
 
+  <!-- Favicon & Theme -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <meta name="theme-color" content="#059669">
+
   <!-- Open Graph / Facebook Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fayzarcomputer.com/">
@@ -99,7 +103,12 @@
   }
   </script>
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Google Fonts (unified Bengali + Latin typography) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN (unified config) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -107,11 +116,15 @@
       theme: {
         extend: {
           colors: {
+            brand: {
+              DEFAULT: '#059669',
+              soft: '#ecfdf5',
+              hover: '#047857',
+              deep: '#065f46'
+            },
             brandGreen: '#059669',
             brandGreenDark: '#047857',
-            brandGreenLight: '#ecfdf5',
-            brandBlue: '#0f172a',
-            brandAmber: '#d97706'
+            brandGreenLight: '#ecfdf5'
           }
         }
       }
@@ -248,6 +261,10 @@
       </a>
       <a href="services.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
         <i class="fas fa-layer-group text-emerald-600 w-5"></i> সেবাসমূহ
+      </a>
+      <a href="portal.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 relative">
+        <i class="fas fa-user-astronaut text-cyan-400 w-5"></i> জব পোর্টাল
+        <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-black ml-auto">নতুন</span>
       </a>
       <a href="tools.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
         <i class="fas fa-wand-magic-sparkles text-amber-500 w-5"></i> কনভার্টার ও টুলস
