@@ -31,35 +31,54 @@ CRITICAL COMPOSITION & COMPLETION RULES:
    - DO NOT stop halfway, DO NOT truncate, and DO NOT summarize or skip questions.
    - Process all questions, figures, values, sections, and paragraphs continuously to the very end of the file.
 
-2. CLEAN PROFESSIONAL OUTPUT (NO OCR METADATA):
-   - NEVER output raw scan artifacts like "==Start of OCR==", "==End of OCR==", page markers, or conversational preamble.
+2. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
+   - Output ONLY the clean transcribed document text directly.
+   - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
    - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
 
-3. CREATIVE QUESTION PAPERS (সৃজনশীল প্রশ্নপত্র) & STIMULUS (উদ্দীপক):
-   - If there is a diagram, transformer, circuit, chart, or data box (e.g. Input/Output, পাকসংখ্যা, ভোল্টেজ, কারেন্ট, রোধ), format the stimulus neatly in a structured Markdown table or clean stem block:
-     | ইনপুট (Input) | আউটপুট (Output) |
-     |---|---|
-     | $V_p = 200\\text{ V}$ | $n_s = 6000$ |
-     | $I_p = 60\\text{ A}$ | $n_p = 800$ |
-   - Format sub-questions with their corresponding marks (মান) directly on the same line:
-     ক. সলিনয়েড কাকে বলে?   ১
-     খ. এক্স-রে এর পরিবর্তে আল্ট্রাসনোগ্রাম করা হয় কেন?   ২
-     গ. উদ্দীপকের তথ্যানুযায়ী আউটপুটে তড়িৎ বিভব নির্ণয় করো।   ৩
-     ঘ. তড়িৎ মোটরটি কার্যকর হবে কিনা—গাণিতিকভাবে ব্যাখ্যা করো।   ৪
-   - NEVER put marks (১, ২, ৩, ৪) on isolated lines at the bottom!
+3. MULTIPLE CHOICE QUESTIONS (বহুনির্বাচনী / নৈর্ব্যক্তিক প্রশ্ন):
+   - Format MCQ options neatly using horizontal spacing/tabs matching textbook question paper layout:
+     ১. একটি আদর্শ ট্রান্সফরমারে নিচের কোনটি সত্য?
+        (ক) Vp/Vs = Np/Ns = Is/Ip    (খ) Vp/Vs = Ns/Np    (গ) Vp*Ip = Vs/Is    (ঘ) Np*Ns = Vp*Vs
+     ২. সমীকরণটির মূল কয়টি?
+        (ক) ১টি    (খ) ২টি    (গ) ৩টি    (ঘ) ৪টি
+   - Keep options aligned side-by-side on the same line with appropriate tab spacing whenever possible.
 
-4. MATHEMATICAL & SCIENTIFIC NOTATION:
-   - Write clear mathematical formulas and physics variables (e.g., $n_s = 6000$, $n_p = 800$, $V_p = 200\\text{ V}$, $P = 12.5\\text{ kW}$, $2x^2 + 5x - 3 = 0$, $\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$).
+4. DIAGRAMS & GEOMETRIC FIGURES (চিত্র / জ্যামিতিক চিত্র / ডায়াগ্রাম):
+   - Whenever there is a diagram, geometric shape (e.g. triangle \Delta ABD, circle, polygon), circuit, graph, chart, or physics illustration, NEVER skip it or leave it blank.
+   - You MUST extract all labels, vertices, side lengths, angles, and given values in text, and clearly format it as:
+     [চিত্র আছে: চিত্রে \Delta ABD একটি ত্রিভুজ, যার বাহু ও কোণের মানসমূহ: AB = ..., BD = ..., AD = ...]
+   - If questions refer to the diagram (যেমন: "উদ্দীপকের চিত্রানুযায়ী ৫ নং প্রশ্নের উত্তর দাও"), always retain the diagram reference and its values clearly so the question remains 100% solvable.
 
-5. TABLES & GRIDS:
-   - Use standard Markdown tables for any tabular data, columns, mark sheets, or vouchers.
+5. TABLES & GRIDS (টেবিল ও ছক):
+   - NEVER skip any table or grid. Transcribe all tables into complete, standard Markdown tables.
+   - Example:
+     | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
+     | :--- | :--- | :--- |
+     | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
+     | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-6. HEADINGS & TITLES:
-   - Mark main titles and institute names in **bold** (e.g. **ফুলবাড়ী সরকারি পাইলট উচ্চ বিদ্যালয়**).
+6. CREATIVE QUESTION PAPERS (সৃজনশীল প্রশ্নপত্র) & MARKS:
+   - Format sub-questions with marks (মান) directly on the same line:
+     ক. রূপান্তরক কাকে বলে? [১]
+     খ. স্টেপ-আপ ও স্টেপ-ডাউন ট্রান্সফরমারের পার্থক্য ব্যাখ্যা কর। [২]
+     গ. উদ্দীপকের তথ্যানুযায়ী আউটপুটে তড়িৎ বিভব নির্ণয় কর। [৩]
+     ঘ. ক্ষমতা অপরিবর্তিত থাকলে সেকেন্ডারি প্রবাহ বিশ্লেষণ কর। [৪]
+   - NEVER isolate marks on empty bottom lines.
 
-7. ACCURATE BENGALI TYPOGRAPHY:
+7. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও বাংলা এককের সম্পূর্ণ পৃথকীকরণ):
+   - Write mathematical formulas, equations, and numbers in LaTeX ($...$).
+   - CRITICAL: NEVER put any Bengali word, text, unit, or quotes (যেমন: "বর্গসেমি", "সেমি", "মিটার", "টাকা", "টি", "জন") inside LaTeX blocks ($...$, $$...$$) or \\text{...}.
+   - LaTeX blocks must ONLY contain pure mathematical numbers, variables, formulas, and symbols.
+   - All Bengali text and units MUST ALWAYS be written outside $...$.
+   - Incorrect: (ক) $4\\sqrt{55} \\text{"বর্গসেমি"}$ ❌
+   - Correct: (ক) $4\\sqrt{55}$ "বর্গসেমি" (অথবা (ক) $4\\sqrt{55}$ বর্গসেমি) ✅
+
+8. ACCURATE BENGALI TYPOGRAPHY & SELF-CORRECTION:
    - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.
-8. Return ONLY the finalized document text. Do not add any chat preamble or markdown code blocks.`;
+   - If the source document contains any obvious typo or discrepancy that you corrected, add a brief note at the very end under:
+     [রেফারেন্স ও সংশোধনী]
+     - সংক্ষেপ বিবরণ...`;
 
   const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '';
   const savedGas = localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '';
@@ -71,6 +90,9 @@ CRITICAL COMPOSITION & COMPLETION RULES:
     gasUrl: savedGas,
     demoMode: hasValidConfig ? false : (localStorage.getItem(STORAGE_KEYS.DEMO_MODE) !== null ? localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true' : true),
     selectedModel: localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto',
+    
+    // Multi-file support
+    filesQueue: [],
     selectedFile: null,
     imageBase64: '',
     imageMimeType: '',
@@ -82,12 +104,42 @@ CRITICAL COMPOSITION & COMPLETION RULES:
 
   let elements = {};
 
+  let _dictLoaded = false;
+
+  // Load the custom spelling-correction dictionary (Unicode -> Bijoy) from
+  // localStorage (admin-set) or the bundled data/converter_dict.json, then push
+  // it into BanglaConverter so every Unicode->Bijoy conversion uses the corrections.
+  async function loadConverterDictionary() {
+    if (_dictLoaded) return;
+    _dictLoaded = true;
+    let dict = [];
+    try {
+      const local = JSON.parse(localStorage.getItem('fayzar_converter_dict') || '[]');
+      if (Array.isArray(local) && local.length) dict = local;
+    } catch (e) { /* ignore */ }
+
+    if (!dict.length) {
+      try {
+        const res = await fetch('data/converter_dict.json?t=' + Date.now());
+        if (res.ok) {
+          const j = await res.json();
+          if (Array.isArray(j) && j.length) dict = j;
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    if (typeof window.BanglaConverter !== 'undefined' && typeof window.BanglaConverter.setCustomDictionary === 'function') {
+      window.BanglaConverter.setCustomDictionary(dict);
+    }
+  }
+
   function init() {
     bindElements();
     if (!elements.panel) return;
     loadSettings();
     updateBadges();
     setupEvents();
+    loadConverterDictionary();
   }
 
   function bindElements() {
@@ -102,6 +154,8 @@ CRITICAL COMPOSITION & COMPLETION RULES:
       removeImageBtn: document.getElementById('ai-ocr-remove-image-btn'),
       fileName: document.getElementById('ai-ocr-file-name'),
       fileSize: document.getElementById('ai-ocr-file-size'),
+      fileCountBadge: document.getElementById('ai-ocr-file-count-badge'),
+      multiThumbs: document.getElementById('ai-ocr-multi-thumbs'),
       
       convertBtn: document.getElementById('ai-ocr-convert-btn'),
       convertBtnText: document.getElementById('ai-ocr-convert-btn-text'),
@@ -173,7 +227,6 @@ CRITICAL COMPOSITION & COMPLETION RULES:
         elements.creditBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-300";
       }
     }
-
     if (elements.modeBadge) {
       if (state.demoMode) {
         elements.modeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-300 inline-flex items-center gap-1";
@@ -189,123 +242,195 @@ CRITICAL COMPOSITION & COMPLETION RULES:
   }
 
   function setupEvents() {
-    // Drag and Drop
-    ['dragenter', 'dragover'].forEach(name => {
-      elements.dropZone.addEventListener(name, (e) => {
-        e.preventDefault();
-        elements.dropZone.classList.add('border-indigo-500', 'bg-indigo-50/20');
+    // Drag & Drop
+    if (elements.dropZone) {
+      ['dragenter', 'dragover'].forEach(name => {
+        elements.dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          elements.dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-950/20');
+        });
       });
-    });
 
-    ['dragleave', 'drop'].forEach(name => {
-      elements.dropZone.addEventListener(name, (e) => {
-        e.preventDefault();
-        elements.dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/20');
+      ['dragleave', 'drop'].forEach(name => {
+        elements.dropZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          elements.dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'dark:bg-indigo-950/20');
+        });
       });
-    });
 
-    elements.dropZone.addEventListener('drop', (e) => {
-      if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
-    });
-
-    elements.fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) handleFile(e.target.files[0]);
-    });
-
-    elements.removeImageBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      clearImage();
-    });
-
-    // Convert Trigger
-    elements.convertBtn.addEventListener('click', startOcrConversion);
-
-    // Collapsible Preview Toggle
-    if (elements.togglePreviewBtn) {
-      elements.togglePreviewBtn.addEventListener('click', () => {
-        const isHidden = elements.collapsiblePreview.classList.contains('hidden');
-        if (isHidden) {
-          elements.collapsiblePreview.classList.remove('hidden');
-          elements.collapsiblePreview.classList.add('flex');
-          elements.togglePreviewText.textContent = 'প্রিভিউ লুকান';
-        } else {
-          elements.collapsiblePreview.classList.add('hidden');
-          elements.collapsiblePreview.classList.remove('flex');
-          elements.togglePreviewText.textContent = 'টেক্সট প্রিভিউ দেখুন';
+      elements.dropZone.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          handleFiles(e.dataTransfer.files);
         }
       });
     }
 
-    // Actions
+    if (elements.fileInput) {
+      elements.fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleFiles(e.target.files);
+        }
+      });
+    }
+
+    if (elements.removeImageBtn) {
+      elements.removeImageBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearImage();
+      });
+    }
+
+    if (elements.convertBtn) elements.convertBtn.addEventListener('click', startOcrConversion);
+
+    if (elements.togglePreviewBtn) {
+      elements.togglePreviewBtn.addEventListener('click', () => {
+        const isHidden = elements.collapsiblePreview?.classList.contains('hidden');
+        if (isHidden) {
+          elements.collapsiblePreview?.classList.remove('hidden');
+          elements.collapsiblePreview?.classList.add('flex');
+          if (elements.togglePreviewText) elements.togglePreviewText.textContent = 'প্রিভিউ লুকান';
+        } else {
+          elements.collapsiblePreview?.classList.add('hidden');
+          elements.collapsiblePreview?.classList.remove('flex');
+          if (elements.togglePreviewText) elements.togglePreviewText.textContent = 'টেক্সট প্রিভিউ দেখুন';
+        }
+      });
+    }
+
     if (elements.copyBtn) elements.copyBtn.addEventListener('click', copyCurrentText);
     if (elements.sendToConverterBtn) elements.sendToConverterBtn.addEventListener('click', sendToMainConverter);
     
-    // Download Word Documents
-    if (elements.downloadDocBtn) {
-      elements.downloadDocBtn.addEventListener('click', () => downloadWordDocument('doc'));
-    }
-    if (elements.downloadBijoyDocxBtn) {
-      elements.downloadBijoyDocxBtn.addEventListener('click', () => downloadWordDocument('bijoy_docx'));
-    }
-    if (elements.downloadDocxBtn) {
-      elements.downloadDocxBtn.addEventListener('click', () => downloadWordDocument('unicode_docx'));
+    if (elements.downloadDocBtn) elements.downloadDocBtn.addEventListener('click', () => downloadWordDocument('unicode_docx'));
+    if (elements.downloadBijoyDocxBtn) elements.downloadBijoyDocxBtn.addEventListener('click', () => downloadWordDocument('unicode_docx'));
+    if (elements.downloadDocxBtn) elements.downloadDocxBtn.addEventListener('click', () => downloadWordDocument('unicode_docx'));
+
+    if (elements.openSettingsBtn) elements.openSettingsBtn.addEventListener('click', () => toggleModal(elements.settingsModal, true));
+    if (elements.closeSettingsBtn) elements.closeSettingsBtn.addEventListener('click', () => toggleModal(elements.settingsModal, false));
+    if (elements.saveSettingsBtn) elements.saveSettingsBtn.addEventListener('click', saveSettings);
+    if (elements.resetCreditsBtn) elements.resetCreditsBtn.addEventListener('click', resetCredits);
+    if (elements.cancelByokBtn) elements.cancelByokBtn.addEventListener('click', () => toggleModal(elements.byokModal, false));
+    if (elements.saveByokBtn) elements.saveByokBtn.addEventListener('click', saveByokKey);
+  }
+
+  function handleFiles(filesList) {
+    if (!filesList || filesList.length === 0) return;
+    const files = Array.from(filesList);
+
+    clearImage();
+    state.filesQueue = [];
+    let totalBytes = 0;
+
+    for (let file of files) {
+      const isImage = file.type.match('image.*') || /\.(png|jpe?g|webp|bmp|jfif)$/i.test(file.name);
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+
+      if (!isImage && !isPdf) {
+        showToast(`'${file.name}' ফরম্যাট সমর্থিত নয়! শুধুমাত্র PDF বা ছবি দিন।`, 'warning');
+        continue;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        showToast(`'${file.name}' সাইজ ৫০MB-র বেশি!`, 'warning');
+        continue;
+      }
+
+      totalBytes += file.size;
+      state.filesQueue.push({
+        file: file,
+        name: file.name,
+        size: file.size,
+        isPdf: isPdf,
+        mimeType: isPdf ? 'application/pdf' : (file.type || 'image/jpeg'),
+        base64: ''
+      });
     }
 
-    // Modals
-    elements.openSettingsBtn.addEventListener('click', () => toggleModal(elements.settingsModal, true));
-    elements.closeSettingsBtn.addEventListener('click', () => toggleModal(elements.settingsModal, false));
-    elements.saveSettingsBtn.addEventListener('click', saveSettings);
-    elements.resetCreditsBtn.addEventListener('click', resetCredits);
-    elements.cancelByokBtn.addEventListener('click', () => toggleModal(elements.byokModal, false));
-    elements.saveByokBtn.addEventListener('click', saveByokKey);
+    if (state.filesQueue.length === 0) return;
+
+    if (state.filesQueue.length === 1) {
+      const single = state.filesQueue[0];
+      state.selectedFile = single.file;
+      state.imageMimeType = single.mimeType;
+      if (elements.fileName) elements.fileName.textContent = single.name;
+      if (elements.fileSize) elements.fileSize.textContent = formatBytes(single.size);
+      if (elements.fileCountBadge) elements.fileCountBadge.textContent = '১টি ফাইল প্রস্তুত';
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        state.imageBase64 = e.target.result;
+        single.base64 = state.imageBase64;
+        if (single.isPdf) {
+          elements.imagePreview?.classList.add('hidden');
+          elements.pdfPreviewIcon?.classList.remove('hidden');
+        } else {
+          if (elements.imagePreview) elements.imagePreview.src = state.imageBase64;
+          elements.imagePreview?.classList.remove('hidden');
+          elements.pdfPreviewIcon?.classList.add('hidden');
+        }
+        elements.uploadPrompt?.classList.add('hidden');
+        elements.previewContainer?.classList.remove('hidden');
+        elements.multiThumbs?.classList.add('hidden');
+        if (elements.convertBtn) elements.convertBtn.disabled = false;
+        elements.successCard?.classList.add('hidden');
+      };
+      reader.readAsDataURL(single.file);
+      return;
+    }
+
+    state.selectedFile = state.filesQueue[0].file;
+    if (elements.fileName) elements.fileName.textContent = `${state.filesQueue.length}টি ফাইল নির্বাচিত`;
+    if (elements.fileSize) elements.fileSize.textContent = `মোট ${formatBytes(totalBytes)}`;
+    if (elements.fileCountBadge) elements.fileCountBadge.textContent = `${state.filesQueue.length}টি ফাইল প্রস্তুত`;
+
+    elements.imagePreview?.classList.add('hidden');
+    elements.pdfPreviewIcon?.classList.add('hidden');
+    elements.uploadPrompt?.classList.add('hidden');
+    elements.previewContainer?.classList.remove('hidden');
+
+    if (elements.multiThumbs) {
+      elements.multiThumbs.innerHTML = '';
+      elements.multiThumbs.classList.remove('hidden');
+
+      state.filesQueue.forEach((item) => {
+        const thumbDiv = document.createElement('div');
+        thumbDiv.className = 'w-14 h-14 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative flex-shrink-0';
+        if (item.isPdf) {
+          thumbDiv.innerHTML = `<i class="fa-solid fa-file-pdf text-rose-500 text-lg"></i><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">${item.name}</span>`;
+        } else {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            item.base64 = e.target.result;
+            thumbDiv.innerHTML = `<img src="${item.base64}" class="w-full h-full object-cover"><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">${item.name}</span>`;
+          };
+          reader.readAsDataURL(item.file);
+        }
+        elements.multiThumbs.appendChild(thumbDiv);
+      });
+    }
+
+    if (elements.convertBtn) elements.convertBtn.disabled = false;
+    elements.successCard?.classList.add('hidden');
+    showToast(`মোট ${state.filesQueue.length}টি ফাইল প্রস্তুত করা হয়েছে!`, 'info');
   }
 
   function handleFile(file) {
-    const isImage = file.type.match('image.*');
-    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-
-    if (!isImage && !isPdf) {
-      showToast('শুধুমাত্র PDF অথবা ইমেজ ফাইল (PNG, JPG, WEBP) নির্বাচন করুন!', 'error');
-      return;
-    }
-    if (file.size > 50 * 1024 * 1024) {
-      showToast('ফাইলের সাইজ ৫০ মেগাবাইটের বেশি হতে পারবে না!', 'error');
-      return;
-    }
-
-    state.selectedFile = file;
-    state.imageMimeType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
-    elements.fileName.textContent = file.name;
-    elements.fileSize.textContent = formatBytes(file.size);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      state.imageBase64 = e.target.result;
-      if (isPdf) {
-        elements.imagePreview.classList.add('hidden');
-        if (elements.pdfPreviewIcon) elements.pdfPreviewIcon.classList.remove('hidden');
-      } else {
-        elements.imagePreview.src = state.imageBase64;
-        elements.imagePreview.classList.remove('hidden');
-        if (elements.pdfPreviewIcon) elements.pdfPreviewIcon.classList.add('hidden');
-      }
-      elements.uploadPrompt.classList.add('hidden');
-      elements.previewContainer.classList.remove('hidden');
-      elements.convertBtn.disabled = false;
-      if (elements.successCard) elements.successCard.classList.add('hidden');
-    };
-    reader.readAsDataURL(file);
+    if (!file) return;
+    handleFiles([file]);
   }
 
   function clearImage() {
     state.selectedFile = null;
     state.imageBase64 = '';
     state.imageMimeType = '';
-    elements.fileInput.value = '';
-    elements.imagePreview.src = '';
-    elements.previewContainer.classList.add('hidden');
-    elements.uploadPrompt.classList.remove('hidden');
-    elements.convertBtn.disabled = true;
+    state.filesQueue = [];
+    if (elements.fileInput) elements.fileInput.value = '';
+    if (elements.imagePreview) elements.imagePreview.src = '';
+    if (elements.previewContainer) elements.previewContainer.classList.add('hidden');
+    if (elements.uploadPrompt) elements.uploadPrompt.classList.remove('hidden');
+    if (elements.multiThumbs) {
+      elements.multiThumbs.innerHTML = '';
+      elements.multiThumbs.classList.add('hidden');
+    }
+    if (elements.convertBtn) elements.convertBtn.disabled = true;
     if (elements.successCard) {
       elements.successCard.classList.add('hidden');
       elements.successCard.classList.remove('flex');
@@ -318,39 +443,127 @@ CRITICAL COMPOSITION & COMPLETION RULES:
   }
 
   async function startOcrConversion() {
-    if (!state.imageBase64) {
-      showToast('অনুগ্রহ করে প্রথমে একটি ছবি আপলোড করুন', 'warning');
+    if (!state.imageBase64 && state.filesQueue.length === 0) {
+      showToast('অনুগ্রহ করে প্রথমে ফাইল আপলোড করুন', 'warning');
       return;
     }
 
-    // 1. If direct Gemini API Key is provided, always run live API directly
     if (state.byokApiKey && state.byokApiKey.trim().length > 0) {
       await runDirectGeminiOcr(state.byokApiKey.trim());
       return;
     }
 
-    // 2. If GAS proxy URL is configured and has free credits
     if (state.gasUrl && state.gasUrl.trim().length > 0 && state.freeUsesCount < MAX_FREE_USES) {
       await runGasProxyOcr();
       return;
     }
 
-    // 3. If in Demo Mode and no API Key
     if (state.demoMode) {
       await runDemoSimulation();
       return;
     }
 
-    // 4. Prompt for API Key
     toggleModal(elements.byokModal, true);
   }
 
   async function runDirectGeminiOcr(apiKey) {
-    setLoading(true, 'Gemini AI ইঞ্জিনের সাথে কানেক্ট করা হচ্ছে...', 30);
+    if (state.filesQueue.length > 1) {
+      setLoading(true, `মোট ${state.filesQueue.length}টি ফাইল Gemini 3.7 AI দিয়ে প্রসেস শুরু হচ্ছে...`, 10);
+      let combinedResults = [];
 
-    const cleanBase64 = state.imageBase64.includes('base64,') 
-      ? state.imageBase64.split('base64,')[1] 
-      : state.imageBase64;
+      for (let f = 0; f < state.filesQueue.length; f++) {
+        const item = state.filesQueue[f];
+        const pct = Math.round((f / state.filesQueue.length) * 80) + 10;
+        setLoading(true, `[ফাইল ${f + 1}/${state.filesQueue.length}] ${item.name} Gemini 3.7 দিয়ে রূপান্তর হচ্ছে...`, pct);
+
+        let b64 = item.base64;
+        if (!b64) {
+          b64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.readAsDataURL(item.file);
+          });
+          item.base64 = b64;
+        }
+
+        try {
+          const text = await executeGeminiRequest(apiKey, b64, item.mimeType, f + 1, state.filesQueue.length);
+          if (text && text.trim()) {
+            combinedResults.push(text.trim());
+          }
+        } catch (err) {
+          setLoading(false);
+          showToast(`'${item.name}' রূপান্তর করতে সমস্যা: ${err.message}`, 'error');
+          return;
+        }
+      }
+
+      setLoading(false);
+      if (combinedResults.length > 0) {
+        const finalText = combinedResults.join('\n\n');
+        handleExtractionSuccess(finalText);
+        showToast(`মোট ${state.filesQueue.length}টি ফাইল সফলভাবে ইউনিকোডে রূপান্তর করা হয়েছে!`, 'success');
+      } else {
+        showToast('ফাইলগুলো থেকে কোনো টেক্সট পাওয়া যায়নি।', 'warning');
+      }
+      return;
+    }
+
+    setLoading(true, 'Gemini 3.7 AI ইঞ্জিনের সাথে কানেক্ট করা হচ্ছে...', 30);
+    try {
+      const text = await executeGeminiRequest(apiKey, state.imageBase64, state.imageMimeType, 1, 1);
+      setLoading(false);
+      if (text && text.trim()) {
+        handleExtractionSuccess(text);
+        showToast('AI দিয়ে ডকুমেন্ট রূপান্তর সম্পন্ন হয়েছে!', 'success');
+      } else {
+        showToast('ছবিটি থেকে কোনো টেক্সট পাওয়া যায়নি।', 'warning');
+      }
+    } catch (err) {
+      setLoading(false);
+      showToast(`ত্রুটি: ${err.message}`, 'error');
+    }
+  }
+
+  async function optimizeBase64Image(dataUrl, mimeType) {
+    if (!dataUrl || typeof dataUrl !== 'string' || mimeType === 'application/pdf') return dataUrl;
+    if (dataUrl.length < 400 * 1024) return dataUrl;
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 2048;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  async function executeGeminiRequest(apiKey, base64Data, mimeType, currentIdx = 1, totalIdx = 1) {
+    const optimizedBase64 = await optimizeBase64Image(base64Data, mimeType);
+    const cleanBase64 = optimizedBase64.includes('base64,') 
+      ? optimizedBase64.split('base64,')[1] 
+      : optimizedBase64;
+    const finalMime = mimeType === 'application/pdf' ? 'application/pdf' : 'image/jpeg';
 
     const payload = {
       contents: [
@@ -359,7 +572,7 @@ CRITICAL COMPOSITION & COMPLETION RULES:
             { text: GEMINI_PROMPT },
             {
               inlineData: {
-                mimeType: state.imageMimeType || 'image/jpeg',
+                mimeType: finalMime,
                 data: cleanBase64
               }
             }
@@ -367,8 +580,11 @@ CRITICAL COMPOSITION & COMPLETION RULES:
         }
       ],
       generationConfig: {
-        temperature: 0.1,
-        maxOutputTokens: 65536
+        temperature: 0.05,
+        maxOutputTokens: 8192,
+        thinkingConfig: {
+          thinkingBudget: 0
+        }
       },
       safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
@@ -379,12 +595,11 @@ CRITICAL COMPOSITION & COMPLETION RULES:
     };
 
     let candidateModels = [
+      'gemini-3.7-flash',
+      'gemini-2.5-flash',
       'gemini-2.0-flash',
-      'gemini-1.5-flash-latest',
-      'gemini-1.5-flash',
-      'gemini-1.5-flash-8b',
-      'gemini-1.5-pro-latest',
-      'gemini-2.0-flash-exp'
+      'gemini-3.7-pro',
+      'gemini-3.6-flash'
     ];
 
     if (state.selectedModel && state.selectedModel !== 'auto') {
@@ -393,19 +608,28 @@ CRITICAL COMPOSITION & COMPLETION RULES:
 
     let successText = null;
     let lastError = null;
-    let workingModel = null;
 
     for (let i = 0; i < candidateModels.length; i++) {
       const model = candidateModels[i];
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      setLoading(true, `Gemini মডেল (${model}) দিয়ে বিশ্লেষণ করা হচ্ছে...`, 40 + i * 10);
+      setLoading(true, `[${currentIdx}/${totalIdx}] ${model} দিয়ে দ্রুত প্রসেস করা হচ্ছে...`, undefined);
 
       try {
-        const res = await fetch(endpoint, {
+        let res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+
+        // If thinkingConfig is unsupported on this specific model/endpoint, retry without thinkingConfig
+        if (res.status === 400 && payload.generationConfig.thinkingConfig) {
+          delete payload.generationConfig.thinkingConfig;
+          res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
 
         if (res.status === 404) {
           console.warn(`Model ${model} returned 404, falling back to next...`);
@@ -426,7 +650,6 @@ CRITICAL COMPOSITION & COMPLETION RULES:
           }
         }
 
-        // Check for safety finish reason
         if (data.candidates && data.candidates.length > 0) {
           const candidate = data.candidates[0];
           if (candidate.finishReason === 'SAFETY') {
@@ -434,11 +657,9 @@ CRITICAL COMPOSITION & COMPLETION RULES:
           }
           if (candidate.content && candidate.content.parts && candidate.content.parts.length > 0) {
             successText = candidate.content.parts.map(p => p.text || '').join('\n');
-            workingModel = model;
             break;
           } else if (candidate.text) {
             successText = candidate.text;
-            workingModel = model;
             break;
           }
         }
@@ -455,51 +676,65 @@ CRITICAL COMPOSITION & COMPLETION RULES:
       }
     }
 
-    // If static candidates failed, try dynamic ListModels
     if (!successText) {
-      try {
-        setLoading(true, 'উপলব্ধ মডেল তালিকা সন্ধান করা হচ্ছে...', 85);
-        const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        if (listRes.ok) {
-          const listData = await listRes.json();
-          const availableModels = (listData.models || [])
-            .filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && m.name)
-            .map(m => m.name.replace('models/', ''));
-
-          for (const dynModel of availableModels) {
-            const dynEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${dynModel}:generateContent?key=${apiKey}`;
-            const dynRes = await fetch(dynEndpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-            if (dynRes.ok) {
-              const dynData = await dynRes.json();
-              if (dynData.candidates && dynData.candidates[0]?.content?.parts) {
-                successText = dynData.candidates[0].content.parts.map(p => p.text || '').join('\n');
-                workingModel = dynModel;
-                break;
-              }
-            }
-          }
-        }
-      } catch (dynErr) {
-        console.warn('ListModels dynamic fallback error:', dynErr);
-      }
+      throw new Error(lastError?.message || 'Gemini API থেকে কোনো টেক্সট পাওয়া যায়নি।');
     }
 
-    setLoading(false);
-
-    if (successText && successText.trim()) {
-      handleExtractionSuccess(successText);
-      showToast(`সফলভাবে রূপান্তর সম্পন্ন হয়েছে! [মডেল: ${workingModel}]`, 'success');
-    } else {
-      const msg = lastError ? lastError.message : 'Gemini থেকে কোনো টেক্সট পাওয়া যায়নি। ছবিটি পরিষ্কার করে আপলোড করুন।';
-      showToast(`ত্রুটি: ${msg}`, 'error');
-    }
+    return cleanOcrResponse(successText);
   }
 
   async function runGasProxyOcr() {
+    if (state.filesQueue.length > 1) {
+      setLoading(true, `মোট ${state.filesQueue.length}টি ফাইল ফ্রি প্রক্সির মাধ্যমে পাঠানো হচ্ছে...`, 15);
+      let combinedResults = [];
+
+      for (let f = 0; f < state.filesQueue.length; f++) {
+        const item = state.filesQueue[f];
+        setLoading(true, `[ফাইল ${f + 1}/${state.filesQueue.length}] ${item.name} প্রসেস হচ্ছে...`, Math.round((f / state.filesQueue.length) * 80) + 10);
+
+        let b64 = item.base64;
+        if (!b64) {
+          b64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.readAsDataURL(item.file);
+          });
+          item.base64 = b64;
+        }
+
+        const cleanBase64 = b64.includes('base64,') ? b64.split('base64,')[1] : b64;
+
+        try {
+          const res = await fetch(state.gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              imageBase64: cleanBase64,
+              mimeType: item.mimeType
+            })
+          });
+
+          const result = await res.json();
+          if (!result.success) throw new Error(result.error || 'GAS Proxy Error');
+          if (result.extractedText) combinedResults.push(result.extractedText);
+        } catch (e) {
+          setLoading(false);
+          showToast(`'${item.name}' প্রক্সি ত্রুটি: ${e.message}`, 'error');
+          return;
+        }
+      }
+
+      state.freeUsesCount += 1;
+      localStorage.setItem(STORAGE_KEYS.FREE_COUNT, state.freeUsesCount.toString());
+      updateBadges();
+
+      setLoading(false);
+      const finalText = combinedResults.join('\n\n');
+      handleExtractionSuccess(finalText);
+      showToast(`মোট ${state.filesQueue.length}টি ফাইল সফলভাবে রূপান্তর সম্পন্ন হয়েছে!`, 'success');
+      return;
+    }
+
     setLoading(true, 'Google Apps Script প্রক্সির মাধ্যমে পাঠানো হচ্ছে...', 35);
     try {
       const cleanBase64 = state.imageBase64.includes('base64,') 
@@ -608,38 +843,57 @@ CRITICAL COMPOSITION & COMPLETION RULES:
     }
   }
 
-  async function copyCurrentText() {
-    const text = state.activeViewTab === 'unicode' ? state.unicodeText : state.bijoyText;
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast(`${state.activeViewTab === 'unicode' ? 'ইউনিকোড' : 'বিজয়'} টেক্সট কপি করা হয়েছে!`, 'success');
-    } catch (e) {
-      showToast('টেক্সট কপি সম্পন্ন হয়েছে!', 'success');
-    }
-  }
-
-  // 1-Click Send to Fayzar Main Converter Tab
-  function sendToMainConverter() {
-    if (!state.unicodeText) {
+  // 1-Click Send to Fayzar Main Converter Wizard (.docx Upload + Live Text)
+  async function sendToMainConverter() {
+    if (!state.unicodeText || !state.unicodeText.trim()) {
       showToast('কোনো টেক্সট পাওয়া যায়নি!', 'warning');
       return;
     }
 
-    const mainSource = document.getElementById('source-text');
-    const wizardSubTabBtn = document.getElementById('wizard-subtab-text-btn');
+    showToast('ফয়জার কনভার্টারে ফাইল প্রস্তুত ও আপলোড করা হচ্ছে...', 'info');
 
-    if (mainSource) {
-      mainSource.value = state.unicodeText;
-      mainSource.dispatchEvent(new Event('input', { bubbles: true }));
-    }
+    try {
+      // 1. Generate real OpenXML .docx blob
+      const docxBlob = await createDocxBlob(state.unicodeText, false);
+      const rawName = state.selectedFile?.name || state.filesQueue?.[0]?.name || 'OCR_Document';
+      const baseName = rawName.replace(/\.[^/.]+$/, '');
+      const docxFile = new File([docxBlob], `${baseName}.docx`, {
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        lastModified: Date.now()
+      });
 
-    // Switch to 'text' tab in tools.html
-    const textTabBtn = document.querySelector('.tool-switch-btn[data-tool-tab="text"]');
-    if (textTabBtn) {
-      textTabBtn.click();
-      if (wizardSubTabBtn) wizardSubTabBtn.click();
-      showToast('টেক্সট সফলভাবে ফয়জার কনভার্টারে পাঠানো হয়েছে!', 'success');
+      // 2. Switch to 'text' tool tab (Fayzar Converter)
+      const textTabBtn = document.querySelector('.tool-switch-btn[data-tool-tab="text"]');
+      if (textTabBtn) textTabBtn.click();
+
+      // 3. Switch to Wizard File tab
+      const wizardSubTabFileBtn = document.getElementById('wizard-subtab-file-btn');
+      if (wizardSubTabFileBtn) wizardSubTabFileBtn.click();
+
+      // 4. Directly trigger initiateFileScan
+      if (typeof window.initiateFileScan === 'function') {
+        await window.initiateFileScan(docxFile);
+      } else {
+        const wizardFileInput = document.getElementById('wizardFileInput');
+        if (wizardFileInput) {
+          const dt = new DataTransfer();
+          dt.items.add(docxFile);
+          wizardFileInput.files = dt.files;
+          wizardFileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+
+      // 5. Also populate live text source-text
+      const mainSource = document.getElementById('source-text');
+      if (mainSource) {
+        mainSource.value = state.unicodeText;
+        mainSource.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+      showToast('ফাইলটি সফলভাবে ফয়জার কনভার্টারে আপলোড ও স্ক্যান হয়েছে!', 'success');
+    } catch (e) {
+      console.error('Send to converter error:', e);
+      showToast(`ফয়জার কনভার্টারে পাঠাতে সমস্যা: ${e.message}`, 'error');
     }
   }
 
@@ -684,9 +938,51 @@ CRITICAL COMPOSITION & COMPLETION RULES:
       .replace(/'/g, '&apos;');
   }
 
+  function sanitizeMathBengaliSeparation(rawText) {
+    if (!rawText || typeof rawText !== 'string') return rawText || '';
+    let s = rawText;
+
+    // 1. Strip \text{...}, \mathrm{...} wrappers around Bengali text
+    s = s.replace(/\\text(?:rm|md|bf|it)?\{\s*([^{}]*?[\u0980-\u09FF][^{}]*?)\s*\}/g, '$1');
+
+    // 2. Scan each math block: $...$, $$...$$, \[...\], \(...\)
+    s = s.replace(/\$\$([\s\S]*?)\$\$|\$([^\$]+?)\$|\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g, (match, d1, s1, b1, p1) => {
+      const isDouble = Boolean(d1 || b1);
+      const inner = d1 || s1 || b1 || p1 || '';
+      
+      if (!/[\u0980-\u09FF]/.test(inner)) {
+        return match;
+      }
+
+      // Split math tokens vs Bengali text tokens
+      const tokenRegex = /([^\u0980-\u09FF"'”’]+)|(["'”’]*[\u0980-\u09FF]+(?:[\s\-_/]+[\u0980-\u09FF]+)*["'”’]*)/g;
+      let parts = [];
+      let m;
+      while ((m = tokenRegex.exec(inner)) !== null) {
+        if (m[1]) {
+          const mathChunk = m[1].trim();
+          if (mathChunk) {
+            parts.push(isDouble ? `$$${mathChunk}$$` : `$${mathChunk}$`);
+          }
+        } else if (m[2]) {
+          const bnChunk = m[2].trim();
+          if (bnChunk) {
+            parts.push(bnChunk);
+          }
+        }
+      }
+
+      return parts.join(' ');
+    });
+
+    // 3. Clean up empty math blocks
+    s = s.replace(/\$\$\s*\$\$/g, '').replace(/\$\s*\$/g, '');
+    return s;
+  }
+
   function cleanOcrResponse(rawText) {
     if (!rawText) return '';
-    let text = rawText.trim();
+    let text = sanitizeMathBengaliSeparation(rawText.trim());
 
     // Remove markdown code fences if present (e.g. ```markdown ... ``` or ```html ... ```)
     if (text.startsWith('```')) {
@@ -904,6 +1200,78 @@ CRITICAL COMPOSITION & COMPLETION RULES:
 
   function renderRunsForRtf(text, isBijoy, fontSizeHalfPt) {
     if (!text || !text.trim()) return '';
+    // If the paragraph carries real LaTeX math, render it as native Word EQ Fields.
+    if (typeof EquationConverter !== 'undefined' && hasLatexMath(text)) {
+      const segments = EquationConverter.splitTextAndMath(text);
+      let rtf = '';
+      for (const seg of segments) {
+        if (seg.type === 'math') {
+          if (EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
+            // Simple quantity/unit/number -> clean editable text
+            const clean = EquationConverter.sanitizeSimpleMath ? EquationConverter.sanitizeSimpleMath(seg.value, isBijoy) : seg.value.replace(/\$/g, '');
+            rtf += renderSimpleMathRtf(clean, isBijoy, fontSizeHalfPt, false);
+          } else {
+            const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
+            rtf += renderEquationForRtf(eqCode, isBijoy, fontSizeHalfPt, false);
+          }
+        } else if (seg.value) {
+          rtf += renderRunsForRtfPlain(seg.value, isBijoy, fontSizeHalfPt, false);
+        }
+      }
+      return rtf;
+    }
+    return renderRunsForRtfPlain(text, isBijoy, fontSizeHalfPt, false);
+  }
+
+  // Encode the EQ field instruction text for inclusion inside RTF.
+  // ASCII command switches (\F, \R, \S...) are kept as single backslashes;
+  // braces are escaped for RTF group safety and non-ASCII chars use \uN? escapes.
+  function encodeEqInst(str) {
+    if (!str) return '';
+    let out = '';
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      if (c === 0x7B) out += '\\{';
+      else if (c === 0x7D) out += '\\}';
+      else if (c >= 0x20 && c <= 0x7E) out += str[i];
+      else out += '\\u' + c + '?';
+    }
+    return out;
+  }
+
+  // Lightweight readable plain-text approximation of an EQ field code (used for the
+  // fldrslt fallback shown before Word refreshes the field).
+  function plainEqApprox(eqCode) {
+    return String(eqCode || '')
+      .replace(/\\F\(([^,]*),([^)]*)\)/g, '($1)/($2)')
+      .replace(/\\R\((?:[^,]*,)?([^)]*)\)/g, '√($1)')
+      .replace(/\\S\\up4\((.*?)\)/g, '$1 ')
+      .replace(/\\S\\do4\((.*?)\)/g, '$1 ')
+      .replace(/\\[a-zA-Z]+/g, '')
+      .replace(/[{}]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function renderEquationForRtf(eqCode, isBijoy, fontSizeHalfPt, isBold) {
+    const boldPrefix = isBold ? '\\b ' : '';
+    const boldSuffix = isBold ? '\\b0 ' : '';
+    const inst = encodeEqInst(eqCode);
+    const plain = plainEqApprox(eqCode);
+    const visible = isBijoy && typeof window.BanglaConverter !== 'undefined'
+      ? window.BanglaConverter.unicodeToBijoy(plain)
+      : plain;
+    return `{\\field{\\*\\fldinst ${boldPrefix}{\\f0\\fs${fontSizeHalfPt} EQ ${inst}}${boldSuffix}}{\\fldrslt ${boldPrefix}{\\f0\\fs${fontSizeHalfPt} ${encodeRtfText(visible || ' ')}}${boldSuffix}}}`;
+  }
+
+  function renderSimpleMathRtf(clean, isBijoy, fontSizeHalfPt, isBold) {
+    const boldPrefix = isBold ? '\\b ' : '';
+    const boldSuffix = isBold ? '\\b0 ' : '';
+    return `{\\f0\\fs${fontSizeHalfPt} ${boldPrefix}${encodeRtfText(isBijoy && typeof window.BanglaConverter !== 'undefined' ? window.BanglaConverter.unicodeToBijoy(clean) : clean)}${boldSuffix}}`;
+  }
+
+  function renderRunsForRtfPlain(text, isBijoy, fontSizeHalfPt, isBold) {
+    if (!text || !text.trim()) return '';
 
     // Check for bold markdown
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
@@ -911,8 +1279,8 @@ CRITICAL COMPOSITION & COMPLETION RULES:
 
     for (const part of parts) {
       if (!part) continue;
-      const isBold = part.startsWith('**') && part.endsWith('**');
-      const cleanText = isBold ? part.slice(2, -2) : part;
+      const bold = isBold || (part.startsWith('**') && part.endsWith('**'));
+      const cleanText = (part.startsWith('**') && part.endsWith('**')) ? part.slice(2, -2) : part;
 
       // Parse rich math runs (subscripts, superscripts, math symbols)
       const mathRuns = parseRichRuns(cleanText);
@@ -923,8 +1291,8 @@ CRITICAL COMPOSITION & COMPLETION RULES:
           : [{ type: 'bengali', text: mRun.text }];
 
         for (const seg of segments) {
-          const boldPrefix = isBold ? '\\b ' : '';
-          const boldSuffix = isBold ? '\\b0 ' : '';
+          const boldPrefix = bold ? '\\b ' : '';
+          const boldSuffix = bold ? '\\b0 ' : '';
           const subPrefix = mRun.isSubscript ? '\\sub ' : (mRun.isSuperscript ? '\\super ' : '');
           const subSuffix = (mRun.isSubscript || mRun.isSuperscript) ? '\\nosupersub ' : '';
 
@@ -941,7 +1309,109 @@ CRITICAL COMPOSITION & COMPLETION RULES:
     return rtf;
   }
 
+  // Detect LaTeX math blocks in a text (same pattern as EquationConverter.splitTextAndMath)
+  function hasLatexMath(text) {
+    return /\$\$[\s\S]*?\$\$|\$[^\$]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/.test(text);
+  }
+
   function renderRunsForOoxml(text, isBijoy, fontSizeHalfPt) {
+    if (!text || !text.trim()) return '';
+    // If the paragraph carries real LaTeX math, render it as native Word EQ Fields.
+    if (typeof EquationConverter !== 'undefined' && hasLatexMath(text)) {
+      const segments = EquationConverter.splitTextAndMath(text);
+      let runsXml = '';
+      for (const seg of segments) {
+        if (seg.type === 'math') {
+          if (EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
+            // Simple quantities/units/numbers -> clean editable text runs
+            const clean = EquationConverter.sanitizeSimpleMath ? EquationConverter.sanitizeSimpleMath(seg.value, isBijoy) : seg.value.replace(/\$/g, '');
+            const tokens = (typeof EquationConverter.tokenizeSimpleMath === 'function') ? EquationConverter.tokenizeSimpleMath(clean) : [];
+            for (const tok of tokens) {
+              if (tok && tok.text) runsXml += renderSimpleMathOoxml(tok, isBijoy, fontSizeHalfPt, false);
+            }
+          } else {
+            const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
+            runsXml += renderEquationForOoxml(eqCode, isBijoy, fontSizeHalfPt, false);
+          }
+        } else if (seg.value) {
+          runsXml += renderRunsForOoxmlPlain(seg.value, isBijoy, fontSizeHalfPt, false);
+        }
+      }
+      return runsXml;
+    }
+    return renderRunsForOoxmlPlain(text, isBijoy, fontSizeHalfPt, false);
+  }
+
+  // Build native Word EQ Field runs (OOXML) for a LaTeX-derived EQ field code.
+  function renderEquationForOoxml(eqCode, isBijoy, fontSizeHalfPt, isBold) {
+    const bengaliFont = isBijoy ? 'SutonnyMJ' : 'Kalpurush';
+    const scriptSz = Math.round(fontSizeHalfPt * 0.67);
+    const boldTag = isBold ? '<w:b/>' : '';
+
+    const rpr = (fontName, sz) => `      <w:rPr>
+        <w:rFonts w:ascii="${fontName}" w:hAnsi="${fontName}" w:cs="${fontName}"/>
+        <w:sz w:val="${sz}"/>
+        <w:szCs w:val="${sz}"/>
+        ${boldTag}
+      </w:rPr>`;
+
+    let xml = '';
+    xml += `      <w:r>
+${rpr('Times New Roman', fontSizeHalfPt)}
+        <w:fldChar w:fldCharType="begin"/>
+      </w:r>\n`;
+
+    const fullEq = ' EQ ' + eqCode + ' ';
+    const tokens = (typeof EquationConverter !== 'undefined' && typeof EquationConverter.tokenizeEqCode === 'function')
+      ? EquationConverter.tokenizeEqCode(fullEq)
+      : [{ text: fullEq, italic: false, isScript: false, isQuotedText: false }];
+
+    for (const t of tokens) {
+      if (!t || !t.text) continue;
+      const isBn = t.isQuotedText && typeof window.BanglaConverter !== 'undefined'
+        && (window.BanglaConverter.hasBengaliText && window.BanglaConverter.hasBengaliText(t.text) || isBijoy);
+      const fontName = isBn ? bengaliFont : 'Times New Roman';
+      const sz = t.isScript ? scriptSz : fontSizeHalfPt;
+      const italicTag = t.italic && !isBn ? '<w:i/><w:iCs/>' : '';
+      xml += `      <w:r>
+        <w:rPr>
+          <w:rFonts w:ascii="${fontName}" w:hAnsi="${fontName}" w:cs="${fontName}"/>
+          <w:sz w:val="${sz}"/>
+          <w:szCs w:val="${sz}"/>
+          ${boldTag}
+          ${italicTag}
+        </w:rPr>
+        <w:instrText xml:space="preserve">${escapeXml(t.text)}</w:instrText>
+      </w:r>\n`;
+    }
+
+    xml += `      <w:r>
+${rpr('Times New Roman', fontSizeHalfPt)}
+        <w:fldChar w:fldCharType="end"/>
+      </w:r>\n`;
+    return xml;
+  }
+
+  // Simple math quantity/unit/number run (editable plain text with italics for variables).
+  function renderSimpleMathOoxml(tok, isBijoy, fontSizeHalfPt, isBold) {
+    const boldTag = isBold ? '<w:b/>' : '';
+    const isBn = tok.isBengali || (typeof window.BanglaConverter !== 'undefined'
+      && window.BanglaConverter.hasBengaliText && window.BanglaConverter.hasBengaliText(tok.text));
+    const fontName = isBn ? (isBijoy ? 'SutonnyMJ' : 'Kalpurush') : 'Times New Roman';
+    const italicTag = tok.italic && !isBn ? '<w:i/><w:iCs/>' : '';
+    return `      <w:r>
+        <w:rPr>
+          <w:rFonts w:ascii="${fontName}" w:hAnsi="${fontName}" w:cs="${fontName}"/>
+          <w:sz w:val="${fontSizeHalfPt}"/>
+          <w:szCs w:val="${fontSizeHalfPt}"/>
+          ${boldTag}
+          ${italicTag}
+        </w:rPr>
+        <w:t xml:space="preserve">${escapeXml(tok.text)}</w:t>
+      </w:r>\n`;
+  }
+
+  function renderRunsForOoxmlPlain(text, isBijoy, fontSizeHalfPt, isBold) {
     if (!text || !text.trim()) return '';
 
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
@@ -949,8 +1419,8 @@ CRITICAL COMPOSITION & COMPLETION RULES:
 
     for (const part of parts) {
       if (!part) continue;
-      const isBold = part.startsWith('**') && part.endsWith('**');
-      const cleanText = isBold ? part.slice(2, -2) : part;
+      const bold = isBold || (part.startsWith('**') && part.endsWith('**'));
+      const cleanText = (part.startsWith('**') && part.endsWith('**')) ? part.slice(2, -2) : part;
 
       const mathRuns = parseRichRuns(cleanText);
 
@@ -960,9 +1430,9 @@ CRITICAL COMPOSITION & COMPLETION RULES:
           : [{ type: 'bengali', text: mRun.text }];
 
         for (const seg of segments) {
-          const boldTag = isBold ? '<w:b/>' : '';
-          const vertAlignTag = mRun.isSubscript 
-            ? '<w:vertAlign w:val="subscript"/>' 
+          const boldTag = bold ? '<w:b/>' : '';
+          const vertAlignTag = mRun.isSubscript
+            ? '<w:vertAlign w:val="subscript"/>'
             : (mRun.isSuperscript ? '<w:vertAlign w:val="superscript"/>' : '');
 
           if (seg.type === 'english') {
@@ -1096,18 +1566,54 @@ ${rtfBody}
       const isBijoy = format === 'bijoy_docx';
       showToast(`নেটিভ ওয়ার্ড .DOCX (${isBijoy ? 'বিজয়' : 'ইউনিকোড'} - ${pageDim.name}) তৈরি হচ্ছে...`, 'info');
 
-      if (typeof JSZip === 'undefined') {
-        showToast('JSZip লাইব্রেরি লোড হয়নি, অনুগ্রুহ করে পেজটি রিফ্রেশ দিন', 'error');
-        return;
+      try {
+        const blob = await createDocxBlob(text, isBijoy);
+        const prefix = isBijoy ? 'Fayzar_Bijoy' : 'Fayzar_Unicode';
+        triggerDownload(blob, `${prefix}_${pageDim.name}_${Date.now()}.docx`);
+        showToast(`${isBijoy ? 'বিজয়' : 'ইউনিকোড'} .DOCX (${pageDim.name} - ${fontSizePt}pt, ০pt Spacing) ডাউনলোড সম্পন্ন!`, 'success');
+      } catch (err) {
+        showToast(`DOCX তৈরি করতে সমস্যা: ${err.message}`, 'error');
       }
+    }
+  }
 
-      let bodyContentXml = '';
+  async function createDocxBlob(text, isBijoy = false, customOptions = {}) {
+    if (typeof JSZip === 'undefined') {
+      throw new Error('JSZip লাইব্রেরি লোড হয়নি, অনুগ্রুহ করে পেজটি রিফ্রেশ দিন');
+    }
 
-      for (const block of blocks) {
-        if (block.type === 'paragraph') {
-          const trimmed = block.text.trim();
-          if (!trimmed) {
-            bodyContentXml += `    <w:p>
+    const pageSizeVal = customOptions.pageSize || (elements.pageSizeSelect ? elements.pageSizeSelect.value : 'a4');
+    const marginVal = customOptions.margin || (elements.pageMarginSelect ? elements.pageMarginSelect.value : 'normal');
+    const fontSizeVal = customOptions.fontSize || (elements.fontSizeSelect ? elements.fontSizeSelect.value : '14');
+    const fontSizePt = parseInt(fontSizeVal, 10) || 14;
+    const fontSizeHalfPt = fontSizePt * 2;
+
+    const PAGE_SIZES = {
+      'a4': { w: 11906, h: 16838, name: 'A4' },
+      'legal': { w: 12240, h: 20160, name: 'Legal' },
+      'letter': { w: 12240, h: 15840, name: 'Letter' }
+    };
+
+    const MARGINS = {
+      'normal': { top: 1440, right: 1440, bottom: 1440, left: 1440 },
+      'narrow': { top: 720, right: 720, bottom: 720, left: 720 },
+      'moderate': { top: 1080, right: 1080, bottom: 1080, left: 1080 },
+      'wide': { top: 1800, right: 1800, bottom: 1800, left: 1800 }
+    };
+
+    const pageDim = PAGE_SIZES[pageSizeVal] || PAGE_SIZES['a4'];
+    const pageMar = MARGINS[marginVal] || MARGINS['normal'];
+    const printableWidth = pageDim.w - pageMar.left - pageMar.right;
+
+    const blocks = parseDocumentBlocks(text);
+
+    let bodyContentXml = '';
+
+    for (const block of blocks) {
+      if (block.type === 'paragraph') {
+        const trimmed = block.text.trim();
+        if (!trimmed) {
+          bodyContentXml += `    <w:p>
       <w:pPr>
         <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>
       </w:pPr>
@@ -1120,28 +1626,28 @@ ${rtfBody}
         <w:t xml:space="preserve"> </w:t>
       </w:r>
     </w:p>\n`;
-          } else {
-            const runsXml = renderRunsForOoxml(block.text, isBijoy, fontSizeHalfPt);
-            bodyContentXml += `    <w:p>
+        } else {
+          const runsXml = renderRunsForOoxml(block.text, isBijoy, fontSizeHalfPt);
+          bodyContentXml += `    <w:p>
       <w:pPr>
         <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>
       </w:pPr>
 ${runsXml}    </w:p>\n`;
-          }
-        } else if (block.type === 'table') {
-          const rows = block.rows;
-          if (rows.length === 0) continue;
-          const maxCols = Math.max(...rows.map(r => r.length));
-          const colWidth = Math.floor(printableWidth / maxCols);
+        }
+      } else if (block.type === 'table') {
+        const rows = block.rows;
+        if (rows.length === 0) continue;
+        const maxCols = Math.max(...rows.map(r => r.length));
+        const colWidth = Math.floor(printableWidth / maxCols);
 
-          const gridColsXml = Array(maxCols).fill(0).map(() => `<w:gridCol w:w="${colWidth}"/>`).join('');
-          const rowsXml = rows.map((row, rIdx) => {
-            const isHeader = (rIdx === 0);
-            const trPr = isHeader ? '<w:trPr><w:tblHeader/></w:trPr>' : '';
-            const cellsXml = Array(maxCols).fill(0).map((_, c) => {
-              const cellText = row[c] || '';
-              const cellRuns = renderRunsForOoxml(cellText, isBijoy, fontSizeHalfPt);
-              return `        <w:tc>
+        const gridColsXml = Array(maxCols).fill(0).map(() => `<w:gridCol w:w="${colWidth}"/>`).join('');
+        const rowsXml = rows.map((row, rIdx) => {
+          const isHeader = (rIdx === 0);
+          const trPr = isHeader ? '<w:trPr><w:tblHeader/></w:trPr>' : '';
+          const cellsXml = Array(maxCols).fill(0).map((_, c) => {
+            const cellText = row[c] || '';
+            const cellRuns = renderRunsForOoxml(cellText, isBijoy, fontSizeHalfPt);
+            return `        <w:tc>
           <w:tcPr>
             <w:tcW w:w="${colWidth}" w:type="dxa"/>
             <w:tcBorders>
@@ -1159,12 +1665,12 @@ ${runsXml}    </w:p>\n`;
 ${cellRuns || '            <w:r><w:t xml:space="preserve"> </w:t></w:r>'}
           </w:p>
         </w:tc>`;
-            }).join('\n');
-
-            return `      <w:tr>${trPr}\n${cellsXml}\n      </w:tr>`;
           }).join('\n');
 
-          bodyContentXml += `    <w:tbl>
+          return `      <w:tr>${trPr}\n${cellsXml}\n      </w:tr>`;
+        }).join('\n');
+
+        bodyContentXml += `    <w:tbl>
       <w:tblPr>
         <w:tblStyle w:val="TableGrid"/>
         <w:tblW w:w="0" w:type="auto"/>
@@ -1182,10 +1688,10 @@ ${cellRuns || '            <w:r><w:t xml:space="preserve"> </w:t></w:r>'}
 ${rowsXml}
     </w:tbl>
     <w:p/>\n`;
-        }
       }
+    }
 
-      const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
@@ -1201,7 +1707,7 @@ ${bodyContentXml}
   </w:body>
 </w:document>`;
 
-      const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
   <w:docDefaults>
     <w:rPrDefault>
@@ -1257,21 +1763,16 @@ ${bodyContentXml}
 </Relationships>`;
 
       const zip = new JSZip();
-      zip.file("[Content_Types].xml", contentTypesXml);
-      zip.folder("_rels").file(".rels", relsXml);
-      zip.folder("word").file("document.xml", documentXml);
-      zip.folder("word").file("styles.xml", stylesXml);
-      zip.folder("word").folder("_rels").file("document.xml.rels", docRelsXml);
+    zip.file("[Content_Types].xml", contentTypesXml);
+    zip.folder("_rels").file(".rels", relsXml);
+    zip.folder("word").file("document.xml", documentXml);
+    zip.folder("word").file("styles.xml", stylesXml);
+    zip.folder("word").folder("_rels").file("document.xml.rels", docRelsXml);
 
-      const blob = await zip.generateAsync({
-        type: "blob",
-        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      });
-
-      const prefix = isBijoy ? 'Fayzar_Bijoy' : 'Fayzar_Unicode';
-      triggerDownload(blob, `${prefix}_${pageDim.name}_${Date.now()}.docx`);
-      showToast(`${isBijoy ? 'বিজয়' : 'ইউনিকোড'} .DOCX (${pageDim.name} - ${fontSizePt}pt, ০pt Spacing) ডাউনলোড সম্পন্ন!`, 'success');
-    }
+    return await zip.generateAsync({
+      type: "blob",
+      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    });
   }
 
   function triggerDownload(blob, filename) {
