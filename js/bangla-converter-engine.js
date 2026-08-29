@@ -6,6 +6,14 @@
 (function (global) {
   'use strict';
 
+  // Custom spelling-correction dictionary shared across the whole app.
+  // Array of { unicode, bijoy } entries set via setCustomDictionary().
+  let CUSTOM_DICT_U2B = [];
+
+  function escapeRegex(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
   // Complete List of 250+ Conjuncts (যুক্তবর্ণ) sorted by length descending
   const UNICODE_TO_BIJOY_CONJUNCTS = [
     // 5 & 4-character clusters
@@ -14,10 +22,10 @@
     { u: "ন্ত্র্য", b: "š¿¨" },
     { u: "ক্ষ্ম", b: "¶¥" },
     { u: "ক্ষ্য", b: "¶¨" },
-    { u: "ক্ষ্ণ", b: "¶ú" },
+    { u: "ক্ষ্ণ", b: "ÿè" },
     { u: "ঙ্ক্স", b: "¼m" },
     { u: "ঙ্ক্ষ", b: "¼¶" },
-    { u: "ম্ভ্র", b: "¤¢ª" },
+    { u: "ম্ভ্র", b: "¤£" },
     { u: "ম্প্র", b: "¤úª" },
     { u: "ত্ত্ব", b: "Ë¡" }, // Exact SutonnyMJ Ttba (ত্ত + ব-ফলা = Ë¡)
     { u: "ত্ত্য", b: "Ë¨" },
@@ -31,14 +39,16 @@
     { u: "স্ট্র", b: "÷ª" },
     { u: "ল্ট্র", b: "ëª" },
     { u: "স্ক্য", b: "¯‹¨" },
-    { u: "স্ক্র", b: "¯‹ª" },
+    { u: "স্ক্র", b: "¯Œ" },
     { u: "ণ্ড্র", b: "Ðª" },
-    { u: "ন্দ্র", b: "›ª" },
+    { u: "ন্দু", b: "›`y" },
+    { u: "ন্দূ", b: "›`~" },
     { u: "ন্দ্র", b: "›`ª" },
+    { u: "ন্দ্র", b: "›ª" },
     { u: "ন্দ্ব", b: "›Ø" },
     { u: "ন্দ্য", b: "›`¨" },
-    { u: "ন্দ", b: "›" },
     { u: "ন্দ", b: "›`" },
+    { u: "ন্দ", b: "›" },
     { u: "ন্ধ্র", b: "Üª" },
     { u: "ন্ধ্য", b: "Ü¨" },
     { u: "প্র্য", b: "cÖ¨" },
@@ -54,7 +64,7 @@
     { u: "ক্ট", b: "±" },
     { u: "ক্ত", b: "³" },
     { u: "ক্ব", b: "K¡" },
-    { u: "ক্ম", b: "²" },
+    { u: "ক্ম", b: "´" },
     { u: "ক্য", b: "K¨" },
     { u: "ক্র", b: "µ" },
     { u: "ক্ল", b: "K¬" },
@@ -81,7 +91,7 @@
     { u: "ঙ্ক", b: "¼" },
     { u: "ঙ্খ", b: "O&L" },
     { u: "ঙ্গ", b: "½" },
-    { u: "ঙ্ঘ", b: "¾" },
+    { u: "ঙ্ঘ", b: "O&N" },
     { u: "ঙ্ম", b: "O¥" },
 
     { u: "চ্চ", b: "”P" },
@@ -93,8 +103,8 @@
     { u: "ছ্য", b: "Q¨" },
     { u: "ছ্র", b: "Qª" },
 
-    { u: "জ্জ", b: "À" },
-    { u: "জ্ঝ", b: "S¨" },
+    { u: "জ্জ", b: "¾" },
+    { u: "জ্ঝ", b: "À" },
     { u: "জ্ঞ", b: "Á" },
     { u: "জ্ব", b: "R¡" },
     { u: "জ্য", b: "R¨" },
@@ -125,30 +135,32 @@
     { u: "ঢ্য", b: "X¨" },
     { u: "ঢ্র", b: "Xª" },
 
-    { u: "দণ্ডায়মান", b: "`Ðvqvgb" },
-    { u: "দণ্ডায়মান", b: "`Ðvqvgb" },
-    { u: "দন্ডায়মান", b: "`Ðvqvgb" },
-    { u: "দন্ডায়মান", b: "`Ðvqvgb" },
-    { u: "দণ্ড", b: "`Ð" },
-    { u: "দন্ড", b: "`Ð" },
-    { u: "খণ্ড", b: "LÐ" },
-    { u: "খন্ড", b: "LÐ" },
-    { u: "কাণ্ড", b: "KvÐ" },
-    { u: "কান্ড", b: "KvÐ" },
-    { u: "পাণ্ডব", b: "cvÐe" },
-    { u: "পান্ডব", b: "cvÐe" },
-    { u: "পাণ্ডুলিপি", b: "cvÐywjwc" },
-    { u: "পান্ডুলিপি", b: "cvÐywjwc" },
-    { u: "খণ্ডকালীন", b: "LÐKvjxb" },
-    { u: "খন্ডকালীন", b: "LÐKvjxb" },
+    { u: "দণ্ডায়মান", b: "`Ûvqvgb" },
+    { u: "দণ্ডায়মান", b: "`Ûvqvgb" },
+    { u: "দন্ডায়মান", b: "`Ûvqvgb" },
+    { u: "দন্ডায়মান", b: "`Ûvqvgb" },
+    { u: "দণ্ড", b: "`Û" },
+    { u: "দন্ড", b: "`Û" },
+    { u: "খণ্ড", b: "LÛ" },
+    { u: "খন্ড", b: "LÛ" },
+    { u: "কাণ্ড", b: "KvÛ" },
+    { u: "কান্ড", b: "KvÛ" },
+    { u: "পাণ্ডব", b: "cvÛe" },
+    { u: "পান্ডব", b: "cvÛe" },
+    { u: "পাণ্ডুলিপি", b: "cvÛywjwc" },
+    { u: "পান্ডুলিপি", b: "cvÛywjwc" },
+    { u: "খণ্ডকালীন", b: "LÛKvjxb" },
+    { u: "খন্ডকালীন", b: "LÛKvjxb" },
     { u: "ণ্ড্য", b: "Ð¨" },
     { u: "ণ্ড্র", b: "Ðª" },
     { u: "ন্ড্র", b: "Ðª" },
-    { u: "ণ্ট", b: "È" },
-    { u: "ন্ঠ", b: "É" },
-    { u: "ণ্ঠ", b: "É" },
-    { u: "ণ্ড", b: "Ð" },
-    { u: "ণ্ণ", b: "Ì" },
+    { u: "ণ্ট", b: "›U" },
+    { u: "ন্ট", b: "›U" },
+    { u: "ন্ঠ", b: "Ú" },
+    { u: "ণ্ঠ", b: "Ú" },
+    { u: "ণ্ড", b: "Û" },
+    { u: "ন্ড", b: "Û" },
+    { u: "ণ্ণ", b: "bœ" },
     { u: "ণ্ব", b: "Y¡" },
     { u: "ণ্ম", b: "Y¥" },
     { u: "ণ্য", b: "Y¨" },
@@ -171,8 +183,8 @@
     { u: "দ্দ", b: "Ï" },
     { u: "দ্ধ", b: "×" },
     { u: "দ্ব", b: "Ø" },
-    { u: "দ্ভ", b: "Ù" },
-    { u: "দ্ম", b: "Ú" },
+    { u: "দ্ভ", b: "™¢" },
+    { u: "দ্ম", b: "Ù" },
     { u: "দ্য", b: "`¨" },
     { u: "দ্র", b: "`ª" },
 
@@ -182,8 +194,8 @@
     { u: "ধ্য", b: "a¨" },
     { u: "ধ্র", b: "aª" },
 
-    { u: "ন্ট", b: "b&U" },
-    { u: "ন্ঠ", b: "b&V" },
+    { u: "ন্ট", b: "›U" },
+    { u: "ন্ঠ", b: "Ú" },
     { u: "ন্ড", b: "Û" },
     { u: "ন্ত", b: "šÍ" },
     { u: "ন্ত্র", b: "š¿" },
@@ -215,7 +227,7 @@
     { u: "ফ্র", b: "d«" },
     { u: "ফ্ল", b: "d¬" },
 
-    { u: "ব্জ", b: "e&R" },
+    { u: "ব্জ", b: "â" },
     { u: "ব্দ", b: "ã" },
     { u: "ব্ধ", b: "ä" },
     { u: "ব্ব", b: "eŸ" },
@@ -249,7 +261,7 @@
     { u: "ল্প", b: "í" },
     { u: "ল্ফ", b: "î" },
     { u: "ল্ব", b: "j¡" },
-    { u: "ল্ম", b: "ï" },
+    { u: "ল্ম", b: "j¥" },
     { u: "ল্য", b: "j¨" },
     { u: "ল্ল", b: "jø" },
 
@@ -288,14 +300,14 @@
     { u: "স্ল", b: "mø" },
 
     { u: "হ্ন", b: "ý" },
-    { u: "হ্ণ", b: "ý" },
-    { u: "হ্ন", b: "þ" },
+    { u: "হ্ণ", b: "nè" },
     { u: "হ্ব", b: "nŸ" },
-    { u: "হ্ম", b: "ÿ" },
+    { u: "হ্ম", b: "þ" },
     { u: "হ্য", b: "n¨" },
     { u: "হ্র", b: "nª" },
     { u: "হ্ল", b: "n¬" },
     { u: "হৃ", b: "ü" },
+    { u: "হূ", b: "n~" },
 
     // Special ligatures
     { u: "কু", b: "Kz" },
@@ -305,7 +317,7 @@
     { u: "রূ", b: "iƒ" },
     { u: "শু", b: "ï" },
     { u: "হু", b: "û" },
-    { u: "হূ", b: "ü" },
+    { u: "হূ", b: "n~" },
     { u: "হৃ", b: "ü" },
     { u: "খ্রি", b: "wLª" }
   ];
@@ -491,21 +503,98 @@
   function unicodeToBijoy(text, options = {}) {
     if (!text || typeof text !== 'string') return text || '';
 
+    // 0. Apply custom spelling-correction dictionary (Unicode -> Bijoy), if any.
+    //    Known problem words are "pinned" to their exact dictionary Bijoy encoding so
+    //    conjunct-breaking bugs can be corrected by the site admin.
+    if (CUSTOM_DICT_U2B && CUSTOM_DICT_U2B.length) {
+      let pinned = text;
+      const placeholders = [];
+      for (let di = 0; di < CUSTOM_DICT_U2B.length; di++) {
+        const e = CUSTOM_DICT_U2B[di];
+        if (!e || !e.unicode || !e.bijoy) continue;
+        const re = new RegExp(escapeRegex(e.unicode), 'g');
+        pinned = pinned.replace(re, function () {
+          const ph = '\uE000' + placeholders.length.toString(36).padStart(3, '0') + '\uE001';
+          placeholders.push(e.bijoy);
+          return ph;
+        });
+      }
+      if (placeholders.length) {
+        let out = _unicodeToBijoyCore(pinned, options);
+        out = out.replace(/\uE000([0-9a-z]{3})\uE001/g, function (m, code) {
+          const n = parseInt(code, 36);
+          return (placeholders[n] !== undefined) ? placeholders[n] : m;
+        });
+        return out;
+      }
+    }
+
+    return _unicodeToBijoyCore(text, options);
+  }
+
+  function sanitizeMathBengaliSeparation(rawText) {
+    if (!rawText || typeof rawText !== 'string') return rawText || '';
+    let s = rawText;
+
+    // 1. Strip \text{...}, \mathrm{...} wrappers around Bengali text
+    s = s.replace(/\\text(?:rm|md|bf|it)?\{\s*([^{}]*?[\u0980-\u09FF][^{}]*?)\s*\}/g, '$1');
+
+    // 2. Scan each math block: $...$, $$...$$, \[...\], \(...\)
+    s = s.replace(/\$\$([\s\S]*?)\$\$|\$([^\$]+?)\$|\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g, (match, d1, s1, b1, p1) => {
+      const isDouble = Boolean(d1 || b1);
+      const inner = d1 || s1 || b1 || p1 || '';
+      
+      if (!/[\u0980-\u09FF]/.test(inner)) {
+        return match;
+      }
+
+      // Split math tokens vs Bengali text tokens
+      const tokenRegex = /([^\u0980-\u09FF"'”’]+)|(["'”’]*[\u0980-\u09FF]+(?:[\s\-_/]+[\u0980-\u09FF]+)*["'”’]*)/g;
+      let parts = [];
+      let m;
+      while ((m = tokenRegex.exec(inner)) !== null) {
+        if (m[1]) {
+          const mathChunk = m[1].trim();
+          if (mathChunk) {
+            parts.push(isDouble ? `$$${mathChunk}$$` : `$${mathChunk}$`);
+          }
+        } else if (m[2]) {
+          const bnChunk = m[2].trim();
+          if (bnChunk) {
+            parts.push(bnChunk);
+          }
+        }
+      }
+
+      return parts.join(' ');
+    });
+
+    // 3. Clean up empty math blocks
+    s = s.replace(/\$\$\s*\$\$/g, '').replace(/\$\s*\$/g, '');
+    return s;
+  }
+
+  function _unicodeToBijoyCore(text, options = {}) {
+    if (!text || typeof text !== 'string') return text || '';
+
+    // First sanitize and extract any Bengali words/units out of LaTeX math blocks
+    let str = sanitizeMathBengaliSeparation(text);
+
     // If text contains LaTeX math blocks ($...$, $$...$$, \[...\], \(...\)), preserve math commands!
     const mathRegex = /\$\$[\s\S]*?\$\$|\$[^\$]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/;
-    if (mathRegex.test(text)) {
+    if (mathRegex.test(str)) {
       const parts = [];
       const regex = /\$\$([\s\S]*?)\$\$|\$([^\$]+?)\$|\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g;
       let lastIndex = 0;
       let match;
 
-      while ((match = regex.exec(text)) !== null) {
+      while ((match = regex.exec(str)) !== null) {
         if (match.index > lastIndex) {
-          parts.push(_convertUnicodeToBijoyRaw(text.substring(lastIndex, match.index), options));
+          parts.push(_convertUnicodeToBijoyRaw(str.substring(lastIndex, match.index), options));
         }
 
         const mathInner = match[1] || match[2] || match[3] || match[4] || "";
-        // Convert any Bengali text inside \text{...} to Bijoy
+        // Convert any leftover Bengali text inside \text{...} to Bijoy
         let convertedMathInner = mathInner.replace(/\\(?:text|mathrm|textmd|textbf|textit)\{([^{}]+)\}/g, (m, inner) => {
           return `\\text{${_convertUnicodeToBijoyRaw(inner, options)}}`;
         });
@@ -515,14 +604,14 @@
         lastIndex = regex.lastIndex;
       }
 
-      if (lastIndex < text.length) {
-        parts.push(_convertUnicodeToBijoyRaw(text.substring(lastIndex), options));
+      if (lastIndex < str.length) {
+        parts.push(_convertUnicodeToBijoyRaw(str.substring(lastIndex), options));
       }
 
       return parts.join('');
     }
 
-    return _convertUnicodeToBijoyRaw(text, options);
+    return _convertUnicodeToBijoyRaw(str, options);
   }
 
   function _convertUnicodeToBijoyRaw(text, options = {}) {
@@ -640,8 +729,10 @@
       else if (clusterUnicode === 'র' && postVowel === '~') { bijoyCluster = 'iƒ'; postVowel = ''; }
       else if (clusterUnicode === 'শ' && postVowel === 'y') { bijoyCluster = 'ï'; postVowel = ''; }
       else if (clusterUnicode === 'হ' && postVowel === 'y') { bijoyCluster = 'û'; postVowel = ''; }
-      else if (clusterUnicode === 'হ' && postVowel === '~') { bijoyCluster = 'ü'; postVowel = ''; }
+      else if (clusterUnicode === 'হ' && postVowel === '~') { bijoyCluster = 'n~'; postVowel = ''; }
       else if (clusterUnicode === 'হ' && postVowel === '„') { bijoyCluster = 'ü'; postVowel = ''; }
+      else if (clusterUnicode === 'ন্দ' && postVowel === 'y') { bijoyCluster = '›`'; postVowel = 'y'; }
+      else if (clusterUnicode === 'ন্দ' && postVowel === '~') { bijoyCluster = '›`'; postVowel = '~'; }
 
       // Construct Bijoy token:
       let unit = "";
@@ -1166,6 +1257,15 @@
     }
   }
 
+  function setCustomDictionary(list) {
+    if (!Array.isArray(list)) list = [];
+    CUSTOM_DICT_U2B = list.filter(e => e && e.unicode && e.bijoy);
+  }
+
+  function getCustomDictionary() {
+    return CUSTOM_DICT_U2B.slice();
+  }
+
   const BanglaConverter = {
     unicodeToBijoy,
     bijoyToUnicode,
@@ -1178,7 +1278,9 @@
     isPureEnglish,
     splitMixedBengaliAndEnglish,
     splitBijoyAndEnglish,
-    convertDigits
+    convertDigits,
+    setCustomDictionary,
+    getCustomDictionary
   };
 
   if (typeof window !== 'undefined') {
