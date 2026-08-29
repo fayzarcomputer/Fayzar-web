@@ -188,14 +188,14 @@
       for (let seg of segments) {
         if (seg.type === 'math') {
           if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
-            // Simple math quantity/unit/number (e.g. $90\%$, $40$, $40~m$): Clean standard text runs
-            const simpleRuns = EquationConverter.createSimpleMathRuns(xmlDoc, seg.value, baseRPr);
+            // Simple math quantity/unit/number (e.g. $90\%$, $40$, $40~m$, $B - \cos\theta = 0$): Clean standard text runs
+            const simpleRuns = EquationConverter.createSimpleMathRuns(xmlDoc, seg.value, baseRPr, isU2B);
             newRuns.push(...simpleRuns);
             stats.convertedRuns++;
           } else {
             // Complex equation: Convert LaTeX to EQ Field code
             const eqCode = EquationConverter.latexToEqField(seg.value, isU2B);
-            const eqRuns = EquationConverter.createOpenXmlEqRuns(xmlDoc, eqCode, baseRPr);
+            const eqRuns = EquationConverter.createOpenXmlEqRuns(xmlDoc, eqCode, baseRPr, isU2B);
             newRuns.push(...eqRuns);
             stats.convertedRuns++;
           }
@@ -577,15 +577,18 @@
           for (let seg of segments) {
             if (seg.type === 'math') {
               if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
-                const clean = EquationConverter.sanitizeSimpleMath(seg.value);
+                const clean = EquationConverter.sanitizeSimpleMath(seg.value, isBijoy);
                 const tokens = typeof EquationConverter.tokenizeSimpleMath === 'function'
                   ? EquationConverter.tokenizeSimpleMath(clean)
                   : [{ text: clean, italic: false }];
                 for (let t of tokens) {
                   if (!t.text) continue;
-                  const italicTag = t.italic ? '<w:i/><w:iCs/>' : '';
+                  const hasBn = t.isBengali || (typeof BanglaConverter !== 'undefined' && (BanglaConverter.hasBengaliText(t.text) || (isBijoy && BanglaConverter.isBijoyString && BanglaConverter.isBijoyString(t.text))));
+                  const font = hasBn ? fontName : "Times New Roman";
+                  const hintAttr = hasBn ? (isBijoy ? 'w:hint="ascii"' : 'w:hint="cs"') : 'w:hint="default"';
+                  const italicTag = (t.italic && !hasBn) ? '<w:i/><w:iCs/>' : '';
                   const escapedText = (t.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                  runsXml += `<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>${italicTag}<w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:t xml:space="preserve">${escapedText}</w:t></w:r>`;
+                  runsXml += `<w:r><w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:cs="${font}" ${hintAttr}/>${italicTag}<w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:t xml:space="preserve">${escapedText}</w:t></w:r>`;
                 }
               } else {
                 const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
@@ -595,9 +598,12 @@
                 runsXml += `<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r>`;
                 for (let t of tokens) {
                   if (!t.text) continue;
-                  const italicTag = t.italic ? '<w:i/><w:iCs/>' : '';
+                  const isBn = t.isQuotedText && typeof BanglaConverter !== 'undefined' && (BanglaConverter.hasBengaliText(t.text) || isBijoy);
+                  const font = isBn ? fontName : "Times New Roman";
+                  const hintAttr = isBn ? (isBijoy ? 'w:hint="ascii"' : 'w:hint="cs"') : 'w:hint="default"';
+                  const italicTag = (t.italic && !isBn) ? '<w:i/><w:iCs/>' : '';
                   const escapedText = (t.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                  runsXml += `<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>${italicTag}<w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:instrText xml:space="preserve">${escapedText}</w:instrText></w:r>`;
+                  runsXml += `<w:r><w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:cs="${font}" ${hintAttr}/>${italicTag}<w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:instrText xml:space="preserve">${escapedText}</w:instrText></w:r>`;
                 }
                 runsXml += `<w:r><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r>`;
               }
@@ -709,7 +715,7 @@
           for (let seg of segments) {
             if (seg.type === 'math') {
               if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
-                const cleanText = EquationConverter.sanitizeSimpleMath(seg.value);
+                const cleanText = EquationConverter.sanitizeSimpleMath(seg.value, isBijoy);
                 const escaped = (cleanText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 innerHtml += `<span style="font-family:'Times New Roman',Arial,serif;">${escaped}</span>`;
               } else {
