@@ -1978,6 +1978,9 @@ function initUnifiedConverterEngine() {
     }
   }
 
+  // Export initiateFileScan to window for 1-click OCR bridge
+  window.initiateFileScan = initiateFileScan;
+
   async function preScanDocumentFile(file, ext) {
     const buffer = await file.arrayBuffer();
     const isWord = ['docx', 'doc'].includes(ext);
