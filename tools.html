@@ -424,7 +424,7 @@
 
                 <!-- Drag & Drop Area -->
                 <div id="ai-ocr-dropzone" class="relative border-2 border-dashed border-indigo-300 dark:border-indigo-800 hover:border-indigo-500 dark:hover:border-indigo-400 rounded-2xl p-8 sm:p-10 flex flex-col items-center justify-center text-center cursor-pointer transition bg-white/70 dark:bg-[#131d31]/70 group">
-                  <input type="file" id="ai-ocr-file-input" accept="image/png, image/jpeg, image/webp, image/jpg, application/pdf, .pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                  <input type="file" id="ai-ocr-file-input" accept="image/png, image/jpeg, image/webp, image/jpg, application/pdf, .pdf" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
 
                   <!-- Empty State -->
                   <div id="ai-ocr-upload-prompt" class="flex flex-col items-center gap-3 py-2">
@@ -432,8 +432,8 @@
                       <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
                     <div>
-                      <p class="text-sm sm:text-base font-black text-slate-800 dark:text-slate-100">PDF বা ছবি এখানে টেনে এনে ছাড়ুন অথবা <span class="text-indigo-600 dark:text-indigo-400 underline">ব্রাউজ করুন</span></p>
-                      <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">যেকোনো নোটিশ, প্রশ্নপত্র, বইয়ের পাতা, দলিল বা ফরমের PDF ও ছবি</p>
+                      <p class="text-sm sm:text-base font-black text-slate-800 dark:text-slate-100">PDF বা ছবি (একাধিক ফাইল) এখানে টেনে এনে ছাড়ুন অথবা <span class="text-indigo-600 dark:text-indigo-400 underline">ব্রাউজ করুন</span></p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">একসাথে একাধিক PDF বা ছবি সিলেক্ট করে রূপান্তর করতে পারবেন</p>
                     </div>
                   </div>
 
@@ -453,7 +453,7 @@
                       <div class="flex-1 text-left min-w-0">
                         <p id="ai-ocr-file-name" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white truncate">document.pdf</p>
                         <p id="ai-ocr-file-size" class="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">1.2 MB</p>
-                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                        <span id="ai-ocr-file-count-badge" class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">
                           <i class="fa-solid fa-circle-check text-[9px]"></i> ফাইল প্রস্তুত
                         </span>
                       </div>
@@ -462,6 +462,9 @@
                         <i class="fa-solid fa-xmark"></i>
                       </button>
                     </div>
+
+                    <!-- Multi-file thumbnails container -->
+                    <div id="ai-ocr-multi-thumbs" class="w-full flex flex-wrap gap-2 max-h-28 overflow-y-auto pr-1 hidden"></div>
                   </div>
                 </div>
               </div>
@@ -540,44 +543,28 @@
                   </div>
                   <div>
                     <h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white">কনভার্ট সম্পন্ন হয়েছে! ওয়ার্ড ফাইল ডাউনলোড করুন</h4>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">আপনার পছন্দ অনুযায়ী নিচের বাটন থেকে সরাসরি ফাইল ডাউনলোড করুন:</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">নিচের বাটন থেকে সরাসরি ইউনিকোড ওয়ার্ড (.docx) ফাইল ডাউনলোড করুন:</p>
                   </div>
                 </div>
 
-                <!-- Prominent Download Buttons Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <!-- 1. Bijoy .DOC -->
-                  <button type="button" id="ai-ocr-download-doc-btn" class="py-3.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition cursor-pointer transform hover:-translate-y-0.5">
-                    <span class="flex items-center gap-2 text-sm">
-                      <i class="fa-solid fa-download"></i> বিজয় .DOC ডাউনলোড
-                    </span>
-                    <span class="text-[10px] font-normal opacity-90">SutonnyMJ (Word 97-2003)</span>
-                  </button>
-
-                  <!-- 2. Bijoy .DOCX -->
-                  <button type="button" id="ai-ocr-download-bijoy-docx-btn" class="py-3.5 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition cursor-pointer transform hover:-translate-y-0.5">
-                    <span class="flex items-center gap-2 text-sm">
-                      <i class="fa-solid fa-file-word"></i> বিজয় .DOCX ডাউনলোড
-                    </span>
-                    <span class="text-[10px] font-normal opacity-90">SutonnyMJ (Word Document)</span>
-                  </button>
-
-                  <!-- 3. Unicode .DOCX -->
-                  <button type="button" id="ai-ocr-download-docx-btn" class="py-3.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-black text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 shadow-lg shadow-slate-800/25 hover:shadow-slate-800/40 transition cursor-pointer transform hover:-translate-y-0.5">
-                    <span class="flex items-center gap-2 text-sm">
-                      <i class="fa-solid fa-file-lines text-emerald-400"></i> ইউনিকোড .DOCX
-                    </span>
-                    <span class="text-[10px] font-normal opacity-90">Kalpurush / Nikosh ফন্ট</span>
+                <!-- Single Prominent Unicode .DOCX Download Button -->
+                <div>
+                  <button type="button" id="ai-ocr-download-docx-btn" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base flex items-center justify-center gap-3 shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition cursor-pointer transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-file-word text-2xl"></i>
+                    <div class="text-left">
+                      <div class="leading-tight">ইউনিকোড .DOCX ডাউনলোড করুন</div>
+                      <div class="text-[11px] font-normal opacity-90">Kalpurush / Nikosh ফন্ট ও গাণিতিক সূত্রসহ প্রিন্ট-রেডি</div>
+                    </div>
                   </button>
                 </div>
 
                 <!-- Secondary Actions & Collapsible Preview -->
                 <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs">
-                  <button type="button" id="ai-ocr-send-to-converter-btn" class="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1.5 transition cursor-pointer" title="এক্সট্রাক্ট করা টেক্সট মূল ফয়জার কনভার্টারে পাঠান">
+                  <button type="button" id="ai-ocr-send-to-converter-btn" class="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-2 transition cursor-pointer shadow-md shadow-emerald-600/20" title="কনভার্ট করা ফাইলটি সরাসরি ফয়জার কনভার্টারে আপলোড ও ওপেন করুন">
                     <i class="fa-solid fa-arrow-right-arrow-left"></i> ফয়জার কনভার্টারে পাঠান
                   </button>
 
-                  <button type="button" id="ai-ocr-toggle-preview-btn" class="py-2 px-3.5 rounded-xl bg-white dark:bg-[#131d31] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold flex items-center gap-1.5 transition cursor-pointer">
+                  <button type="button" id="ai-ocr-toggle-preview-btn" class="py-2.5 px-4 rounded-xl bg-white dark:bg-[#131d31] hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold flex items-center gap-2 transition cursor-pointer">
                     <i class="fa-solid fa-eye text-indigo-500"></i> <span id="ai-ocr-toggle-preview-text">টেক্সট প্রিভিউ দেখুন</span>
                   </button>
                 </div>
