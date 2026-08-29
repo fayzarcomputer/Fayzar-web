@@ -454,7 +454,9 @@
                   const tok = tokens[k];
                   const fontStyle = tok.italic ? 'font-style:italic;' : 'font-style:normal;';
                   const fontSize = tok.isScript ? 'font-size:8.0pt;mso-bidi-font-size:8.0pt;' : '';
-                  innerHtml += `<span style="font-family:'Times New Roman',Arial,serif;${fontStyle}${fontSize}">${this._escapeHtml(tok.text)}</span>`;
+                  const isBn = tok.isQuotedText && typeof BanglaConverter !== 'undefined' && (BanglaConverter.hasBengaliText(tok.text) || BanglaConverter.isBijoyString && BanglaConverter.isBijoyString(tok.text));
+                  const fontName = isBn ? 'SutonnyMJ' : 'Times New Roman';
+                  innerHtml += `<span style="font-family:'${fontName}',Arial,serif;${fontStyle}${fontSize}">${this._escapeHtml(tok.text)}</span>`;
                 }
 
                 const fieldHtml = `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>${innerHtml} <span style='mso-element:field-end'></span></span><![endif]-->`;
