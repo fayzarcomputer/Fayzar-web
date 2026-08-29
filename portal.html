@@ -9,15 +9,36 @@
   <meta name="title" content="ডিজিটাল জব ও আবেদন পোর্টাল — ফয়জার কম্পিউটার">
   <meta name="description" content="টেলিটক ও সকল সরকারি চাকরির আবেদনে ১-ক্লিকে ফর্ম ও ছবি-স্বাক্ষর পূরণ করতে ফয়জার অটো-ফিল এক্সটেনশন ব্যবহার করুন। আপনার আবেদন তথ্য ক্লাউডে নিরাপদ রাখুন।">
   <meta name="keywords" content="চাকরির আবেদন, জব পোর্টাল, টেলিটক আবেদন, জব অটো ফিল, ফয়জার অটো-ফিল, ফয়জার কম্পিউটার, চাকরির সার্কুলার, ছবি স্বাক্ষর রিসাইজ">
-  <link rel="canonical" href="https://fayzarcomputer.github.io/portal.html">
+  <link rel="canonical" href="https://fayzarcomputer.com/portal.html">
+  <meta name="robots" content="index, follow">
 
-  <!-- Google Fonts & Font Awesome -->
+  <!-- Favicon & Theme -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <meta name="theme-color" content="#059669">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fayzarcomputer.com/portal.html">
+  <meta property="og:title" content="ডিজিটাল জব ও আবেদন পোর্টাল — ফয়জার কম্পিউটার">
+  <meta property="og:description" content="টেলিটক ও সকল সরকারি চাকরির আবেদনে ১-ক্লিকে ফর্ম ও ছবি-স্বাক্ষর পূরণ করতে ফয়জার অটো-ফিল এক্সটেনশন ব্যবহার করুন।">
+  <meta property="og:image" content="https://fayzarcomputer.com/assets/og-preview.jpg">
+  <meta property="og:locale" content="bn_BD">
+  <meta property="og:site_name" content="ফয়জার কম্পিউটার">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://fayzarcomputer.com/portal.html">
+  <meta name="twitter:title" content="ডিজিটাল জব ও আবেদন পোর্টাল — ফয়জার কম্পিউটার">
+  <meta name="twitter:description" content="টেলিটক ও সরকারি চাকরির আবেদনে ফয়জার অটো-ফিল এক্সটেনশন ও ক্লাউড প্রোফাইল।">
+  <meta name="twitter:image" content="https://fayzarcomputer.com/assets/og-preview.jpg">
+
+  <!-- Google Fonts (unified Bengali + Latin typography) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS CDN (unified config) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -25,10 +46,15 @@
       theme: {
         extend: {
           colors: {
+            brand: {
+              DEFAULT: '#059669',
+              soft: '#ecfdf5',
+              hover: '#047857',
+              deep: '#065f46'
+            },
             brandGreen: '#059669',
             brandGreenDark: '#047857',
-            brandBlue: '#0f172a',
-            brandAmber: '#d97706'
+            brandGreenLight: '#ecfdf5'
           }
         }
       }
@@ -765,22 +791,102 @@
 
   <!-- Footer -->
   <footer class="bg-slate-900 text-slate-400 border-t-4 border-emerald-600 pt-12 pb-8 text-xs mt-12">
-    <div class="container mx-auto max-w-6xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>
-        <div class="text-base font-black text-white">ফয়জার <span class="text-emerald-400">কম্পিউটার</span></div>
-        <p class="text-slate-400 mt-1">ফুলবাড়ী সরকারি কলেজ গেট সংলগ্ন, ফুলবাড়ী, দিনাজপুর • 01717-101919</p>
+    <div class="container mx-auto max-w-6xl px-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 pb-8 border-b border-slate-800">
+        <div class="space-y-2">
+          <div class="text-base font-black text-white">
+            ফয়জার <span class="text-emerald-400">কম্পিউটার</span>
+          </div>
+          <p class="text-amber-400 font-bold">প্রোপ্রাইটর: মোঃ ফয়জার আলী</p>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            সরকার অনুমোদিত ডিজিটাল ভূমিসেবা, সরকারি চাকরির আবেদন, টেলিটক ছবি রিসাইজ ও ইউনিকোড-বিজয় কনভার্টার কেন্দ্র।
+          </p>
+        </div>
+        <div>
+          <div class="text-white font-bold mb-2">দ্রুত লিংক</div>
+          <ul class="space-y-1.5 text-[11px]">
+            <li><a href="index.html" class="hover:text-emerald-400">হোম</a></li>
+            <li><a href="notices.html" class="hover:text-emerald-400">নোটিশ</a></li>
+            <li><a href="services.html" class="hover:text-emerald-400">সেবাসমূহ</a></li>
+            <li><a href="portal.html" class="hover:text-emerald-400">জব পোর্টাল</a></li>
+            <li><a href="contact.html" class="hover:text-emerald-400">যোগাযোগ</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-white font-bold mb-2">জনপ্রিয় অনলাইন টুলস</div>
+          <ul class="space-y-1.5 text-[11px]">
+            <li><a href="tools.html?tab=text" class="hover:text-emerald-400">অফিস ও প্রশ্নপত্র কনভার্টার</a></li>
+            <li><a href="tools.html?tab=resizer" class="hover:text-emerald-400">টেলিটক ছবি ও স্বাক্ষর রিসাইজার</a></li>
+            <li><a href="tools.html?tab=age" class="hover:text-emerald-400">চাকরির বয়স ক্যালকুলেটর</a></li>
+            <li><a href="tools.html?tab=land" class="hover:text-emerald-400">দলিল রেজিস্ট্রি ফি ক্যালকুলেটর</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-white font-bold mb-2">যোগাযোগের ঠিকানা</div>
+          <div class="space-y-1.5 text-[11px] text-slate-400">
+            <p>ফুলবাড়ী সরকারি কলেজ গেটের পশ্চিম পার্শ্বে, ফুলবাড়ী, দিনাজপুর।</p>
+            <p class="text-emerald-400 font-bold">ফোন: 01717-101919</p>
+            <p>ইমেইল: fayzar.computer@gmail.com</p>
+          </div>
+        </div>
       </div>
-      <div class="text-slate-500 text-center sm:text-right">
-        <p>© ২০২৬ ফয়জার কম্পিউটার এন্ড ডিজিটাল সেবা। সর্বস্বত্ব সংরক্ষিত।</p>
-        <p class="text-[11px] mt-0.5">ডিজিটাল বাংলাদেশ বিনির্মাণে বিশ্বস্ত সহযোগী</p>
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
+        <div>© ২০২৫-২০২৬ ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট। সর্বস্বত্ব সংরক্ষিত।</div>
+        <div class="text-slate-400">অনুমোদন পত্র নং: দিনাজ/ফুল/এলএসএসএফসি-০৭/২০২৫</div>
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Bottom Nav Dock -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center justify-around shadow-2xl">
+    <a href="index.html" class="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-emerald-600">
+      <i class="fas fa-home text-sm"></i>
+      <span class="text-[10px] font-bold">হোম</span>
+    </a>
+    <a href="notices.html" class="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-emerald-600">
+      <i class="fas fa-bullhorn text-sm"></i>
+      <span class="text-[10px] font-bold">নোটিশ</span>
+    </a>
+    <a href="services.html" class="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-emerald-600">
+      <i class="fas fa-layer-group text-sm"></i>
+      <span class="text-[10px] font-bold">সেবা</span>
+    </a>
+    <a href="tools.html" class="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-emerald-600">
+      <i class="fas fa-wand-magic-sparkles text-sm"></i>
+      <span class="text-[10px] font-bold">টুলস</span>
+    </a>
+    <a href="https://wa.me/8801717101919" target="_blank" class="flex flex-col items-center gap-0.5 text-emerald-600">
+      <i class="fab fa-whatsapp text-sm"></i>
+      <span class="text-[10px] font-bold">মেসেজ</span>
+    </a>
+  </div>
 
   <!-- Scripts -->
   <script src="js/fayzar-firebase-client.js"></script>
   <script src="js/portal.js"></script>
   <script>
+    // Shop open/closed status badge
+    (function initPortalShopStatus() {
+      const statusBadge = document.getElementById('shop-status-badge');
+      if (!statusBadge) return;
+      const now = new Date();
+      const day = now.getDay();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      let isOpen = false;
+      if (day === 5) {
+        isOpen = currentMinutes >= 960 && currentMinutes < 1260;
+      } else {
+        isOpen = currentMinutes >= 600 && currentMinutes < 1260;
+      }
+      if (isOpen) {
+        statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+        statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> দোকান খোলা আছে (রাত ৯টা পর্যন্ত)';
+      } else {
+        statusBadge.className = 'inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700';
+        statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> দোকান এখন বন্ধ (সকাল ১০টায় খুলবে)';
+      }
+    })();
+
     // Theme toggle
     document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
       document.documentElement.classList.toggle('dark');
