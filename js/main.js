@@ -1702,11 +1702,13 @@ function initToolsIfPresent() {
 
       if (tab === tabKey) {
         btn.className = `${BASE_BTN_CLASSES} ${ACTIVE_CLASSES} ${isHighlighted ? 'tool-featured-highlight' : ''}`;
+        btn.setAttribute('aria-selected', 'true');
         if (iconBadge && TAB_ICON_STYLES[tab]) {
           iconBadge.className = `tool-tab-icon-badge w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-xl ${TAB_ICON_STYLES[tab].active} flex items-center justify-center text-xs sm:text-sm lg:text-base flex-shrink-0 transition-colors`;
         }
       } else {
         btn.className = `${BASE_BTN_CLASSES} ${INACTIVE_CLASSES}`;
+        btn.setAttribute('aria-selected', 'false');
         if (iconBadge && TAB_ICON_STYLES[tab]) {
           iconBadge.className = `tool-tab-icon-badge w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-xl ${TAB_ICON_STYLES[tab].inactive} flex items-center justify-center text-xs sm:text-sm lg:text-base flex-shrink-0 transition-colors`;
         }
