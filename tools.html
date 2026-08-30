@@ -898,112 +898,159 @@
               </div>
             </div>
 
-            <div class="mt-10 pt-8 border-t-2 border-slate-200 dark:border-slate-700/80 space-y-8">
+            <div class="mt-10 pt-8 border-t-2 border-slate-200 dark:border-slate-700/80 space-y-10">
               
-              <!-- ১. পরিচিতি ও মূল বৈশিষ্ট্য (Feature Highlights) -->
-              <div class="space-y-5">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-2xl bg-emerald-600/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold">
-                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+              <!-- ১. পরিচিতি ও সম্পূর্ণ ব্যবহার নির্দেশিকা (Feature Highlights & Complete User Guide) -->
+              <div class="space-y-6">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-emerald-600/20">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
                   </div>
                   <div>
-                    <h3 class="text-base sm:text-lg font-black text-slate-800 dark:text-white">ফয়জার কনভার্টার — বিবরণ ও সম্পূর্ণ ব্যবহার নির্দেশিকা</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold">ইউনিকোড ⇄ বিজয়, গণিত প্রশ্নপত্র, LaTeX সূত্র ও অফিস ডকুমেন্টের কী কী রূপান্তর হয় তার পূর্ণাঙ্গ তালিকা</p>
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">ফয়জার কনভার্টার — বিবরণ ও সম্পূর্ণ ব্যবহার নির্দেশিকা</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold mt-0.5">ইউনিকোড ⇄ বিজয় (SutonnyMJ), গণিত প্রশ্নপত্র, LaTeX সমীকরণ ও অফিস ডকুমেন্টের পূর্ণাঙ্গ রূপান্তর প্ল্যাটফর্ম</p>
                   </div>
                 </div>
 
-                <!-- কী কী রূপান্তর করে তার বিস্তারিত বিবরণ তালিকা (What It Converts) -->
-                <div class="p-5 rounded-3xl bg-slate-50 dark:bg-[#162238] border border-slate-200 dark:border-slate-700/80 space-y-3.5">
+                <!-- ৪-ধাপের সহজ ব্যবহার নির্দেশিকা (Step-by-Step Step Cards) -->
+                <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-50 via-emerald-50/30 to-teal-50/20 dark:from-[#162238] dark:via-[#18263f] dark:to-[#131d31] border-2 border-emerald-500/30 shadow-sm space-y-4">
+                  <div class="flex items-center justify-between border-b border-emerald-200 dark:border-emerald-800/60 pb-3">
+                    <h4 class="text-sm sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                      <i class="fa-solid fa-list-check text-emerald-600 dark:text-emerald-400"></i> সহজ ৪-ধাপের ব্যবহার নির্দেশিকা (How to Use):
+                    </h4>
+                    <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-600 text-white shadow-xs">১০০% ফ্রি ও আনলিমিটেড</span>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+                    
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-2 relative overflow-hidden group hover:border-emerald-400 transition-all">
+                      <div class="w-7 h-7 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-black text-xs">১</div>
+                      <h5 class="font-extrabold text-slate-900 dark:text-white text-sm">ইনপুট প্রদান করুন</h5>
+                      <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                        বামে টেক্সট বক্সে লেখা পেস্ট করুন অথবা সরাসরি ফাইল (<code class="text-emerald-600 font-bold">.docx</code>, <code class="text-emerald-600 font-bold">.xlsx</code>, <code class="text-emerald-600 font-bold">.pptx</code>) ড্র্যাগ করে ড্রপ করুন।
+                      </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-2 relative overflow-hidden group hover:border-blue-400 transition-all">
+                      <div class="w-7 h-7 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 flex items-center justify-center font-black text-xs">২</div>
+                      <h5 class="font-extrabold text-slate-900 dark:text-white text-sm">মোড নির্বাচন করুন</h5>
+                      <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                        প্রয়োজন অনুযায়ী <strong>ইউনিকোড ➔ বিজয়</strong> অথবা <strong>বিজয় ➔ ইউনিকোড</strong> মোড টগল বাটন সিলেক্ট করুন।
+                      </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-2 relative overflow-hidden group hover:border-purple-400 transition-all">
+                      <div class="w-7 h-7 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 flex items-center justify-center font-black text-xs">৩</div>
+                      <h5 class="font-extrabold text-slate-900 dark:text-white text-sm">কনভার্ট ও প্রিভিউ</h5>
+                      <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                        <strong>"কনভার্ট করুন"</strong> বাটনে চাপ দিলেই ডানপাশে মুহূর্তের মধ্যে শতভাগ নির্ভুল ফলাফল ও লাইভ প্রিভিউ দেখতে পাবেন।
+                      </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-2 relative overflow-hidden group hover:border-cyan-400 transition-all">
+                      <div class="w-7 h-7 rounded-xl bg-cyan-100 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 flex items-center justify-center font-black text-xs">৪</div>
+                      <h5 class="font-extrabold text-slate-900 dark:text-white text-sm">কপি বা ডাউনলোড</h5>
+                      <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                        এক ক্লিকে টেক্সট কপি করুন অথবা আধুনিক <strong>Word (.docx)</strong> কিংবা প্রেস উপযোগী <strong>Word 2003 (.doc)</strong> ফরম্যাটে ডাউনলোড করুন।
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- কী কী রূপান্তর করে তার বিস্তারিত বিবরণ তালিকা (Core Conversion Capabilities) -->
+                <div class="p-5 sm:p-6 rounded-3xl bg-slate-50 dark:bg-[#162238] border border-slate-200 dark:border-slate-700/80 space-y-4">
                   <h4 class="text-xs sm:text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-emerald-600"></i> ফয়জার কনভার্টারে কী কী কনভার্ট করা যায় (মূল সেবাসমূহ):
                   </h4>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">
-                    <div class="p-3.5 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1">
-                      <div class="font-black text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs leading-relaxed">
+                    
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1.5">
+                      <div class="font-black text-emerald-700 dark:text-emerald-300 flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-font"></i> ১. ইউনিকোড ⇄ বিজয় (SutonnyMJ) ফন্ট রূপান্তর
                       </div>
-                      <p class="text-slate-600 dark:text-slate-200 font-medium">
-                        অভ্র, নিকোশ বা ওয়েবের যেকোনো ইউনিকোড টেক্সটকে প্রকাশনা ও প্রেসের উপযোগী খাঁটি বিজয় (SutonnyMJ) ফন্টে এবং পুরনো বিজয়কে আধুনিক ইউনিকোডে এক ক্লিকে রূপান্তর।
+                      <p class="text-slate-600 dark:text-slate-300 font-medium">
+                        অভ্র, রিদমিক, গুগল ইনপুট, নিকোশ বা ইন্টারনেটের যেকোনো ইউনিকোড টেক্সটকে প্রকাশনা ও অফসেট প্রেসের উপযোগী খাঁটি বিজয় (SutonnyMJ) ফন্টে এবং পুরনো বিজয়কে আধুনিক ইউনিকোডে এক ক্লিকে রূপান্তর।
                       </p>
                     </div>
 
-                    <div class="p-3.5 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1">
-                      <div class="font-black text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1.5">
+                      <div class="font-black text-blue-700 dark:text-blue-300 flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-square-root-variable"></i> ২. গণিত ও বিজ্ঞানের প্রশ্নপত্র ও জটিল সমীকরণ
                       </div>
-                      <p class="text-slate-600 dark:text-slate-200 font-medium">
-                        পদার্থ, রসায়ন ও গণিতের জটিল ভগ্নাংশ, বর্গমূল ($\sqrt{x}$), ঘাত-পাওয়ার ($ms^{-2}$), ভেক্টর ($\vec{A}$), সাবস্ক্রিপ্ট ($V_p, I_p$), গ্রিক প্রতীক ($\alpha, \beta, \theta$), ইন্টিগ্রাল ও শতকরার ($90\%$, $40\text{ m}$) সমীকরণ সম্পূর্ণ অক্ষত থাকে।
+                      <p class="text-slate-600 dark:text-slate-300 font-medium">
+                        পদার্থ, রসায়ন ও গণিতের জটিল ভগ্নাংশ ($\frac{a}{b}$), বর্গমূল ($\sqrt{x}$), ঘাত-পাওয়ার ($ms^{-2}$), ভেক্টর ($\vec{A}$), সাবস্ক্রিপ্ট ($V_p, I_p, H_2O$), গ্রিক প্রতীক ($\alpha, \beta, \theta, \pi, \lambda$), ইন্টিগ্রাল ($\int$), সামেশন ($\sum$) ও শতকরা-একক ($90\%$, $40\text{ m}$) সম্পূর্ণ অক্ষত থাকে।
                       </p>
                     </div>
 
-                    <div class="p-3.5 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1">
-                      <div class="font-black text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1.5">
+                      <div class="font-black text-purple-700 dark:text-purple-300 flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-code"></i> ৩. LaTeX কোড সরাসরি Word Equation-এ রূপান্তর
                       </div>
-                      <p class="text-slate-600 dark:text-slate-200 font-medium">
-                        প্রশ্নে বা টেক্সটে থাকা ইনলাইন ($...$) ও ডিসপ্লে ($$...$$) লেটেক্স সূত্রগুলোকে স্বয়ংক্রিয়ভাবে শনাক্ত করে মাইক্রোসফট ওয়ার্ডের এডিটেবল ম্যাথ ইকুয়েশনে রূপান্তর করে।
+                      <p class="text-slate-600 dark:text-slate-300 font-medium">
+                        প্রশ্নে বা টেক্সটে থাকা ইনলাইন ($...$) ও ডিসপ্লে ($$...$$) লেটেক্স সূত্রগুলোকে স্বয়ংক্রিয়ভাবে শনাক্ত করে মাইক্রোসফট ওয়ার্ডের এডিটেবল নেটিভ ম্যাথ ইকুয়েশনে রূপান্তর করে।
                       </p>
                     </div>
 
-                    <div class="p-3.5 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1">
-                      <div class="font-black text-cyan-700 dark:text-cyan-300 flex items-center gap-1.5">
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1.5">
+                      <div class="font-black text-cyan-700 dark:text-cyan-300 flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-file-word"></i> ৪. Word (.docx ও .doc 2003), Excel ও PowerPoint
                       </div>
-                      <p class="text-slate-600 dark:text-slate-200 font-medium">
+                      <p class="text-slate-600 dark:text-slate-300 font-medium">
                         আধুনিক (.docx) ও প্রেস-উপযোগী ওয়ার্ড ২০০৩ (.doc) উভয় ফরম্যাটে সরাসরি ডাউনলোড। টেবিল, মার্জিন, টেক্সট কালার, ছবি ও পেজ লেআউট শতভাগ অবিকৃত রাখা হয়।
                       </p>
                     </div>
 
-                    <div class="p-3.5 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1 md:col-span-2">
-                      <div class="font-black text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
+                    <div class="p-4 rounded-2xl bg-white dark:bg-[#1a263d] border border-slate-200 dark:border-slate-700/80 shadow-2xs space-y-1.5 md:col-span-2">
+                      <div class="font-black text-rose-700 dark:text-rose-300 flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-spell-check"></i> ৫. জটিল যুক্তবর্ণের শতভাগ সঠিক বানান ও মিক্সড ল্যাঙ্গুয়েজ প্রটেকশন
                       </div>
-                      <p class="text-slate-600 dark:text-slate-200 font-medium">
-                        উচ্চতায় (<code class="text-emerald-600 font-bold">D”PZvq</code>), কুণ্ডলীর (<code class="text-emerald-600 font-bold">KzÐjxi</code>), আল্ট্রাসনোগ্রাম (<code class="text-emerald-600 font-bold">Avëªvm‡bvMÖvg</code>), ট্রান্সফরমার ইত্যাদি জটিল বানান বিজয়ে নির্ভুলভাবে কনভার্ট হয় এবং একই সাথে থাকা ইংরেজি শব্দ ও ফন্ট অক্ষত থাকে।
+                      <p class="text-slate-600 dark:text-slate-300 font-medium">
+                        উচ্চতায় (<code class="text-emerald-600 dark:text-emerald-400 font-bold">D”PZvq</code>), কুণ্ডলীর (<code class="text-emerald-600 dark:text-emerald-400 font-bold">KzÐjxi</code>), আল্ট্রাসনোগ্রাম (<code class="text-emerald-600 dark:text-emerald-400 font-bold">Avëªvm‡bvMÖvg</code>), ট্রান্সফরমার (<code class="text-emerald-600 dark:text-emerald-400 font-bold">UªvÝdigvi</code>), সদস্যবৃন্দ (<code class="text-emerald-600 dark:text-emerald-400 font-bold">m`m¨e„›`</code>), প্ল্যাটফর্ম (<code class="text-emerald-600 dark:text-emerald-400 font-bold">cø¨vUdig</code>), আন্তর্জাতিক ইত্যাদি জটিল বানান বিজয়ে নির্ভুলভাবে কনভার্ট হয় এবং একই সাথে থাকা ইংরেজি শব্দ ও ফন্ট অক্ষত থাকে।
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <!-- ৪টি ফিচার কার্ড গ্রিড -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2 text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-1 text-xs">
                   
                   <div class="p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
-                    <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center text-sm font-bold">
+                    <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center text-base font-bold">
                       <i class="fa-solid fa-file-word"></i>
                     </div>
                     <h4 class="font-black text-slate-800 dark:text-white text-sm">সাপোর্টেড ডকুমেন্টস</h4>
-                    <p class="text-slate-600 dark:text-slate-200 leading-relaxed font-medium">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                       মাইক্রোসফট ওয়ার্ড (.docx, .doc), গণিত প্রশ্নপত্র, এক্সেল শিট (.xlsx, .xls) এবং পাওয়ারপয়েন্ট স্লাইড (.pptx, .ppt)। টেবিল, মার্জিন ও কালার অবিকৃত থাকে।
                     </p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
-                    <div class="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center text-sm font-bold">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center text-base font-bold">
                       <i class="fa-solid fa-square-root-variable"></i>
                     </div>
                     <h4 class="font-black text-slate-800 dark:text-white text-sm">সমীকরণ সুরক্ষা (LaTeX/EQ)</h4>
-                    <p class="text-slate-600 dark:text-slate-200 leading-relaxed font-medium">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                       পদার্থ ও গণিতের জটিল ভগ্নাংশ, বর্গমূল, ঘাত/পাওয়ার ও সাবস্ক্রিপ্ট ($V_p, I_p, ms^{-2}$), ইন্টিগ্রাল, গ্রিক প্রতীক ও $90\%$, $40\text{ m}$ শতভাগ অক্ষত থাকে।
                     </p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-sm font-bold">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center text-base font-bold">
                       <i class="fa-solid fa-spell-check"></i>
                     </div>
                     <h4 class="font-black text-slate-800 dark:text-white text-sm">নিখুঁত জটিল যুক্তবর্ণ</h4>
-                    <p class="text-slate-600 dark:text-slate-200 leading-relaxed font-medium">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                       উচ্চতায় (<code class="text-emerald-600 dark:text-emerald-400 font-bold">D”PZvq</code>), কুণ্ডলীর (<code class="text-emerald-600 dark:text-emerald-400 font-bold">KzÐjxi</code>), আল্ট্রাসনোগ্রাম (<code class="text-emerald-600 dark:text-emerald-400 font-bold">Avëªvm‡bvMÖvg</code>), ট্রান্সফরমার, গঠনতন্ত্র ও সদস্যবৃন্দ শতভাগ খাঁটি বিজয়ে রূপান্তরিত হয়।
                     </p>
                   </div>
 
                   <div class="p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
-                    <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center text-sm font-bold">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center text-base font-bold">
                       <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <h4 class="font-black text-slate-800 dark:text-white text-sm">১০০% ডেটা প্রাইভেসি</h4>
-                    <p class="text-slate-600 dark:text-slate-200 leading-relaxed font-medium">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                       সম্পূর্ণ রূপান্তর আপনার ব্রাউজারের ইন-মেমরি ইঞ্জিনে অফলাইনে প্রসেস হয়। আপনার প্রশ্নপত্র বা গোপন নথি কোনো সার্ভারে আপলোড বা সংরক্ষিত হয় না।
                     </p>
                   </div>
@@ -1016,59 +1063,102 @@
                 <h4 class="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
                   <i class="fa-solid fa-circle-nodes text-emerald-600"></i> ফয়জার কনভার্টারের বিশেষত্ব ও এসইও বিবরণ (SEO Overview)
                 </h4>
-                <p class="text-slate-600 dark:text-slate-200">
+                <p class="text-slate-600 dark:text-slate-300">
                   বাংলাদেশের শিক্ষাপ্রতিষ্ঠান, প্রেস, প্রকাশনা এবং সরকারি-বেসরকারি অফিস-আদালতে বহুল ব্যবহৃত <strong>ইউনিকোড টু বিজয়</strong> এবং <strong>বিজয় টু ইউনিকোড</strong> রূপান্তরের ক্ষেত্রে সবচেয়ে বড় চ্যালেঞ্জ হলো যুক্তবর্ণ ভেঙে যাওয়া এবং প্রশ্নপত্রের গাণিতিক সমীকরণ বিকৃত হওয়া। প্রচলিত কনভার্টারগুলোতে ফাইল আপলোড করলে LaTeX বা Word Equation প্রতীকগুলো নষ্ট হয়ে যায় এবং জটিল যুক্তবর্ণ যেমন <em>উচ্চতায়, কুণ্ডলী, আল্ট্রাসনোগ্রাম, ট্রান্সফরমার</em> ভুল বানান প্রদর্শন করে।
                 </p>
-                <p class="text-slate-600 dark:text-slate-200">
+                <p class="text-slate-600 dark:text-slate-300">
                   <strong>ফয়জার কনভার্টার (Fayzar Converter)</strong> তৈরি করা হয়েছে দেশের সেরা <strong>গণিত ডকুমেন্ট কনভার্টার</strong> ও <strong>লেটেক্স কনভার্টার</strong> হিসেবে। এটি সাধারণ টেক্সট ও জটিল সমীকরণ স্বয়ংক্রিয়ভাবে আলাদা করে পার্স করে। ফলে সমীকরণসমূহ সরাসরি নেটিভ ওয়ার্ড ইকুয়েশনে রূপান্তরিত হয় এবং টেক্সট অংশগুলো হুবহু মূল ফন্টের স্টাইল, টেবিল কাঠামো, মার্জিন ও বিন্যাস অক্ষুণ্ণ রেখে <strong>.doc (Word 97-2003)</strong> ও <strong>.docx</strong> ফরম্যাটে সংরক্ষিত হয়। এটি বাংলা <strong>প্রশ্নপত্র কনভার্টার</strong> ও ডকুমেন্ট টাইপোগ্রাফির জন্য দেশের সবচেয়ে নির্ভুল ও নির্ভরযোগ্য রূপান্তর প্ল্যাটফর্ম।
                 </p>
               </div>
 
-              <!-- ৩. সাধারণ জিজ্ঞাসা ও উত্তর (FAQ Accordion) -->
-              <div class="space-y-3">
-                <h4 class="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
-                  <i class="fa-solid fa-circle-question text-blue-600"></i> সাধারণ জিজ্ঞাসা ও উত্তর (FAQ)
-                </h4>
+              <!-- ৩. সাধারণ জিজ্ঞাসা ও উত্তর (Comprehensive FAQ Accordion) -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/80 pb-3">
+                  <h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-blue-600"></i> সাধারণ জিজ্ঞাসা ও উত্তর (Frequently Asked Questions - FAQ)
+                  </h4>
+                  <span class="text-xs text-slate-500 dark:text-slate-400 font-bold hidden sm:inline-block">ক্লিক করে উত্তর দেখুন</span>
+                </div>
 
-                <div class="space-y-2.5 text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                   
-                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer">
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-emerald-400 transition-colors">
                     <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
-                      <span>১. গণিত প্রশ্নপত্র ও বিজ্ঞানের সমীকরণ কনভার্ট করলে কি ভেঙে যাবে?</span>
-                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                      <span class="pr-2">১. গণিত প্রশ্নপত্র ও বিজ্ঞানের সমীকরণ কনভার্ট করলে কি ভেঙে যাবে?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
                     </summary>
-                    <p class="mt-2.5 text-slate-600 dark:text-slate-200 font-medium leading-relaxed pl-1 border-l-2 border-emerald-500">
-                      না, কখনোই ভাঙবে না। আমাদের ইঞ্জিন মাইক্রোসফট ওয়ার্ডের নেটিভ সমীকরণ ফিল্ড (Word EQ Fields) তৈরি করে, যার ফলে ভগ্নাংশ, বর্গমূল, পাওয়ার, সাবস্ক্রিপ্ট ও গ্রিক প্রতীকগুলো ওয়ার্ডে সম্পূর্ণ নিখুঁতভাবে প্রদর্শিত ও প্রিন্টযোগ্য থাকে।
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-emerald-500">
+                      না, কখনোই ভাঙবে না। আমাদের ইঞ্জিন মাইক্রোসফট ওয়ার্ডের নেটিভ সমীকরণ ফিল্ড (Word EQ Fields / OMML) তৈরি করে, যার ফলে ভগ্নাংশ, বর্গমূল, ঘাত/পাওয়ার, সাবস্ক্রিপ্ট ও গ্রিক প্রতীকগুলো ওয়ার্ডে সম্পূর্ণ নিখুঁতভাবে প্রদর্শিত ও প্রিন্টযোগ্য থাকে।
                     </p>
                   </details>
 
-                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer">
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-cyan-400 transition-colors">
                     <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
-                      <span>২. .doc এবং .docx ফরম্যাটের মধ্যে কোনটি নির্বাচন করা উচিত?</span>
-                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                      <span class="pr-2">২. .doc এবং .docx ফরম্যাটের মধ্যে কোনটি নির্বাচন করা উচিত?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
                     </summary>
-                    <p class="mt-2.5 text-slate-600 dark:text-slate-200 font-medium leading-relaxed pl-1 border-l-2 border-cyan-500">
-                      আপনি যদি কোনো কম্পিউটারের পুরনো মাইক্রোসফট ওয়ার্ড ২০০৩ সংস্করণে বা প্রিন্টিং প্রেসে ফাইলটি খুলতে চান, তবে <strong>.doc</strong> বাটন চাপুন। আর যদি আধুনিক ওয়ার্ড (২০০৭ থেকে ৩৬৫) বা গুগোল ডক্সে কাজ করতে চান, তবে <strong>.docx</strong> বাটন চাপুন।
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-cyan-500">
+                      আপনি যদি কোনো অফসেট প্রিন্টিং প্রেস, সাইবার ক্যাফে বা পুরনো কম্পিউটারের মাইক্রোসফট ওয়ার্ড ২০০৩ সংস্করণে ফাইলটি খুলতে চান, তবে <strong>.doc</strong> বাটন চাপুন। আর যদি আধুনিক ওয়ার্ড (২০০৭ থেকে ৩৬৫) বা গুগল ডক্সে কাজ করতে চান, তবে <strong>.docx</strong> বাটন চাপুন।
                     </p>
                   </details>
 
-                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer">
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-blue-400 transition-colors">
                     <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
-                      <span>৩. ইউনিকোডে রূপান্তরের ক্ষেত্রে "নিকশ" নাকি "কালপুরুষ" ফন্ট ভালো?</span>
-                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                      <span class="pr-2">৩. ইউনিকোডে রূপান্তরের ক্ষেত্রে "নিকশ" নাকি "কালপুরুষ" ফন্ট ভালো?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
                     </summary>
-                    <p class="mt-2.5 text-slate-600 dark:text-slate-200 font-medium leading-relaxed pl-1 border-l-2 border-blue-500">
-                      বাংলাদেশ সরকারের অফিসিয়াল ও দাপ্তরিক কাজের জন্য <strong>Nikosh (নিকশ)</strong> ফন্ট স্ট্যান্ডার্ড হিসেবে ব্যবহৃত হয়। আর পাঠ্যপুস্তক, সাহিত্য ও আকর্ষণীয় মুদ্রণের জন্য <strong>Kalpurush (কালপুরুষ)</strong> ফন্ট সবচেয়ে জনপ্রিয়। আপনার পছন্দমতো যে কোনো একটি বেছে নিতে পারেন।
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-blue-500">
+                      বাংলাদেশ সরকারের অফিসিয়াল ও দাপ্তরিক কাজের জন্য <strong>Nikosh (নিকশ)</strong> ফন্ট স্ট্যান্ডার্ড হিসেবে ব্যবহৃত হয়। আর পাঠ্যপুস্তক, সাহিত্য ও আকর্ষণীয় মুদ্রণের জন্য <strong>Kalpurush (কালপুরুষ)</strong> বা <strong>SolaimanLipi</strong> সবচেয়ে জনপ্রিয়। আপনার প্রয়োজনমতো যেকোনোটি ব্যবহার করতে পারেন।
                     </p>
                   </details>
 
-                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer">
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-amber-400 transition-colors">
                     <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
-                      <span>৪. বাংলা ও ইংরেজির মিশ্রিত ডকুমেন্টে ইংরেজির ফন্ট বা লেখা পরিবর্তন হবে কি?</span>
-                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                      <span class="pr-2">৪. বাংলা ও ইংরেজির মিশ্রিত ডকুমেন্টে ইংরেজির ফন্ট বা লেখা পরিবর্তন হবে কি?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
                     </summary>
-                    <p class="mt-2.5 text-slate-600 dark:text-slate-200 font-medium leading-relaxed pl-1 border-l-2 border-amber-500">
-                      না, আমাদের ইন্টেলিজেন্ট মিক্সড-টেক্সট হ্যান্ডলার স্বয়ংক্রিয়ভাবে ইংরেজি শব্দ ও কোড আলাদা শনাক্ত করে এবং মূল ইংরেজি ফন্ট (যেমন Times New Roman, Calibri, Arial) শতভাগ অপরিবর্তিত রাখে।
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-amber-500">
+                      না, আমাদের ইন্টেলিজেন্ট মিক্সড-টেক্সট হ্যান্ডলার স্বয়ংক্রিয়ভাবে ইংরেজি শব্দ ও কোড আলাদা শনাক্ত করে এবং মূল ইংরেজি ফন্ট (যেমন Times New Roman, Calibri, Arial) ও স্পেলিং শতভাগ অপরিবর্তিত রাখে।
+                    </p>
+                  </details>
+
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-emerald-400 transition-colors">
+                    <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
+                      <span class="pr-2">৫. কোনো ফাইল কনভার্ট করলে কি ডকুমেন্টের গোপনীয়তা বা নিরাপত্তা বজায় থাকে?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
+                    </summary>
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-emerald-500">
+                      হ্যাঁ, শতভাগ নিরাপদ! ফয়জার কনভার্টার সম্পূর্ণ ক্লায়েন্ট-সাইড (ব্রাউজারের ইন-মেমরি জাভাস্ক্রিপ্ট) ইঞ্জিনে কাজ করে। আপনার কোনো টেক্সট, প্রশ্নপত্র বা ফাইল কোনো সার্ভারে আপলোড বা সংরক্ষিত হয় না। এমনকি ইন্টারনেট ছাড়াও অফলাইনে এটি সমানভাবে কাজ করে।
+                    </p>
+                  </details>
+
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-purple-400 transition-colors">
+                    <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
+                      <span class="pr-2">৬. অনেক বড় সাইজের বা একাধিক পৃষ্ঠার ওয়ার্ড/এক্সেল ফাইল কি কনভার্ট করা যাবে?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
+                    </summary>
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-purple-500">
+                      হ্যাঁ, শত শত পৃষ্ঠার বিশাল বই, গাইড বা বড় এক্সেল স্প্রেডশিটও মুহূর্তের মধ্যে রূপান্তর করা সম্ভব। কোনো পৃষ্ঠা বা অক্ষরের লিমিট নেই।
+                    </p>
+                  </details>
+
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-teal-400 transition-colors">
+                    <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
+                      <span class="pr-2">৭. মোবাইল ফোন বা ট্যাবলেট দিয়ে কি কনভার্টারটি ব্যবহার করা যাবে?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
+                    </summary>
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-teal-500">
+                      হ্যাঁ, এটি সম্পূর্ণ মোবাইল ফ্রেন্ডলি ও রেসপনসিভ। অ্যান্ড্রয়েড ও আইফোনের যেকোনো ব্রাউজারে এটি স্মুথলি কাজ করে এবং টেক্সট কনভার্ট করে সরাসরি ফোনে ব্যবহার বা ফাইল ডাউনলোড করা যায়।
+                    </p>
+                  </details>
+
+                  <details class="group p-4 rounded-2xl bg-white dark:bg-[#162238] border border-slate-200 dark:border-slate-700 shadow-xs cursor-pointer hover:border-rose-400 transition-colors">
+                    <summary class="font-extrabold text-slate-800 dark:text-slate-100 flex items-center justify-between list-none">
+                      <span class="pr-2">৮. কোনো শব্দের যুক্তবর্ণ ভুল দেখালে বা নতুন শব্দের বানান ঠিক করতে কী করণীয়?</span>
+                      <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0"></i>
+                    </summary>
+                    <p class="mt-2.5 text-slate-600 dark:text-slate-300 font-medium leading-relaxed pl-2 border-l-2 border-rose-500">
+                      নিচে থাকা <strong>"আপনার মতামত বা সমস্যার কথা জানান"</strong> বক্সে শব্দটি ও আপনার মতামত লিখে সাবমিট করলে আমাদের ব্যাকএন্ড ডিকশনারিতে তা দ্রুত সমাধান করে যুক্ত করা হবে।
                     </p>
                   </details>
 
