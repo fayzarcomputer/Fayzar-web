@@ -296,6 +296,28 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .file-dropzone-active { border-color: var(--primary) !important; background-color: rgba(5, 150, 105, 0.08) !important; transform: scale(1.01); }
 
 /* ==========================================================================
+   AI PROCESSING ANIMATIONS
+   ========================================================================== */
+@keyframes scanLaser {
+  0% { top: 0%; opacity: 0.8; }
+  50% { top: 90%; opacity: 1; }
+  100% { top: 0%; opacity: 0.8; }
+}
+
+.animate-scan-laser {
+  animation: scanLaser 2.2s ease-in-out infinite;
+}
+
+@keyframes shimmerProgress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-progress-shimmer {
+  animation: shimmerProgress 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ==========================================================================
    LINE CLAMP
    ========================================================================== */
 .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
