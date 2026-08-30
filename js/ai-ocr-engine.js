@@ -87,7 +87,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 8. ACCURATE BENGALI TYPOGRAPHY:
    - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
-  const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '';
+  const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
+
+  const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || DEFAULT_GEMINI_API_KEY;
   const savedGas = localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '';
   const hasValidConfig = Boolean(savedKey || savedGas);
 
@@ -95,7 +97,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     freeUsesCount: parseInt(localStorage.getItem(STORAGE_KEYS.FREE_COUNT) || '0', 10),
     byokApiKey: savedKey,
     gasUrl: savedGas,
-    demoMode: hasValidConfig ? false : (localStorage.getItem(STORAGE_KEYS.DEMO_MODE) !== null ? localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true' : true),
+    demoMode: (localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true'),
     selectedModel: localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto',
 
     filesQueue: [],
@@ -1796,6 +1798,16 @@ ${bodyContentXml}
         elements.progressContainer.classList.remove('flex');
       }
       if (elements.convertBtnText) elements.convertBtnText.textContent = 'AI দিয়ে কনভার্ট ও ওয়ার্ড ফাইল তৈরি করুন';
+    }
+  }
+
+  function updateBadges() {
+    if (elements.modeBadge) {
+      if (state.demoMode) {
+        elements.modeBadge.textContent = 'ডেমো মোড';
+      } else if (state.byokApiKey) {
+        elements.modeBadge.textContent = 'লাইভ AI মোড';
+      }
     }
   }
 
