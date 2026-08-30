@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>অনলাইন রেজাল্ট ও একাডেমিক ট্রান্সক্রিপ্ট পোর্টাল | ফয়জার কম্পিউটার</title>
+  <meta name="title" content="অনলাইন রেজাল্ট ও একাডেমিক ট্রান্সক্রিপ্ট পোর্টাল | ফয়জার কম্পিউটার">
+  <meta name="description" content="ড্রিমল্যান্ড রেসিডেন্সিয়াল মডেল স্কুলসহ বিভিন্ন শিক্ষাপ্রতিষ্ঠানের অনলাইন রেজাল্ট সার্চ, বিষয়ভিত্তিক মার্কশীট, জিপিএ, গ্রেড ও মেধাতালিকা প্রিন্ট পোর্টাল।">
+  <meta name="keywords" content="অনলাইন রেজাল্ট, মার্কশীট প্রিন্ট, ড্রিমল্যান্ড মডেল স্কুল, রেজাল্ট শিট, ফুলবাড়ী দিনাজপুর, ফয়জার কম্পিউটার রেজাল্ট, Academic Transcript">
+  <meta name="author" content="ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট">
+  <link rel="canonical" href="https://fayzarcomputer.com/results.html">
+
+  <!-- Favicon & Theme -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <meta name="theme-color" content="#059669">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#059669',
+              dark: '#047857',
+              light: '#10b981',
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              900: '#064e3b'
+            },
+            navy: {
+              900: '#0a1128',
+              800: '#101f42',
+              700: '#1c2e59'
+            }
+          },
+          fontFamily: {
+            sans: ['Hind Siliguri', 'Noto Sans Bengali', 'Outfit', 'sans-serif'],
+            display: ['Outfit', 'Hind Siliguri', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* Print Optimization CSS for Perfect Single Page A4 Marksheet */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 12pt;
+      }
+      .no-print, nav, footer, header, #searchSection, #topActionToolbar, #tabsHeader, #classTabulationSection, #analyticsSection, .fixed {
+        display: none !important;
+      }
+      #marksheetContainer {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .marksheet-card {
+        border: 2px solid #1e293b !important;
+        padding: 24px !important;
+        border-radius: 8px !important;
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+      .certificate-border {
+        border: 2px double #0f172a !important;
+        padding: 16px !important;
+      }
+      .print-shadow-none {
+        box-shadow: none !important;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    /* Watermark Effect */
+    .watermark-bg {
+      position: relative;
+    }
+    .watermark-bg::before {
+      content: 'DREAMLAND';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-size: 5.5rem;
+      font-weight: 900;
+      color: rgba(15, 23, 42, 0.03);
+      pointer-events: none;
+      z-index: 0;
+      white-space: nowrap;
+      letter-spacing: 0.2em;
+    }
+    .dark .watermark-bg::before {
+      color: rgba(255, 255, 255, 0.02);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- =========================================================================
+       ১. শীর্ষ হেডার ও নেভিগেশন বার (Header & Navbar)
+       ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+        
+        <!-- Brand Logo -->
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <i class="fas fa-graduation-cap text-xl sm:text-2xl"></i>
+          </div>
+          <div>
+            <div class="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <span>ফয়জার কম্পিউটার</span>
+              <span class="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300/40">রেজাল্ট পোর্টাল</span>
+            </div>
+            <div class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">অনলাইন রেজাল্ট ও মার্কশীট পাবলিকেশন সিস্টেম</div>
+          </div>
+        </a>
+
+        <!-- Navigation Links -->
+        <nav class="hidden md:flex items-center gap-1.5 lg:gap-3">
+          <a href="index.html" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-all">হোম</a>
+          <a href="results.html" class="px-3.5 py-2 rounded-xl text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 transition-all flex items-center gap-1.5">
+            <i class="fas fa-award"></i> রেজাল্ট পোর্টাল
+          </a>
+          <a href="tools.html" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-all">টুলস</a>
+          <a href="notices.html" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-all">নোটিশ</a>
+          <a href="portal.html" class="px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-all">প্রার্থী কর্নার</a>
+        </nav>
+
+        <!-- Right Side Actions: Admin Link + Dark Mode Toggle -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a href="result-admin.html" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5">
+            <i class="fas fa-sliders text-emerald-500"></i>
+            <span class="hidden sm:inline">রেজাল্ট অ্যাডমিন</span>
+            <span class="sm:hidden">অ্যাডমিন</span>
+          </a>
+
+          <!-- Dark Mode Toggle Button -->
+          <button type="button" id="themeToggleBtn" aria-label="Toggle Dark Mode" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-all cursor-pointer">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block text-amber-400"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       ২. হিরো সেকশন ও রেজাল্ট সার্চ ফর্ম (Hero & Result Search Form)
+       ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+
+    <section id="searchSection" class="no-print">
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-700 to-slate-900 text-white p-6 sm:p-10 shadow-2xl shadow-emerald-950/20 border border-emerald-500/30">
+        
+        <!-- Decorative Glow Shapes -->
+        <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-emerald-400/20 blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-teal-400/20 blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-3xl mx-auto text-center space-y-3">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-emerald-200">
+            <i class="fas fa-school"></i> <span id="heroInstName">ড্রিমল্যান্ড রেসিডেন্সিয়াল মডেল স্কুল</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
+            অনলাইন রেজাল্ট ও মার্কশীট অনুসন্ধান
+          </h1>
+          <p class="text-sm sm:text-base text-emerald-100/90 font-medium">
+            পরীক্ষার সাল, পরীক্ষার নাম, শ্রেণি এবং রোল নম্বর ইনপুট দিয়ে তাৎক্ষণিক বিষয়ভিত্তিক ফলাফল ও অফিশিয়াল মার্কশীট দেখুন।
+          </p>
+        </div>
+
+        <!-- Search Input Box Card -->
+        <div class="relative z-10 mt-8 max-w-4xl mx-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-white/40 dark:border-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl">
+          <form id="resultSearchForm" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              
+              <!-- 1. Exam Year -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">
+                  <i class="far fa-calendar-alt text-emerald-600 mr-1"></i> পরীক্ষার সাল
+                </label>
+                <select id="searchYear" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm focus:ring-2 focus:ring-emerald-500 outline-hidden transition-all">
+                  <option value="2025" selected>২০২৫ (2025)</option>
+                  <option value="2026">২০২৬ (2026)</option>
+                </select>
+              </div>
+
+              <!-- 2. Exam Name -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">
+                  <i class="fas fa-file-signature text-emerald-600 mr-1"></i> পরীক্ষার নাম
+                </label>
+                <select id="searchExam" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm focus:ring-2 focus:ring-emerald-500 outline-hidden transition-all">
+                  <option value="annual_2025" selected>বার্ষিক পরীক্ষা-২০২৫</option>
+                  <option value="half_yearly_2025">অর্ধবার্ষিক পরীক্ষা-২০২৫</option>
+                  <option value="model_test">মডেল টেস্ট / সাময়িক</option>
+                </select>
+              </div>
+
+              <!-- 3. Class Selection -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">
+                  <i class="fas fa-users-rectangle text-emerald-600 mr-1"></i> শ্রেণি ও শাখা
+                </label>
+                <select id="searchClass" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm focus:ring-2 focus:ring-emerald-500 outline-hidden transition-all">
+                  <option value="">-- শ্রেণি নির্বাচন করুন --</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <!-- 4. Roll Number -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">
+                  <i class="fas fa-hashtag text-emerald-600 mr-1"></i> রোল নম্বর
+                </label>
+                <input type="text" id="searchRoll" placeholder="যেমন: 1, 2, 10" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm focus:ring-2 focus:ring-emerald-500 outline-hidden transition-all" required>
+              </div>
+
+            </div>
+
+            <!-- Submit Button & Quick Helper -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+              <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                <i class="fas fa-info-circle text-emerald-600"></i>
+                <span>টিপস: শ্রেণি নির্বাচন করে সরাসরি রোল নম্বর লিখে খুঁজুন।</span>
+              </div>
+              <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button type="button" id="resetSearchBtn" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                  রিসেট
+                </button>
+                <button type="submit" id="searchSubmitBtn" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                  <i class="fas fa-search"></i> ফলাফল দেখুন
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         ৩. ট্যাব নেভিগেশন (Marksheet, Merit List, Statistics)
+         ========================================================================= -->
+    <div id="tabsHeader" class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 no-print overflow-x-auto">
+      <button type="button" data-tab="marksheetTab" class="result-tab-btn active px-4 py-2 rounded-xl text-sm font-bold bg-emerald-600 text-white shadow-md transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i class="fas fa-id-card"></i> একাডেমিক ট্রান্সক্রিপ্ট / মার্কশীট
+      </button>
+      <button type="button" data-tab="tabulationTab" class="result-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i class="fas fa-list-ol"></i> পূর্ণাঙ্গ মেধাতালিকা
+      </button>
+      <button type="button" data-tab="analyticsTab" class="result-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i class="fas fa-chart-pie"></i> ফলাফল পরিসংখ্যান
+      </button>
+    </div>
+
+    <!-- =========================================================================
+         ৪. মার্কশীট ডিসপ্লে সেকশন (Academic Transcript View & Print)
+         ========================================================================= -->
+    <section id="marksheetTabContent" class="space-y-6">
+      
+      <!-- Top Action Toolbar (Print, PDF, Share) -->
+      <div id="topActionToolbar" class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm no-print">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="activeResultTitle" class="text-sm font-bold text-slate-700 dark:text-slate-200">ফলাফল প্রদর্শিত হচ্ছে</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="printSingleMarksheetBtn" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+            <i class="fas fa-print"></i> মার্কশীট প্রিন্ট (A4)
+          </button>
+          <button type="button" id="copyResultLinkBtn" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5 cursor-pointer">
+            <i class="fas fa-share-nodes"></i> লিঙ্ক কপি
+          </button>
+        </div>
+      </div>
+
+      <!-- Marksheet Card (Official Certificate Layout) -->
+      <div id="marksheetContainer" class="bg-white dark:bg-slate-900 p-4 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl watermark-bg marksheet-card relative overflow-hidden">
+        
+        <div class="certificate-border border-2 border-slate-900 dark:border-slate-700 p-4 sm:p-6 rounded-2xl space-y-6">
+          
+          <!-- Header Area with School Info -->
+          <div class="text-center space-y-1.5 border-b-2 border-slate-900 dark:border-slate-700 pb-4 relative">
+            <div class="flex items-center justify-between">
+              <!-- Left Seal -->
+              <div class="hidden sm:flex flex-col items-center justify-center w-20 h-20 rounded-full border border-emerald-600/40 p-1">
+                <div class="w-full h-full rounded-full border-2 border-dashed border-emerald-600/60 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-extrabold text-[10px] text-center leading-tight">
+                  ESTD<br>2010
+                </div>
+              </div>
+
+              <!-- Main Title -->
+              <div class="space-y-1 flex-1 px-2">
+                <div id="msInstNameBn" class="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-wide">
+                  ড্রিমল্যান্ড রেসিডেন্সিয়াল মডেল স্কুল
+                </div>
+                <div id="msInstNameEn" class="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 tracking-wider">
+                  DREAMLAND RESIDENTIAL MODEL SCHOOL
+                </div>
+                <div id="msInstAddress" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+                  বারাই, ফুলবাড়ী, দিনাজপুর
+                </div>
+                <div class="inline-block px-4 py-1 mt-1 rounded-full bg-slate-900 text-white dark:bg-emerald-600 text-xs sm:text-sm font-bold tracking-wide shadow-xs">
+                  <span id="msExamName">বার্ষিক পরীক্ষার ফলাফল - ২০২৫</span>
+                </div>
+                <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest pt-0.5">
+                  ACADEMIC TRANSCRIPT / মার্কশীট
+                </div>
+              </div>
+
+              <!-- Right Grading Key Summary Box -->
+              <div class="hidden sm:block text-[10px] border border-slate-300 dark:border-slate-700 p-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/80 text-left font-mono">
+                <div class="font-bold border-b border-slate-200 dark:border-slate-700 pb-0.5 mb-0.5 text-center text-slate-800 dark:text-slate-200">Grading Scale</div>
+                <div class="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[9px]">
+                  <span>80-100 : A+ (5.0)</span>
+                  <span>50-59 : B  (3.0)</span>
+                  <span>70-79  : A  (4.0)</span>
+                  <span>40-49 : C  (2.0)</span>
+                  <span>60-69  : A- (3.5)</span>
+                  <span>33-39 : D  (1.0)</span>
+                  <span class="col-span-2 text-rose-600 font-bold">00-32  : F  (0.0)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Student Profile Information Grid -->
+          <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/80">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
+              
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">শিক্ষার্থীর নাম :</span>
+                <span id="msStudentName" class="font-bold text-slate-900 dark:text-white text-sm sm:text-base">লোড হচ্ছে...</span>
+              </div>
+
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">রোল নম্বর :</span>
+                <span id="msRoll" class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base font-mono">--</span>
+              </div>
+
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">শ্রেণি :</span>
+                <span id="msClass" class="font-bold text-slate-900 dark:text-white">--</span>
+              </div>
+
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">শাখা / বিভাগ :</span>
+                <span id="msSection" class="font-bold text-slate-900 dark:text-white">সাধারণ</span>
+              </div>
+
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">পিতার নাম :</span>
+                <span id="msFatherName" class="font-medium text-slate-800 dark:text-slate-200">--</span>
+              </div>
+
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">মাতার নাম :</span>
+                <span id="msMotherName" class="font-medium text-slate-800 dark:text-slate-200">--</span>
+              </div>
+
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">জন্ম তারিখ :</span>
+                <span id="msDob" class="font-medium text-slate-800 dark:text-slate-200">--</span>
+              </div>
+
+              <div>
+                <span class="text-slate-500 dark:text-slate-400 block text-[11px] font-semibold">ফলাফল স্ট্যাটাস :</span>
+                <span id="msStatusBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+                  উত্তীর্ণ (Passed)
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quick High-Impact Result Stats Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            
+            <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/40 border border-emerald-200 dark:border-emerald-800/60">
+              <span class="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 uppercase block">প্রাপ্ত জিপিএ (GPA)</span>
+              <span id="msGpa" class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono">5.00</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border border-blue-200 dark:border-blue-800/60">
+              <span class="text-[11px] font-bold text-blue-800 dark:text-blue-300 uppercase block">লেটার গ্রেড (Grade)</span>
+              <span id="msGrade" class="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400">A+</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border border-amber-200 dark:border-amber-800/60">
+              <span class="text-[11px] font-bold text-amber-800 dark:text-amber-300 uppercase block">মেধা স্থান (Rank)</span>
+              <span id="msRank" class="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400">১ম</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-gradient-to-br from-purple-50 to-fuchsia-50 dark:from-purple-950/40 dark:to-fuchsia-950/40 border border-purple-200 dark:border-purple-800/60">
+              <span class="text-[11px] font-bold text-purple-800 dark:text-purple-300 uppercase block">মোট নম্বর (Total)</span>
+              <span id="msTotalMarks" class="text-2xl sm:text-3xl font-black text-purple-600 dark:text-purple-400 font-mono">৫৮৯ / ৬০০</span>
+            </div>
+
+          </div>
+
+          <!-- Subject Marks Breakdown Table -->
+          <div class="overflow-x-auto rounded-xl border border-slate-300 dark:border-slate-700">
+            <table class="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold border-b border-slate-300 dark:border-slate-700">
+                  <th class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-center w-12">ক্র.</th>
+                  <th class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700">বিষয়ের নাম (Subject Name)</th>
+                  <th class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-center w-20">পূর্ণমান</th>
+                  <th class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-center w-28">প্রাপ্ত নম্বর</th>
+                  <th class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-center w-24">লেটার গ্রেড</th>
+                  <th class="py-2.5 px-3 text-center w-24">গ্রেড পয়েন্ট</th>
+                </tr>
+              </thead>
+              <tbody id="msSubjectsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/80 bg-white dark:bg-slate-900">
+                <!-- Populated dynamically -->
+              </tbody>
+              <tfoot>
+                <tr class="bg-slate-50 dark:bg-slate-800/80 font-bold border-t-2 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                  <td colspan="2" class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-right">সর্বমোট / চূড়ান্ত ফলাফল :</td>
+                  <td id="msTotalFullMarksFoot" class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-center font-mono">৬০০</td>
+                  <td id="msTotalMarksFoot" class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-center font-mono text-emerald-600 dark:text-emerald-400 text-base">৫৮৯</td>
+                  <td id="msGradeFoot" class="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 text-center text-blue-600 dark:text-blue-400 text-base">A+</td>
+                  <td id="msGpaFoot" class="py-2.5 px-3 text-center font-mono text-emerald-600 dark:text-emerald-400 text-base">5.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Bottom Footer: QR Code, Remarks, and Signatures -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t-2 border-slate-900 dark:border-slate-700 items-end">
+            
+            <!-- Left: QR Code & Verification -->
+            <div class="text-center sm:text-left flex flex-col sm:flex-row items-center gap-3">
+              <div id="msQrCodeBox" class="w-20 h-20 flex-shrink-0"></div>
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5 text-center sm:text-left">
+                <div class="font-bold text-slate-700 dark:text-slate-300">ডিজিটাল ভেরিফিকেশন</div>
+                <div>অনলাইনে সত্যতা যাচাই করতে QR কোডটি স্ক্যান করুন।</div>
+                <div class="text-[10px] font-mono text-slate-400" id="msPublishDate">তারিখ: ৩১/১২/২০২৫</div>
+              </div>
+            </div>
+
+            <!-- Middle: Guardian Signature -->
+            <div class="text-center space-y-1">
+              <div class="h-10 border-b border-slate-400 dark:border-slate-600 border-dashed w-36 mx-auto"></div>
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">অভিভাবকের স্বাক্ষর</span>
+            </div>
+
+            <!-- Right: Principal Signature -->
+            <div class="text-center sm:text-right space-y-1">
+              <div class="h-10 border-b border-slate-400 dark:border-slate-600 border-dashed w-36 ml-auto mr-auto sm:mr-0"></div>
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">প্রধান শিক্ষকের স্বাক্ষর ও সিল</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         ৫. ক্লাস-ভিত্তিক পূর্ণাঙ্গ মেধাতালিকা ট্যাব (Class Tabulation Sheet)
+         ========================================================================= -->
+    <section id="tabulationTabContent" class="space-y-6 hidden">
+      
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">পূর্ণাঙ্গ শ্রেণি মেধাতালিকা ও রেজাল্ট শিট</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">শ্রেণিভিত্তিক সকল শিক্ষার্থীর ফলাফল, জিপিএ, মোট নম্বর ও মেধা স্থান তালিকা।</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="tabulationClassSelect" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden">
+              <!-- Dynamically populated -->
+            </select>
+            <button type="button" id="printTabulationBtn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 dark:bg-emerald-600 text-white transition-all flex items-center gap-1.5 cursor-pointer">
+              <i class="fas fa-print"></i> শিট প্রিন্ট
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabulation Table -->
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700">
+              <tr>
+                <th class="py-3 px-3 text-center w-16">মেধা স্থান</th>
+                <th class="py-3 px-3 text-center w-16">রোল</th>
+                <th class="py-3 px-4">শিক্ষার্থীর নাম</th>
+                <th class="py-3 px-3 text-center">প্রাপ্ত GPA</th>
+                <th class="py-3 px-3 text-center">লেটার গ্রেড</th>
+                <th class="py-3 px-3 text-center">মোট নম্বর</th>
+                <th class="py-3 px-3 text-center">স্ট্যাটাস</th>
+                <th class="py-3 px-3 text-center no-print">অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="tabulationTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         ৬. রেজাল্ট পরিসংখ্যান ও অ্যানালিটিক্স ট্যাব (Result Analytics)
+         ========================================================================= -->
+    <section id="analyticsTabContent" class="space-y-6 hidden">
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl font-bold">
+            <i class="fas fa-users"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-semibold">মোট পরীক্ষার্থী</div>
+            <div id="statTotalStudents" class="text-2xl font-black text-slate-900 dark:text-white font-mono">২৪৭</div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold">
+            <i class="fas fa-circle-check"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-semibold">মোট উত্তীর্ণ (Passed)</div>
+            <div id="statPassedStudents" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono">--</div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold">
+            <i class="fas fa-star"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-semibold">জিপিএ-৫.০০ (GPA 5)</div>
+            <div id="statGpa5Count" class="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">--</div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-950 text-teal-600 dark:text-teal-400 flex items-center justify-center text-xl font-bold">
+            <i class="fas fa-percent"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-semibold">পাশের হার (Pass Rate)</div>
+            <div id="statPassRate" class="text-2xl font-black text-teal-600 dark:text-teal-400 font-mono">--%</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Grade Distribution Breakdown -->
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fas fa-chart-simple text-emerald-600"></i> গ্রেডভিত্তিক পরিসংখ্যান (Grade Distribution)
+        </h3>
+        <div id="gradeDistributionBars" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       ৭. ফুটার সেকশন (Footer)
+       ========================================================================= -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-auto no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+      <div class="font-bold text-white text-sm">ফয়জার কম্পিউটার এন্ড ফটোস্ট্যাট | ডিজিটাল সেবা কেন্দ্র</div>
+      <div>ফুলবাড়ী সরকারি কলেজ গেটের পশ্চিম পার্শ্বে, ফুলবাড়ী, দিনাজপুর। ফোন: 01717-101919</div>
+      <div class="text-slate-500 pt-2">© ২০২৫-২০২৬ ফয়জার কম্পিউটার অনলাইন রেজাল্ট পোর্টাল। সর্বস্বত্ব সংরক্ষিত।</div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/result-engine.js"></script>
+  <script src="js/results-public.js"></script>
+</body>
+</html>
