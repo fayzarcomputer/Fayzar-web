@@ -12,7 +12,7 @@
   let allStudents = [];
 
   // DOM Elements
-  const authOverlay = document.getElementById('authOverlay');
+  const authOverlay = document.getElementById('adminAuthOverlay') || document.getElementById('authOverlay');
   const pinForm = document.getElementById('adminPinForm');
   const pinInput = document.getElementById('adminPinInput');
   const adminThemeToggleBtn = document.getElementById('adminThemeToggleBtn');
@@ -107,22 +107,35 @@
   }
 
   function checkAuth() {
-    if (sessionStorage.getItem('fayzar_admin_authenticated') === 'true') {
-      authOverlay?.classList.add('hidden');
-    } else {
-      authOverlay?.classList.remove('hidden');
+    const isAuth = sessionStorage.getItem('fayzar_admin_authenticated') === 'true';
+    if (isAuth && authOverlay) {
+      authOverlay.style.display = 'none';
+      authOverlay.classList.add('hidden');
+    } else if (authOverlay) {
+      authOverlay.style.display = 'flex';
+      authOverlay.classList.remove('hidden');
+      setTimeout(() => pinInput?.focus(), 100);
     }
 
     pinForm?.addEventListener('submit', (e) => {
       e.preventDefault();
-      const val = pinInput?.value?.trim();
-      if (val === '1234' || val === 'fayzar' || val === 'admin' || val === 'fc2025' || val === '101919') {
+      let val = pinInput?.value?.trim() || '';
+      // Convert Bengali digits if typed in Bengali (e.g. ১২৩৪ -> 1234)
+      val = ResultEngine.toEnDigit(val).toLowerCase();
+      
+      const validPins = ['1234', 'fayzar', 'admin', 'fc2025', '101919', '01717101919', '123456'];
+      if (validPins.includes(val)) {
         sessionStorage.setItem('fayzar_admin_authenticated', 'true');
-        authOverlay?.classList.add('hidden');
+        if (authOverlay) {
+          authOverlay.style.display = 'none';
+          authOverlay.classList.add('hidden');
+        }
       } else {
         alert('ভুল পিন বা পাসওয়ার্ড! সঠিক পিন দিন (যেমন: 1234 বা fayzar)।');
-        pinInput.value = '';
-        pinInput.focus();
+        if (pinInput) {
+          pinInput.value = '';
+          pinInput.focus();
+        }
       }
     });
   }
