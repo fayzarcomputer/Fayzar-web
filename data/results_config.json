@@ -1,0 +1,153 @@
+{
+  "institution": {
+    "id": "dreamland-school",
+    "name_bn": "ড্রিমল্যান্ড রেসিডেন্সিয়াল মডেল স্কুল",
+    "name_en": "Dreamland Residential Model School",
+    "address_bn": "বারাই, ফুলবাড়ী, দিনাজপুর",
+    "address_en": "Barai, Phulbari, Dinajpur",
+    "eiin": "123456",
+    "estd": "2010",
+    "phone": "01712-345678",
+    "email": "dreamland@gmail.com",
+    "logo": "assets/images/school-logo.png"
+  },
+  "current_exam": {
+    "year": "2025",
+    "exam_id": "annual_2025",
+    "exam_name_bn": "বার্ষিক পরীক্ষা - ২০২৫",
+    "exam_name_en": "Annual Examination - 2025",
+    "published_date": "2025-12-31",
+    "is_published": true
+  },
+  "grading_scale": [
+    {
+      "grade": "A+",
+      "point": 5,
+      "min": 80,
+      "max": 100,
+      "remark": "Outstanding"
+    },
+    {
+      "grade": "A",
+      "point": 4,
+      "min": 70,
+      "max": 79,
+      "remark": "Excellent"
+    },
+    {
+      "grade": "A-",
+      "point": 3.5,
+      "min": 60,
+      "max": 69,
+      "remark": "Very Good"
+    },
+    {
+      "grade": "B",
+      "point": 3,
+      "min": 50,
+      "max": 59,
+      "remark": "Good"
+    },
+    {
+      "grade": "C",
+      "point": 2,
+      "min": 40,
+      "max": 49,
+      "remark": "Satisfactory"
+    },
+    {
+      "grade": "D",
+      "point": 1,
+      "min": 33,
+      "max": 39,
+      "remark": "Pass"
+    },
+    {
+      "grade": "F",
+      "point": 0,
+      "min": 0,
+      "max": 32,
+      "remark": "Failed"
+    }
+  ],
+  "classes": [
+    {
+      "id": "nursery",
+      "name_bn": "নার্সারি",
+      "name_en": "Nursery",
+      "section": ""
+    },
+    {
+      "id": "kg",
+      "name_bn": "কেজি",
+      "name_en": "KG",
+      "section": ""
+    },
+    {
+      "id": "class_1",
+      "name_bn": "১ম শ্রেণি",
+      "name_en": "Class 1",
+      "section": ""
+    },
+    {
+      "id": "class_2",
+      "name_bn": "২য় শ্রেণি",
+      "name_en": "Class 2",
+      "section": ""
+    },
+    {
+      "id": "class_3",
+      "name_bn": "৩য় শ্রেণি",
+      "name_en": "Class 3",
+      "section": ""
+    },
+    {
+      "id": "class_4",
+      "name_bn": "৪র্থ শ্রেণি",
+      "name_en": "Class 4",
+      "section": ""
+    },
+    {
+      "id": "class_5",
+      "name_bn": "৫ম শ্রেণি",
+      "name_en": "Class 5",
+      "section": ""
+    },
+    {
+      "id": "class_6_daiya",
+      "name_bn": "৬ষ্ঠ শ্রেণি (ডালিয়া)",
+      "name_en": "Class 6 (Dahlia)",
+      "section": "ডালিয়া (Dahlia)"
+    },
+    {
+      "id": "class_6_defodil",
+      "name_bn": "৬ষ্ঠ শ্রেণি (ড্যাফোডিল)",
+      "name_en": "Class 6 (Daffodil)",
+      "section": "ড্যাফোডিল (Daffodil)"
+    },
+    {
+      "id": "class_7",
+      "name_bn": "৭ম শ্রেণি",
+      "name_en": "Class 7",
+      "section": ""
+    },
+    {
+      "id": "class_8",
+      "name_bn": "৮ম শ্রেণি",
+      "name_en": "Class 8",
+      "section": ""
+    },
+    {
+      "id": "class_9",
+      "name_bn": "৯ম শ্রেণি",
+      "name_en": "Class 9",
+      "section": "বিজ্ঞান (Science)"
+    },
+    {
+      "id": "class_10",
+      "name_bn": "১০ম শ্রেণি",
+      "name_en": "Class 10",
+      "section": "বিজ্ঞান (Science)"
+    }
+  ]
+}
