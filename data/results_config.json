@@ -149,5 +149,141 @@
       "name_en": "Class 10",
       "section": "বিজ্ঞান (Science)"
     }
-  ]
+  ],
+  "institutions": [
+    {
+      "id": "dreamland-school",
+      "name_bn": "ড্রিমল্যান্ড রেসিডেন্সিয়াল মডেল স্কুল",
+      "name_en": "Dreamland Residential Model School",
+      "address_bn": "বারাই, ফুলবাড়ী, দিনাজপুর",
+      "address_en": "Barai, Phulbari, Dinajpur",
+      "established": "",
+      "classes": [
+        {
+          "id": "nursery",
+          "name_bn": "নার্সারি",
+          "name_en": "Nursery",
+          "section": ""
+        },
+        {
+          "id": "kg",
+          "name_bn": "কেজি",
+          "name_en": "KG",
+          "section": ""
+        },
+        {
+          "id": "class_1",
+          "name_bn": "১ম শ্রেণি",
+          "name_en": "Class 1",
+          "section": ""
+        },
+        {
+          "id": "class_2",
+          "name_bn": "২য় শ্রেণি",
+          "name_en": "Class 2",
+          "section": ""
+        },
+        {
+          "id": "class_3",
+          "name_bn": "৩য় শ্রেণি",
+          "name_en": "Class 3",
+          "section": ""
+        },
+        {
+          "id": "class_4",
+          "name_bn": "৪র্থ শ্রেণি",
+          "name_en": "Class 4",
+          "section": ""
+        },
+        {
+          "id": "class_5",
+          "name_bn": "৫ম শ্রেণি",
+          "name_en": "Class 5",
+          "section": ""
+        },
+        {
+          "id": "class_6_daiya",
+          "name_bn": "৬ষ্ঠ শ্রেণি (ডালিয়া)",
+          "name_en": "Class 6 (Dahlia)",
+          "section": "ডালিয়া (Dahlia)"
+        },
+        {
+          "id": "class_6_defodil",
+          "name_bn": "৬ষ্ঠ শ্রেণি (ড্যাফোডিল)",
+          "name_en": "Class 6 (Daffodil)",
+          "section": "ড্যাফোডিল (Daffodil)"
+        },
+        {
+          "id": "class_7",
+          "name_bn": "৭ম শ্রেণি",
+          "name_en": "Class 7",
+          "section": ""
+        },
+        {
+          "id": "class_8",
+          "name_bn": "৮ম শ্রেণি",
+          "name_en": "Class 8",
+          "section": ""
+        },
+        {
+          "id": "class_9",
+          "name_bn": "৯ম শ্রেণি",
+          "name_en": "Class 9",
+          "section": "বিজ্ঞান (Science)"
+        },
+        {
+          "id": "class_10",
+          "name_bn": "১০ম শ্রেণি",
+          "name_en": "Class 10",
+          "section": "বিজ্ঞান (Science)"
+        }
+      ]
+    },
+    {
+      "id": "amdungi-madrasah",
+      "name_bn": "আমডুঙ্গীহাট ঈমান উদ্দিন চৌধুরী আলিম মাদ্রাসা",
+      "name_en": "Amdungi Hat Iman Uddin Chowdhury Alim Madrasah",
+      "address_bn": "ডাকঘর: রাজারামপুর, উপজেলা: ফুলবাড়ী, জেলা: দিনাজপুর (স্থাপিত: ১৯৮৮)",
+      "address_en": "Post: Rajarampur, Upazila: Phulbari, Dist: Dinajpur (Estd: 1988)",
+      "established": "1988",
+      "classes": [
+        {
+          "id": "madrasah_class_6",
+          "name_bn": "৬ষ্ঠ শ্রেণি (দাকিল)",
+          "name_en": "Class 6 (Dakhil)",
+          "level": "dakhil",
+          "full_marks": 950
+        },
+        {
+          "id": "madrasah_class_7",
+          "name_bn": "৭ম শ্রেণি (দাকিল)",
+          "name_en": "Class 7 (Dakhil)",
+          "level": "dakhil",
+          "full_marks": 950
+        },
+        {
+          "id": "madrasah_class_8",
+          "name_bn": "৮ম শ্রেণি (দাকিল)",
+          "name_en": "Class 8 (Dakhil)",
+          "level": "dakhil",
+          "full_marks": 950
+        },
+        {
+          "id": "madrasah_class_9",
+          "name_bn": "৯ম শ্রেণি (দাকিল)",
+          "name_en": "Class 9 (Dakhil)",
+          "level": "dakhil",
+          "full_marks": 1300
+        },
+        {
+          "id": "madrasah_class_10",
+          "name_bn": "১০ম শ্রেণি (দাকিল)",
+          "name_en": "Class 10 (Dakhil)",
+          "level": "dakhil",
+          "full_marks": 1300
+        }
+      ]
+    }
+  ],
+  "active_institution_id": "dreamland-school"
 }
