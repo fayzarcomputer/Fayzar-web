@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>রেজাল্ট ম্যানেজমেন্ট ও কন্ট্রোল প্যানেল | ফয়জার কম্পিউটার</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicon & Theme -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <meta name="theme-color" content="#059669">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#059669',
+              dark: '#047857',
+              light: '#10b981',
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              900: '#064e3b'
+            }
+          },
+          fontFamily: {
+            sans: ['Hind Siliguri', 'Noto Sans Bengali', 'Outfit', 'sans-serif'],
+            display: ['Outfit', 'Hind Siliguri', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- SheetJS for Excel Reading/Writing -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* Batch Print CSS - Exactly 1 A4 Page per Student */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .no-print, header, nav, #adminAuthOverlay, #adminSidebar, #adminTabsNav, #topBar, button {
+        display: none !important;
+      }
+      #batchPrintContainer {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .batch-student-page {
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        padding: 24px !important;
+        height: 100vh !important;
+        box-sizing: border-box !important;
+      }
+      .certificate-border {
+        border: 2px double #0f172a !important;
+        padding: 16px !important;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- =========================================================================
+       ১. অ্যাডমিন অথেনটিকেশন পিন স্ক্রিন (Security PIN Overlay)
+       ========================================================================= -->
+  <div id="adminAuthOverlay" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6 text-center">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-2xl mx-auto shadow-lg shadow-emerald-500/30">
+        <i class="fas fa-lock"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">রেজাল্ট অ্যাডমিন প্যানেল</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">প্রবেশ করতে অ্যাডমিন পাসকি অথবা পিন নম্বর দিন। (ডিফল্ট: 1234 বা fayzar)</p>
+      </div>
+
+      <form id="adminPinForm" class="space-y-4">
+        <input type="password" id="adminPinInput" placeholder="পিন বা পাসওয়ার্ড দিন" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center text-lg font-mono tracking-widest text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-hidden" autofocus>
+        
+        <div class="flex items-center gap-2">
+          <a href="results.html" class="w-1/2 py-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-all flex items-center justify-center gap-1.5">
+            <i class="fas fa-arrow-left"></i> পোর্টালে ফেরত
+          </a>
+          <button type="submit" class="w-1/2 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+            <i class="fas fa-key"></i> প্রবেশ করুন
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       ২. অ্যাডমিন হেডার ও নেভিগেশন (Admin Header)
+       ========================================================================= -->
+  <header id="topBar" class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+            <i class="fas fa-sliders text-lg"></i>
+          </div>
+          <div>
+            <div class="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
+              <span>রেজাল্ট অ্যাডমিন ও পাবলিকেশন</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold">ম্যানেজার</span>
+            </div>
+            <div class="text-xs text-slate-500">ফয়জার কম্পিউটার রেজাল্ট প্রসেসিং সেন্টার</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a href="results.html" target="_blank" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100 transition-all flex items-center gap-1.5">
+            <i class="fas fa-external-link-alt"></i> লাইভ পোর্টাল
+          </a>
+          <button type="button" id="adminThemeToggleBtn" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-all cursor-pointer">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block text-amber-400"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       ৩. অ্যাডমিন মূল কার্যক্ষেত্র (Admin Workspace)
+       ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 no-print">
+
+    <!-- Admin Navigation Tabs -->
+    <div id="adminTabsNav" class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto">
+      <button type="button" data-admin-tab="batchPrintTab" class="admin-tab-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 text-white shadow-md transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i class="fas fa-print"></i> ব্যাচ প্রিন্ট ইঞ্জিন (সব মার্কশীট)
+      </button>
+      <button type="button" data-admin-tab="spreadsheetTab" class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i class="fas fa-table"></i> লাইভ মার্ক এডিটর ও স্টুডেন্ট
+      </button>
+      <button type="button" data-admin-tab="excelImportTab" class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i class="fas fa-file-excel"></i> ১-ক্লিকে এক্সেল ইমপোর্ট
+      </button>
+      <button type="button" data-admin-tab="settingsTab" class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+        <i class="fas fa-gear"></i> স্কুল ও পরীক্ষা সেটিংস
+      </button>
+    </div>
+
+    <!-- =========================================================================
+         ট্যাব ১: ব্যাচ প্রিন্ট ইঞ্জিন (Batch Marksheet Print Engine)
+         ========================================================================= -->
+    <section id="batchPrintTabContent" class="space-y-6">
+      
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fas fa-copy text-emerald-600"></i> ১-ক্লিকে ক্লাসের সকল মার্কশীট ব্যাচ প্রিন্ট
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              ওয়ার্ড মেইল-মার্জের কোনো প্রয়োজন নেই! শ্রেণি নির্বাচন করে প্রিন্ট বাটনে চাপ দিলেই পুরো ক্লাসের সব শিক্ষার্থীর মার্কশীট ধারাবাহিক A4 পৃষ্ঠায় প্রিন্ট হবে।
+            </p>
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <select id="batchClassSelect" class="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 outline-hidden">
+              <!-- Dynamically populated -->
+            </select>
+            <button type="button" id="executeBatchPrintBtn" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/20 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap">
+              <i class="fas fa-print"></i> ব্যাচ প্রিন্ট করুন (A4)
+            </button>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-200">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-check-circle text-emerald-600 text-base"></i>
+            <span>নির্বাচিত ক্লাসে সর্বমোট <strong id="batchStudentCount">০</strong> জন শিক্ষার্থীর মার্কশীট প্রিন্টের জন্য প্রস্তুত।</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview of First Few Marksheets -->
+      <div class="space-y-4">
+        <div class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+          ব্যাচ প্রিন্ট প্রিভিউ (Batch Preview):
+        </div>
+        <div id="batchPreviewGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         ট্যাব ২: লাইভ মার্ক এডিটর ও স্টুডেন্ট ম্যানেজার (Live Mark Entry)
+         ========================================================================= -->
+    <section id="spreadsheetTabContent" class="space-y-6 hidden">
+      
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">লাইভ মার্কশীট স্প্রেডশিট এডিটর</h2>
+            <p class="text-xs text-slate-500">নম্বর পরিবর্তন করার সাথে সাথেই লাইভ GPA, Grade ও মেধা স্থান স্বয়ংক্রিয়ভাবে হিসাব হবে।</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="editorClassSelect" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold focus:ring-2 focus:ring-emerald-500 outline-hidden">
+              <!-- Dynamically populated -->
+            </select>
+            <button type="button" id="addNewStudentBtn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5 cursor-pointer">
+              <i class="fas fa-user-plus text-emerald-600"></i> নতুন শিক্ষার্থী
+            </button>
+            <button type="button" id="saveEditorChangesBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+              <i class="fas fa-save"></i> পরিবর্তন সংরক্ষণ
+            </button>
+          </div>
+        </div>
+
+        <!-- Editable Grid Container -->
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 max-h-[600px]">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead id="editorTableHead" class="sticky top-0 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700 z-10">
+              <!-- Dynamically generated based on class subjects -->
+            </thead>
+            <tbody id="editorTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900 font-sans">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         ট্যাব ৩: ১-ক্লিকে এক্সেল ইমপোর্ট (Excel / CSV Importer)
+         ========================================================================= -->
+    <section id="excelImportTabContent" class="space-y-6 hidden">
+      
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fas fa-file-import text-emerald-600"></i> নতুন এক্সেল (`.xlsx`) ফাইল ইমপোর্ট করুন
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            আপনার কম্পিউটারের যেকোনো `Result Sheet.xlsx` ফাইল ড্র্যাগ অ্যান্ড ড্রপ করলেই সিস্টেম স্বয়ংক্রিয়ভাবে সব ক্লাসের ডাটা প্রসেস করে নিবে।
+          </p>
+        </div>
+
+        <!-- Drag and Drop Dropzone -->
+        <div id="excelDropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-3xl p-8 sm:p-12 text-center bg-slate-50 dark:bg-slate-800/40 transition-all cursor-pointer space-y-3">
+          <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden">
+          <div class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl mx-auto">
+            <i class="fas fa-cloud-arrow-up"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-slate-800 dark:text-slate-200">এক্সেল ফাইল এখানে টেনে আনুন বা ক্লিক করে নির্বাচন করুন</div>
+            <div class="text-xs text-slate-400 mt-0.5">সাপোর্টেড ফরম্যাট: .xlsx, .xls (Multiple Sheets Supported)</div>
+          </div>
+        </div>
+
+        <div id="importResultStatus" class="hidden p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+          <!-- Parsed summary -->
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================================================================
+         ট্যাব ৪: স্কুল ও পরীক্ষা সেটিংস (Settings & Profile)
+         ========================================================================= -->
+    <section id="settingsTabContent" class="space-y-6 hidden">
+      
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fas fa-sliders text-emerald-600"></i> প্রতিষ্ঠান ও পরীক্ষা কনফিগারেশন
+        </h2>
+
+        <form id="settingsForm" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">প্রতিষ্ঠানের নাম (বাংলা)</label>
+              <input type="text" id="cfgInstNameBn" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold outline-hidden focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">প্রতিষ্ঠানের নাম (ইংরেজি)</label>
+              <input type="text" id="cfgInstNameEn" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold outline-hidden focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">প্রতিষ্ঠানের ঠিকানা</label>
+              <input type="text" id="cfgInstAddress" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold outline-hidden focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">বর্তমান পরীক্ষার নাম</label>
+              <input type="text" id="cfgExamName" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold outline-hidden focus:ring-2 focus:ring-emerald-500">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
+            <button type="button" id="resetDefaultDataBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-all cursor-pointer">
+              <i class="fas fa-rotate-left mr-1"></i> ডিফল্ট রেজাল্ট রিসেট
+            </button>
+            <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition-all cursor-pointer">
+              <i class="fas fa-check mr-1"></i> সেটিংস সংরক্ষণ করুন
+            </button>
+          </div>
+        </form>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       ৪. ব্যাচ প্রিন্ট কন্টেইনার (প্রিন্ট দেওয়ার সময় এটি রেন্ডার হবে)
+       ========================================================================= -->
+  <div id="batchPrintContainer" class="hidden">
+    <!-- Populated with continuous A4 marksheets during print -->
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/bangla-converter-engine.js"></script>
+  <script src="js/result-engine.js"></script>
+  <script src="js/results-admin.js"></script>
+</body>
+</html>
