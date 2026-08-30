@@ -93,11 +93,15 @@ CRITICAL COMPOSITION & FORMATTING RULES:
   const savedGas = localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '';
   const hasValidConfig = Boolean(savedKey || savedGas);
 
+  const rawDemoSetting = localStorage.getItem(STORAGE_KEYS.DEMO_MODE);
+  // Default to Live mode (false) when API key is available
+  const isDemo = (rawDemoSetting === 'true');
+
   const state = {
     freeUsesCount: parseInt(localStorage.getItem(STORAGE_KEYS.FREE_COUNT) || '0', 10),
     byokApiKey: savedKey,
     gasUrl: savedGas,
-    demoMode: (localStorage.getItem(STORAGE_KEYS.DEMO_MODE) === 'true'),
+    demoMode: isDemo,
     selectedModel: localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto',
 
     filesQueue: [],
@@ -295,6 +299,10 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     if (elements.downloadBijoyDocxBtn) elements.downloadBijoyDocxBtn.addEventListener('click', () => downloadWordDocument('bijoy_docx'));
     if (elements.downloadDocxBtn) elements.downloadDocxBtn.addEventListener('click', () => downloadWordDocument('unicode_docx'));
 
+    if (elements.modeBadge) {
+      elements.modeBadge.style.cursor = 'pointer';
+      elements.modeBadge.addEventListener('click', () => toggleModal(elements.settingsModal, true));
+    }
     if (elements.openSettingsBtn) elements.openSettingsBtn.addEventListener('click', () => toggleModal(elements.settingsModal, true));
     if (elements.closeSettingsBtn) elements.closeSettingsBtn.addEventListener('click', () => toggleModal(elements.settingsModal, false));
     if (elements.saveSettingsBtn) elements.saveSettingsBtn.addEventListener('click', saveSettings);
@@ -1798,16 +1806,6 @@ ${bodyContentXml}
         elements.progressContainer.classList.remove('flex');
       }
       if (elements.convertBtnText) elements.convertBtnText.textContent = 'AI দিয়ে কনভার্ট ও ওয়ার্ড ফাইল তৈরি করুন';
-    }
-  }
-
-  function updateBadges() {
-    if (elements.modeBadge) {
-      if (state.demoMode) {
-        elements.modeBadge.textContent = 'ডেমো মোড';
-      } else if (state.byokApiKey) {
-        elements.modeBadge.textContent = 'লাইভ AI মোড';
-      }
     }
   }
 
