@@ -1,5 +1,6 @@
 /**
  * Fayzar Computer Online Result Portal - Public UI Script
+ * Multi-Institution Support (Dreamland School & Amdungi Madrasah)
  * Handles Search, Marksheet Rendering, QR Code, Tabs & Printing
  */
 
@@ -13,6 +14,7 @@
   // DOM Elements
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   const searchForm = document.getElementById('resultSearchForm');
+  const searchInstitution = document.getElementById('searchInstitution');
   const searchYear = document.getElementById('searchYear');
   const searchExam = document.getElementById('searchExam');
   const searchClass = document.getElementById('searchClass');
@@ -75,14 +77,33 @@
       allStudents = (typeof window !== 'undefined' && Array.isArray(window.DEFAULT_RESULTS_DATA)) ? window.DEFAULT_RESULTS_DATA : [];
     }
 
+    // Populate institutions in dropdown if present
+    if (searchInstitution && config && Array.isArray(config.institutions)) {
+      searchInstitution.innerHTML = '';
+      config.institutions.forEach(inst => {
+        const opt = document.createElement('option');
+        opt.value = inst.id;
+        opt.textContent = `${inst.id.includes('madrasah') ? '🕌' : '🏫'} ${inst.name_bn}`;
+        searchInstitution.appendChild(opt);
+      });
+      searchInstitution.value = config.active_institution_id || 'dreamland-school';
+    }
+
     populateClassDropdowns();
     updateInstitutionHeaders();
 
     // Check URL parameters for direct result lookup
     const urlParams = new URLSearchParams(window.location.search);
+    const qInst = urlParams.get('inst');
     const qClass = urlParams.get('class');
     const qRoll = urlParams.get('roll');
     const qYear = urlParams.get('year') || '2025';
+
+    if (qInst && searchInstitution) {
+      searchInstitution.value = qInst;
+      populateClassDropdowns();
+      updateInstitutionHeaders();
+    }
 
     if (qClass && qRoll) {
       if (searchYear) searchYear.value = qYear;
@@ -90,8 +111,9 @@
       if (searchRoll) searchRoll.value = qRoll;
       doSearch(qYear, qClass, qRoll);
     } else {
-      // Show default top student (e.g. Class 5 Roll 10 / Rank 1)
-      const defaultStudent = allStudents.find(s => s.class_id === 'class_5' && s.position === 1) || allStudents[0];
+      const inst = getActiveInstitution();
+      const instStudents = allStudents.filter(s => s.institution_id === inst.id || (!s.institution_id && inst.id === 'dreamland-school'));
+      const defaultStudent = instStudents[0];
       if (defaultStudent) {
         renderMarksheet(defaultStudent);
         if (searchClass) searchClass.value = defaultStudent.class_id;
@@ -99,7 +121,7 @@
       }
     }
 
-    renderTabulation(tabulationClassSelect?.value || 'class_5');
+    renderTabulation(tabulationClassSelect?.value);
     renderAnalytics();
   }
 
@@ -122,22 +144,37 @@
     });
   }
 
+  function getActiveInstitution() {
+    const selectedId = searchInstitution?.value || config?.active_institution_id || 'dreamland-school';
+    if (config && Array.isArray(config.institutions)) {
+      const found = config.institutions.find(i => i.id === selectedId);
+      if (found) return found;
+    }
+    return config?.institution || {
+      id: "dreamland-school",
+      name_bn: "ড্রিমল্যান্ড রেসিডেন্সিয়াল মডেল স্কুল",
+      name_en: "Dreamland Residential Model School",
+      address_bn: "বারাই, ফুলবাড়ী, দিনাজপুর",
+      classes: config?.classes || []
+    };
+  }
+
   function updateInstitutionHeaders() {
-    if (!config || !config.institution) return;
-    const inst = config.institution;
+    const inst = getActiveInstitution();
     if (heroInstName) heroInstName.textContent = inst.name_bn;
     if (msInstNameBn) msInstNameBn.textContent = inst.name_bn;
-    if (msInstNameEn) msInstNameEn.textContent = inst.name_en;
-    if (msInstAddress) msInstAddress.textContent = inst.address_bn;
+    if (msInstNameEn) msInstNameEn.textContent = inst.name_en || '';
+    if (msInstAddress) msInstAddress.textContent = inst.address_bn || '';
     if (msExamName && config.current_exam) msExamName.textContent = config.current_exam.exam_name_bn;
   }
 
   function populateClassDropdowns() {
-    if (!config || !Array.isArray(config.classes)) return;
+    const inst = getActiveInstitution();
+    const classes = inst.classes || [];
 
     if (searchClass) {
       searchClass.innerHTML = '<option value="">-- শ্রেণি নির্বাচন করুন --</option>';
-      config.classes.forEach(c => {
+      classes.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = `${c.name_bn} ${c.section ? '(' + c.section + ')' : ''}`;
@@ -147,17 +184,35 @@
 
     if (tabulationClassSelect) {
       tabulationClassSelect.innerHTML = '';
-      config.classes.forEach(c => {
+      classes.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = `${c.name_bn} ${c.section ? '(' + c.section + ')' : ''}`;
         tabulationClassSelect.appendChild(opt);
       });
-      tabulationClassSelect.value = 'class_5';
+      if (classes.length > 0) {
+        tabulationClassSelect.value = classes[0].id;
+      }
     }
   }
 
   function bindEvents() {
+    // Institution Change
+    searchInstitution?.addEventListener('change', () => {
+      updateInstitutionHeaders();
+      populateClassDropdowns();
+      const inst = getActiveInstitution();
+      const instStudents = allStudents.filter(s => s.institution_id === inst.id || (!s.institution_id && inst.id === 'dreamland-school'));
+      const defaultStudent = instStudents[0];
+      if (defaultStudent) {
+        renderMarksheet(defaultStudent);
+        if (searchClass) searchClass.value = defaultStudent.class_id;
+        if (searchRoll) searchRoll.value = String(defaultStudent.roll);
+      }
+      renderTabulation(tabulationClassSelect?.value);
+      renderAnalytics();
+    });
+
     // Search Form Submit
     searchForm?.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -182,7 +237,7 @@
     // Reset Form
     resetSearchBtn?.addEventListener('click', () => {
       searchForm.reset();
-      searchClass.value = '';
+      if (searchClass) searchClass.value = '';
     });
 
     // Tab Switching
@@ -205,7 +260,7 @@
         if (targetTab === 'marksheetTab') marksheetTabContent?.classList.remove('hidden');
         if (targetTab === 'tabulationTab') {
           tabulationTabContent?.classList.remove('hidden');
-          renderTabulation(tabulationClassSelect?.value || 'class_5');
+          renderTabulation(tabulationClassSelect?.value);
         }
         if (targetTab === 'analyticsTab') {
           analyticsTabContent?.classList.remove('hidden');
@@ -231,7 +286,8 @@
     // Share Link Copy
     copyResultLinkBtn?.addEventListener('click', () => {
       if (!currentStudent) return;
-      const url = `${window.location.origin}${window.location.pathname}?year=${currentStudent.year}&class=${currentStudent.class_id}&roll=${currentStudent.roll}`;
+      const inst = getActiveInstitution();
+      const url = `${window.location.origin}${window.location.pathname}?inst=${inst.id}&year=${currentStudent.academic_year || 2025}&class=${currentStudent.class_id}&roll=${currentStudent.roll}`;
       navigator.clipboard.writeText(url).then(() => {
         const originalText = copyResultLinkBtn.innerHTML;
         copyResultLinkBtn.innerHTML = '<i class="fas fa-check text-emerald-500"></i> লিঙ্ক কপি হয়েছে!';
@@ -251,13 +307,15 @@
       return;
     }
 
+    const inst = getActiveInstitution();
     const student = allStudents.find(s => 
+      (s.institution_id === inst.id || (!s.institution_id && inst.id === 'dreamland-school')) &&
       s.class_id === classId && 
       (s.roll === rollNum || String(s.roll) === String(rollStr))
     );
 
     if (!student) {
-      alert(`রোল ${rollStr} এর জন্য কোনো ফলাফল পাওয়া যায়নি। অনুগ্রহ করে শ্রেণি ও রোল নম্বর পুনরায় যাচাই করুন।`);
+      alert(`রোল ${rollStr} এর জন্য কোনো ফলাফল পাওয়া যায়নি। অনুগ্রহ করে প্রতিষ্ঠান, শ্রেণি ও রোল নম্বর পুনরায় যাচাই করুন।`);
       return;
     }
 
@@ -278,6 +336,12 @@
     if (!student) return;
     currentStudent = student;
 
+    // Auto sync header to student's institution
+    if (student.institution_name_bn) {
+      if (msInstNameBn) msInstNameBn.textContent = student.institution_name_bn;
+      if (heroInstName) heroInstName.textContent = student.institution_name_bn;
+    }
+
     if (activeResultTitle) {
       activeResultTitle.textContent = `${student.class_name_bn} | রোল: ${student.roll} (${student.student_name_bn})`;
     }
@@ -285,7 +349,7 @@
     if (msStudentName) msStudentName.textContent = student.student_name_bn || 'নাম উল্লেখ নেই';
     if (msRoll) msRoll.textContent = ResultEngine.toBnDigit(student.roll);
     if (msClass) msClass.textContent = student.class_name_bn;
-    if (msSection) msSection.textContent = student.section || 'সাধারণ';
+    if (msSection) msSection.textContent = student.group_bn ? `${student.group_bn} বিভাগ` : (student.section_bn || 'সাধারণ');
     if (msFatherName) msFatherName.textContent = student.father_name_bn || '--';
     if (msMotherName) msMotherName.textContent = student.mother_name_bn || '--';
     if (msDob) msDob.textContent = student.dob || '--';
@@ -328,19 +392,21 @@
       student.subjects.forEach((sub, idx) => {
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors';
-        const isF = sub.grade === 'F';
+        const isF = sub.grade === 'F' || sub.letter_grade === 'F';
+        const subGrade = sub.grade || sub.letter_grade || 'D';
+        const subPoint = sub.point !== undefined ? sub.point : (sub.grade_point !== undefined ? sub.grade_point : 1.0);
         
         tr.innerHTML = `
           <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700/80 text-center font-mono text-slate-500">${idx + 1}</td>
           <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700/80 font-medium">
             <span class="text-slate-900 dark:text-slate-100 font-bold">${sub.name_bn}</span>
             ${sub.is_optional ? '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded-sm bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-semibold">৪র্থ বিষয়</span>' : ''}
-            <span class="block text-[11px] text-slate-400 font-sans">${sub.name_en}</span>
+            ${sub.code ? `<span class="ml-1 text-[10px] text-slate-400">(${sub.code})</span>` : ''}
           </td>
           <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700/80 text-center font-mono text-slate-600 dark:text-slate-300">${ResultEngine.toBnDigit(sub.full_marks)}</td>
           <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700/80 text-center font-mono font-bold ${isF ? 'text-rose-600 dark:text-rose-400' : 'text-slate-800 dark:text-slate-100'}">${ResultEngine.toBnDigit(sub.marks_obtained)}</td>
-          <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700/80 text-center font-bold ${isF ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400'}">${sub.grade}</td>
-          <td class="py-2.5 px-3 text-center font-mono font-bold ${isF ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}">${ResultEngine.formatGpa(sub.point)}</td>
+          <td class="py-2.5 px-3 border-r border-slate-200 dark:border-slate-700/80 text-center font-bold ${isF ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400'}">${subGrade}</td>
+          <td class="py-2.5 px-3 text-center font-mono font-bold ${isF ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}">${ResultEngine.formatGpa(subPoint)}</td>
         `;
         msSubjectsTableBody.appendChild(tr);
       });
@@ -354,7 +420,8 @@
 
     // QR Code
     if (msQrCodeBox) {
-      const verifyUrl = `${window.location.origin}${window.location.pathname}?year=${student.year}&class=${student.class_id}&roll=${student.roll}`;
+      const inst = getActiveInstitution();
+      const verifyUrl = `${window.location.origin}${window.location.pathname}?inst=${inst.id}&year=${student.academic_year || 2025}&class=${student.class_id}&roll=${student.roll}`;
       msQrCodeBox.innerHTML = ResultEngine.generateVerificationQrSvg(verifyUrl, 80);
     }
   }
@@ -371,7 +438,11 @@
 
   function renderTabulation(classId) {
     if (!tabulationTableBody) return;
-    const classStudents = allStudents.filter(s => s.class_id === classId);
+    const inst = getActiveInstitution();
+    const classStudents = allStudents.filter(s => 
+      (s.institution_id === inst.id || (!s.institution_id && inst.id === 'dreamland-school')) &&
+      s.class_id === classId
+    );
 
     // Sort by position
     classStudents.sort((a, b) => (a.position || 999) - (b.position || 999));
@@ -432,7 +503,9 @@
   }
 
   function renderAnalytics() {
-    const stats = ResultEngine.getClassAnalytics(allStudents);
+    const inst = getActiveInstitution();
+    const instStudents = allStudents.filter(s => s.institution_id === inst.id || (!s.institution_id && inst.id === 'dreamland-school'));
+    const stats = ResultEngine.getClassAnalytics(instStudents);
     
     const statTotal = document.getElementById('statTotalStudents');
     const statPassed = document.getElementById('statPassedStudents');
