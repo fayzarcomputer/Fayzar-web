@@ -375,13 +375,13 @@
             <!-- =================================================================
                  সাব-প্যানেল ১: সার্বজনীন ৩-ধাপ স্মার্ট কনভার্টার উইজার্ড
                  ================================================================= -->
-            <div id="wizard-subpanel-file" class="space-y-5">
+            <div id="wizard-subpanel-file" class="space-y-5 min-h-[380px] sm:min-h-[420px] flex flex-col justify-center">
 
               <!-- ================= ধাপ ১: সার্বজনীন অল-ইন-ওয়ান ড্রপজোন ================= -->
-              <div id="wizard-step-1" class="space-y-4">
+              <div id="wizard-step-1" class="space-y-4 flex-1 flex flex-col justify-center">
                 
                 <!-- Clean Modern Dropzone Box -->
-                <div id="wizardDropZone" class="border-2 border-dashed border-emerald-400/90 dark:border-emerald-500/70 hover:border-emerald-500 rounded-3xl p-8 sm:p-12 text-center cursor-pointer bg-gradient-to-b from-emerald-50/40 via-white to-teal-50/20 dark:from-[#162238]/90 dark:via-[#131d31] dark:to-[#162238]/60 hover:bg-emerald-50/60 dark:hover:bg-[#1a2b47] transition-all shadow-inner group relative">
+                <div id="wizardDropZone" class="min-h-[380px] sm:min-h-[420px] flex flex-col items-center justify-center border-2 border-dashed border-emerald-400/90 dark:border-emerald-500/70 hover:border-emerald-500 rounded-3xl p-8 sm:p-12 text-center cursor-pointer bg-gradient-to-b from-emerald-50/40 via-white to-teal-50/20 dark:from-[#162238]/90 dark:via-[#131d31] dark:to-[#162238]/60 hover:bg-emerald-50/60 dark:hover:bg-[#1a2b47] transition-all shadow-inner group relative">
                   <input type="file" id="wizardFileInput" accept=".docx,.doc,.xlsx,.xls,.pptx,.ppt,.pdf,image/png,image/jpeg,image/webp,image/jpg" multiple class="hidden">
                   
                   <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-indigo-600 text-white flex items-center justify-center text-2xl sm:text-3xl mx-auto mb-3.5 shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform duration-300">
@@ -421,7 +421,7 @@
               </div>
 
               <!-- ================= ধাপ ২: অটো-ডিটেকশন ও স্মার্ট অপশন কার্ড ================= -->
-              <div id="wizard-step-2" class="hidden space-y-5 animate-fade-in">
+              <div id="wizard-step-2" class="hidden space-y-5 animate-fade-in min-h-[380px] sm:min-h-[420px] flex-col justify-between">
                 
                 <!-- File Overview Banner -->
                 <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 rounded-3xl p-5 sm:p-6 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -646,23 +646,85 @@
               </div>
 
               <!-- ================= ধাপ ৩: প্রগ্রেস ও রেজাল্ট হাব ================= -->
-              <div id="wizard-step-3" class="hidden space-y-5 animate-fade-in">
+              <div id="wizard-step-3" class="hidden space-y-5 animate-fade-in min-h-[380px] sm:min-h-[420px] flex flex-col justify-center">
                 
-                <!-- Progress Card -->
-                <div id="wizardProgressCard" class="hidden p-6 sm:p-8 rounded-3xl bg-slate-50 dark:bg-[#162238] border border-slate-200 dark:border-slate-700 text-xs shadow-md space-y-3">
-                  <div class="flex items-center justify-between text-slate-700 dark:text-slate-300 font-bold">
-                    <span id="wizardProgressStatus" class="flex items-center gap-2 text-sm sm:text-base font-black">
-                      <i class="fa-solid fa-spinner fa-spin text-emerald-600 text-lg"></i> <span id="wizardProgressTitle">প্রসেসিং চলছে...</span>
-                    </span>
-                    <span id="wizardProgressPctText" class="text-emerald-600 dark:text-emerald-400 font-mono font-black text-base">40%</span>
+                <!-- High-Tech Animated Progress Card (Full Height & Visual Polish) -->
+                <div id="wizardProgressCard" class="hidden min-h-[380px] sm:min-h-[420px] p-6 sm:p-10 rounded-3xl bg-gradient-to-b from-slate-50 via-white to-emerald-50/20 dark:from-[#162238] dark:via-[#131d31] dark:to-[#162238] border border-slate-200/80 dark:border-slate-700/80 shadow-xl flex flex-col items-center justify-center text-center relative overflow-hidden">
+                  
+                  <!-- Background Ambient Glow -->
+                  <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                  <!-- Central Orbital Scanner Graphic -->
+                  <div class="relative w-24 h-24 sm:w-28 sm:h-28 mb-5 flex items-center justify-center">
+                    <!-- Outer pulsating waves -->
+                    <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-emerald-500/20 via-teal-500/30 to-indigo-500/20 animate-ping opacity-50 pointer-events-none"></div>
+                    <div class="absolute -inset-2 rounded-full bg-gradient-to-r from-emerald-500/20 to-indigo-500/20 blur-xl pointer-events-none"></div>
+                    
+                    <!-- Orbital dashed rotating ring -->
+                    <div class="absolute inset-0 rounded-full border-2 border-dashed border-emerald-500/60 dark:border-emerald-400/70 animate-spin" style="animation-duration: 9s;"></div>
+                    
+                    <!-- Inner counter-rotating gradient arc ring -->
+                    <div class="absolute inset-2 rounded-full border-2 border-t-emerald-500 border-r-teal-400 border-b-indigo-500 border-l-transparent animate-spin" style="animation-duration: 3s; animation-direction: reverse;"></div>
+                    
+                    <!-- Central floating icon badge with laser scanner -->
+                    <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-emerald-600 via-teal-600 to-indigo-600 text-white flex items-center justify-center text-2xl sm:text-3xl shadow-xl shadow-emerald-500/30 overflow-hidden">
+                      <i class="fa-solid fa-file-invoice"></i>
+                      <!-- Laser Scanner Line -->
+                      <div class="absolute inset-x-0 h-1 bg-cyan-300 shadow-[0_0_10px_#22d3ee] animate-scan-laser"></div>
+                    </div>
                   </div>
-                  <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                    <div id="wizardProgressBar" class="bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-600 h-2.5 rounded-full transition-all duration-300 w-1/3"></div>
+
+                  <!-- Title & Dynamic Subtitle -->
+                  <div class="space-y-1 mb-5 max-w-lg">
+                    <h3 id="wizardProgressTitle" class="text-base sm:text-xl font-black text-slate-800 dark:text-white tracking-tight">
+                      Gemini AI দিয়ে রূপান্তর হচ্ছে...
+                    </h3>
+                    <p id="wizardProgressSubtext" class="text-xs text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
+                      ডকুমেন্টের টেক্সট, টেবিল, গণিত সমীকরণ ও যুক্তবর্ণ সুচারুভাবে বিশ্লেষণ করা হচ্ছে
+                    </p>
                   </div>
+
+                  <!-- 4-Step Animated Pipeline Workflow -->
+                  <div class="w-full max-w-xl grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5 text-[11px] font-bold">
+                    <div id="pipeStep1" class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 flex items-center justify-center gap-1.5 shadow-2xs transition-all">
+                      <i class="fa-solid fa-circle-check text-emerald-600"></i> ১. ফাইল পার্সিং
+                    </div>
+                    <div id="pipeStep2" class="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800 flex items-center justify-center gap-1.5 shadow-2xs transition-all animate-pulse">
+                      <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> ২. AI OCR বিশ্লেষণ
+                    </div>
+                    <div id="pipeStep3" class="p-2 rounded-xl bg-slate-100 dark:bg-[#1a263d] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5 transition-all">
+                      <i class="fa-solid fa-square-root-variable text-amber-500"></i> ৩. সমীকরণ ও বিজয়
+                    </div>
+                    <div id="pipeStep4" class="p-2 rounded-xl bg-slate-100 dark:bg-[#1a263d] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5 transition-all">
+                      <i class="fa-solid fa-file-word text-blue-500"></i> ৪. ওয়ার্ড প্রস্তুত
+                    </div>
+                  </div>
+
+                  <!-- Shimmer Progress Bar & Percent Counter -->
+                  <div class="w-full max-w-xl space-y-2">
+                    <div class="flex items-center justify-between text-xs font-black text-slate-700 dark:text-slate-300">
+                      <span id="wizardProgressStatus" class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> প্রসেসিং চলছে...
+                      </span>
+                      <span id="wizardProgressPctText" class="font-mono font-black text-sm sm:text-base text-emerald-600 dark:text-emerald-400">৪৫%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 p-0.5 overflow-hidden shadow-inner">
+                      <div id="wizardProgressBar" class="bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-600 h-2 rounded-full transition-all duration-300 w-2/5 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/40 animate-progress-shimmer"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Helpful Waiting Note -->
+                  <div class="mt-5 p-2.5 px-4 rounded-xl bg-white/80 dark:bg-[#1a263d]/80 border border-slate-200 dark:border-slate-700/80 text-[11px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-2 max-w-md mx-auto shadow-2xs">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-xs flex-shrink-0 animate-bounce"></i>
+                    <span>সমীকরণ ও জটিল যুক্তবর্ণ নির্ভুল করতে কয়েক সেকেন্ড সময় লাগে, অনুগ্রহ করে অপেক্ষা করুন</span>
+                  </div>
+
                 </div>
 
                 <!-- Comprehensive Unified Result Card -->
-                <div id="wizardResultCard" class="hidden bg-gradient-to-br from-emerald-500/10 via-teal-500/10 to-indigo-500/10 dark:from-emerald-950/40 dark:via-teal-950/40 dark:to-indigo-950/40 p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/50 dark:border-emerald-500/60 flex-col gap-6 shadow-xl">
+                <div id="wizardResultCard" class="hidden min-h-[380px] sm:min-h-[420px] bg-gradient-to-br from-emerald-500/10 via-teal-500/10 to-indigo-500/10 dark:from-emerald-950/40 dark:via-teal-950/40 dark:to-indigo-950/40 p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/50 dark:border-emerald-500/60 flex-col justify-between gap-5 shadow-xl">
                   
                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-700 pb-5">
                     <div class="flex items-center gap-3.5">
