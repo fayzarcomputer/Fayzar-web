@@ -1731,16 +1731,16 @@ function initToolsIfPresent() {
     });
   });
 
-  // Read URL query parameter: ?tab=resizer/text/age/land/ai-ocr (Defaults to 'text'!)
-  // If ?tab=math is passed, gracefully map to 'text' for unified converter
+  // Read URL query parameter: ?tab=resizer/text/age/land/ai-ocr
   const urlParams = new URLSearchParams(window.location.search);
   let activeTabParam = urlParams.get('tab');
   if (activeTabParam === 'math') activeTabParam = 'text';
   if (activeTabParam === 'ocr') activeTabParam = 'ai-ocr';
+  const defaultTab = document.getElementById('panel-text') ? 'text' : 'resizer';
   if (activeTabParam && ['resizer', 'text', 'age', 'land', 'ai-ocr'].includes(activeTabParam)) {
     switchToolTab(activeTabParam);
   } else {
-    switchToolTab('text');
+    switchToolTab(defaultTab);
   }
 
   // --- Tool 1: Photo & Signature Resizer ---
