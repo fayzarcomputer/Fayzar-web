@@ -151,6 +151,9 @@
         <a href="index.html" class="px-3.5 py-2 rounded-xl hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
           <i class="fas fa-home"></i> হোম
         </a>
+        <a href="converter.html" class="px-3.5 py-2 rounded-xl hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
+          <i class="fas fa-wand-magic-sparkles text-amber-500"></i> ফয়জার কনভার্টার
+        </a>
         <a href="notices.html" class="px-3.5 py-2 rounded-xl hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
           <i class="fas fa-bullhorn text-blue-500"></i> নোটিশ
         </a>
@@ -163,7 +166,7 @@
           <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-black">নতুন</span>
         </a>
         <a href="tools.html" class="px-3.5 py-2 rounded-xl hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
-          <i class="fas fa-wand-magic-sparkles text-amber-500"></i> কনভার্টার ও টুলস
+          <i class="fas fa-toolbox text-emerald-600"></i> অন্যান্য টুলস
         </a>
         <a href="contact.html" class="px-3.5 py-2 rounded-xl text-white bg-emerald-600 dark:bg-emerald-600 flex items-center gap-1.5 shadow-md font-extrabold">
           <i class="fas fa-location-dot text-rose-500"></i> যোগাযোগ
@@ -176,15 +179,15 @@
 
       <!-- Day/Night & Action -->
       <div class="flex items-center gap-2">
-        <button id="theme-toggle-btn" aria-label="মোড পরিবর্তন" class="p-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 transition flex items-center justify-center shadow-xs border border-slate-300 dark:border-slate-700/60">
-          <i class="fas fa-moon text-sm dark:hidden"></i>
+        <button id="theme-toggle-btn" type="button" aria-label="ডার্ক বা লাইট মোড পরিবর্তন করুন" title="ডার্ক/লাইট মোড" class="p-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 transition flex items-center justify-center shadow-xs border border-slate-300 dark:border-slate-700/60">
+          <i class="fas fa-moon text-sm dark:hidden" aria-hidden="true"></i>
           <i class="fas fa-sun text-sm hidden dark:inline-block text-amber-400"></i>
         </button>
-        <a href="tel:01717101919" class="hidden sm:inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs sm:text-sm font-extrabold px-4 py-2 rounded-xl shadow-md transition">
-          <i class="fas fa-phone-alt"></i> <span>01717-101919</span>
+        <a href="tel:01717101919" aria-label="সরাসরি কল করুন 01717-101919 নম্বরে" class="hidden sm:inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs sm:text-sm font-extrabold px-4 py-2 rounded-xl shadow-md transition">
+          <i class="fas fa-phone-alt" aria-hidden="true"></i> <span>01717-101919</span>
         </a>
-        <button id="mobile-menu-toggle" aria-label="মেনু" class="lg:hidden p-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
-          <i class="fas fa-bars text-base"></i>
+        <button id="mobile-menu-toggle" type="button" aria-label="মোবাইল নেভিগেশন মেনু খুলুন" title="মেনু" class="lg:hidden p-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+          <i class="fas fa-bars text-base" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -193,6 +196,9 @@
     <div id="mobile-drawer" class="hidden lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-4 py-4 space-y-2 shadow-2xl">
       <a href="index.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
         <i class="fas fa-home w-5"></i> হোম
+      </a>
+      <a href="converter.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
+        <i class="fas fa-wand-magic-sparkles text-amber-500 w-5"></i> ফয়জার কনভার্টার
       </a>
       <a href="notices.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
         <i class="fas fa-bullhorn text-blue-500 w-5"></i> নোটিশ
@@ -205,7 +211,7 @@
         <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-black ml-auto">নতুন</span>
       </a>
       <a href="tools.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2">
-        <i class="fas fa-wand-magic-sparkles text-amber-500 w-5"></i> কনভার্টার ও টুলস
+        <i class="fas fa-toolbox text-emerald-600 w-5"></i> অন্যান্য টুলস
       </a>
       <a href="contact.html" class="block py-2.5 px-3 rounded-xl text-sm font-bold bg-emerald-600 text-white flex items-center gap-2">
         <i class="fas fa-location-dot text-rose-500 w-5"></i> যোগাযোগ
