@@ -564,3 +564,36 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .svc-accent-result { border-top: 4px solid #0891b2 !important; }
 .svc-accent-edu    { border-top: 4px solid #9333ea !important; }
 
+/* ==========================================================================
+   ACCESSIBILITY & MOBILE PERFORMANCE ENHANCEMENTS
+   ========================================================================== */
+
+/* Enhanced focus indicators for keyboard navigation */
+:focus-visible {
+  outline: 2.5px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Hardware accelerated transitions for mobile touch & scrolls */
+.glass-header,
+.floating-cta-btn,
+.mobile-bottom-dock,
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
