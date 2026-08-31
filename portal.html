@@ -9,7 +9,7 @@
   <meta name="title" content="ডিজিটাল জব ও আবেদন পোর্টাল — ফয়জার কম্পিউটার">
   <meta name="description" content="টেলিটক ও সকল সরকারি চাকরির আবেদনে ১-ক্লিকে ফর্ম ও ছবি-স্বাক্ষর পূরণ করতে ফয়জার অটো-ফিল এক্সটেনশন ব্যবহার করুন। আপনার আবেদন তথ্য ক্লাউডে নিরাপদ রাখুন।">
   <meta name="keywords" content="চাকরির আবেদন, জব পোর্টাল, টেলিটক আবেদন, জব অটো ফিল, ফয়জার অটো-ফিল, ফয়জার কম্পিউটার, চাকরির সার্কুলার, ছবি স্বাক্ষর রিসাইজ">
-  <link rel="canonical" href="https://fayzarcomputer.com/portal.html">
+  <link rel="canonical" href="https://fayzarcomputer.com.bd/portal.html">
   <meta name="robots" content="index, follow">
 
   <!-- Favicon & Theme -->
@@ -18,19 +18,19 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://fayzarcomputer.com/portal.html">
+  <meta property="og:url" content="https://fayzarcomputer.com.bd/portal.html">
   <meta property="og:title" content="ডিজিটাল জব ও আবেদন পোর্টাল — ফয়জার কম্পিউটার">
   <meta property="og:description" content="টেলিটক ও সকল সরকারি চাকরির আবেদনে ১-ক্লিকে ফর্ম ও ছবি-স্বাক্ষর পূরণ করতে ফয়জার অটো-ফিল এক্সটেনশন ব্যবহার করুন।">
-  <meta property="og:image" content="https://fayzarcomputer.com/assets/og-preview.jpg">
+  <meta property="og:image" content="https://fayzarcomputer.com.bd/assets/og-preview.jpg">
   <meta property="og:locale" content="bn_BD">
   <meta property="og:site_name" content="ফয়জার কম্পিউটার">
 
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://fayzarcomputer.com/portal.html">
+  <meta name="twitter:url" content="https://fayzarcomputer.com.bd/portal.html">
   <meta name="twitter:title" content="ডিজিটাল জব ও আবেদন পোর্টাল — ফয়জার কম্পিউটার">
   <meta name="twitter:description" content="টেলিটক ও সরকারি চাকরির আবেদনে ফয়জার অটো-ফিল এক্সটেনশন ও ক্লাউড প্রোফাইল।">
-  <meta name="twitter:image" content="https://fayzarcomputer.com/assets/og-preview.jpg">
+  <meta name="twitter:image" content="https://fayzarcomputer.com.bd/assets/og-preview.jpg">
 
   <!-- Google Fonts (unified Bengali + Latin typography) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -699,7 +699,7 @@
             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2 text-center">
               <label class="block font-bold text-slate-700 dark:text-slate-300 text-xs">প্রার্থীর ছবি (৩০০x৩০০ পিক্সেল)</label>
               <div class="w-24 h-24 mx-auto bg-slate-200 dark:bg-slate-700 rounded-xl border border-dashed border-slate-400 overflow-hidden flex items-center justify-center">
-                <img id="pf-photo-preview" class="w-full h-full object-cover hidden">
+                <img id="pf-photo-preview" class="w-full h-full object-cover hidden" alt="Fayzar Computer">
                 <i id="pf-photo-placeholder" class="fas fa-user text-2xl text-slate-400"></i>
               </div>
               <input type="file" id="pf-photo-file" accept="image/*" class="text-[11px] file:mr-2 file:py-1 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer">
@@ -711,7 +711,7 @@
             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2 text-center">
               <label class="block font-bold text-slate-700 dark:text-slate-300 text-xs">প্রার্থীর স্বাক্ষর (৩০০x৮০ পিক্সেল)</label>
               <div class="w-36 h-14 mx-auto bg-slate-200 dark:bg-slate-700 rounded-xl border border-dashed border-slate-400 overflow-hidden flex items-center justify-center">
-                <img id="pf-sig-preview" class="w-full h-full object-contain hidden">
+                <img id="pf-sig-preview" class="w-full h-full object-contain hidden" alt="Fayzar Computer">
                 <i id="pf-sig-placeholder" class="fas fa-signature text-xl text-slate-400"></i>
               </div>
               <input type="file" id="pf-sig-file" accept="image/*" class="text-[11px] file:mr-2 file:py-1 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer">
@@ -869,8 +869,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/fayzar-firebase-client.js"></script>
-  <script src="js/portal.js"></script>
+  <script src="js/fayzar-firebase-client.js" defer></script>
+  <script src="js/portal.js" defer></script>
   <script>
     // Shop open/closed status badge
     (function initPortalShopStatus() {
