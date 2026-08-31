@@ -108,7 +108,7 @@
   <!-- Google Fonts (unified Bengali + Latin typography) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS CDN (unified config) -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -134,7 +134,8 @@
   </script>
 
   <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
   <!-- Custom Modern Design System -->
   <link rel="stylesheet" href="css/style.css">
@@ -161,7 +162,7 @@
     <div class="container mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-2">
       <!-- Live Status Badge -->
       <div class="flex items-center gap-2">
-        <div id="shop-status-badge" class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+        <div id="shop-status-badge" class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 min-w-[130px]">
           <span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> লোড হচ্ছে...
         </div>
         <span class="text-slate-300 hidden md:inline text-[11px]">| ফুলবাড়ী সরকারি কলেজ গেটের পশ্চিম পার্শ্বে, দিনাজপুর</span>
@@ -330,7 +331,7 @@
           </div>
           <input 
             type="text" 
-            id="hero-live-search" 
+            id="hero-live-search" aria-label="সেবা বা নোটিশ অনুসন্ধান" 
             placeholder="যেকোনো সেবা বা নোটিশ খুঁজুন (যেমন: নামজারি, ছবি রিসাইজ, চাকরি সার্কুলার...)" 
             class="w-full text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold placeholder:text-slate-400 bg-transparent focus:outline-none py-2.5 px-1"
           >
@@ -379,7 +380,7 @@
         </div>
 
         <!-- Notices Cards Grid (Compact & High Contrast) -->
-        <div id="home-notices-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 transition-all duration-300">
+        <div id="home-notices-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 transition-all duration-300 min-h-[160px]">
           <!-- Dynamically rendered via main.js with compact cards -->
         </div>
 
@@ -451,7 +452,7 @@
         </div>
 
         <!-- Result Box populated dynamically by main.js -->
-        <div id="calc-result-display" class="fade-in"></div>
+        <div id="calc-result-display" class="fade-in min-h-[140px]"></div>
       </div>
 
       <div class="mt-4 text-center text-xs text-slate-500 dark:text-slate-400 font-semibold flex items-center justify-center gap-1.5">
@@ -506,7 +507,7 @@
         <div class="relative w-full lg:w-80">
           <input 
             type="text" 
-            id="home-service-search-input" 
+            id="home-service-search-input" aria-label="সেবা খুঁজুন" 
             placeholder="পদ, সেবা বা বিষয়ের নাম দিয়ে খুঁজুন..." 
             class="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 rounded-2xl text-xs font-bold focus:outline-none focus:border-emerald-500 text-slate-800 dark:text-slate-100 shadow-inner"
           >
@@ -887,15 +888,15 @@
         <form id="contactFeedbackForm" class="space-y-4 text-xs">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <div>
-              <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">আপনার নাম *</label>
+              <label for="contactFbUserName" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">আপনার নাম *</label>
               <input type="text" id="contactFbUserName" required placeholder="উদাঃ মোঃ রফিকুল ইসলাম" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl font-bold text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500 shadow-inner">
             </div>
             <div>
-              <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">মোবাইল বা ইমেইল *</label>
+              <label for="contactFbUserContact" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">মোবাইল বা ইমেইল *</label>
               <input type="text" id="contactFbUserContact" required placeholder="উদাঃ 017xxxxxxxx বা ইমেইল" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl font-bold text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500 shadow-inner">
             </div>
             <div>
-              <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">সেবার বিষয় / ক্যাটাগরি</label>
+              <label for="contactFbCategory" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">সেবার বিষয় / ক্যাটাগরি</label>
               <select id="contactFbCategory" class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl font-bold text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500 shadow-inner">
                 <option value="ডিজিটাল ভূমিসেবা">ডিজিটাল ভূমিসেবা (নামজারি, খাজনা)</option>
                 <option value="সরকারি চাকরির আবেদন">সরকারি চাকরির আবেদন ও সার্কুলার</option>
@@ -907,7 +908,7 @@
           </div>
 
           <div>
-            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">আপনার মূল্যবান মন্তব্য, অভিজ্ঞতা বা পরামর্শ *</label>
+            <label for="contactFbUserMessage" class="block font-bold text-slate-700 dark:text-slate-300 mb-1">আপনার মূল্যবান মন্তব্য, অভিজ্ঞতা বা পরামর্শ *</label>
             <textarea id="contactFbUserMessage" rows="3" required placeholder="আপনার সেবাপ্রাপ্তির অভিজ্ঞতা কেমন ছিল বা সেবার মান আরও উন্নত করতে কী পরামর্শ দিতে চান বিস্তারিত লিখুন..." class="w-full p-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl font-medium text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500 resize-none shadow-inner"></textarea>
           </div>
 
