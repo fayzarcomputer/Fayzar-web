@@ -1,9 +1,9 @@
 /* ==========================================================================
    Fayzar Computer & Digital Center - Design System
-   Version: 4.0 (Unified Design Tokens, Modern Emerald Brand, Consistent Surfaces)
+   Version: 4.1 (SEO-Optimized, Floating CTA, Performance-Tuned)
+   NOTE: Google Fonts loaded via <link> in HTML <head> (no @import to avoid
+   double-load and render-blocking penalty). Do NOT re-add @import here.
    ========================================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @font-face {
   font-family: 'SutonnyMJ';
@@ -323,3 +323,244 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ==========================================================================
+   FLOATING CTA BUTTONS (WhatsApp + Call Stack)
+   Fixed bottom-right corner. Hidden on mobile (<1024px) because the
+   mobile bottom-nav-bar already provides WhatsApp access.
+   ========================================================================== */
+.floating-cta-stack {
+  position: fixed;
+  bottom: 2rem;
+  right: 1.5rem;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  /* Hidden on mobile — mobile nav bar covers this */
+  display: none;
+}
+
+/* Show only on large screens (desktop/tablet) */
+@media (min-width: 1024px) {
+  .floating-cta-stack {
+    display: flex;
+  }
+}
+
+/* Base button style */
+.floating-cta-btn {
+  position: relative;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.375rem;
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  cursor: pointer;
+}
+
+.floating-cta-btn:hover {
+  transform: scale(1.12) translateY(-2px);
+}
+
+/* WhatsApp button — green */
+.floating-cta-btn.whatsapp-btn {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  box-shadow: 0 6px 20px -4px rgba(37, 211, 102, 0.55);
+  animation: floatPulseGreen 3s ease-in-out infinite;
+}
+.floating-cta-btn.whatsapp-btn:hover {
+  box-shadow: 0 10px 30px -4px rgba(37, 211, 102, 0.7);
+}
+
+/* Call button — emerald/teal */
+.floating-cta-btn.call-btn {
+  background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  box-shadow: 0 6px 20px -4px rgba(5, 150, 105, 0.5);
+  animation: floatPulseEmerald 3s ease-in-out infinite 1.5s;
+}
+.floating-cta-btn.call-btn:hover {
+  box-shadow: 0 10px 30px -4px rgba(5, 150, 105, 0.65);
+}
+
+/* Tooltip (appears to the left on hover) */
+.cta-tooltip {
+  position: absolute;
+  right: calc(100% + 0.65rem);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.6rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  transform: translateY(-50%) translateX(6px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.cta-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-left-color: rgba(15, 23, 42, 0.92);
+}
+
+.floating-cta-btn:hover .cta-tooltip,
+.floating-cta-btn:focus .cta-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Pulse glow animations */
+@keyframes floatPulseGreen {
+  0%, 100% {
+    box-shadow: 0 6px 20px -4px rgba(37, 211, 102, 0.55);
+  }
+  50% {
+    box-shadow: 0 6px 28px -2px rgba(37, 211, 102, 0.8), 0 0 0 6px rgba(37, 211, 102, 0.12);
+  }
+}
+
+@keyframes floatPulseEmerald {
+  0%, 100% {
+    box-shadow: 0 6px 20px -4px rgba(5, 150, 105, 0.5);
+  }
+  50% {
+    box-shadow: 0 6px 28px -2px rgba(5, 150, 105, 0.75), 0 0 0 6px rgba(5, 150, 105, 0.1);
+  }
+}
+
+/* Dark mode adjustments */
+.dark .cta-tooltip {
+  background: rgba(241, 245, 249, 0.95);
+  color: #0f172a;
+  border-color: rgba(0,0,0,0.1);
+}
+.dark .cta-tooltip::after {
+  border-left-color: rgba(241, 245, 249, 0.95);
+}
+
+/* ==========================================================================
+   STATIC SERVICE CARDS (SEO-friendly no-JS fallback)
+   These are shown immediately by default; JS replaces them once loaded.
+   ========================================================================== */
+.svc-static-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .svc-static-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .svc-static-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.svc-static-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+.svc-static-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.svc-static-card__icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.375rem;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.svc-static-card__title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-heading);
+  margin-bottom: 0.35rem;
+}
+
+.svc-static-card__desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 0.85rem;
+}
+
+.svc-static-card__checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.svc-static-card__checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  color: var(--text-body);
+  line-height: 1.45;
+}
+
+.svc-static-card__checklist li::before {
+  content: '✓';
+  color: var(--primary);
+  font-weight: 900;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.svc-static-card__checklist-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+/* Card accent borders (top stripe) */
+.svc-accent-job    { border-top: 4px solid #d97706 !important; }
+.svc-accent-land   { border-top: 4px solid #059669 !important; }
+.svc-accent-print  { border-top: 4px solid #7c3aed !important; }
+.svc-accent-photo  { border-top: 4px solid #2563eb !important; }
+.svc-accent-result { border-top: 4px solid #0891b2 !important; }
+.svc-accent-edu    { border-top: 4px solid #9333ea !important; }
+
