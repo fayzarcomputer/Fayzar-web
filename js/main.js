@@ -1661,98 +1661,92 @@ document.getElementById('notice-modal-close')?.addEventListener('click', () => {
 });
 
 // =========================================================================
-// ৭. স্মার্ট টুলস স্যুট কন্ট্রোলার (tools.html)
+// ৭. স্মার্ট টুলস স্যুট ও সার্বজনীন কনভার্টার কন্ট্রোলার
 // =========================================================================
 function initToolsIfPresent() {
   const tabButtons = document.querySelectorAll('.tool-switch-btn');
-  if (!tabButtons || tabButtons.length === 0) return;
+  if (tabButtons && tabButtons.length > 0) {
+    const BASE_BTN_CLASSES = "tool-switch-btn w-10 h-10 sm:w-11 sm:h-11 lg:w-full lg:h-auto mx-auto lg:mx-0 p-0 lg:p-3 rounded-xl lg:rounded-2xl transition-all flex items-center justify-center lg:justify-between gap-3 group relative cursor-pointer";
+    const ACTIVE_CLASSES = "active shadow-md bg-emerald-600 text-white border-2 border-emerald-600 tool-featured-highlight";
+    const INACTIVE_CLASSES = "bg-white dark:bg-[#1a263d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600/80 hover:bg-slate-100 dark:hover:bg-[#23324f] shadow-2xs";
 
-  const BASE_BTN_CLASSES = "tool-switch-btn w-10 h-10 sm:w-11 sm:h-11 lg:w-full lg:h-auto mx-auto lg:mx-0 p-0 lg:p-3 rounded-xl lg:rounded-2xl transition-all flex items-center justify-center lg:justify-between gap-3 group relative cursor-pointer";
-  const ACTIVE_CLASSES = "active shadow-md bg-emerald-600 text-white border-2 border-emerald-600 tool-featured-highlight";
-  const INACTIVE_CLASSES = "bg-white dark:bg-[#1a263d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600/80 hover:bg-slate-100 dark:hover:bg-[#23324f] shadow-2xs";
+    const TAB_ICON_STYLES = {
+      'ai-ocr': {
+        active: "bg-white/25 text-white",
+        inactive: "bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"
+      },
+      text: {
+        active: "bg-white/25 text-white",
+        inactive: "bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400"
+      },
+      resizer: {
+        active: "bg-white/25 text-white",
+        inactive: "bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400"
+      },
+      age: {
+        active: "bg-white/25 text-white",
+        inactive: "bg-cyan-100 dark:bg-cyan-950 text-cyan-600 dark:text-cyan-400"
+      },
+      land: {
+        active: "bg-white/25 text-white",
+        inactive: "bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400"
+      }
+    };
 
-  const TAB_ICON_STYLES = {
-    'ai-ocr': {
-      active: "bg-white/25 text-white",
-      inactive: "bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"
-    },
-    text: {
-      active: "bg-white/25 text-white",
-      inactive: "bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400"
-    },
-    resizer: {
-      active: "bg-white/25 text-white",
-      inactive: "bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400"
-    },
-    age: {
-      active: "bg-white/25 text-white",
-      inactive: "bg-cyan-100 dark:bg-cyan-950 text-cyan-600 dark:text-cyan-400"
-    },
-    land: {
-      active: "bg-white/25 text-white",
-      inactive: "bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400"
+    function switchToolTab(tabKey) {
+      tabButtons.forEach(btn => {
+        const tab = btn.dataset.toolTab;
+        const isHighlighted = tab === 'text' || tab === 'ai-ocr';
+        const iconBadge = btn.querySelector('.tool-tab-icon-badge');
+
+        if (tab === tabKey) {
+          btn.className = `${BASE_BTN_CLASSES} ${ACTIVE_CLASSES} ${isHighlighted ? 'tool-featured-highlight' : ''}`;
+          btn.setAttribute('aria-selected', 'true');
+          if (iconBadge && TAB_ICON_STYLES[tab]) {
+            iconBadge.className = `tool-tab-icon-badge w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-xl ${TAB_ICON_STYLES[tab].active} flex items-center justify-center text-xs sm:text-sm lg:text-base flex-shrink-0 transition-colors`;
+          }
+        } else {
+          btn.className = `${BASE_BTN_CLASSES} ${INACTIVE_CLASSES}`;
+          btn.setAttribute('aria-selected', 'false');
+          if (iconBadge && TAB_ICON_STYLES[tab]) {
+            iconBadge.className = `tool-tab-icon-badge w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-xl ${TAB_ICON_STYLES[tab].inactive} flex items-center justify-center text-xs sm:text-sm lg:text-base flex-shrink-0 transition-colors`;
+          }
+        }
+      });
+
+      document.querySelectorAll('.tool-content-panel').forEach(p => p.classList.add('hidden'));
+      const targetPanel = document.getElementById(`panel-${tabKey}`);
+      if (targetPanel) {
+        targetPanel.classList.remove('hidden');
+        if (window.innerWidth < 1024) {
+          targetPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
     }
-  };
 
-  function switchToolTab(tabKey) {
     tabButtons.forEach(btn => {
-      const tab = btn.dataset.toolTab;
-      const isHighlighted = tab === 'text' || tab === 'ai-ocr';
-      const iconBadge = btn.querySelector('.tool-tab-icon-badge');
-
-      if (tab === tabKey) {
-        btn.className = `${BASE_BTN_CLASSES} ${ACTIVE_CLASSES} ${isHighlighted ? 'tool-featured-highlight' : ''}`;
-        btn.setAttribute('aria-selected', 'true');
-        if (iconBadge && TAB_ICON_STYLES[tab]) {
-          iconBadge.className = `tool-tab-icon-badge w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-xl ${TAB_ICON_STYLES[tab].active} flex items-center justify-center text-xs sm:text-sm lg:text-base flex-shrink-0 transition-colors`;
-        }
-      } else {
-        btn.className = `${BASE_BTN_CLASSES} ${INACTIVE_CLASSES}`;
-        btn.setAttribute('aria-selected', 'false');
-        if (iconBadge && TAB_ICON_STYLES[tab]) {
-          iconBadge.className = `tool-tab-icon-badge w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-xl ${TAB_ICON_STYLES[tab].inactive} flex items-center justify-center text-xs sm:text-sm lg:text-base flex-shrink-0 transition-colors`;
-        }
-      }
+      btn.addEventListener('click', () => {
+        switchToolTab(btn.dataset.toolTab);
+      });
     });
 
-    document.querySelectorAll('.tool-content-panel').forEach(p => p.classList.add('hidden'));
-    const targetPanel = document.getElementById(`panel-${tabKey}`);
-    if (targetPanel) {
-      targetPanel.classList.remove('hidden');
-      if (window.innerWidth < 1024) {
-        targetPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    // Read URL query parameter: ?tab=resizer/text/age/land/ai-ocr
+    const urlParams = new URLSearchParams(window.location.search);
+    let activeTabParam = urlParams.get('tab');
+    if (activeTabParam === 'math') activeTabParam = 'text';
+    if (activeTabParam === 'ocr') activeTabParam = 'ai-ocr';
+    const defaultTab = document.getElementById('panel-text') ? 'text' : 'resizer';
+    if (activeTabParam && ['resizer', 'text', 'age', 'land', 'ai-ocr'].includes(activeTabParam)) {
+      switchToolTab(activeTabParam);
+    } else {
+      switchToolTab(defaultTab);
     }
   }
 
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      switchToolTab(btn.dataset.toolTab);
-    });
-  });
-
-  // Read URL query parameter: ?tab=resizer/text/age/land/ai-ocr
-  const urlParams = new URLSearchParams(window.location.search);
-  let activeTabParam = urlParams.get('tab');
-  if (activeTabParam === 'math') activeTabParam = 'text';
-  if (activeTabParam === 'ocr') activeTabParam = 'ai-ocr';
-  const defaultTab = document.getElementById('panel-text') ? 'text' : 'resizer';
-  if (activeTabParam && ['resizer', 'text', 'age', 'land', 'ai-ocr'].includes(activeTabParam)) {
-    switchToolTab(activeTabParam);
-  } else {
-    switchToolTab(defaultTab);
-  }
-
-  // --- Tool 1: Photo & Signature Resizer ---
+  // Always initialize individual engines if their DOM elements exist
   initResizerEngine();
-
-  // --- Tool 2: Unified Smart Office & Question Paper Converter Wizard ---
   initUnifiedConverterEngine();
-
-  // --- Tool 3: Job Age Calculator Engine ---
   initAgeCalcEngine();
-
-  // --- Tool 4: Land Area & Deed Calculator ---
   initLandCalculatorEngine();
 }
 
