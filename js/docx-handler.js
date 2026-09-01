@@ -576,7 +576,9 @@
           let runsXml = "";
           for (let seg of segments) {
             if (seg.type === 'math') {
-              if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
+              if (typeof EquationConverter !== 'undefined' && typeof EquationConverter.latexToOmml === 'function') {
+                runsXml += EquationConverter.latexToOmml(seg.value, isBijoy);
+              } else if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
                 const clean = EquationConverter.sanitizeSimpleMath(seg.value, isBijoy);
                 const tokens = typeof EquationConverter.tokenizeSimpleMath === 'function'
                   ? EquationConverter.tokenizeSimpleMath(clean)
@@ -664,7 +666,7 @@
 </Relationships>`;
 
       const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <w:body>
     ${paragraphsXml}
     <w:sectPr>
@@ -699,12 +701,12 @@
     }
 
     /**
-     * Generate an Office 2003 .doc Blob from raw text
+     * Generate an Office 2003 .doc Blob from raw text with 100% font & math preservation
      */
     static createDocFromText(text, fontName = 'SutonnyMJ', isBijoy = true) {
       const lines = (text || '').split(/\r?\n/);
       const paragraphsHtml = lines.map(line => {
-        if (!line) return `<p style="margin: 0 0 6pt 0; font-family: '${fontName}', SutonnyMJ, Arial, sans-serif; font-size: 14pt;">&nbsp;</p>`;
+        if (!line || !line.trim()) return `<p class="MsoNormal" style="margin: 0 0 6pt 0; font-size: 14pt;">&nbsp;</p>`;
 
         const hasMath = typeof EquationConverter !== 'undefined' && 
                         (/\$\$[\s\S]*?\$\$|\$[^\$]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/.test(line));
@@ -717,21 +719,50 @@
               if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
                 const cleanText = EquationConverter.sanitizeSimpleMath(seg.value, isBijoy);
                 const escaped = (cleanText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                innerHtml += `<span style="font-family:'Times New Roman',Arial,serif;">${escaped}</span>`;
+                innerHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escaped}</span>`;
               } else {
                 const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
-                innerHtml += `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${eqCode} <span style='mso-element:field-end'></span></span><![endif]-->`;
+                const cleanEq = (eqCode || '').trim();
+                const cleanEqCode = cleanEq.startsWith('EQ ') ? cleanEq.slice(3).trim() : cleanEq;
+                innerHtml += `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${cleanEqCode} <span style='mso-element:field-end'></span></span><![endif]-->`;
               }
             } else if (seg.value) {
-              const escaped = (seg.value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-              innerHtml += `<span style="font-family:'${fontName}',SutonnyMJ,Arial,sans-serif;">${escaped}</span>`;
+              const mixedParts = (typeof BanglaConverter !== 'undefined' && typeof BanglaConverter.splitMixedBengaliAndEnglish === 'function')
+                ? BanglaConverter.splitMixedBengaliAndEnglish(seg.value)
+                : [{ type: 'bengali', text: seg.value }];
+              
+              for (const part of mixedParts) {
+                const escaped = (part.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                if (part.type === 'english') {
+                  innerHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escaped}</span>`;
+                } else {
+                  const targetText = isBijoy && typeof BanglaConverter !== 'undefined' ? BanglaConverter.unicodeToBijoy(part.text) : part.text;
+                  const escapedBn = (targetText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                  innerHtml += `<span style="font-family:'${fontName}',Arial,sans-serif;mso-ascii-font-family:'${fontName}';mso-hansi-font-family:'${fontName}';mso-bidi-font-family:'${fontName}';">${escapedBn}</span>`;
+                }
+              }
             }
           }
-          return `<p style="margin: 0 0 6pt 0; font-size: 14pt;">${innerHtml || '&nbsp;'}</p>`;
+          return `<p class="MsoNormal" style="margin: 0 0 6pt 0; font-size: 14pt; line-height: 1.4;">${innerHtml || '&nbsp;'}</p>`;
         }
 
-        const escaped = (line || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return `<p style="margin: 0 0 6pt 0; font-family: '${fontName}', SutonnyMJ, Arial, sans-serif; font-size: 14pt; line-height: 1.4;">${escaped || '&nbsp;'}</p>`;
+        // Plain line without LaTeX delimiters: check mixed Bengali & English/Math
+        const mixedParts = (typeof BanglaConverter !== 'undefined' && typeof BanglaConverter.splitMixedBengaliAndEnglish === 'function')
+          ? BanglaConverter.splitMixedBengaliAndEnglish(line)
+          : [{ type: 'bengali', text: line }];
+
+        let lineHtml = "";
+        for (const part of mixedParts) {
+          if (part.type === 'english') {
+            const escapedEn = (part.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            lineHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escapedEn}</span>`;
+          } else {
+            const targetText = isBijoy && typeof BanglaConverter !== 'undefined' ? BanglaConverter.unicodeToBijoy(part.text) : part.text;
+            const escapedBn = (targetText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            lineHtml += `<span style="font-family:'${fontName}',Arial,sans-serif;mso-ascii-font-family:'${fontName}';mso-hansi-font-family:'${fontName}';mso-bidi-font-family:'${fontName}';">${escapedBn}</span>`;
+          }
+        }
+        return `<p class="MsoNormal" style="margin: 0 0 6pt 0; font-size: 14pt; line-height: 1.4;">${lineHtml || '&nbsp;'}</p>`;
       }).join('\n');
 
       const docHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
@@ -740,7 +771,22 @@
 <style>
 @page Section1 { size: 595.35pt 841.95pt; margin: 72pt 72pt 72pt 72pt; mso-header-margin: 36pt; mso-footer-margin: 36pt; }
 div.Section1 { page: Section1; }
-body { font-family: '${fontName}', SutonnyMJ, Arial, sans-serif; font-size: 14pt; }
+p.MsoNormal, li.MsoNormal, div.MsoNormal {
+  margin: 0 0 6pt 0;
+  font-size: 14pt;
+  font-family: "${fontName}", Arial, sans-serif;
+  mso-ascii-font-family: "Times New Roman";
+  mso-hansi-font-family: "Times New Roman";
+  mso-fareast-font-family: "Times New Roman";
+  mso-bidi-font-family: "${fontName}";
+}
+body {
+  font-family: "${fontName}", Arial, sans-serif;
+  mso-ascii-font-family: "Times New Roman";
+  mso-hansi-font-family: "Times New Roman";
+  mso-bidi-font-family: "${fontName}";
+  font-size: 14pt;
+}
 p { margin: 0 0 6pt 0; }
 </style>
 </head>
