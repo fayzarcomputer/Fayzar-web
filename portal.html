@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="bn" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
@@ -423,35 +423,61 @@
     </div>
 
     <!-- =========================================================================
-         ১. চলমান সরকারি চাকরির সার্কুলার ও নিয়োগ বিজ্ঞপ্তি
+         ১. চলমান সরকারি ও বেসরকারি চাকরির সার্কুলার (লাইভ গুগল শিট সিঙ্ক)
          ========================================================================= -->
-    <section class="space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+    <section id="job-circulars-section" class="space-y-6 pt-2">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fas fa-bullhorn text-amber-500"></i> লাইভ সার্কুলার বুলেটিন
+              <i class="fas fa-bullhorn text-amber-500 animate-pulse"></i> লাইভ গুগল শিট জব বুলেটিন
             </span>
-            <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> আবেদন চলমান
+            <span id="portal-live-status" class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> রিয়েল-টাইম লাইভ সিঙ্ক
+            </span>
+            <span id="portal-total-badge" class="px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-[10px] font-black border border-blue-300 dark:border-blue-800">
+              লোড হচ্ছে...
             </span>
           </div>
-          <h3 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white mt-1">
-            চলমান সরকারি চাকরির সার্কুলার ও আবেদন লিংক
-          </h3>
+          <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white mt-1.5">
+            চলমান সরকারি ও স্বায়ত্তশাসিত চাকরির সার্কুলার
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+            প্রতিটি সার্কুলারের পদসংখ্যা, প্রয়োজনীয় যোগ্যতা, আবেদনের ডেডলাইন এবং সরাসরি অনলাইন আবেদনের লিংক নিচে বিস্তারিত দেওয়া হলো।
+          </p>
         </div>
 
-        <a href="notices.html" class="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline bg-white dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs self-start sm:self-auto">
-          <span>সকল নোটিশ আর্কাইভ দেখুন</span>
-          <i class="fas fa-arrow-right text-[10px]"></i>
-        </a>
+        <!-- Search Input and Filter -->
+        <div class="w-full md:w-80 relative shrink-0">
+          <input 
+            type="text" 
+            id="portal-job-search-input" 
+            placeholder="পদ, দপ্তর বা বিষয় দিয়ে খুঁজুন..." 
+            class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-2xl text-xs font-bold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white shadow-xs"
+          >
+          <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+        </div>
       </div>
 
-      <!-- Compact Dynamic Job Cards Container -->
-      <div id="portal-job-notices-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered dynamically by loadCompactJobNotices() -->
-        <div class="col-span-full py-8 text-center text-slate-500 dark:text-slate-400 text-xs">
-          <i class="fas fa-spinner fa-spin text-emerald-500 text-lg mr-2"></i> চাকরির সার্কুলার লোড হচ্ছে...
+      <!-- Quick Filter Chips -->
+      <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+        <button type="button" id="chip-filter-all" onclick="filterPortalJobs('all')" class="portal-chip active px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-extrabold shadow-sm transition">
+          <i class="fas fa-layer-group text-[10px]"></i> সকল সার্কুলার
+        </button>
+        <button type="button" id="chip-filter-hot" onclick="filterPortalJobs('hot')" class="portal-chip px-3.5 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+          <i class="fas fa-fire text-rose-500 text-[10px]"></i> 🔥 জরুরি / হট নোটিশ
+        </button>
+        <button type="button" id="chip-filter-dinajpur" onclick="filterPortalJobs('dinajpur')" class="portal-chip px-3.5 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+          <i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> দিনাজপুর জেলা আবেদনযোগ্য
+        </button>
+      </div>
+
+      <!-- Large Spacious Job Cards Container (সব এক নজরে দৃশ্যমান) -->
+      <div id="portal-job-notices-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Rendered dynamically with big, rich, high-contrast cards -->
+        <div class="col-span-full py-12 text-center text-slate-500 dark:text-slate-400 text-xs">
+          <i class="fas fa-spinner fa-spin text-emerald-500 text-2xl mb-2"></i>
+          <p class="font-bold">গুগল ড্রাইভ শিট থেকে লাইভ সার্কুলার লোড হচ্ছে...</p>
         </div>
       </div>
     </section>
@@ -915,68 +941,392 @@
       document.getElementById('guide-modal')?.classList.remove('hidden');
     }
 
-    // Load Compact Job Notices dynamically from data/notices.json
-    async function loadCompactJobNotices() {
+    // Bangla Number formatting helper
+    function toBanglaNumber(num) {
+      if (num === null || num === undefined) return '';
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      return String(num).replace(/\d/g, d => bnDigits[d]);
+    }
+
+    // ============================================================
+    // ইমবেডেড ফলব্যাক ডেটা (সর্বদা কাজ করে, নেটওয়ার্ক ছাড়াও)
+    // Google Sheet আপডেট করলে, এটি স্বয়ংক্রিয়ভাবে লাইভ ডেটা দিয়ে replace হয়
+    // ============================================================
+    const EMBEDDED_JOB_NOTICES = [
+      {
+        id: 'emb-1',
+        type: 'ব্যাংক / সরকারি',
+        badgeStyle: 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white',
+        title: 'সহকারী পরিচালক (এক্স-ক্যাডার আইন)',
+        org: 'বাংলাদেশ ব্যাংক (Bangladesh Bank)',
+        qualification: 'এলএলবি/এলএলএম ডিগ্রিধারী। বয়স সর্বোচ্চ ৩০ বছর। ১টি পদে নিয়োগ।',
+        startDate: '2026-09-01',
+        deadline: '2026-09-20',
+        daysLeft: '১৯ দিন বাকি',
+        dinajpurEligible: 'হ্যাঁ (সকল জেলা)',
+        applyLink: 'https://erecruitment.bb.org.bd',
+        isHot: true
+      },
+      {
+        id: 'emb-2',
+        type: 'সরকারি চাকরি',
+        badgeStyle: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white',
+        title: 'সহকারী পরিচালক ও অন্যান্য পদে নিয়োগ বিজ্ঞপ্তি',
+        org: 'বাংলাদেশ রপ্তানি প্রক্রিয়াকরণ অঞ্চল কর্তৃপক্ষ (BEPZA)',
+        qualification: 'স্নাতক/স্নাতকোত্তর। বিভিন্ন পদে ও বিভিন্ন যোগ্যতায় নিয়োগ। বয়স সর্বোচ্চ ৩০ বছর।',
+        startDate: '2026-09-01',
+        deadline: '2026-09-28',
+        daysLeft: '২৭ দিন বাকি',
+        dinajpurEligible: 'হ্যাঁ (সকল জেলা)',
+        applyLink: 'http://bepza.teletalk.com.bd',
+        isHot: true
+      },
+      {
+        id: 'emb-3',
+        type: 'সরকারি/স্বায়ত্তশাসিত',
+        badgeStyle: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white',
+        title: 'কর্মকর্তা ও বিভিন্ন কারিগরি পদে নিয়োগ',
+        org: 'মেঘনা পেট্রোলিয়াম লিমিটেড (MPL)',
+        qualification: 'বিএসসি ইঞ্জিনিয়ারিং / বিবিএ / বিকম। বিভিন্ন পদে নিয়োগ। বয়স সর্বোচ্চ ৩০ বছর।',
+        startDate: '2026-09-01',
+        deadline: '2026-09-25',
+        daysLeft: '২৪ দিন বাকি',
+        dinajpurEligible: 'হ্যাঁ (সকল জেলা)',
+        applyLink: 'http://mpl.teletalk.com.bd',
+        isHot: true
+      },
+      {
+        id: 'emb-4',
+        type: 'সরকারি চাকরি',
+        badgeStyle: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white',
+        title: 'রাজস্ব প্রশাসনের বিভিন্ন পদে নিয়োগ',
+        org: 'জেলা প্রশাসকের কার্যালয়, বগুড়া',
+        qualification: 'এসএসসি / এইচএসসি / স্নাতক পাস (পদ অনুযায়ী)। শুধুমাত্র বগুড়া জেলার প্রার্থীরা আবেদন করতে পারবেন।',
+        startDate: '2026-09-01',
+        deadline: '2026-09-22',
+        daysLeft: '২১ দিন বাকি',
+        dinajpurEligible: 'না (শুধুমাত্র বগুড়া জেলা)',
+        applyLink: 'http://dcbogura.teletalk.com.bd',
+        isHot: false
+      },
+      {
+        id: 'emb-5',
+        type: 'সরকারি চাকরি',
+        badgeStyle: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white',
+        title: 'বিভিন্ন পদের সমন্বিত নিয়োগ বিজ্ঞপ্তি',
+        org: 'কারিগরি শিক্ষা অধিদপ্তর (DTE)',
+        qualification: 'স্নাতক / ডিপ্লোমা / এইচএসসি / এসএসসি পাস (পদ অনুযায়ী)। সারা বাংলাদেশের প্রার্থীরা আবেদন করতে পারবেন।',
+        startDate: '2026-09-01',
+        deadline: '2026-09-30',
+        daysLeft: '২৯ দিন বাকি',
+        dinajpurEligible: 'হ্যাঁ (সকল জেলা)',
+        applyLink: 'http://dte.teletalk.com.bd',
+        isHot: false
+      },
+      {
+        id: 'emb-6',
+        type: 'বেসরকারি চাকরি',
+        badgeStyle: 'bg-gradient-to-r from-purple-600 to-pink-600 text-white',
+        title: 'ম্যানেজার (ইনস্টিটিউশনাল সেলস)',
+        org: 'এসএমসি এন্টারপ্রাইজ লিমিটেড (SMC)',
+        qualification: 'যেকোনো বিষয়ে স্নাতক। বিক্রয় কাজে অভিজ্ঞতা থাকলে অগ্রাধিকার। বেতন আলোচনাসাপেক্ষ।',
+        startDate: '2026-08-25',
+        deadline: '2026-09-08',
+        daysLeft: '৭ দিন বাকি',
+        dinajpurEligible: 'হ্যাঁ (উন্মুক্ত)',
+        applyLink: 'https://www.smc-bd.org',
+        isHot: false
+      }
+    ];
+
+    // Google Sheet Live Sync Engine for Job Sector (Unrestricted CORS CSV Export)
+    const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1HqbHGm1RnduSp8T1iLfDASs2urGziEwcBWsta1r3WwE/export?format=csv&gid=0';
+    let portalAllJobs = [];
+    let currentJobFilter = 'all';
+    let currentJobSearch = '';
+
+    function parseCSV(str) {
+      const arr = [];
+      let row = [''];
+      let inQuotes = false;
+      for (let i = 0; i < str.length; i++) {
+        let c = str[i];
+        let next = str[i+1];
+        if (c === '"' && inQuotes && next === '"') {
+          row[row.length - 1] += '"';
+          i++;
+        } else if (c === '"') {
+          inQuotes = !inQuotes;
+        } else if (c === ',' && !inQuotes) {
+          row.push('');
+        } else if ((c === '\r' || c === '\n') && !inQuotes) {
+          if (c === '\r' && next === '\n') { i++; }
+          arr.push(row);
+          row = [''];
+        } else {
+          row[row.length - 1] += c;
+        }
+      }
+      if (row.length > 1 || (row.length === 1 && row[0] !== '')) arr.push(row);
+      return arr;
+    }
+
+    async function loadGoogleSheetJobNotices() {
       const container = document.getElementById('portal-job-notices-container');
+      const countBadge = document.getElementById('portal-total-badge');
       if (!container) return;
 
+      // 0. Immediately show embedded data (always works, no network needed)
+      portalAllJobs = EMBEDDED_JOB_NOTICES.slice();
+      if (countBadge) {
+        countBadge.textContent = toBanglaNumber(portalAllJobs.length) + 'টি সক্রিয় সার্কুলার';
+      }
+      renderPortalJobs();
+
+      // 1. First show cached data immediately if available
       try {
-        const res = await fetch('data/notices.json');
-        if (!res.ok) throw new Error('Notices fetch failed');
-        const notices = await res.json();
-        
-        if (!notices || notices.length === 0) {
-          container.innerHTML = '<div class="col-span-full py-8 text-center text-slate-400 text-xs">বর্তমানে কোনো সক্রিয় নোটিশ পাওয়া যায়নি।</div>';
-          return;
+        const cached = localStorage.getItem('fayzar_cached_portal_jobs');
+        if (cached) {
+          portalAllJobs = JSON.parse(cached);
+          if (countBadge && portalAllJobs.length > 0) {
+            countBadge.textContent = `${toBanglaNumber(portalAllJobs.length)}টি সক্রিয় সার্কুলার`;
+          }
+          renderPortalJobs();
         }
+      } catch(e) {}
 
-        // Take first 6 active notices
-        const activeNotices = notices.slice(0, 6);
+      // 2. Fetch live data from Google Sheet CSV
+      try {
+        const res = await fetch(GOOGLE_SHEET_CSV_URL);
+        if (!res.ok) throw new Error('Sheet fetch status: ' + res.status);
+        const text = await res.text();
+        const rows = parseCSV(text);
 
-        container.innerHTML = activeNotices.map(n => {
-          const dept = n.department || n.category || 'সরকারি চাকরি';
-          const deadline = n.deadline || 'চলমান';
-          const vacancies = n.vacancies || 'উল্লেখ নেই';
-          const fee = n.fee || '১১২ - ২২৩ ৳';
-          const applyUrl = n.applyUrl || n.link || 'notices.html';
+        if (rows && rows.length > 1) {
+          const parsedJobs = rows.slice(1).map((r, i) => {
+            const rawType = String(r[0] || '').trim();
+            const orgName = String(r[1] || '').trim();
+            const postTitle = String(r[2] || '').trim();
+            const qualificationDesc = String(r[3] || '').trim();
+            const startDate = String(r[4] || '').trim();
+            const deadlineDate = String(r[5] || '').trim();
+            const dinajpur = String(r[6] || '').trim();
+            const applyUrl = String(r[7] || '').trim();
+            const isHotNotice = String(r[8] || '').toUpperCase() === 'TRUE' || r[8] === true;
+            const daysRemaining = String(r[9] || '').trim();
 
-          return `
-            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-sm hover:shadow-md transition flex flex-col justify-between gap-3 group">
-              <div class="space-y-2">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[10px] font-extrabold border border-emerald-300 dark:border-emerald-800">
-                    ${dept}
-                  </span>
-                  <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                    <i class="far fa-calendar-alt"></i> ${deadline}
-                  </span>
-                </div>
-                <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition leading-snug">
-                  ${n.title || n.postTitle}
-                </h4>
-              </div>
+            let badgeStyle = 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
+            if (rawType.includes('ব্যাংক')) badgeStyle = 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white';
+            else if (rawType.includes('বেসরকারি')) badgeStyle = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white';
 
-              <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                <div>
-                  <span class="font-bold text-slate-700 dark:text-slate-300">পদ:</span> ${vacancies} | 
-                  <span class="font-bold text-slate-700 dark:text-slate-300">ফি:</span> ${fee}
-                </div>
-                <a href="${applyUrl}" target="_blank" class="inline-flex items-center gap-1 font-black text-emerald-600 dark:text-emerald-400 hover:underline">
-                  <span>আবেদন লিংক</span>
-                  <i class="fas fa-arrow-right text-[9px]"></i>
-                </a>
-              </div>
-            </div>
-          `;
-        }).join('');
+            return {
+              id: 'job-gsheet-' + (i + 1),
+              type: rawType || 'সরকারি চাকরি',
+              badgeStyle: badgeStyle,
+              title: postTitle || 'চাকরি বিজ্ঞপ্তি',
+              org: orgName || 'সরকারি প্রতিষ্ঠান',
+              qualification: qualificationDesc,
+              startDate: startDate,
+              deadline: deadlineDate,
+              daysLeft: daysRemaining ? `${daysRemaining} দিন বাকি` : 'আবেদন সচল',
+              dinajpurEligible: dinajpur,
+              applyLink: applyUrl,
+              isHot: isHotNotice
+            };
+          }).filter(n => n.title && n.title !== 'নোটিশের শিরোনাম / পদের নাম');
 
+          if (parsedJobs.length > 0) {
+            portalAllJobs = parsedJobs;
+            try { localStorage.setItem('fayzar_cached_portal_jobs', JSON.stringify(portalAllJobs)); } catch(e){}
+            if (countBadge) {
+              countBadge.textContent = `${toBanglaNumber(portalAllJobs.length)}টি সক্রিয় সার্কুলার`;
+            }
+            renderPortalJobs();
+            return;
+          }
+        }
       } catch (err) {
-        console.warn('Could not load notices:', err);
-        container.innerHTML = '<div class="col-span-full py-6 text-center text-slate-400 text-xs">নোটিশ লোড করা সম্ভব হয়নি। <a href="notices.html" class="text-emerald-500 font-bold underline">নোটিশ পেজে যান</a></div>';
+        console.warn('Google Sheet Live Sync Warning:', err);
+      }
+
+      // 3. If live fetch failed and no cache, fallback to data/notices.json
+      if (portalAllJobs.length === 0) {
+        try {
+          const fbRes = await fetch('data/notices.json');
+          const fbNotices = await fbRes.json();
+          portalAllJobs = fbNotices.filter(n => n.category === 'jobs' || !n.category);
+          if (countBadge && portalAllJobs.length > 0) {
+            countBadge.textContent = `${toBanglaNumber(portalAllJobs.length)}টি সক্রিয় সার্কুলার`;
+          }
+          renderPortalJobs();
+        } catch(e) {
+          container.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400 text-xs">বিজ্ঞপ্তি লোড করা সম্ভব হয়নি। পেজটি রিফ্রেশ দিন।</div>';
+        }
       }
     }
 
-    loadCompactJobNotices();
+    function renderPortalJobs() {
+      const container = document.getElementById('portal-job-notices-container');
+      if (!container) return;
+
+      let list = portalAllJobs;
+
+      if (currentJobFilter === 'hot') {
+        list = list.filter(j => j.isHot);
+      } else if (currentJobFilter === 'dinajpur') {
+        list = list.filter(j => j.dinajpurEligible && j.dinajpurEligible.includes('হ্যাঁ'));
+      }
+
+      if (currentJobSearch.trim()) {
+        const q = currentJobSearch.toLowerCase();
+        list = list.filter(j => 
+          (j.title && j.title.toLowerCase().includes(q)) ||
+          (j.org && j.org.toLowerCase().includes(q)) ||
+          (j.qualification && j.qualification.toLowerCase().includes(q))
+        );
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md">
+            <i class="fas fa-search text-3xl text-slate-400 mb-2"></i>
+            <p class="text-xs font-black text-slate-500">কোনো সার্কুলার পাওয়া যায়নি।</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(j => {
+        const isDinajpurYes = j.dinajpurEligible && j.dinajpurEligible.includes('হ্যাঁ');
+        const domain = j.applyLink ? j.applyLink.replace(/^https?:\/\//, '').split('/')[0] : '';
+        const whatsappMsg = `আসসালামু আলাইকুম, আমি "${j.title}" (${j.org}) বিজ্ঞপ্তির অনলাইন আবেদন ফয়জার কম্পিউটার থেকে সম্পন্ন করতে চাচ্ছি।`;
+
+        return `
+          <div class="p-6 sm:p-7 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 dark:hover:border-emerald-500/60 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col justify-between space-y-5 group relative overflow-hidden">
+            
+            <!-- Top Accent Strip -->
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+
+            <div class="space-y-4">
+              
+              <!-- Top Row: Org, Badges & Deadline -->
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-3 py-1 rounded-full text-[11px] font-extrabold ${j.badgeStyle || 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white'} shadow-xs flex items-center gap-1.5">
+                    <i class="fas fa-building text-[10px]"></i> ${j.type || 'সরকারি চাকরি'}
+                  </span>
+                  ${j.isHot ? '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-xs animate-pulse flex items-center gap-1"><i class="fas fa-fire text-[9px]"></i> হট নোটিশ</span>' : ''}
+                </div>
+
+                <div class="flex items-center gap-1.5 text-xs font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-3 py-1 rounded-xl border border-rose-200 dark:border-rose-900/60">
+                  <i class="fas fa-clock text-[11px]"></i>
+                  <span>শেষ: <strong>${j.deadline}</strong></span>
+                  ${j.daysLeft ? `<span class="ml-1 text-[10px] bg-rose-600 text-white px-2 py-0.2 rounded-md font-extrabold">${j.daysLeft}</span>` : ''}
+                </div>
+              </div>
+
+              <!-- Institution / Department Name -->
+              <div class="text-xs font-black text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 text-xs shrink-0">
+                  <i class="fas fa-landmark"></i>
+                </div>
+                <span class="text-sm font-black">${j.org}</span>
+              </div>
+
+              <!-- Post Designation / কি কি পদে নিয়োগ নিচ্ছে (Prominent Box) -->
+              <div class="p-3.5 rounded-2xl bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800/80 dark:to-slate-800/40 border border-slate-200 dark:border-slate-700">
+                <div class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <i class="fas fa-briefcase text-emerald-600"></i> নিয়োগের পদের নাম / শিরোনাম:
+                </div>
+                <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">
+                  ${j.title}
+                </h3>
+              </div>
+
+              <!-- Vacancy & Detailed Qualifications (সম্পূর্ণ যোগ্যতা ও পদ বিবরণ) -->
+              <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                <div class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <i class="fas fa-graduation-cap text-sky-600"></i>
+                  <span>পদসংখ্যা, শিক্ষাগত যোগ্যতা ও শর্তাবলী:</span>
+                </div>
+                <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                  ${j.qualification || 'বিস্তারিত বিজ্ঞপ্তিতে দেখুন'}
+                </p>
+              </div>
+
+              <!-- Timeline & District Eligibility Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                ${j.startDate ? `
+                  <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <span class="text-slate-600 dark:text-slate-400 font-bold"><i class="fas fa-calendar-check text-emerald-600 mr-1"></i> শুরুর তারিখ:</span>
+                    <strong class="text-slate-900 dark:text-white font-extrabold">${j.startDate}</strong>
+                  </div>
+                ` : ''}
+
+                ${j.dinajpurEligible ? `
+                  <div class="p-2.5 rounded-xl ${isDinajpurYes ? 'bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200' : 'bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200'} flex items-center justify-between col-span-full ${j.startDate ? 'sm:col-span-1' : ''}">
+                    <span class="font-bold flex items-center gap-1.5">
+                      <i class="fas ${isDinajpurYes ? 'fa-check-circle text-emerald-600' : 'fa-triangle-exclamation text-amber-600'}"></i>
+                      <span>দিনাজপুর জেলা:</span>
+                    </span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black ${isDinajpurYes ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">
+                      ${j.dinajpurEligible}
+                    </span>
+                  </div>
+                ` : ''}
+              </div>
+
+            </div>
+
+            <!-- Action Buttons (সব একবারে দৃশ্যমান) -->
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
+              ${j.applyLink ? `
+                <a href="${j.applyLink}" target="_blank" rel="noopener" class="w-full bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black py-3 px-4 rounded-2xl text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 hover:shadow-lg transition">
+                  <i class="fas fa-arrow-up-right-from-square text-sm"></i>
+                  <span>সরাসরি অনলাইন আবেদন পোর্টালে যান (${domain})</span>
+                </a>
+              ` : ''}
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <a href="https://wa.me/8801717101919?text=${encodeURIComponent(whatsappMsg)}" target="_blank" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+                  <i class="fab fa-whatsapp text-sm"></i>
+                  <span>ফয়জার কম্পিউটার থেকে আবেদন</span>
+                </a>
+                
+                <a href="downloads/Fayzar-AutoFill-Setup.exe" download="Fayzar-AutoFill-Setup.exe" class="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-700 transition">
+                  <i class="fas fa-bolt text-amber-500"></i>
+                  <span>১-ক্লিক অটো-ফিল এক্সটেনশন</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Filter Trigger Handler
+    window.filterPortalJobs = function(filter) {
+      currentJobFilter = filter;
+      document.querySelectorAll('.portal-chip').forEach(btn => {
+        btn.className = 'portal-chip px-3.5 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition font-bold text-xs';
+      });
+      const activeBtn = document.getElementById('chip-filter-' + filter);
+      if (activeBtn) {
+        activeBtn.className = 'portal-chip active px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-extrabold shadow-sm transition text-xs';
+      }
+      renderPortalJobs();
+    };
+
+    // Live Search Trigger
+    document.getElementById('portal-job-search-input')?.addEventListener('input', (e) => {
+      currentJobSearch = e.target.value;
+      renderPortalJobs();
+    });
+
+    // Initialize Job Notices on Portal
+    loadGoogleSheetJobNotices();
   </script>
 </body>
 </html>
+
