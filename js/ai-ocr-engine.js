@@ -1361,12 +1361,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       let runsXml = '';
       for (const seg of segments) {
         if (seg.type === 'math') {
-          if (EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
-            const clean = EquationConverter.sanitizeSimpleMath ? EquationConverter.sanitizeSimpleMath(seg.value, isBijoy) : seg.value.replace(/\$/g, '');
-            const tokens = (typeof EquationConverter.tokenizeSimpleMath === 'function') ? EquationConverter.tokenizeSimpleMath(clean) : [];
-            for (const tok of tokens) {
-              if (tok && tok.text) runsXml += renderSimpleMathOoxml(tok, isBijoy, fontSizeHalfPt, false);
-            }
+          if (typeof EquationConverter !== 'undefined' && typeof EquationConverter.latexToOmml === 'function') {
+            runsXml += EquationConverter.latexToOmml(seg.value, isBijoy);
           } else {
             const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
             runsXml += renderEquationForOoxml(eqCode, isBijoy, fontSizeHalfPt, false);
@@ -1517,30 +1513,31 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
     const rawName = state.selectedFile?.name || state.filesQueue?.[0]?.name || 'Question_Paper';
     const baseName = rawName.replace(/\.[^/.]+$/, '');
 
-    // FORMAT 1: Word 2003 .DOC (First creates Bijoy DOCX, then converts via Fayzar DocxToDocConverter)
+    // FORMAT 1: Word 2003 .DOC (Direct Full-Fidelity Word 2003 SutonnyMJ Document)
     if (format === 'doc') {
       showToast(`ওয়ার্ড ২০০৩ (.doc) ফাইল প্রস্তুত হচ্ছে...`, 'info');
 
       try {
-        // Step 1: Create standard Bijoy .docx Blob
-        const docxBlob = await createDocxBlob(text, true, { pageSize: pageSizeVal, margin: marginVal, fontSize: fontSizeVal });
-
-        // Step 2: Convert to Word 2003 .doc using Fayzar's full-fidelity DocxToDocConverter
-        if (typeof DocxToDocConverter !== 'undefined') {
+        let docBlob = null;
+        if (typeof DocxHandler !== 'undefined' && typeof DocxHandler.createDocFromText === 'function') {
+          docBlob = DocxHandler.createDocFromText(text, 'SutonnyMJ', true);
+        } else if (typeof DocxToDocConverter !== 'undefined') {
+          const docxBlob = await createDocxBlob(text, true, { pageSize: pageSizeVal, margin: marginVal, fontSize: fontSizeVal });
           const docxConverter = new DocxToDocConverter();
           const docResult = await docxConverter.convertDocxToDoc(docxBlob, {
             pageSize: pageSizeVal,
             preserveSutonny: true,
             optimizeForQuestionPaper: true
           });
-          const finalDocBlob = docResult.blob || docResult.convertedBlob;
-          triggerDownload(finalDocBlob, `${baseName}_Word2003.doc`);
-          showToast(`ওয়ার্ড ২০০৩ (.doc - সুতন্নিএমজে) সফলভাবে ডাউনলোড হয়েছে!`, 'success');
-        } else {
-          // Fallback if DocxToDocConverter is missing
-          triggerDownload(docxBlob, `${baseName}_Word2003.doc`);
-          showToast(`ডকুমেন্ট ডাউনলোড সম্পন্ন!`, 'success');
+          docBlob = docResult.blob || docResult.convertedBlob;
         }
+
+        if (!docBlob) {
+          throw new Error('Word 2003 (.doc) ফাইল প্রস্তুত করা যায়নি');
+        }
+
+        triggerDownload(docBlob, `${baseName}_Word2003.doc`);
+        showToast(`ওয়ার্ড ২০০৩ (.doc - সুতন্নিএমজে) সফলভাবে ডাউনলোড হয়েছে!`, 'success');
       } catch (err) {
         console.error('Doc conversion error', err);
         showToast(`ওয়ার্ড ২০০৩ ফাইল তৈরিতে সমস্যা: ${err.message}`, 'error');
@@ -1579,7 +1576,14 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
   }
 
   async function createDocxBlob(text, isBijoy = false, customOptions = {}) {
-    if (typeof JSZip === 'undefined') {
+    const ZipConstructor = (typeof JSZip !== 'undefined')
+      ? JSZip
+      : (typeof window !== 'undefined' && window.JSZip ? window.JSZip : (typeof global !== 'undefined' && global.JSZip ? global.JSZip : null));
+
+    if (!ZipConstructor) {
+      if (typeof DocxHandler !== 'undefined' && typeof DocxHandler.createDocxFromText === 'function') {
+        return await DocxHandler.createDocxFromText(text, { isBijoy });
+      }
       throw new Error('JSZip লাইব্রেরি লোড হয়নি, অনুগ্রহ করে পেজটি রিফ্রেশ দিন');
     }
 
@@ -1696,6 +1700,7 @@ ${rowsXml}
 <w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+  xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
   xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
   xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
   mc:Ignorable="w14">
@@ -1763,7 +1768,7 @@ ${bodyContentXml}
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
 </Relationships>`;
 
-    const zip = new JSZip();
+    const zip = new ZipConstructor();
     zip.file("[Content_Types].xml", contentTypesXml);
     zip.folder("_rels").file(".rels", relsXml);
     zip.folder("word").file("document.xml", documentXml);
