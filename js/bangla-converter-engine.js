@@ -1153,33 +1153,34 @@
   function splitMixedBengaliAndEnglish(text) {
     if (!text || typeof text !== 'string') return [];
     
-    // Check if the whole string is pure English
+    // Check if pure English
     if (isPureEnglish(text)) {
       return [{ type: 'english', text: text }];
     }
-    // Check if the whole string has NO Latin letters [a-zA-Z]
-    if (!/[A-Za-z]/.test(text)) {
+    // Check if has no Latin letters and no Greek / Math symbols
+    if (!/[A-Za-z\u0370-\u03FF\u1F00-\u1FFF]/.test(text) && !/[+\-*\/=<>±×÷≠≤≥≈∞→⇒√∫∑°\^]/.test(text)) {
       return [{ type: 'bengali', text: text }];
     }
 
     const segments = [];
-    // Tokenize Latin word blocks vs Bengali word blocks
-    const regex = /([A-Za-z0-9\.\,\-\_\@\:\/\#\$\%\&\*\+\=\(\)\[\]\{\}\'\"\\<\>\|\s\–\—\‘\’\“\”\•\…]+)|([\u0980-\u09FF\s\u0964\u0965\d\.\,\-\:\;\(\)\/\+\=\*\?\!\@\#\$\%\^\&\|]+)|([^\s]+|\s+)/g;
+    // Tokenizer matching Bengali vs English/Math/Greek/Symbols
+    const tokenRegex = /([\u0980-\u09FF\u0964\u0965]+)|([A-Za-z0-9\u0370-\u03FF\u1F00-\u1FFF\\_+\-*\/=<>±×÷≠≤≥≈∞→⇒√∫∑°\^\$\#\%\&\~\(\)\[\]\{\}]+)|([^\s\u0980-\u09FFA-Za-z0-9\u0370-\u03FF]+|\s+)/g;
     
     let match;
-    while ((match = regex.exec(text)) !== null) {
-      const matchText = match[0];
-      if (!matchText) continue;
-      
-      if (/[A-Za-z]/.test(matchText)) {
-        segments.push({ type: 'english', text: matchText });
-      } else if (hasBengaliText(matchText)) {
-        segments.push({ type: 'bengali', text: matchText });
-      } else {
+    while ((match = tokenRegex.exec(text)) !== null) {
+      const bnMatch = match[1];
+      const enMatch = match[2];
+      const neutralMatch = match[3];
+
+      if (bnMatch) {
+        segments.push({ type: 'bengali', text: bnMatch });
+      } else if (enMatch) {
+        segments.push({ type: 'english', text: enMatch });
+      } else if (neutralMatch) {
         if (segments.length > 0) {
-          segments[segments.length - 1].text += matchText;
+          segments[segments.length - 1].text += neutralMatch;
         } else {
-          segments.push({ type: 'english', text: matchText });
+          segments.push({ type: 'bengali', text: neutralMatch });
         }
       }
     }
@@ -1187,18 +1188,18 @@
     const merged = [];
     for (let k = 0; k < segments.length; k++) {
       const s = segments[k];
+      if (!s.text) continue;
       if (merged.length > 0 && merged[merged.length - 1].type === s.type) {
         merged[merged.length - 1].text += s.text;
       } else {
         merged.push({ type: s.type, text: s.text });
       }
     }
-    return merged;
-  }
 
+    return merged.length > 0 ? merged : [{ type: 'bengali', text: text }];
+  }
   /**
    * Splits a Bijoy (SutonnyMJ) string into distinct Bijoy Bengali and English segments.
-   * Isolates recognized English tokens (acronyms, emails, URLs, English keywords) from Bijoy text.
    * @param {string} text
    * @returns {Array<{type: 'bengali'|'english', text: string}>}
    */
