@@ -863,6 +863,189 @@
       }
       return result;
     }
+
+    /**
+     * Converts a LaTeX math string to Native Microsoft Word OMML (<m:oMath>) XML string.
+     * 100% Native Office Math for Word 2007, 2010, 2013, 2016, 2019, 2021 & Office 365.
+     * Eliminates Equation Editor 3.0 popup, eliminates "Word equation too large to convert" error.
+     */
+    static latexToOmml(latex, isBijoy = false) {
+      if (!latex) return '';
+      let s = latex.trim();
+      s = s.replace(/^\$\$+|\$\$+$/g, '').replace(/^\\\[|\\\]$/g, '').replace(/^\\\(|\\\)$/g, '').replace(/^\$+|\$+$/g, '').trim();
+
+      const symMap = [
+        [/\\theta\b|\\vartheta\b/g, '\u03B8'],
+        [/\\pi\b/g, '\u03C0'],
+        [/\\alpha\b/g, '\u03B1'],
+        [/\\beta\b/g, '\u03B2'],
+        [/\\gamma\b/g, '\u03B3'],
+        [/\\delta\b/g, '\u03B4'],
+        [/\\epsilon\b|\\varepsilon\b/g, '\u03B5'],
+        [/\\lambda\b/g, '\u03BB'],
+        [/\\mu\b/g, '\u03BC'],
+        [/\\sigma\b/g, '\u03C3'],
+        [/\\phi\b|\\varphi\b/g, '\u03C6'],
+        [/\\omega\b/g, '\u03C9'],
+        [/\\Delta\b/g, '\u0394'],
+        [/\\Omega\b/g, '\u03A9'],
+        [/\\pm\b/g, '\u00B1'],
+        [/\\mp\b/g, '\u2213'],
+        [/\\times\b/g, '\u00D7'],
+        [/\\div\b/g, '\u00F7'],
+        [/\\cdot\b/g, '\u00B7'],
+        [/\\neq\b/g, '\u2260'],
+        [/\\leq\b|\\le\b/g, '\u2264'],
+        [/\\geq\b|\\ge\b/g, '\u2265'],
+        [/\\approx\b/g, '\u2248'],
+        [/\\therefore\b/g, '\u2234'],
+        [/\\because\b/g, '\u2235'],
+        [/\\infty\b/g, '\u221E'],
+        [/\\degree\b|\\circ\b/g, '\u00B0'],
+        [/\\angle\b/g, '\u2220'],
+        [/\\sin\b/g, 'sin '],
+        [/\\cos\b/g, 'cos '],
+        [/\\tan\b/g, 'tan '],
+        [/\\sec\b/g, 'sec '],
+        [/\\csc\b/g, 'csc '],
+        [/\\cot\b/g, 'cot '],
+        [/\\arcsin\b/g, 'arcsin '],
+        [/\\arccos\b/g, 'arccos '],
+        [/\\arctan\b/g, 'arctan '],
+        [/\\log\b/g, 'log '],
+        [/\\ln\b/g, 'ln '],
+        [/\\lim\b/g, 'lim '],
+        [/\\left/g, ''],
+        [/\\right/g, '']
+      ];
+
+      for (const [re, rep] of symMap) {
+        s = s.replace(re, rep);
+      }
+
+      function escapeXml(unsafe) {
+        return String(unsafe || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+
+      function findMatchingBrace(str, startIdx) {
+        let depth = 0;
+        for (let idx = startIdx; idx < str.length; idx++) {
+          if (str[idx] === '{') depth++;
+          else if (str[idx] === '}') {
+            depth--;
+            if (depth === 0) return idx;
+          }
+        }
+        return -1;
+      }
+
+      function parseChunk(str) {
+        if (!str) return '';
+        let out = '';
+        let i = 0;
+
+        while (i < str.length) {
+          // 1. Fraction: \frac{num}{den}
+          if (str.startsWith('\\frac', i)) {
+            let numStart = str.indexOf('{', i + 5);
+            if (numStart !== -1) {
+              let numEnd = findMatchingBrace(str, numStart);
+              if (numEnd !== -1) {
+                let denStart = str.indexOf('{', numEnd + 1);
+                if (denStart !== -1) {
+                  let denEnd = findMatchingBrace(str, denStart);
+                  if (denEnd !== -1) {
+                    const num = str.slice(numStart + 1, numEnd);
+                    const den = str.slice(denStart + 1, denEnd);
+                    out += '<m:f><m:fPr><m:type m:val="bar"/></m:fPr><m:num>' + parseChunk(num) + '</m:num><m:den>' + parseChunk(den) + '</m:den></m:f>';
+                    i = denEnd + 1;
+                    continue;
+                  }
+                }
+              }
+            }
+          }
+
+          // 2. Square Root: \sqrt{...} or \sqrt[n]{...}
+          if (str.startsWith('\\sqrt', i)) {
+            let deg = '';
+            let degEnd = -1;
+            if (str[i + 5] === '[') {
+              degEnd = str.indexOf(']', i + 5);
+              if (degEnd !== -1) deg = str.slice(i + 6, degEnd);
+            }
+            let radStart = str.indexOf('{', degEnd !== -1 ? degEnd : i + 5);
+            if (radStart !== -1) {
+              let radEnd = findMatchingBrace(str, radStart);
+              if (radEnd !== -1) {
+                const rad = str.slice(radStart + 1, radEnd);
+                out += '<m:rad><m:radPr><m:degHide m:val="' + (deg ? 'off' : 'on') + '"/></m:radPr>' + (deg ? '<m:deg>' + parseChunk(deg) + '</m:deg>' : '') + '<m:e>' + parseChunk(rad) + '</m:e></m:rad>';
+                i = radEnd + 1;
+                continue;
+              }
+            }
+          }
+
+          // 3. Regular chars / expressions
+          let textChunk = '';
+          while (i < str.length && !str.startsWith('\\frac', i) && !str.startsWith('\\sqrt', i)) {
+            textChunk += str[i];
+            i++;
+          }
+
+          if (textChunk) {
+            out += parseScripts(textChunk);
+          }
+        }
+        return out;
+      }
+
+      function parseScripts(tStr) {
+        let res = '';
+        let j = 0;
+        while (j < tStr.length) {
+          if (tStr[j] === '^' || tStr[j] === '_') {
+            const isSup = (tStr[j] === '^');
+            j++;
+            let scriptVal = '';
+            if (tStr[j] === '{') {
+              const matchEnd = findMatchingBrace(tStr, j);
+              if (matchEnd !== -1) {
+                scriptVal = tStr.slice(j + 1, matchEnd);
+                j = matchEnd + 1;
+              } else {
+                scriptVal = tStr[j] || '';
+                j++;
+              }
+            } else if (j < tStr.length) {
+              scriptVal = tStr[j];
+              j++;
+            }
+
+            if (isSup) {
+              res += '<m:sSup><m:e></m:e><m:sup>' + parseChunk(scriptVal) + '</m:sup></m:sSup>';
+            } else {
+              res += '<m:sSub><m:e></m:e><m:sub>' + parseChunk(scriptVal) + '</m:sub></m:sSub>';
+            }
+          } else {
+            let plain = '';
+            while (j < tStr.length && tStr[j] !== '^' && tStr[j] !== '_') {
+              plain += tStr[j];
+              j++;
+            }
+            if (plain) {
+              res += '<m:r><m:t xml:space="preserve">' + escapeXml(plain) + '</m:t></m:r>';
+            }
+          }
+        }
+        return res;
+      }
+
+      return '<m:oMath>' + parseChunk(s) + '</m:oMath>';
+    }
   }
 
   if (typeof window !== 'undefined') {
