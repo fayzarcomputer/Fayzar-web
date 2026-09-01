@@ -25,7 +25,7 @@
 
   class DocxToDocConverter {
     constructor() {
-      this.domParser = new DOMParser();
+      this.domParser = typeof DOMParser !== 'undefined' ? new DOMParser() : null;
     }
 
     /**
@@ -267,16 +267,16 @@
     }
 
     _parseDocumentBody(docXml, styleResolver, mediaMap, opts) {
-      const body = docXml.querySelector("body") || docXml.documentElement;
+      const body = docXml ? (docXml.querySelector("body") || docXml.documentElement) : null;
       let htmlParts = [];
       let previewLines = [];
       let stats = { paragraphs: 0, tables: 0, runs: 0 };
 
       // Page Setup & Margins from sectPr
-      const sectPr = body.querySelector("sectPr");
+      const sectPr = body ? body.querySelector("sectPr") : null;
       let pageSettings = this._parseSectionProperties(sectPr, opts);
 
-      const children = body.childNodes;
+      const children = body ? body.childNodes : [];
       for (let i = 0; i < children.length; i++) {
         const node = children[i];
         if (node.nodeType !== 1) continue;
@@ -444,22 +444,11 @@
               continue;
             } else if (type === "end") {
               if (inField) {
-                const cleanEq = fieldCode.trim();
-                const tokens = (typeof EquationConverter !== 'undefined' && typeof EquationConverter.tokenizeEqCode === 'function')
-                  ? EquationConverter.tokenizeEqCode(cleanEq)
-                  : [{ text: cleanEq, italic: false, isScript: false }];
+                const rawEq = fieldCode.trim();
+                const cleanEq = rawEq.startsWith('EQ ') ? rawEq.slice(3).trim() : rawEq;
 
-                let innerHtml = "";
-                for (let k = 0; k < tokens.length; k++) {
-                  const tok = tokens[k];
-                  const fontStyle = tok.italic ? 'font-style:italic;' : 'font-style:normal;';
-                  const fontSize = tok.isScript ? 'font-size:8.0pt;mso-bidi-font-size:8.0pt;' : '';
-                  const isBn = tok.isQuotedText && typeof BanglaConverter !== 'undefined' && (BanglaConverter.hasBengaliText(tok.text) || BanglaConverter.isBijoyString && BanglaConverter.isBijoyString(tok.text));
-                  const fontName = isBn ? 'SutonnyMJ' : 'Times New Roman';
-                  innerHtml += `<span style="font-family:'${fontName}',Arial,serif;${fontStyle}${fontSize}">${this._escapeHtml(tok.text)}</span>`;
-                }
-
-                const fieldHtml = `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>${innerHtml} <span style='mso-element:field-end'></span></span><![endif]-->`;
+                // Word 2003 EQ field code MUST be plain text without HTML span tags inside the field instruction!
+                const fieldHtml = `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${this._escapeHtml(cleanEq)} <span style='mso-element:field-end'></span></span><![endif]-->`;
                 runsHtml.push(fieldHtml);
                 inField = false;
                 fieldCode = "";
@@ -636,16 +625,20 @@
       }
 
       // Ensure SutonnyMJ / Bijoy font family is preserved with full fidelity for Word 2003 (.doc)
-      // Only default to Times New Roman/Cambria if no specific font was specified
       if (!fontFamily) {
         fontFamily = opts.preserveSutonny ? 'SutonnyMJ' : 'Times New Roman';
       }
 
-      // Font family declarations
-      rStyles.push(`font-family:'${fontFamily}',SutonnyMJ,Arial,sans-serif`);
-      rStyles.push(`mso-ascii-font-family:'${fontFamily}'`);
-      rStyles.push(`mso-hansi-font-family:'${fontFamily}'`);
-      rStyles.push(`mso-bidi-font-family:'${fontFamily}'`);
+      // Check if run is SutonnyMJ/Bijoy vs English/Math
+      const isSutonnyRun = (fontFamily && (fontFamily.includes('Sutonny') || fontFamily.includes('Bijoy') || fontFamily.includes('Bangla'))) || (opts.preserveSutonny && fontFamily !== 'Times New Roman' && fontFamily !== 'Cambria Math');
+      const effectiveAsciiFont = isSutonnyRun ? 'SutonnyMJ' : 'Times New Roman';
+      const effectiveBidiFont = isSutonnyRun ? 'SutonnyMJ' : (fontFamily || 'Kalpurush');
+
+      // Font family declarations with proper dual-font binding
+      rStyles.push(`font-family:'${effectiveAsciiFont}',SutonnyMJ,Arial,sans-serif`);
+      rStyles.push(`mso-ascii-font-family:'${effectiveAsciiFont}'`);
+      rStyles.push(`mso-hansi-font-family:'${effectiveAsciiFont}'`);
+      rStyles.push(`mso-bidi-font-family:'${effectiveBidiFont}'`);
 
       if (isBold) rStyles.push(`font-weight:bold;mso-bidi-font-weight:bold`);
       if (isItalic) rStyles.push(`font-style:italic;mso-bidi-font-style:italic`);
@@ -885,6 +878,8 @@
 	mso-pagination:widow-orphan;
 	font-size:12.0pt;
 	font-family:"SutonnyMJ",Arial,sans-serif;
+	mso-ascii-font-family:"Times New Roman";
+	mso-hansi-font-family:"Times New Roman";
 	mso-fareast-font-family:"Times New Roman";
 	mso-bidi-font-family:"SutonnyMJ";}
  table.MsoNormalTable
