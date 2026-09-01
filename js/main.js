@@ -530,7 +530,7 @@ function initHeroSearch() {
       html += '<div class="bg-slate-50 dark:bg-slate-900/80 px-4 py-1.5 text-[10px] font-black text-blue-700 dark:text-blue-400 uppercase tracking-wider">চলমান নোটিশ</div>';
       matchedNotices.forEach(n => {
         html += `
-          <a href="notices.html" class="flex items-center justify-between p-3 hover:bg-blue-50 dark:hover:bg-slate-700/60 transition group">
+          <a href="portal.html#job-circulars-section" class="flex items-center justify-between p-3 hover:bg-blue-50 dark:hover:bg-slate-700/60 transition group">
             <div class="flex items-center gap-2.5">
               <i class="fas fa-bullhorn text-blue-600 text-xs"></i>
               <div>
@@ -658,8 +658,100 @@ function initMobileMenu() {
 }
 
 // =========================================================================
-// ৬. ডেটা লোড ও ইনিশিয়ালাইজেশন
+// ৬. লাইভ গুগল শিট নোটিশ হ্যান্ডলার ও ইনিশিয়ালাইজেশন (CORS-Free CSV Sync)
 // =========================================================================
+const GOOGLE_SHEET_NOTICE_CSV_URL = 'https://docs.google.com/spreadsheets/d/1HqbHGm1RnduSp8T1iLfDASs2urGziEwcBWsta1r3WwE/export?format=csv&gid=0';
+
+function parseNoticeCSV(str) {
+  const arr = [];
+  let row = [''];
+  let inQuotes = false;
+  for (let i = 0; i < str.length; i++) {
+    let c = str[i];
+    let next = str[i+1];
+    if (c === '"' && inQuotes && next === '"') {
+      row[row.length - 1] += '"';
+      i++;
+    } else if (c === '"') {
+      inQuotes = !inQuotes;
+    } else if (c === ',' && !inQuotes) {
+      row.push('');
+    } else if ((c === '\r' || c === '\n') && !inQuotes) {
+      if (c === '\r' && next === '\n') { i++; }
+      arr.push(row);
+      row = [''];
+    } else {
+      row[row.length - 1] += c;
+    }
+  }
+  if (row.length > 1 || (row.length === 1 && row[0] !== '')) arr.push(row);
+  return arr;
+}
+
+async function fetchLiveGoogleSheetNotices() {
+  try {
+    const res = await fetch(GOOGLE_SHEET_NOTICE_CSV_URL);
+    if (!res.ok) throw new Error('Sheet fetch status: ' + res.status);
+    const text = await res.text();
+    const rows = parseNoticeCSV(text);
+    
+    if (rows && rows.length > 1) {
+      const gNotices = rows.slice(1).map((r, i) => {
+        const rawType = String(r[0] || '').trim();
+        const orgName = String(r[1] || '').trim();
+        const postTitle = String(r[2] || '').trim();
+        const qualificationDesc = String(r[3] || '').trim();
+        const startDate = String(r[4] || '').trim();
+        const deadlineDate = String(r[5] || '').trim();
+        const dinajpur = String(r[6] || '').trim();
+        const applyUrl = String(r[7] || '').trim();
+        const isHotNotice = String(r[8] || '').toUpperCase() === 'TRUE' || r[8] === true;
+        const daysRemaining = String(r[9] || '').trim();
+
+        let badgeStyle = 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
+        if (rawType.includes('ব্যাংক')) badgeStyle = 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white';
+        else if (rawType.includes('বেসরকারি')) badgeStyle = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white';
+        else if (rawType.includes('কলেজ') || rawType.includes('স্কুল')) badgeStyle = 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white';
+
+        return {
+          id: 'gsheet-notice-' + (i + 1),
+          category: (rawType.includes('কলেজ') || rawType.includes('স্কুল')) ? 'college' : 'jobs',
+          type: rawType || 'সরকারি চাকরি',
+          badge: rawType || 'চাকরি সার্কুলার',
+          badgeStyle: badgeStyle,
+          title: postTitle || 'চাকরি বিজ্ঞপ্তি',
+          org: orgName || 'সরকারি দপ্তর/প্রতিষ্ঠান',
+          dept: orgName,
+          qualification: qualificationDesc,
+          summary: qualificationDesc,
+          details: qualificationDesc,
+          startDate: startDate,
+          deadline: deadlineDate,
+          daysLeft: daysRemaining ? `${daysRemaining} দিন বাকি` : 'আবেদন সচল',
+          dinajpurEligible: dinajpur,
+          applyLink: applyUrl,
+          sourceUrl: applyUrl,
+          pdfUrl: applyUrl,
+          isHot: isHotNotice
+        };
+      }).filter(n => n.title && n.title !== 'নোটিশের শিরোনাম / পদের নাম');
+
+      if (gNotices.length > 0) {
+        console.log(`✅ Loaded ${gNotices.length} live notices from Google Sheet.`);
+        try { localStorage.setItem('fayzar_cached_gnotices', JSON.stringify(gNotices)); } catch(e){}
+        return gNotices;
+      }
+    }
+  } catch (err) {
+    console.warn('Google Sheet Live Sync Notice Warning:', err);
+    try {
+      const cached = localStorage.getItem('fayzar_cached_gnotices');
+      if (cached) return JSON.parse(cached);
+    } catch(e){}
+  }
+  return null;
+}
+
 async function loadDataAndRender() {
   try {
     const sRes = await fetch('data/services.json');
@@ -673,12 +765,18 @@ async function loadDataAndRender() {
     allServices = ALL_SERVICES_DATA;
   }
 
+  // লাইভ গুগল শিট নোটিশ সিঙ্ক (https://docs.google.com/spreadsheets/d/1HqbHGm1RnduSp8T1iLfDASs2urGziEwcBWsta1r3WwE/edit)
   try {
-    const nRes = await fetch('data/notices.json');
-    if (nRes.ok) {
-      const fetchedNotices = await nRes.json();
-      if (Array.isArray(fetchedNotices) && fetchedNotices.length > 0) {
-        allNotices = fetchedNotices;
+    const liveGNotices = await fetchLiveGoogleSheetNotices();
+    if (liveGNotices && liveGNotices.length > 0) {
+      allNotices = liveGNotices;
+    } else {
+      const nRes = await fetch('data/notices.json');
+      if (nRes.ok) {
+        const fetchedNotices = await nRes.json();
+        if (Array.isArray(fetchedNotices) && fetchedNotices.length > 0) {
+          allNotices = fetchedNotices;
+        }
       }
     }
   } catch(e) {
@@ -747,328 +845,10 @@ function toBanglaNumber(num) {
 // Homepage Renderer with High-Contrast Rich Cards & Smooth Infinite Auto-Rotation
 // Homepage Renderer with Viewport-Aware Auto-Rotation & Card-Only Hover Pause
 function renderHomepageComponents() {
-  const noticeContainer = document.getElementById('home-notices-container');
-  const noticeSection = document.getElementById('home-notices-section');
-
-  const checklistSection = document.getElementById('home-checklist-section');
-  const calcSelect = document.getElementById('calc-service-select');
-  const calcResult = document.getElementById('calc-result-display');
-
+  // ১. সেবাসমূহ কম্পোনেন্ট কন্ট্রোলার
   const serviceContainer = document.getElementById('home-services-container');
-  const serviceSection = document.getElementById('home-services-section');
-
-  // =========================================================================
-  // ভিউপোর্ট ভিজিবিলিটি ডিটেক্টর (IntersectionObserver):
-  // ব্যবহারকারী যে সেকশনটি বর্তমানে স্ক্রিনে দেখছেন, শুধুমাত্র সেটিই অটো-রোটেট হবে।
-  // =========================================================================
-  let isNoticeInView = false;
-  let isChecklistInView = false;
-  let isServiceInView = false;
-
-  if ('IntersectionObserver' in window) {
-    const viewportObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.target === noticeSection) {
-          isNoticeInView = entry.isIntersecting;
-        } else if (entry.target === checklistSection) {
-          isChecklistInView = entry.isIntersecting;
-        } else if (entry.target === serviceSection) {
-          isServiceInView = entry.isIntersecting;
-        }
-      });
-    }, { threshold: 0.15 });
-
-    if (noticeSection) viewportObserver.observe(noticeSection);
-    if (checklistSection) viewportObserver.observe(checklistSection);
-    if (serviceSection) viewportObserver.observe(serviceSection);
-  } else {
-    isNoticeInView = true;
-    isChecklistInView = true;
-    isServiceInView = true;
-  }
-
-  // ==========================================
-  // ১. হিরো ব্যানারে কমপ্যাক্ট নোটিশ বুলেটিন
-  // ==========================================
-  if (noticeContainer && allNotices && allNotices.length > 0) {
-    const noticePageSize = 3;
-    const totalNoticePages = Math.ceil(allNotices.length / noticePageSize);
-    let currentNoticePage = 0;
-    let noticeAutoTimer = null;
-    let isNoticeCardHovered = false;
-
-    const noticeIndicator = document.getElementById('notice-page-indicator');
-    const noticeDotsContainer = document.getElementById('notice-dots-container');
-    const noticePrevBtn = document.getElementById('notice-prev-btn');
-    const noticeNextBtn = document.getElementById('notice-next-btn');
-
-    function updateNoticeCycleStatus(hovered) {
-      const statusEl = document.getElementById('notices-cycle-status');
-      if (!statusEl) return;
-      if (hovered) {
-        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span> বিরতি (নোটিশে মাউস)';
-        statusEl.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-400/40';
-      } else {
-        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 status-dot-open"></span> অটো-রোটেশন সচল';
-        statusEl.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-400/40';
-      }
-    }
-
-    function renderNoticesPage(pageIdx) {
-      currentNoticePage = (pageIdx + totalNoticePages) % totalNoticePages;
-      const start = currentNoticePage * noticePageSize;
-      let noticesToShow = allNotices.slice(start, start + noticePageSize);
-      
-      if (noticesToShow.length < noticePageSize && allNotices.length >= noticePageSize) {
-        const needed = noticePageSize - noticesToShow.length;
-        noticesToShow = noticesToShow.concat(allNotices.slice(0, needed));
-      }
-
-      noticeContainer.innerHTML = noticesToShow.map((n, idx) => {
-        const isJob = n.category === 'jobs';
-        return `
-          <div class="notice-card ${isJob ? 'card-accent-job' : 'card-accent-college'} p-3.5 sm:p-4 flex flex-col justify-between rotate-card-enter stagger-${idx + 1} bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-lg border border-white/20 dark:border-slate-700/60 rounded-2xl">
-            <div>
-              <div class="flex items-center justify-between gap-1.5 mb-2">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${isJob ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white' : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'} shadow-xs">
-                  ${n.badge || (isJob ? 'চাকরি সার্কুলার' : 'স্কুল-কলেজ')}
-                </span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800 flex items-center gap-1">
-                  <i class="fas fa-clock text-[9px]"></i> শেষ: ${n.deadline}
-                </span>
-              </div>
-
-              <h3 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-snug mb-1 line-clamp-2">
-                ${n.title}
-              </h3>
-              <div class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 mb-2 flex items-center gap-1 truncate">
-                <i class="fas fa-building text-[9px]"></i> ${n.dept || n.org || 'সরকারি প্রতিষ্ঠান'}
-              </div>
-              <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed mb-3 line-clamp-2">${n.summary || n.details || ''}</p>
-            </div>
-
-            <a href="notices.html" class="w-full bg-slate-100 dark:bg-slate-700/80 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-800 dark:text-slate-100 font-extrabold text-[11px] py-1.5 px-3 rounded-xl transition flex items-center justify-between border border-slate-200 dark:border-slate-600 shadow-xs">
-              <span>বিস্তারিত ও আবেদন গাইড</span>
-              <i class="fas fa-arrow-right text-[10px]"></i>
-            </a>
-          </div>
-        `;
-      }).join('');
-
-      if (noticeIndicator) {
-        noticeIndicator.textContent = `${toBanglaNumber(currentNoticePage + 1)}/${toBanglaNumber(totalNoticePages)}`;
-      }
-
-      if (noticeDotsContainer) {
-        noticeDotsContainer.innerHTML = Array.from({ length: totalNoticePages }).map((_, i) => `
-          <button type="button" aria-label="স্লাইড ${i + 1}" class="h-1.5 rounded-full transition-all duration-300 ${i === currentNoticePage ? 'w-5 bg-amber-400' : 'w-1.5 bg-white/40 hover:bg-white/70'}" onclick="window.setHomeNoticePage(${i})"></button>
-        `).join('');
-      }
-    }
-
-    window.setHomeNoticePage = function(idx) {
-      renderNoticesPage(idx);
-      resetNoticeAutoTimer();
-    };
-
-    function nextNoticeSlide() {
-      renderNoticesPage(currentNoticePage + 1);
-    }
-
-    function prevNoticeSlide() {
-      renderNoticesPage(currentNoticePage - 1);
-    }
-
-    function startNoticeAutoTimer() {
-      clearInterval(noticeAutoTimer);
-      noticeAutoTimer = setInterval(() => {
-        // শুধুমাত্র ভিউপোর্টে দৃশ্যমান থাকলে এবং নোটিশ কার্ডের ওপর মাউস না থাকলে রোটেট হবে
-        if (isNoticeInView && !isNoticeCardHovered) {
-          nextNoticeSlide();
-        }
-      }, 3000);
-    }
-
-    function resetNoticeAutoTimer() {
-      startNoticeAutoTimer();
-    }
-
-    noticePrevBtn?.addEventListener('click', () => { prevNoticeSlide(); resetNoticeAutoTimer(); });
-    noticeNextBtn?.addEventListener('click', () => { nextNoticeSlide(); resetNoticeAutoTimer(); });
-
-    // শুধুমাত্র নোটিশ কার্ডের ওপর মাউস থাকলে বিরতি, অন্য কোথাও থাকলে অটো-রোটেট সচল থাকবে
-    noticeContainer.addEventListener('mouseover', (e) => {
-      if (e.target.closest('.notice-card')) {
-        isNoticeCardHovered = true;
-        updateNoticeCycleStatus(true);
-      }
-    });
-
-    noticeContainer.addEventListener('mouseout', (e) => {
-      const card = e.target.closest('.notice-card');
-      const nextCard = e.relatedTarget?.closest('.notice-card');
-      if (card && card !== nextCard) {
-        isNoticeCardHovered = false;
-        updateNoticeCycleStatus(false);
-      }
-    });
-
-    renderNoticesPage(0);
-    startNoticeAutoTimer();
-  }
-
-  // ==========================================
-  // ২. হোমপেজ চেকলিস্ট সেকশন (Auto-Rotating Checklist & Cost Calculator)
-  // কম্পিউটার ও স্টুডিও ক্যাটাগরির সেবাগুলোর চেকলিস্ট সম্পূর্ণ বন্ধ রাখা হয়েছে (শুধু সরকারি ভূমিসেবা ও অনলাইন নাগরিক সেবা রাখা)
-  // ==========================================
-  const checklistServices = (allServices || []).filter(s => s.category !== 'computer');
-
-  if (checklistSection && calcSelect && calcResult && checklistServices.length > 0) {
-    let currentChecklistIndex = 0;
-    let checklistAutoTimer = null;
-    let isChecklistCardHovered = false;
-
-    const checklistPrevBtn = document.getElementById('checklist-prev-btn');
-    const checklistNextBtn = document.getElementById('checklist-next-btn');
-    const checklistIndicator = document.getElementById('checklist-service-indicator');
-    const checklistCycleStatus = document.getElementById('checklist-cycle-status');
-
-    function updateChecklistStatus(hovered) {
-      if (!checklistCycleStatus) return;
-      if (hovered) {
-        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (বক্সে মাউস)';
-        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
-      } else {
-        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
-        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
-      }
-    }
-
-    // ড্রপডাউনে শুধুমাত্র ভূমিসেবা ও অনলাইন সেবা রাখা (কম্পিউটার ও স্টুডিও সেবা বাদ)
-    calcSelect.innerHTML = checklistServices.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
-
-    function renderChecklist(serviceId) {
-      const s = checklistServices.find(item => item.id === serviceId) || checklistServices[0];
-      if (!s) return;
-
-      currentChecklistIndex = checklistServices.findIndex(item => item.id === s.id);
-      if (currentChecklistIndex === -1) currentChecklistIndex = 0;
-
-      calcSelect.value = s.id;
-
-      if (checklistIndicator) {
-        checklistIndicator.textContent = `সেবা ${toBanglaNumber(currentChecklistIndex + 1)}/${toBanglaNumber(checklistServices.length)}`;
-      }
-
-      calcResult.innerHTML = `
-        <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4 fade-in">
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="text-slate-500 dark:text-slate-400 text-[11px] block font-bold">সরকারি রাজস্ব ফি:</span>
-              <strong class="text-sm text-slate-900 dark:text-white block mt-1">${s.govtFee || 'সরকারি নিয়ম অনুযায়ী'}</strong>
-            </div>
-            <div class="bg-emerald-50/50 dark:bg-emerald-950/40 p-3.5 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 shadow-xs">
-              <span class="text-emerald-700 dark:text-emerald-400 text-[11px] block font-bold">দোকানের সার্ভিস চার্জ:</span>
-              <strong class="text-sm text-emerald-800 dark:text-emerald-300 block mt-1">${s.serviceFee || '৫০ - ১০০ ৳'}</strong>
-            </div>
-            <div class="bg-amber-50/50 dark:bg-amber-950/40 p-3.5 rounded-2xl border-2 border-amber-200 dark:border-amber-800 shadow-xs">
-              <span class="text-amber-700 dark:text-amber-400 text-[11px] block font-bold">প্রক্রিয়াকরণ সময়:</span>
-              <strong class="text-sm text-amber-800 dark:text-amber-300 block mt-1">${s.duration || 'তাৎক্ষণিক'}</strong>
-            </div>
-          </div>
-
-          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border-2 border-emerald-100 dark:border-slate-700 shadow-xs">
-            <h4 class="text-xs font-black text-slate-900 dark:text-white mb-2.5 flex items-center gap-2">
-              <i class="fas fa-clipboard-check text-emerald-600 text-sm"></i> যা যা সাথে আনতে হবে (প্রয়োজনীয় কাগজপত্র):
-            </h4>
-            <ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
-              ${(s.documents || []).map(doc => `
-                <li class="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl">
-                  <i class="fas fa-check-circle text-emerald-600 mt-0.5 text-xs"></i>
-                  <span class="font-semibold">${doc}</span>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20${encodeURIComponent(s.title)}%20সেবাটি%20নিতে%20চাচ্ছি।" target="_blank" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-5 py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md glow-btn-primary transition">
-              <i class="fab fa-whatsapp text-sm"></i> হোয়াটসঅ্যাপে সরাসরি এই সেবা নিন
-            </a>
-            <a href="tel:01717101919" class="w-full sm:w-auto bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 font-extrabold px-4 py-3 rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600 transition">
-              <i class="fas fa-phone-alt text-emerald-600"></i> কল করুন: 01717-101919
-            </a>
-          </div>
-        </div>
-      `;
-    }
-
-    function nextChecklist() {
-      currentChecklistIndex = (currentChecklistIndex + 1) % checklistServices.length;
-      renderChecklist(checklistServices[currentChecklistIndex].id);
-    }
-
-    function prevChecklist() {
-      currentChecklistIndex = (currentChecklistIndex - 1 + checklistServices.length) % checklistServices.length;
-      renderChecklist(checklistServices[currentChecklistIndex].id);
-    }
-
-    function startChecklistAutoTimer() {
-      clearInterval(checklistAutoTimer);
-      checklistAutoTimer = setInterval(() => {
-        if (isChecklistInView && !isChecklistCardHovered) {
-          nextChecklist();
-        }
-      }, 3000);
-    }
-
-    function resetChecklistAutoTimer() {
-      startChecklistAutoTimer();
-    }
-
-    calcSelect.addEventListener('change', (e) => {
-      renderChecklist(e.target.value);
-      resetChecklistAutoTimer();
-    });
-
-    checklistPrevBtn?.addEventListener('click', () => { prevChecklist(); resetChecklistAutoTimer(); });
-    checklistNextBtn?.addEventListener('click', () => { nextChecklist(); resetChecklistAutoTimer(); });
-
-    calcSelect.addEventListener('mouseenter', () => {
-      isChecklistCardHovered = true;
-      updateChecklistStatus(true);
-    });
-    calcSelect.addEventListener('mouseleave', () => {
-      isChecklistCardHovered = false;
-      updateChecklistStatus(false);
-    });
-    calcSelect.addEventListener('focus', () => {
-      isChecklistCardHovered = true;
-      updateChecklistStatus(true);
-    });
-    calcSelect.addEventListener('blur', () => {
-      isChecklistCardHovered = false;
-      updateChecklistStatus(false);
-    });
-
-    calcResult.addEventListener('mouseenter', () => {
-      isChecklistCardHovered = true;
-      updateChecklistStatus(true);
-    });
-    calcResult.addEventListener('mouseleave', () => {
-      isChecklistCardHovered = false;
-      updateChecklistStatus(false);
-    });
-
-    renderChecklist(checklistServices[0]?.id);
-    startChecklistAutoTimer();
-  }
-
-  // ==========================================
-  // ৩. হোমপেজ সেবা সমূহ (সার্চ, ক্যাটাগরি ফিল্টার ও অটো-রোটেশন সার্কেল)
-  // ==========================================
-  if (serviceContainer && allServices && allServices.length > 0) {
-    const serviceBatchSize = 3;
+  if (serviceContainer) {
+    const serviceBatchSize = 6;
     let activeHomeCategory = 'all';
     let homeSearchQuery = '';
     let currentServiceBatch = 0;
@@ -1210,8 +990,7 @@ function renderHomepageComponents() {
     function startServiceAutoTimer() {
       clearInterval(serviceAutoTimer);
       serviceAutoTimer = setInterval(() => {
-        // শুধুমাত্র ভিউপোর্টে দৃশ্যমান থাকলে এবং সেবা কার্ডের ওপর মাউস না থাকলে রোটেট হবে
-        if (isServiceInView && !isServiceCardHovered && !isSearchBoxFocused) {
+        if (!isServiceCardHovered && !isSearchBoxFocused && !homeSearchQuery.trim() && activeHomeCategory === 'all') {
           nextServiceBatch();
         }
       }, 3000);
@@ -1274,7 +1053,160 @@ function renderHomepageComponents() {
     renderServiceBatch(0);
     startServiceAutoTimer();
   }
+
+  // ২. স্কুল ও কলেজ সংক্রান্ত নোটিশ বুলেটিন কম্পোনেন্ট কন্ট্রোলার (Homepage School/College Notice Bulletin)
+  const homeNoticeContainer = document.getElementById('home-notices-container');
+  if (homeNoticeContainer) {
+    const noticeBatchSize = 3;
+    let currentNoticeBatch = 0;
+    let noticeAutoTimer = null;
+    let isNoticeHovered = false;
+
+    const noticeIndicator = document.getElementById('notice-page-indicator');
+    const noticeDotsContainer = document.getElementById('notice-dots-container');
+    const noticePrevBtn = document.getElementById('notice-prev-btn');
+    const noticeNextBtn = document.getElementById('notice-next-btn');
+    const noticesCycleStatus = document.getElementById('notices-cycle-status');
+
+    // Filter school/college/admission/exam notices
+    let schoolCollegeNotices = allNotices.filter(n => 
+      n.category === 'admissions' || 
+      n.category === 'college' || 
+      n.category === 'results' ||
+      (n.org && (n.org.includes('কলেজ') || n.org.includes('বিশ্ববিদ্যালয়') || n.org.includes('বোর্ড') || n.org.includes('স্কুল') || n.org.includes('অধিদপ্তর'))) ||
+      (n.title && (n.title.includes('ফরম পূরণ') || n.title.includes('ভর্তি') || n.title.includes('পরীক্ষা') || n.title.includes('ডিগ্রি') || n.title.includes('অনার্স') || n.title.includes('প্রবেশপত্র')))
+    );
+
+    if (schoolCollegeNotices.length === 0) {
+      schoolCollegeNotices = ALL_NOTICES_DATA.filter(n => n.category === 'admissions' || n.category === 'results' || (n.org && n.org.includes('কলেজ')));
+      if (schoolCollegeNotices.length === 0) schoolCollegeNotices = allNotices;
+    }
+
+    const totalNoticeBatches = Math.max(1, Math.ceil(schoolCollegeNotices.length / noticeBatchSize));
+
+    function renderHomeNoticeBatch(batchIdx) {
+      currentNoticeBatch = (batchIdx + totalNoticeBatches) % totalNoticeBatches;
+      const start = currentNoticeBatch * noticeBatchSize;
+      const end = Math.min(start + noticeBatchSize, schoolCollegeNotices.length);
+      const batchList = schoolCollegeNotices.slice(start, end);
+
+      if (batchList.length === 0) {
+        homeNoticeContainer.innerHTML = '<div class="col-span-full text-center py-6 text-slate-300 text-xs font-bold">বর্তমানে কোনো স্কুল বা কলেজের নোটিশ নেই।</div>';
+        return;
+      }
+
+      homeNoticeContainer.innerHTML = batchList.map(n => {
+        const typeBadge = n.type || 'কলেজ নোটিশ';
+        const deadline = n.deadline || 'চলমান';
+        const org = n.org || 'ফুলবাড়ী সরকারি কলেজ';
+        const pdfLink = n.pdfUrl || n.sourceUrl || 'portal.html';
+        const whatsappMsg = `আসসালামু আলাইকুম, আমি "${n.title}" (${org}) নোটিশ সম্পর্কে অনলাইন আবেদন/ফরম পূরণের সেবা নিতে চাচ্ছি।`;
+
+        return `
+          <div class="p-5 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-white/20 dark:border-slate-700/60 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-3 group text-slate-800 dark:text-slate-100">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
+                  <i class="fas fa-graduation-cap mr-1"></i> ${typeBadge}
+                </span>
+                <span class="text-[10px] font-extrabold text-amber-700 dark:text-amber-400 flex items-center gap-1">
+                  <i class="far fa-calendar-alt"></i> ${deadline}
+                </span>
+              </div>
+
+              <div class="text-[11px] font-black text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                <i class="fas fa-school text-xs"></i>
+                <span class="truncate">${org}</span>
+              </div>
+
+              <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                ${n.title}
+              </h4>
+
+              <p class="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                ${n.details || n.qualification || n.summary || 'বিস্তারিত তথ্যের জন্য ক্লিক করুন।'}
+              </p>
+            </div>
+
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+              <a href="https://wa.me/8801717101919?text=${encodeURIComponent(whatsappMsg)}" target="_blank" class="font-extrabold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1">
+                <i class="fab fa-whatsapp text-emerald-600"></i> <span>হেল্পলাইন</span>
+              </a>
+              ${n.sourceUrl || n.pdfUrl ? `
+                <a href="${pdfLink}" target="_blank" rel="noopener" class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-[11px] font-black transition flex items-center gap-1">
+                  <span>বিজ্ঞপ্তি দেখুন</span>
+                  <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+                </a>
+              ` : `
+                <a href="portal.html" class="px-3 py-1 rounded-xl bg-emerald-600 text-white text-[11px] font-black transition flex items-center gap-1">
+                  <span>জব পোর্টাল</span>
+                  <i class="fas fa-arrow-right text-[9px]"></i>
+                </a>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (noticeIndicator) {
+        noticeIndicator.textContent = `${toBanglaNumber(currentNoticeBatch + 1)}/${toBanglaNumber(totalNoticeBatches)}`;
+      }
+
+      if (noticeDotsContainer) {
+        noticeDotsContainer.innerHTML = Array.from({ length: totalNoticeBatches }).map((_, i) => `
+          <button type="button" aria-label="নোটিশ ব্যাচ ${i + 1}" class="h-2 rounded-full transition-all duration-300 ${i === currentNoticeBatch ? 'w-6 bg-amber-400' : 'w-2 bg-white/40 hover:bg-white/70'}" onclick="window.setHomeNoticeBatch(${i})"></button>
+        `).join('');
+      }
+    }
+
+    window.setHomeNoticeBatch = function(idx) {
+      renderHomeNoticeBatch(idx);
+      resetNoticeAutoTimer();
+    };
+
+    function nextHomeNoticeBatch() {
+      renderHomeNoticeBatch(currentNoticeBatch + 1);
+    }
+
+    function prevHomeNoticeBatch() {
+      renderHomeNoticeBatch(currentNoticeBatch - 1);
+    }
+
+    function startNoticeAutoTimer() {
+      clearInterval(noticeAutoTimer);
+      noticeAutoTimer = setInterval(() => {
+        if (!isNoticeHovered) {
+          nextHomeNoticeBatch();
+        }
+      }, 4000);
+    }
+
+    function resetNoticeAutoTimer() {
+      startNoticeAutoTimer();
+    }
+
+    noticePrevBtn?.addEventListener('click', () => { prevHomeNoticeBatch(); resetNoticeAutoTimer(); });
+    noticeNextBtn?.addEventListener('click', () => { nextHomeNoticeBatch(); resetNoticeAutoTimer(); });
+
+    homeNoticeContainer.addEventListener('mouseenter', () => {
+      isNoticeHovered = true;
+      if (noticesCycleStatus) {
+        noticesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span> বিরতি (মাউস রাখা হয়েছে)';
+      }
+    });
+
+    homeNoticeContainer.addEventListener('mouseleave', () => {
+      isNoticeHovered = false;
+      if (noticesCycleStatus) {
+        noticesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 status-dot-open"></span> অটো-রোটেশন সচল';
+      }
+    });
+
+    renderHomeNoticeBatch(0);
+    startNoticeAutoTimer();
+  }
 }
+
 function renderServicesPage() {
   const gridContainer = document.getElementById('services-grid-container');
   const searchInput = document.getElementById('service-search-input');
