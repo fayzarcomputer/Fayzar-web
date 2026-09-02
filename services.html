@@ -229,6 +229,15 @@
       <p class="text-xs sm:text-sm text-emerald-100 max-w-2xl mx-auto leading-relaxed font-normal">
         ভূমিসেবা, ই-নামজারি, খতিয়ান, চাকরির আবেদন, প্রশ্নপত্র কম্পোজ ও কম্পিউটার সংক্রান্ত সকল সেবার পূর্ণাঙ্গ বিবরণ, সরকারি রাজস্ব ফি ও দোকান চার্জ।
       </p>
+      
+      <!-- Quick Jump Button to Shop Rate Chart -->
+      <div class="mt-4">
+        <a href="#rate-chart" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-extrabold text-xs backdrop-blur-md border border-white/30 transition shadow-sm">
+          <i class="fas fa-file-invoice-dollar text-amber-300"></i>
+          <span>দোকানের কাজের মূল্য তালিকা দেখুন</span>
+          <i class="fas fa-arrow-down text-[10px]"></i>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -284,6 +293,433 @@
       <!-- Services Grid Container (Category-based auto-rotated) -->
       <div id="services-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300">
         <!-- Rendered via main.js with rich cards -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       দোকানের কাজের স্বচ্ছ মূল্য তালিকা (Shop Work Transparent Rate Chart)
+       ========================================================================= -->
+  <section class="py-16 px-4 bg-slate-200/70 dark:bg-[#0c1322] border-t-2 border-emerald-500/20 border-b border-slate-300 dark:border-slate-800" id="rate-chart">
+    <div class="container mx-auto max-w-6xl">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-extrabold text-xs mb-3 shadow-xs">
+          <i class="fas fa-file-invoice-dollar text-emerald-600"></i>
+          <span>স্বচ্ছ মূল্য নিশ্চয়তা • নির্ধারিত দোকান রেটচার্ট</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white leading-tight">
+          ফয়জার কম্পিউটার কাজের স্বচ্ছ মূল্য তালিকা
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed font-normal">
+          কম্পোজ, প্রিন্ট, ফটোকপি, পাসপোর্ট ছবি ও অনলাইন আবেদনের সঠিক এবং স্বচ্ছ নির্ধারিত মূল্য দেখে নিন। কোনো গোপন বা অতিরিক্ত চার্জ নেই।
+        </p>
+
+        <!-- Feature Trust Badges -->
+        <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-4 text-xs font-extrabold text-slate-700 dark:text-slate-200">
+          <span class="flex items-center gap-1.5"><i class="fas fa-circle-check text-emerald-600"></i> কোনো অতিরিক্ত লুকানো চার্জ নেই</span>
+          <span class="flex items-center gap-1.5"><i class="fas fa-circle-check text-emerald-600"></i> প্রিমিয়াম কোয়ালিটি কাগজ ও প্রিন্ট</span>
+          <span class="flex items-center gap-1.5"><i class="fas fa-circle-check text-emerald-600"></i> দ্রুত ও নির্ভুল ডেলিভারি</span>
+        </div>
+      </div>
+
+      <!-- Controls: Category Tabs & Instant Search -->
+      <div class="bg-white dark:bg-slate-800/95 rounded-3xl p-4 sm:p-5 mb-8 shadow-md border border-slate-200 dark:border-slate-700/80 flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <!-- Search Input -->
+        <div class="relative w-full md:w-80">
+          <input 
+            type="text" 
+            id="rate-search-input" 
+            placeholder="রেট খুঁজুন (যেমন: প্রিন্ট, ফটোকপি, পাসপোর্ট, A4)..." 
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold focus:outline-none focus:border-emerald-500 text-slate-800 dark:text-slate-100 shadow-inner"
+          >
+          <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+        </div>
+
+        <!-- Filter Category Tabs -->
+        <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto overflow-x-auto pb-1 md:pb-0" id="rate-category-tabs">
+          <button data-rate-cat="all" class="rate-tab-btn active px-3.5 py-2 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-xs transition cursor-pointer">
+            সবগুলো
+          </button>
+          <button data-rate-cat="compose" class="rate-tab-btn px-3 py-2 rounded-xl text-xs font-bold border bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+            <i class="fas fa-keyboard text-emerald-600 mr-1"></i> কম্পোজ
+          </button>
+          <button data-rate-cat="print" class="rate-tab-btn px-3 py-2 rounded-xl text-xs font-bold border bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+            <i class="fas fa-print text-blue-500 mr-1"></i> প্রিন্ট
+          </button>
+          <button data-rate-cat="photocopy" class="rate-tab-btn px-3 py-2 rounded-xl text-xs font-bold border bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+            <i class="fas fa-copy text-amber-500 mr-1"></i> ফটোকপি
+          </button>
+          <button data-rate-cat="photo" class="rate-tab-btn px-3 py-2 rounded-xl text-xs font-bold border bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+            <i class="fas fa-camera text-purple-500 mr-1"></i> ছবি প্রিন্ট
+          </button>
+          <button data-rate-cat="scan" class="rate-tab-btn px-3 py-2 rounded-xl text-xs font-bold border bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+            <i class="fas fa-envelope-open-text text-teal-600 mr-1"></i> স্ক্যানিং ও মেইল
+          </button>
+          <button data-rate-cat="online" class="rate-tab-btn px-3 py-2 rounded-xl text-xs font-bold border bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+            <i class="fas fa-laptop-code text-indigo-500 mr-1"></i> অনলাইন আবেদন
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Rate Cards Grid (6 Categories) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="rate-cards-container">
+        
+        <!-- ১. কম্পোজ -->
+        <div class="rate-category-card bg-white dark:bg-slate-800/95 rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-slate-200 dark:border-slate-700/80 flex flex-col justify-between" data-rate-category="compose">
+          <div>
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center text-lg shadow-sm">
+                  <i class="fas fa-keyboard"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">ক্রমিক ০১</span>
+                  <h3 class="text-base font-black text-slate-900 dark:text-white mt-0.5">কম্পোজ (Compose)</h3>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">২টি সেবা</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] rounded-xl">
+                    <th class="p-2.5 rounded-l-xl">বিবরণ</th>
+                    <th class="p-2.5 text-center">মূল্য</th>
+                    <th class="p-2.5 rounded-r-xl">মন্তব্য</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-800 dark:text-slate-200">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">বাংলা অথবা ইংরেজি: প্রতি পৃষ্ঠা (A4)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৩০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">স্ট্যান্ডার্ড ফন্ট ও ফরম্যাট</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">গণিত / পদার্থ / রসায়ন: প্রতি পৃষ্ঠা (A4)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৪৫ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">জটিল সমীকরণ ও ইকুয়েশন</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-xs">
+            <span class="text-slate-500 dark:text-slate-400 text-[11px]">প্রিন্ট খরচ আলাদা প্রযোজ্য</span>
+            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20কম্পোজ%20করার%20জন্য%20ফাইল%20পাঠাতে%20চাচ্ছি।" target="_blank" class="font-extrabold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1">
+              <i class="fab fa-whatsapp text-emerald-600"></i> ডকুমেন্ট পাঠান
+            </a>
+          </div>
+        </div>
+
+        <!-- ২. প্রিন্ট -->
+        <div class="rate-category-card bg-white dark:bg-slate-800/95 rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-slate-200 dark:border-slate-700/80 flex flex-col justify-between" data-rate-category="print">
+          <div>
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-700 text-white flex items-center justify-center text-lg shadow-sm">
+                  <i class="fas fa-print"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] font-black text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded-full border border-blue-300 dark:border-blue-800">ক্রমিক ০২</span>
+                  <h3 class="text-base font-black text-slate-900 dark:text-white mt-0.5">প্রিন্ট (Print)</h3>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">৩টি সেবা</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] rounded-xl">
+                    <th class="p-2.5 rounded-l-xl">বিবরণ</th>
+                    <th class="p-2.5 text-center">মূল্য</th>
+                    <th class="p-2.5 rounded-r-xl">মন্তব্য</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-800 dark:text-slate-200">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">সাধারণ কালার প্রিন্ট</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">১০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-amber-700 dark:text-amber-400 font-bold">কালার কারেকশন বা রিসাইজ করতে হলে আলোচনা সাপেক্ষে</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">রেজাল্ট / এডমিট / নেট থেকে প্রিন্ট</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">১৫ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">অনলাইন সার্চ ও তৎক্ষণাৎ প্রিন্ট</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">সাদাকালো প্রিন্ট</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৫ ৳</td>
+                    <td class="p-2.5 text-[11px] text-amber-700 dark:text-amber-400 font-bold">কাজ বা এডিট করতে হলে ১০ টাকা</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-xs">
+            <span class="text-slate-500 dark:text-slate-400 text-[11px]">হাই-কোয়ালিটি লেজার প্রিন্টিং</span>
+            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20পিডিএফ/ডকুমেন্ট%20প্রিন্ট%20করতে%20চাচ্ছি।" target="_blank" class="font-extrabold text-blue-700 dark:text-blue-400 hover:underline flex items-center gap-1">
+              <i class="fab fa-whatsapp text-emerald-600"></i> প্রিন্টের ফাইল পাঠান
+            </a>
+          </div>
+        </div>
+
+        <!-- ৩. ফটোকপি -->
+        <div class="rate-category-card bg-white dark:bg-slate-800/95 rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-slate-200 dark:border-slate-700/80 flex flex-col justify-between" data-rate-category="photocopy">
+          <div>
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-700 text-white flex items-center justify-center text-lg shadow-sm">
+                  <i class="fas fa-copy"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] font-black text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded-full border border-amber-300 dark:border-amber-800">ক্রমিক ০৩</span>
+                  <h3 class="text-base font-black text-slate-900 dark:text-white mt-0.5">ফটোকপি (Photocopy)</h3>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">৪টি সেবা</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] rounded-xl">
+                    <th class="p-2.5 rounded-l-xl">বিবরণ</th>
+                    <th class="p-2.5 text-center">মূল্য</th>
+                    <th class="p-2.5 rounded-r-xl">মন্তব্য</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-800 dark:text-slate-200">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">A4 পেজ প্রতি পৃষ্ঠা (১ সাইড)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">২ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">একক পাশ কপি</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">A4 পেজ প্রতি পৃষ্ঠা (উভয় সাইড)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৩ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">ডুপ্লেক্স উভয় পাশ</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">Legal পেজ প্রতি পৃষ্ঠা (১ সাইড)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৩ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">দলিল ও কোর্ট সাইজ পেজ</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">Legal পেজ প্রতি পৃষ্ঠা (উভয় সাইড)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৫ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">উভয় পাশ লিগ্যাল কপি</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-xs">
+            <span class="text-slate-500 dark:text-slate-400 text-[11px]">পরিষ্কার ও ডিপ ব্ল্যাক ফটোকপি</span>
+            <span class="font-black text-emerald-700 dark:text-emerald-400 text-[11px]">৮০ GSM পেপার</span>
+          </div>
+        </div>
+
+        <!-- ৪. ছবি প্রিন্ট -->
+        <div class="rate-category-card bg-white dark:bg-slate-800/95 rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-slate-200 dark:border-slate-700/80 flex flex-col justify-between" data-rate-category="photo">
+          <div>
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-700 text-white flex items-center justify-center text-lg shadow-sm">
+                  <i class="fas fa-camera"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] font-black text-purple-700 dark:text-purple-400 bg-purple-100 dark:bg-purple-950 px-2 py-0.5 rounded-full border border-purple-300 dark:border-purple-800">ক্রমিক ০৪</span>
+                  <h3 class="text-base font-black text-slate-900 dark:text-white mt-0.5">ছবি প্রিন্ট ও স্টুডিও (Photo Print)</h3>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">৫টি সেবা</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] rounded-xl">
+                    <th class="p-2.5 rounded-l-xl">বিবরণ</th>
+                    <th class="p-2.5 text-center">মূল্য</th>
+                    <th class="p-2.5 rounded-r-xl">মন্তব্য</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-800 dark:text-slate-200">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">২ কপি পাসপোর্ট / স্ট্যাম্প সাইজ (নতুন ছবি)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">২০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">দোকানে ছবি তোলা ও ব্যাকগ্রাউন্ড চেঞ্জ</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">৪ কপি পাসপোর্ট / স্ট্যাম্প সাইজ (নতুন ছবি)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৩০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">ল্যাব কোয়ালিটি গ্লসি পেপার</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">২ কপি পাসপোর্ট / স্ট্যাম্প সাইজ (আগের ছবি)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">১০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">সংরক্ষিত বা মোবাইলের ছবি থেকে</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">৪ কপি পাসপোর্ট / স্ট্যাম্প সাইজ (আগের ছবি)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">২০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">রিপ্রিন্ট প্যাকেজ</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">4R সাইজ (প্রিন্ট + লেমেনেটিং)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৪০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-bold">হাই-গ্লসি ফটো ও লেমিনেশন সহ</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-xs">
+            <span class="text-slate-500 dark:text-slate-400 text-[11px]">ওয়াটারপ্রুফ ফটো পেপার</span>
+            <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম,%20আমি%20ছবি%20প্রিন্ট%20করার%20জন্য%20ছবি%20পাঠাতে%20চাচ্ছি।" target="_blank" class="font-extrabold text-purple-700 dark:text-purple-400 hover:underline flex items-center gap-1">
+              <i class="fab fa-whatsapp text-emerald-600"></i> WhatsApp-এ ছবি পাঠান
+            </a>
+          </div>
+        </div>
+
+        <!-- ৫. স্ক্যানিং + মেইল -->
+        <div class="rate-category-card bg-white dark:bg-slate-800/95 rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-slate-200 dark:border-slate-700/80 flex flex-col justify-between" data-rate-category="scan">
+          <div>
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-800 text-white flex items-center justify-center text-lg shadow-sm">
+                  <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] font-black text-teal-700 dark:text-teal-400 bg-teal-100 dark:bg-teal-950 px-2 py-0.5 rounded-full border border-teal-300 dark:border-teal-800">ক্রমিক ০৫</span>
+                  <h3 class="text-base font-black text-slate-900 dark:text-white mt-0.5">স্ক্যানিং + মেইল (Scanning & Email)</h3>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">১টি সেবা</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] rounded-xl">
+                    <th class="p-2.5 rounded-l-xl">বিবরণ</th>
+                    <th class="p-2.5 text-center">মূল্য</th>
+                    <th class="p-2.5 rounded-r-xl">মন্তব্য</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-800 dark:text-slate-200">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5 font-bold">স্ক্যানিং + মেইল (১-২ পৃষ্ঠা)</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">২০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-amber-700 dark:text-amber-400 font-bold">২ পৃষ্ঠার অধিক হলে প্রতি পৃষ্ঠা ৫ টাকা হারে বৃদ্ধি পাবে</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-xs">
+            <span class="text-slate-500 dark:text-slate-400 text-[11px]">এইচডি স্ক্যান ও সরাসরি পিডিএফ তৈরি</span>
+            <span class="text-emerald-700 dark:text-emerald-400 font-extrabold text-[11px]">৩০০+ DPI স্ক্যান</span>
+          </div>
+        </div>
+
+        <!-- ৬. অনলাইনে আবেদন -->
+        <div class="rate-category-card bg-white dark:bg-slate-800/95 rounded-3xl p-5 sm:p-6 shadow-lg border-2 border-slate-200 dark:border-slate-700/80 flex flex-col justify-between" data-rate-category="online">
+          <div>
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-800 text-white flex items-center justify-center text-lg shadow-sm">
+                  <i class="fas fa-laptop-code"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] font-black text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950 px-2 py-0.5 rounded-full border border-indigo-300 dark:border-indigo-800">ক্রমিক ০৬</span>
+                  <h3 class="text-base font-black text-slate-900 dark:text-white mt-0.5">অনলাইনে আবেদন (Online Application)</h3>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">৫টি সেবা</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-extrabold text-[11px] rounded-xl">
+                    <th class="p-2.5 rounded-l-xl">বিবরণ</th>
+                    <th class="p-2.5 text-center">মূল্য</th>
+                    <th class="p-2.5 rounded-r-xl">মন্তব্য</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-800 dark:text-slate-200">
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">ভর্তি আবেদন</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">১০০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">একাদশ শ্রেণি, ডিগ্রি, অনার্স ও মাস্টার্স</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">সাধারণ চাকরির আবেদন</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">৫০ - ১০০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-amber-700 dark:text-amber-400 font-bold">(আবেদনের ধরণ অনুযায়ী- পূর্বে জেনে নিন)</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">ফরম ফিল-আপ</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">১০০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">বোর্ড ও বিশ্ববিদ্যালয় পরীক্ষার ফরম পূরণ</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">পাসপোর্ট আবেদন</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">২০০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">ই-পাসপোর্ট নতুন ও রি-ইস্যু আবেদন</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <td class="p-2.5">অনলাইনে জিডি</td>
+                    <td class="p-2.5 text-center font-black text-emerald-700 dark:text-emerald-400 text-sm whitespace-nowrap">২০০ ৳</td>
+                    <td class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400">হারানো ডকুমেন্টস সংক্রান্ত অনলাইন জিডি</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-xs">
+            <span class="text-slate-500 dark:text-slate-400 text-[11px]">সরকারি চালান ও ফি আলাদা</span>
+            <a href="portal.html" class="font-extrabold text-indigo-700 dark:text-indigo-400 hover:underline flex items-center gap-1">
+              <i class="fas fa-arrow-right"></i> জব ও আবেদন পোর্টাল
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Notice & Helpline Footer Banner -->
+      <div class="mt-8 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl flex-shrink-0">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <div>
+            <h4 class="text-base sm:text-lg font-black">যেকোনো সেবার বিষয়ে বিস্তারিত জানতে সরাসরি যোগাযোগ করুন</h4>
+            <p class="text-xs text-emerald-100 font-medium mt-0.5">সরকারি ফি ও আবেদনের শর্তাবলী সম্পর্কে জানতে দোকানে আসুন অথবা ফোনে যোগাযোগ করুন।</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <a href="tel:01717101919" class="w-full md:w-auto px-5 py-3 rounded-2xl bg-white text-slate-900 font-black text-xs hover:bg-slate-100 transition shadow-md flex items-center justify-center gap-2">
+            <i class="fas fa-phone-alt text-emerald-600"></i> 01717-101919
+          </a>
+          <a href="https://wa.me/8801717101919" target="_blank" rel="noopener" class="w-full md:w-auto px-5 py-3 rounded-2xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/20 font-black text-xs transition flex items-center justify-center gap-2">
+            <i class="fab fa-whatsapp text-emerald-400"></i> WhatsApp
+          </a>
+        </div>
       </div>
 
     </div>
