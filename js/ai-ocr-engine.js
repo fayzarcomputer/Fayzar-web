@@ -29,22 +29,42 @@
   const MAX_IMAGE_DIMENSION = 1400;
   const JPEG_COMPRESSION_QUALITY = 0.84;
 
-  const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, and LaTeX-to-Word formatting specialist.
-Your goal is to extract and compose a COMPLETE, UNTRUNCATED, BEAUTIFULLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
+  const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, Academic Proofreader, and LaTeX-to-Word formatting specialist.
+Your goal is to extract, verify, correct, and compose a COMPLETE, UNTRUNCATED, FLAWLESSLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
 
-CRITICAL COMPOSITION & FORMATTING RULES:
+CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
+
 1. FULL COMPLETE EXTRACTION ACROSS ALL IMAGES/PAGES (সব পেজের সম্পূর্ণ রূপান্তর):
    - You are provided with ALL pages/images of the document simultaneously in exact sequential order.
-   - You MUST extract and transcribe ALL questions, diagrams, values, tables, and text across ALL images continuously from Page 1 to the very last page in a single unified document.
+   - You MUST extract and transcribe ALL questions, stems (উদ্দীপক), diagrams, values, tables, and text across ALL images continuously from Page 1 to the very last page in a single unified document.
    - DO NOT stop halfway, DO NOT omit any image/page, DO NOT summarize or skip questions.
    - Maintain seamless question numbering (১., ২., ৩., ..., ক., খ., গ., ঘ.) across page breaks.
 
-2. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
-   - Output ONLY the clean transcribed document text directly.
+2. ACTIVE SELF-VERIFICATION & SMART CORRECTION (প্রশ্ন ও সমীকরণ স্বয়ংক্রিয় যাচাই ও সংশোধন):
+   - CRITICAL REQUIREMENT: Real question papers or scanned images often contain printing flaws, blurriness, typographical errors, broken conjuncts (যুক্তবর্ণ), missing exponents, or flawed mathematical syntax.
+   - You MUST thoroughly verify every question, stem (উদ্দীপক), formula, and multiple-choice option for academic and mathematical correctness.
+   - If an equation is blurry or flawed (e.g. missing power $x2 + 5x + 6$ instead of $x^2 + 5x + 6$, broken fraction $\\frac{a}{b}$, missing degree $30^\\circ$, missing angle $\\angle ABC$, broken square root $\\sqrt{b^2 - 4ac}$, incorrect physics/chemistry formula), intelligently fix it in the main text so that the question is 100% mathematically valid, complete, and solvable.
+   - If Bengali text has OCR misrecognitions (e.g. missing মাত্রা/আ-কার/ই-কার, broken যুক্তবর্ণ যেমন: ক্ষ, জ্ঞ, ষ্ণ, ষ্ঠ, ঙ্ক, ঙ্গ, ত্ত, ক্ত, ত্র, শ্র, হৃ, দ্র), correct them into standard, grammatically flawless Bengali.
+   - In the main document body, ALWAYS output the fully corrected, clean, professional question text.
+
+3. DEDICATED REFERENCE & CORRECTION NOTES SECTION (ফাইলের নিচে রেফারেন্স ও সংশোধনী নোট):
+   - CRITICAL: At the very end of the transcribed document, you MUST ALWAYS append a structured verification reference section starting with a horizontal divider:
+   ---
+   [যাচাই ও সংশোধনী রেফারেন্স / Verification & Correction Notes]
+   • [List each specific correction, auto-fix, or assumption made for blurry/flawed parts, referencing the question number. e.g. "প্রশ্ন নং ১ (গ): মূল ছবিতে সমীকরণের ঘাত অস্পষ্ট ছিল; গাণিতিক সঙ্গতি অনুসারে $x^2 - 5x + 6 = 0$ হিসেবে শুদ্ধ করা হয়েছে।"]
+   • [e.g. "প্রশ্ন নং ৩ (খ): 'ট্রান্সফরমার'-এর ক্ষমতা একক $kW$ এবং ভোল্টেজ সমীকরণ $V_p/V_s = N_p/N_s$ যাচাইকৃত ও শুদ্ধ করা হয়েছে।"]
+   • [e.g. "প্রশ্ন নং ৪ (ক): যুক্তবর্ণ 'অভিকর্ষজ' বানান ও একক $\\text{m/s}^2$ শুদ্ধ করা হয়েছে।"]
+   - If no corrections were needed and the original was 100% crystal clear:
+   ---
+   [যাচাই ও সংশোধনী রেফারেন্স / Verification & Correction Notes]
+   • সকল প্রশ্ন, গাণিতিক সমীকরণ ও টেক্সট শতভাগ নির্ভুলভাবে যাচাইকৃত। কোনো অস্পষ্টতা বা সংশোধনের প্রয়োজন নেই।
+
+4. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
+   - Output ONLY the clean transcribed document text followed by the reference section.
    - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
    - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
 
-3. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
+5. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
    - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
    - Write clean plain roman numerals without any asterisks:
      i. A, B ও C একই সরলরেখায় অবস্থিত
@@ -54,7 +74,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
    - Keep MCQ options aligned side-by-side on the same line with proper spacing.
 
-4. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
+6. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
    - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
    - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
      ক. রূপান্তরক কাকে বলে?
@@ -62,13 +82,13 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      গ. উদ্দীপকের তথ্যানুযায়ী আউটপুটে তড়িৎ বিভব নির্ণয় কর।
      ঘ. ক্ষমতা অপরিবর্তিত থাকলে সেকেন্ডারি প্রবাহ বিশ্লেষণ কর।
 
-5. DIAGRAMS & GEOMETRIC FIGURES (চিত্র / জ্যামিতিক চিত্র / ডায়াগ্রাম):
+7. DIAGRAMS & GEOMETRIC FIGURES (চিত্র / জ্যামিতিক চিত্র / ডায়াগ্রাম):
    - Whenever there is a diagram, geometric shape (e.g. triangle \\Delta ABD, circle, polygon), circuit, graph, chart, or physics illustration, NEVER skip it or leave it blank.
    - You MUST extract all labels, vertices, side lengths, angles, and given values in text, and clearly format it as:
      [চিত্র আছে: চিত্রে \\Delta ABD একটি ত্রিভুজ, যার বাহু ও কোণের মানসমূহ: AB = ..., BD = ..., AD = ...]
    - If questions refer to the diagram (যেমন: "উদ্দীপকের চিত্রানুযায়ী ৫ নং প্রশ্নের উত্তর দাও"), always retain the diagram reference and its values clearly so the question remains 100% solvable.
 
-6. TABLES & GRIDS (টেবিল ও ছক):
+8. TABLES & GRIDS (টেবিল ও ছক):
    - NEVER skip any table or grid. Transcribe all tables into complete, standard Markdown tables.
    - Example:
      | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
@@ -76,7 +96,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
      | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-7. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও বাংলা এককের সম্পূর্ণ পৃথকীকরণ):
+9. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও বাংলা এককের সম্পূর্ণ পৃথকীকরণ):
    - Write mathematical formulas, equations, and numbers in LaTeX ($...$).
    - CRITICAL: NEVER put any Bengali word, text, unit, or quotes (যেমন: "বর্গসেমি", "সেমি", "মিটার", "টাকা", "টি", "জন") inside LaTeX blocks ($...$, $$...$$) or \\text{...}.
    - LaTeX blocks must ONLY contain pure mathematical numbers, variables, formulas, and symbols.
@@ -84,8 +104,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
    - Incorrect: (ক) $4\\sqrt{55} \\text{"বর্গসেমি"}$ ❌
    - Correct: (ক) $4\\sqrt{55}$ "বর্গসেমি" (অথবা (ক) $4\\sqrt{55}$ বর্গসেমি) ✅
 
-8. ACCURATE BENGALI TYPOGRAPHY:
-   - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
+10. ACCURATE BENGALI TYPOGRAPHY:
+    - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
   const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
 
@@ -194,13 +214,13 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       fontSizeSelect: document.getElementById('ai-target-font-size') || document.getElementById('ai-ocr-font-size'),
       lineSpacingSelect: document.getElementById('ai-ocr-line-spacing'),
 
-      openSettingsBtn: document.getElementById('ai-ocr-open-settings-btn'),
+      openSettingsBtn: document.getElementById('ai-ocr-open-settings-btn') || document.getElementById('ai-ocr-settings-btn'),
       settingsModal: document.getElementById('ai-ocr-settings-modal'),
-      closeSettingsBtn: document.getElementById('ai-ocr-close-settings-btn'),
-      saveSettingsBtn: document.getElementById('ai-ocr-save-settings-btn'),
+      closeSettingsBtn: document.getElementById('ai-ocr-settings-close-btn') || document.getElementById('ai-ocr-close-settings-btn'),
+      saveSettingsBtn: document.getElementById('ai-ocr-settings-save-btn') || document.getElementById('ai-ocr-save-settings-btn'),
       demoToggle: document.getElementById('ai-ocr-demo-toggle'),
-      geminiKeyInput: document.getElementById('ai-ocr-gemini-key-input'),
-      modelSelect: document.getElementById('ai-ocr-model-select'),
+      geminiKeyInput: document.getElementById('ai-ocr-settings-api-key') || document.getElementById('ai-ocr-gemini-key-input'),
+      modelSelect: document.getElementById('ai-ocr-settings-model-select') || document.getElementById('ai-ocr-model-select'),
       gasUrlInput: document.getElementById('ai-ocr-gas-url-input'),
       resetCreditsBtn: document.getElementById('ai-ocr-reset-credits-btn'),
 
@@ -667,9 +687,13 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     let candidateModels = [
       'gemini-2.0-flash',
       'gemini-2.0-flash-lite',
+      'gemini-2.0-flash-exp',
+      'gemini-2.0-pro-exp-02-05',
       'gemini-1.5-flash',
+      'gemini-1.5-flash-latest',
       'gemini-1.5-flash-8b',
-      'gemini-1.5-pro'
+      'gemini-1.5-pro',
+      'gemini-1.5-pro-latest'
     ];
 
     if (state.selectedModel && state.selectedModel !== 'auto') {
