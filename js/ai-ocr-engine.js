@@ -1317,9 +1317,36 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
   }
 
   // Sanitizer: Strips unwanted asterisks around Roman numerals & removes mark brackets [১], [২] from questions
+  function suppressHallucinatedRepetitions(text) {
+    if (!text || typeof text !== 'string') return text || '';
+    let cleaned = text;
+
+    // 1. Collapse duplicate lines
+    const lines = cleaned.split('\n');
+    const filteredLines = [];
+    let lastLine = null;
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed && trimmed === lastLine) {
+        continue;
+      }
+      lastLine = trimmed;
+      filteredLines.push(line);
+    }
+    cleaned = filteredLines.join('\n');
+
+    // 2. Collapse repeated inline phrases / formula steps
+    cleaned = cleaned.replace(/(.{12,140}?)(?:\s*\1\s*){2,}/gs, '$1');
+
+    // 3. Clean trailing repetitive unclosed equations
+    cleaned = cleaned.replace(/(\\implies|\=\s*0|বা\s*\$)[^\n$]{0,100}(?:\1[^\n$]{0,100}){3,}/g, '$1');
+
+    return cleaned;
+  }
+
   function cleanOcrResponse(rawText) {
     if (!rawText) return '';
-    let text = sanitizeMathBengaliSeparation(rawText.trim());
+    let text = suppressHallucinatedRepetitions(sanitizeMathBengaliSeparation(rawText.trim()));
 
     if (text.startsWith('```')) {
       text = text.replace(/^```[a-zA-Z]*\n?/, '').replace(/\n?```$/, '');
