@@ -107,11 +107,28 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
 10. ACCURATE BENGALI TYPOGRAPHY:
     - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
-  const DEFAULT_GEMINI_API_KEY = '';
+  // Dynamic API Key Vault Connector (Securely loads deobfuscated keys from fayzar-ocr-config.js)
+  function getActiveApiKey() {
+    const customKey = (state && state.byokApiKey ? state.byokApiKey : '').trim();
+    if (customKey && customKey.length > 10) return customKey;
+    const localKey = (localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '').trim();
+    if (localKey && localKey.length > 10) return localKey;
+    if (typeof window !== 'undefined' && window.FayzarOcrConfig && typeof window.FayzarOcrConfig.getActiveApiKey === 'function') {
+      return window.FayzarOcrConfig.getActiveApiKey();
+    }
+    return '';
+  }
+
+  function getBackupApiKey() {
+    if (typeof window !== 'undefined' && window.FayzarOcrConfig && typeof window.FayzarOcrConfig.getBackupApiKey === 'function') {
+      return window.FayzarOcrConfig.getBackupApiKey();
+    }
+    return '';
+  }
 
   const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '';
   const savedGas = localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '';
-  const hasValidConfig = Boolean(savedKey || savedGas);
+  const hasValidConfig = Boolean(savedKey || savedGas || getActiveApiKey());
 
   const rawDemoSetting = localStorage.getItem(STORAGE_KEYS.DEMO_MODE);
   // Default to Live mode (false) when API key is available
@@ -239,23 +256,23 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
   }
 
   function updateBadges() {
-    const remaining = Math.max(0, MAX_FREE_USES - state.freeUsesCount);
+    const activeKey = getActiveApiKey();
     if (elements.creditBadge) {
-      elements.creditBadge.textContent = `ফ্রি ক্রেডিট: ${toBengaliNumber(remaining)}/${toBengaliNumber(MAX_FREE_USES)}`;
-      if (remaining === 0) {
-        elements.creditBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300";
-        elements.creditBadge.textContent = "ফ্রি শেষ (BYOK)";
+      if (activeKey) {
+        elements.creditBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300";
+        elements.creditBadge.textContent = "AI OCR সক্রিয় (ফ্রি)";
       } else {
-        elements.creditBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-300";
+        const remaining = Math.max(0, MAX_FREE_USES - state.freeUsesCount);
+        elements.creditBadge.textContent = `ফ্রি ক্রেডিট: ${toBengaliNumber(remaining)}/${toBengaliNumber(MAX_FREE_USES)}`;
       }
     }
     if (elements.modeBadge) {
       if (state.demoMode) {
         elements.modeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-300 inline-flex items-center gap-1.5";
         elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> অফলাইন ডেমো`;
-      } else if (state.byokApiKey) {
+      } else if (activeKey) {
         elements.modeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 inline-flex items-center gap-1.5";
-        elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> লাইভ API সচল`;
+        elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> লাইভ AI সচল`;
       } else {
         elements.modeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-300 inline-flex items-center gap-1.5";
         elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500"></span> ফ্রি প্রক্সি`;
@@ -652,12 +669,13 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
       return;
     }
 
-    if (state.byokApiKey && state.byokApiKey.trim().length > 0) {
-      await runDirectGeminiOcr(state.byokApiKey.trim());
+    const key = getActiveApiKey();
+    if (key) {
+      await runDirectGeminiOcr(key);
       return;
     }
 
-    if (state.gasUrl && state.gasUrl.trim().length > 0 && state.freeUsesCount < MAX_FREE_USES) {
+    if (state.gasUrl && state.gasUrl.trim().length > 0) {
       await runGasProxyOcr();
       return;
     }
@@ -694,24 +712,22 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
 
     if (onProgress) onProgress(total > 1 ? `সবগুলো (${toBengaliNumber(total)}টি) পেজ একসাথে AI-তে পাঠানো হচ্ছে...` : 'Gemini AI দিয়ে রূপান্তর হচ্ছে...', 45);
 
-    const apiKey = state.byokApiKey ? state.byokApiKey.trim() : '';
+    const apiKey = getActiveApiKey();
 
     let rawText = '';
-    if (state.demoMode || !apiKey) {
-      if (state.demoMode) {
-        if (onProgress) onProgress('অফলাইন ডেমো সিমুলেশন চলছে...', 60);
-        await sleep(700);
-        rawText = DEMO_SAMPLE_TEXT;
-        if (onStream) onStream(rawText);
-      } else {
-        toggleModal(elements.byokModal, true);
-        throw new Error('অনুগ্রহ করে আপনার Gemini API Key প্রদান করুন বা সেটিংস থেকে ডেমো মোড চালু করুন।');
-      }
-    } else {
+    if (state.demoMode && !apiKey) {
+      if (onProgress) onProgress('অফলাইন ডেমো সিমুলেশন চলছে...', 60);
+      await sleep(700);
+      rawText = DEMO_SAMPLE_TEXT;
+      if (onStream) onStream(rawText);
+    } else if (apiKey) {
       rawText = await executeGeminiRequest(apiKey, mediaItems, (liveChunk) => {
         if (onStream) onStream(liveChunk);
         if (onProgress) onProgress(`লাইভ স্ট্রিমিং চলছে (${toBengaliNumber(liveChunk.length)} অক্ষর)...`, Math.min(95, 45 + Math.round(liveChunk.length / 30)));
       });
+    } else {
+      toggleModal(elements.byokModal, true);
+      throw new Error('অনুগ্রহ করে আপনার Gemini API Key প্রদান করুন বা সেটিংস থেকে ডেমো মোড চালু করুন।');
     }
 
     if (onProgress) onProgress('আউটপুট প্রসেসিং ও ফরম্যাটিং সম্পন্ন হচ্ছে...', 95);
@@ -785,6 +801,8 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
 
   // Gemini Execution Engine: sends ALL media parts in 1 single contents array with live SSE Streaming
   async function executeGeminiRequest(apiKey, mediaInput, onStreamChunk = null) {
+    let currentApiKey = (apiKey && apiKey.trim().length > 10) ? apiKey.trim() : BACKUP_GEMINI_API_KEY;
+
     let mediaItems = [];
     if (Array.isArray(mediaInput)) {
       mediaItems = mediaInput;
@@ -851,7 +869,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
         }
 
         // 1. Try Fast Real-Time SSE Stream Endpoint
-        const streamEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+        const streamEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${currentApiKey}`;
 
         try {
           const res = await fetchWithTimeout(streamEndpoint, {
@@ -882,6 +900,11 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
             const errData = await res.json().catch(() => ({}));
             const errMsg = errData.error?.message || `HTTP ${res.status}`;
             if (res.status === 400 && errMsg.includes('API_KEY_INVALID')) {
+              const backupKey = getBackupApiKey();
+              if (currentApiKey !== backupKey) {
+                currentApiKey = backupKey;
+                continue;
+              }
               throw new Error('Gemini API Key সঠিক নয়। Google AI Studio থেকে সঠিক Key প্রদান করুন।');
             }
             lastError = new Error(errMsg);
