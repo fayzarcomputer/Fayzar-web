@@ -2196,13 +2196,8 @@ ${bodyContentXml}
     return new Promise(r => setTimeout(r, ms));
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  global.FayzarAiOcrEngine = {
+  // Instant global engine export (available immediately before DOMContentLoaded)
+  const FayzarAiOcrEngine = {
     init,
     startOcrConversion,
     startUnifiedOcr,
@@ -2213,5 +2208,26 @@ ${bodyContentXml}
     cleanOcrResponse,
     state
   };
+
+  if (typeof window !== 'undefined') {
+    window.FayzarAiOcrEngine = FayzarAiOcrEngine;
+    window.AiOcrEngine = FayzarAiOcrEngine;
+  }
+  global.FayzarAiOcrEngine = FayzarAiOcrEngine;
+
+  // Safe DOM Initialization
+  try {
+    if (typeof document !== 'undefined') {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          try { init(); } catch (e) { console.warn('AI OCR engine DOM init warning:', e); }
+        });
+      } else {
+        try { init(); } catch (e) { console.warn('AI OCR engine init warning:', e); }
+      }
+    }
+  } catch (e) {
+    console.warn('AI OCR auto-init warning:', e);
+  }
 
 })(typeof window !== 'undefined' ? window : this);
