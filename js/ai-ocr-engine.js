@@ -107,9 +107,9 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
 10. ACCURATE BENGALI TYPOGRAPHY:
     - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
-  const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
+  const DEFAULT_GEMINI_API_KEY = '';
 
-  const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || DEFAULT_GEMINI_API_KEY;
+  const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '';
   const savedGas = localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '';
   const hasValidConfig = Boolean(savedKey || savedGas);
 
@@ -331,13 +331,127 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     if (elements.saveByokBtn) elements.saveByokBtn.addEventListener('click', saveByokKey);
   }
 
+  // =========================================================================
+  // DYNAMIC SCRIPT LAZY-LOADER & FAILSAFE UTILITIES
+  // =========================================================================
+
+  async function ensureExternalScript(globalVarName, url) {
+    if (typeof window !== 'undefined' && window[globalVarName]) {
+      return window[globalVarName];
+    }
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[src="${url}"]`);
+      if (existing) {
+        existing.addEventListener('load', () => resolve(window[globalVarName]));
+        existing.addEventListener('error', () => reject(new Error(`লাইব্রেরি লোড হতে ব্যর্থ: ${url}`)));
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = url;
+      script.async = true;
+      script.onload = () => resolve(window[globalVarName]);
+      script.onerror = () => reject(new Error(`লাইব্রেরি স্ক্রিপ্ট লোড হতে ব্যর্থ: ${url}`));
+      document.head.appendChild(script);
+    });
+  }
+
+  async function ensurePdfJs() {
+    if (typeof window !== 'undefined' && typeof window.pdfjsLib !== 'undefined') {
+      if (!window.pdfjsLib.GlobalWorkerOptions?.workerSrc) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+      return window.pdfjsLib;
+    }
+    if (typeof window !== 'undefined' && window['pdfjs-dist/build/pdf']) {
+      const lib = window['pdfjs-dist/build/pdf'];
+      if (!lib.GlobalWorkerOptions?.workerSrc) {
+        lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+      return lib;
+    }
+    try {
+      await ensureExternalScript('pdfjsLib', 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        return window.pdfjsLib;
+      }
+    } catch (e) {
+      console.warn('PDF.js dynamic load failed:', e);
+    }
+    return window.pdfjsLib || window['pdfjs-dist/build/pdf'] || null;
+  }
+
+  // Multi-page PDF to High-DPI JPEG Canvas Renderer
+  async function renderPdfFileToPages(file, maxPages = 25) {
+    const pdfLib = await ensurePdfJs();
+    if (!pdfLib) {
+      throw new Error('PDF.js লাইব্রেরি লোড হয়নি। দয়া করে ইন্টারনেট সংযোগ চেক করে পেজ রিফ্রেশ দিন।');
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await pdfLib.getDocument({ data: arrayBuffer }).promise;
+    const numPages = Math.min(pdfDoc.numPages, maxPages);
+    const pages = [];
+
+    for (let pNum = 1; pNum <= numPages; pNum++) {
+      const page = await pdfDoc.getPage(pNum);
+      const unscaled = page.getViewport({ scale: 1.0 });
+
+      // Optimal scale for Bengali conjuncts & mathematical OCR (1.8x, capped at MAX_IMAGE_DIMENSION)
+      let scale = 1.8;
+      if (unscaled.width * scale > MAX_IMAGE_DIMENSION || unscaled.height * scale > MAX_IMAGE_DIMENSION) {
+        scale = Math.min(MAX_IMAGE_DIMENSION / unscaled.width, MAX_IMAGE_DIMENSION / unscaled.height);
+      }
+
+      const viewport = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(viewport.width);
+      canvas.height = Math.round(viewport.height);
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      const base64 = canvas.toDataURL('image/jpeg', JPEG_COMPRESSION_QUALITY);
+      pages.push({
+        file: file,
+        name: `${file.name} (পেজ ${toBengaliNumber(pNum)})`,
+        originalName: file.name,
+        pageNum: pNum,
+        totalPages: pdfDoc.numPages,
+        isPdfPage: true,
+        size: Math.round((base64.length * 3) / 4),
+        base64: base64,
+        mimeType: 'image/jpeg'
+      });
+    }
+
+    return pages;
+  }
+
   // Fast image optimization: resize on canvas
   async function fastOptimizeImageFile(file) {
     return new Promise((resolve) => {
-      if (!file || file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-        const reader = new FileReader();
-        reader.onload = e => resolve({ base64: e.target.result, mimeType: 'application/pdf' });
-        reader.readAsDataURL(file);
+      if (!file) {
+        resolve({ base64: '', mimeType: 'image/jpeg' });
+        return;
+      }
+
+      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        renderPdfFileToPages(file, 1).then(pages => {
+          if (pages.length > 0) {
+            resolve({ base64: pages[0].base64, mimeType: 'image/jpeg' });
+          } else {
+            const reader = new FileReader();
+            reader.onload = e => resolve({ base64: e.target.result, mimeType: 'application/pdf' });
+            reader.readAsDataURL(file);
+          }
+        }).catch(() => {
+          const reader = new FileReader();
+          reader.onload = e => resolve({ base64: e.target.result, mimeType: 'application/pdf' });
+          reader.readAsDataURL(file);
+        });
         return;
       }
 
@@ -366,7 +480,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'medium';
+          ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, w, h);
           resolve({ base64: canvas.toDataURL('image/jpeg', quality), mimeType: 'image/jpeg' });
         };
@@ -385,58 +499,78 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     state.filesQueue = [];
     let totalBytes = 0;
 
-    for (let file of files) {
-      const isImage = file.type.match('image.*') || /\.(png|jpe?g|webp|bmp|jfif)$/i.test(file.name);
-      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    setLoading(true, 'ফাইল প্রসেসিং ও পেজ রেন্ডারিং হচ্ছে...', 15);
 
-      if (!isImage && !isPdf) {
-        showToast(`'${file.name}' ফরম্যাট সমর্থিত নয়! শুধুমাত্র PDF বা ছবি দিন।`, 'warning');
-        continue;
-      }
-      if (file.size > 50 * 1024 * 1024) {
-        showToast(`'${file.name}' সাইজ ৫০MB-র বেশি!`, 'warning');
-        continue;
-      }
+    try {
+      for (let file of files) {
+        const isImage = file.type.match('image.*') || /\.(png|jpe?g|webp|bmp|jfif)$/i.test(file.name);
+        const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
-      totalBytes += file.size;
-      state.filesQueue.push({
-        file: file,
-        name: file.name,
-        size: file.size,
-        isPdf: isPdf,
-        mimeType: isPdf ? 'application/pdf' : (file.type || 'image/jpeg'),
-        base64: ''
-      });
+        if (!isImage && !isPdf) {
+          showToast(`'${file.name}' ফরম্যাট সমর্থিত নয়! শুধুমাত্র PDF বা ছবি দিন।`, 'warning');
+          continue;
+        }
+        if (file.size > 50 * 1024 * 1024) {
+          showToast(`'${file.name}' সাইজ ৫০MB-র বেশি!`, 'warning');
+          continue;
+        }
+
+        totalBytes += file.size;
+
+        if (isPdf) {
+          try {
+            const pdfPages = await renderPdfFileToPages(file);
+            for (const p of pdfPages) {
+              state.filesQueue.push(p);
+            }
+          } catch (pdfErr) {
+            console.warn('PDF page rendering fallback:', pdfErr);
+            const opt = await fastOptimizeImageFile(file);
+            state.filesQueue.push({
+              file: file,
+              name: file.name,
+              size: file.size,
+              isPdf: true,
+              mimeType: opt.mimeType,
+              base64: opt.base64
+            });
+          }
+        } else {
+          const opt = await fastOptimizeImageFile(file);
+          state.filesQueue.push({
+            file: file,
+            name: file.name,
+            size: file.size,
+            isPdf: false,
+            mimeType: opt.mimeType,
+            base64: opt.base64
+          });
+        }
+      }
+    } catch (processErr) {
+      console.error('File queue processing error:', processErr);
+    } finally {
+      setLoading(false);
     }
 
     if (state.filesQueue.length === 0) return;
 
-    // Single file handling
+    // Single item / page handling
     if (state.filesQueue.length === 1) {
       const single = state.filesQueue[0];
       state.selectedFile = single.file;
       state.imageMimeType = single.mimeType;
+      state.imageBase64 = single.base64;
+
       if (elements.fileName) elements.fileName.textContent = single.name;
       if (elements.fileSize) elements.fileSize.textContent = formatBytes(single.size);
-      if (elements.fileCountBadge) elements.fileCountBadge.textContent = '১টি ফাইল প্রস্তুত';
+      if (elements.fileCountBadge) elements.fileCountBadge.textContent = '১টি পেজ প্রস্তুত';
 
-      // Pre-optimize in the background for zero-latency execution
-      fastOptimizeImageFile(single.file).then((opt) => {
-        state.imageBase64 = opt.base64;
-        state.imageMimeType = opt.mimeType;
-        single.base64 = opt.base64;
-        single.mimeType = opt.mimeType;
-
-        if (single.isPdf) {
-          elements.imagePreview?.classList.add('hidden');
-          elements.pdfPreviewIcon?.classList.remove('hidden');
-        } else {
-          if (elements.imagePreview) elements.imagePreview.src = opt.base64;
-          elements.imagePreview?.classList.remove('hidden');
-          elements.pdfPreviewIcon?.classList.add('hidden');
-        }
-      });
-
+      if (elements.imagePreview) {
+        elements.imagePreview.src = single.base64;
+        elements.imagePreview.classList.remove('hidden');
+      }
+      elements.pdfPreviewIcon?.classList.add('hidden');
       elements.uploadPrompt?.classList.add('hidden');
       elements.previewContainer?.classList.remove('hidden');
       elements.multiThumbs?.classList.add('hidden');
@@ -445,13 +579,19 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
       return;
     }
 
-    // Multiple files handling: All files will be sent to Gemini in a SINGLE request!
+    // Multiple pages / files handling
     state.selectedFile = state.filesQueue[0].file;
-    if (elements.fileName) elements.fileName.textContent = `${toBengaliNumber(state.filesQueue.length)}টি ফাইল নির্বাচিত`;
+    state.imageBase64 = state.filesQueue[0].base64;
+    state.imageMimeType = state.filesQueue[0].mimeType;
+
+    if (elements.fileName) elements.fileName.textContent = `${toBengaliNumber(state.filesQueue.length)}টি পেজ নির্বাচিত`;
     if (elements.fileSize) elements.fileSize.textContent = `মোট ${formatBytes(totalBytes)}`;
     if (elements.fileCountBadge) elements.fileCountBadge.textContent = `${toBengaliNumber(state.filesQueue.length)}টি পেজ একসাথে প্রসেস হবে`;
 
-    elements.imagePreview?.classList.add('hidden');
+    if (elements.imagePreview) {
+      elements.imagePreview.src = state.filesQueue[0].base64;
+      elements.imagePreview.classList.remove('hidden');
+    }
     elements.pdfPreviewIcon?.classList.add('hidden');
     elements.uploadPrompt?.classList.add('hidden');
     elements.previewContainer?.classList.remove('hidden');
@@ -462,27 +602,23 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
 
       state.filesQueue.forEach((item, idx) => {
         const thumbDiv = document.createElement('div');
-        thumbDiv.className = 'w-14 h-14 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative flex-shrink-0';
-        if (item.isPdf) {
-          thumbDiv.innerHTML = `<i class="fa-solid fa-file-pdf text-rose-500 text-lg"></i><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">P${idx+1}: ${item.name}</span>`;
-          fastOptimizeImageFile(item.file).then(opt => {
-            item.base64 = opt.base64;
-            item.mimeType = opt.mimeType;
-          });
-        } else {
-          fastOptimizeImageFile(item.file).then(opt => {
-            item.base64 = opt.base64;
-            item.mimeType = opt.mimeType;
-            thumbDiv.innerHTML = `<img src="${opt.base64}" class="w-full h-full object-cover"><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">P${idx+1}: ${item.name}</span>`;
-          });
-        }
+        thumbDiv.className = 'w-16 h-18 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center relative flex-shrink-0 cursor-pointer shadow-sm hover:border-indigo-500 transition';
+        thumbDiv.innerHTML = `
+          <img src="${item.base64}" class="w-full h-full object-cover" alt="Page ${idx + 1}">
+          <div class="absolute inset-x-0 bottom-0 bg-slate-900/80 backdrop-blur-xs py-0.5 text-[8px] font-bold text-white text-center truncate px-1">
+            P${toBengaliNumber(idx + 1)}
+          </div>
+        `;
+        thumbDiv.addEventListener('click', () => {
+          if (elements.imagePreview) elements.imagePreview.src = item.base64;
+        });
         elements.multiThumbs.appendChild(thumbDiv);
       });
     }
 
     if (elements.convertBtn) elements.convertBtn.disabled = false;
     elements.successCard?.classList.add('hidden');
-    showToast(`মোট ${toBengaliNumber(state.filesQueue.length)}টি পেজ প্রস্তুত! সবগুলো একসাথে রূপান্তর হবে।`, 'info');
+    showToast(`মোট ${toBengaliNumber(state.filesQueue.length)}টি পেজ প্রস্তুত! সবগুলো একসাথে নিখুঁতভাবে রূপান্তর হবে।`, 'info');
   }
 
   function clearImage() {
@@ -685,15 +821,13 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     };
 
     let candidateModels = [
+      'gemini-2.5-flash',
       'gemini-2.0-flash',
-      'gemini-2.0-flash-lite',
-      'gemini-2.0-flash-exp',
-      'gemini-2.0-pro-exp-02-05',
       'gemini-1.5-flash',
-      'gemini-1.5-flash-latest',
-      'gemini-1.5-flash-8b',
       'gemini-1.5-pro',
-      'gemini-1.5-pro-latest'
+      'gemini-2.5-pro',
+      'gemini-2.0-flash-lite',
+      'gemini-1.5-flash-8b'
     ];
 
     if (state.selectedModel && state.selectedModel !== 'auto') {
@@ -701,130 +835,198 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     }
 
     let lastError = null;
-    let isRateLimited = false;
+    const BACKOFF_DELAYS = [2000, 4000, 8000]; // 2s -> 4s -> 8s exponential backoff
 
     for (let i = 0; i < candidateModels.length; i++) {
       const model = candidateModels[i];
+      let retryCount = 0;
+      let modelSucceeded = false;
 
-      // 1. Try Fast Real-Time SSE Stream Endpoint
-      const streamEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
-
-      try {
-        const res = await fetchWithTimeout(streamEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }, REQUEST_TIMEOUT_MS);
-
-        if (res.status === 404) continue;
-
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          const errMsg = errData.error?.message || `HTTP ${res.status}`;
-          if (res.status === 400 && errMsg.includes('API_KEY_INVALID')) {
-            throw new Error('Gemini API Key সঠিক নয়। Google AI Studio থেকে সঠিক Key দিন।');
-          } else if (res.status === 429) {
-            isRateLimited = true;
-            const nextModel = candidateModels[i + 1] || 'বিকল্প মডেল';
-            setLoading(true, `[${model} কোটা ব্যস্ত] বিকল্প মডেল (${nextModel})-এ সুইচ হচ্ছে...`, 50 + (i * 8));
-            lastError = new Error(`${model} রেট লিমিট অতিক্রম করেছে।`);
-            await sleep(350);
-            continue;
-          } else {
-            lastError = new Error(errMsg);
-            continue;
-          }
+      while (retryCount <= BACKOFF_DELAYS.length) {
+        if (retryCount > 0) {
+          const delayMs = BACKOFF_DELAYS[retryCount - 1] + Math.floor(Math.random() * 300);
+          const delaySec = Math.round(delayMs / 1000);
+          setLoading(true, `[${model} কোটা ব্যস্ত] ${toBengaliNumber(delaySec)} সেকেন্ড অপেক্ষা করে পুনরায় চেষ্টা করা হচ্ছে (চেষ্টা ${toBengaliNumber(retryCount)}/৩)...`, 50 + (i * 7));
+          await sleep(delayMs);
         }
 
-        // Read and parse SSE stream chunks in real-time
-        if (res.body && typeof res.body.getReader === 'function') {
-          const reader = res.body.getReader();
-          const decoder = new TextDecoder('utf-8');
-          let buffer = '';
-          let fullStreamedText = '';
+        // 1. Try Fast Real-Time SSE Stream Endpoint
+        const streamEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
+        try {
+          const res = await fetchWithTimeout(streamEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }, REQUEST_TIMEOUT_MS);
 
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (trimmed.startsWith('data:')) {
-                const dataJson = trimmed.slice(5).trim();
-                if (!dataJson || dataJson === '[DONE]') continue;
-                try {
-                  const chunkObj = JSON.parse(dataJson);
-                  const chunkPart = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                  if (chunkPart) {
-                    fullStreamedText += chunkPart;
-                    if (onStreamChunk) onStreamChunk(fullStreamedText);
-                  }
-                } catch (pe) { /* partial chunk */ }
-              }
+          if (res.status === 404) {
+            // Model not supported, break inner loop to try next model
+            break;
+          }
+
+          if (res.status === 429 || res.status === 503) {
+            retryCount++;
+            if (retryCount <= BACKOFF_DELAYS.length) {
+              lastError = new Error(`${model} রেট লিমিট (HTTP ${res.status})`);
+              continue; // Retry with next backoff
+            } else {
+              const nextModel = candidateModels[i + 1] || 'বিকল্প মডেল';
+              setLoading(true, `[${model} লিমিট শেষ] বিকল্প মডেল (${nextModel})-এ সুইচ হচ্ছে...`, 50 + ((i + 1) * 7));
+              lastError = new Error(`${model} রেট লিমিট অতিক্রম করেছে।`);
+              break; // Exhausted retries, proceed to next model
             }
           }
 
-          if (fullStreamedText.trim()) {
-            return cleanOcrResponse(fullStreamedText);
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            const errMsg = errData.error?.message || `HTTP ${res.status}`;
+            if (res.status === 400 && errMsg.includes('API_KEY_INVALID')) {
+              throw new Error('Gemini API Key সঠিক নয়। Google AI Studio থেকে সঠিক Key প্রদান করুন।');
+            }
+            lastError = new Error(errMsg);
+            break; // Non-retryable error, try next candidate model
           }
-        }
 
-        // Standard non-streaming fallback
-        const fallbackRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }, REQUEST_TIMEOUT_MS);
+          // 2. Read and parse SSE stream chunks with robust event-boundary buffering (Zero Data Loss)
+          if (res.body && typeof res.body.getReader === 'function') {
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let streamBuffer = '';
+            let fullStreamedText = '';
 
-        if (fallbackRes.ok) {
-          const fbData = await fallbackRes.json().catch(() => ({}));
-          const fbCandidate = fbData.candidates?.[0];
-          if (fbCandidate && fbCandidate.content && fbCandidate.content.parts) {
-            return cleanOcrResponse(fbCandidate.content.parts.map(p => p.text || '').join('\n'));
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              streamBuffer += decoder.decode(value, { stream: true });
+
+              // Split on complete SSE event boundaries (\n\n or \r\n\r\n)
+              const events = streamBuffer.split(/\r?\n\r?\n/);
+              // Preserve the last partial chunk in streamBuffer
+              streamBuffer = events.pop() || '';
+
+              for (const ev of events) {
+                if (!ev.trim()) continue;
+                const lines = ev.split(/\r?\n/);
+                let eventPayload = '';
+
+                for (const line of lines) {
+                  const trimmed = line.trim();
+                  if (trimmed.startsWith('data:')) {
+                    const dataPart = trimmed.slice(5).trim();
+                    if (dataPart && dataPart !== '[DONE]') {
+                      eventPayload += (eventPayload ? '\n' : '') + dataPart;
+                    }
+                  }
+                }
+
+                if (!eventPayload) continue;
+
+                try {
+                  const chunkObj = JSON.parse(eventPayload);
+                  const candidates = chunkObj.candidates || [];
+                  for (const cand of candidates) {
+                    const partsList = cand.content?.parts || [];
+                    for (const p of partsList) {
+                      if (p.text) {
+                        fullStreamedText += p.text;
+                        if (onStreamChunk) onStreamChunk(fullStreamedText);
+                      }
+                    }
+                  }
+                } catch (pe) {
+                  // Fallback: Attempt line by line parsing if multiple JSON payloads were joined
+                  const splitLines = eventPayload.split('\n');
+                  for (const sLine of splitLines) {
+                    try {
+                      const chunkObj = JSON.parse(sLine);
+                      const text = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                      if (text) {
+                        fullStreamedText += text;
+                        if (onStreamChunk) onStreamChunk(fullStreamedText);
+                      }
+                    } catch (pe2) {
+                      // Keep partial line in streamBuffer for next read packet
+                      streamBuffer = `data: ${sLine}\n\n` + streamBuffer;
+                    }
+                  }
+                }
+              }
+            }
+
+            // Flush any remaining final data
+            if (streamBuffer.trim().startsWith('data:')) {
+              const remaining = streamBuffer.trim().slice(5).trim();
+              if (remaining && remaining !== '[DONE]') {
+                try {
+                  const chunkObj = JSON.parse(remaining);
+                  const text = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                  if (text) {
+                    fullStreamedText += text;
+                    if (onStreamChunk) onStreamChunk(fullStreamedText);
+                  }
+                } catch (e) { /* ignore end */ }
+              }
+            }
+
+            if (fullStreamedText.trim()) {
+              return cleanOcrResponse(fullStreamedText);
+            }
           }
-        }
 
-      } catch (err) {
-        if (err.name === 'AbortError') {
-          lastError = new Error(`${model} রেসপন্স দিতে দেরি করছে, পরের মডেল চেষ্টা করা হচ্ছে...`);
-          continue;
+          // 3. Standard non-streaming fallback
+          const fallbackRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }, REQUEST_TIMEOUT_MS);
+
+          if (fallbackRes.ok) {
+            const fbData = await fallbackRes.json().catch(() => ({}));
+            const fbCandidate = fbData.candidates?.[0];
+            if (fbCandidate && fbCandidate.content && fbCandidate.content.parts) {
+              return cleanOcrResponse(fbCandidate.content.parts.map(p => p.text || '').join('\n'));
+            }
+          }
+
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            lastError = new Error(`${model} রেসপন্স দিতে দেরি করছে, পরের মডেল চেষ্টা করা হচ্ছে...`);
+            break;
+          }
+          if (err.message.includes('API Key') || err.message.includes('Safety Filter')) {
+            throw err;
+          }
+          lastError = err;
+          break;
         }
-        if (err.message.includes('API Key') || err.message.includes('Safety Filter')) {
-          throw err;
-        }
-        lastError = err;
       }
     }
 
-    // Cooldown auto-retry on 8B model
-    if (isRateLimited) {
-      try {
-        setLoading(true, 'রেট লিমিট কুলডাউন চলছে (১.৫ সেকেন্ড অপেক্ষা)...', 85);
-        await sleep(1500);
-        const retryModel = 'gemini-1.5-flash-8b';
-        const retryEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent?key=${apiKey}`;
-        const retryRes = await fetchWithTimeout(retryEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }, REQUEST_TIMEOUT_MS);
+    // Cooldown auto-retry on fallback model
+    try {
+      setLoading(true, 'বিকল্প ব্যাকআপ মডেলে স্বয়ংক্রিয় রিকভারি চেষ্টা চলছে...', 88);
+      await sleep(1500);
+      const retryModel = 'gemini-1.5-flash-8b';
+      const retryEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent?key=${apiKey}`;
+      const retryRes = await fetchWithTimeout(retryEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }, REQUEST_TIMEOUT_MS);
 
-        if (retryRes.ok) {
-          const retryData = await retryRes.json().catch(() => ({}));
-          const parts = retryData.candidates?.[0]?.content?.parts;
-          if (parts && parts.length > 0) {
-            return cleanOcrResponse(parts.map(p => p.text || '').join('\n'));
-          }
+      if (retryRes.ok) {
+        const retryData = await retryRes.json().catch(() => ({}));
+        const parts = retryData.candidates?.[0]?.content?.parts;
+        if (parts && parts.length > 0) {
+          return cleanOcrResponse(parts.map(p => p.text || '').join('\n'));
         }
-      } catch (retryErr) { /* ignore */ }
-    }
+      }
+    } catch (retryErr) { /* ignore */ }
 
     // Dynamic Discovery Fallback
     try {
-      setLoading(true, 'আপনার API Key-এর জন্য উপলব্ধ মডেল তালিকা খোঁজা হচ্ছে...', 90);
+      setLoading(true, 'আপনার API Key-এর জন্য উপলব্ধ মডেল তালিকা খোঁজা হচ্ছে...', 92);
       const listRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {}, 6000);
       if (listRes.ok) {
         const listData = await listRes.json();
@@ -1196,6 +1398,20 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     return runs.length > 0 ? runs : [{ text: clean }];
   }
 
+  function isTableDividerLine(line) {
+    const trimmed = (line || '').trim();
+    return /^\s*\|?[\s\-:]+(\|[\s\-:]+)+\|?\s*$/.test(trimmed) && trimmed.includes('-');
+  }
+
+  function isTableRowCandidate(line) {
+    const trimmed = (line || '').trim();
+    if (!trimmed) return false;
+    if (isTableDividerLine(trimmed)) return true;
+    if (!trimmed.includes('|')) return false;
+    const parts = trimmed.replace(/^\s*\||\|\s*$/g, '').split('|');
+    return parts.length >= 2;
+  }
+
   function parseDocumentBlocks(text) {
     if (!text || !text.trim()) return [];
 
@@ -1245,22 +1461,33 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
       const line = lines[i];
       const trimmed = line.trim();
 
-      if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.includes('|')) {
+      if (isTableRowCandidate(trimmed)) {
         const tableLines = [];
-        while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+        while (i < lines.length && isTableRowCandidate(lines[i].trim())) {
           tableLines.push(lines[i].trim());
           i++;
         }
 
-        const parsedRows = [];
-        for (const tLine of tableLines) {
-          if (/^\|[\s\-:]+(\|[\s\-:]+)+\|$/.test(tLine)) continue;
-          const cells = tLine.split('|').slice(1, -1).map(c => c.trim());
-          if (cells.length > 0) parsedRows.push(cells);
-        }
+        const hasDivider = tableLines.some(l => isTableDividerLine(l));
+        if (hasDivider || tableLines.length >= 2) {
+          const parsedRows = [];
+          for (const tLine of tableLines) {
+            if (isTableDividerLine(tLine)) continue;
+            const cleanLine = tLine.replace(/^\s*\|/, '').replace(/\|\s*$/, '');
+            const cells = cleanLine.split('|').map(c => c.trim());
+            if (cells.length > 0 && cells.some(c => c.length > 0)) {
+              parsedRows.push(cells);
+            }
+          }
 
-        if (parsedRows.length > 0) {
-          blocks.push({ type: 'table', rows: parsedRows });
+          if (parsedRows.length > 0) {
+            blocks.push({ type: 'table', rows: parsedRows });
+            continue;
+          }
+        } else {
+          for (const tLine of tableLines) {
+            blocks.push({ type: 'paragraph', text: tLine });
+          }
           continue;
         }
       }
@@ -1600,15 +1827,26 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
   }
 
   async function createDocxBlob(text, isBijoy = false, customOptions = {}) {
-    const ZipConstructor = (typeof JSZip !== 'undefined')
+    let ZipConstructor = (typeof JSZip !== 'undefined')
       ? JSZip
       : (typeof window !== 'undefined' && window.JSZip ? window.JSZip : (typeof global !== 'undefined' && global.JSZip ? global.JSZip : null));
+
+    if (!ZipConstructor) {
+      try {
+        await ensureExternalScript('JSZip', 'js/jszip.min.js');
+      } catch (e1) {
+        try {
+          await ensureExternalScript('JSZip', 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+        } catch (e2) { /* ignore */ }
+      }
+      ZipConstructor = (typeof JSZip !== 'undefined') ? JSZip : (typeof window !== 'undefined' ? window.JSZip : null);
+    }
 
     if (!ZipConstructor) {
       if (typeof DocxHandler !== 'undefined' && typeof DocxHandler.createDocxFromText === 'function') {
         return await DocxHandler.createDocxFromText(text, { isBijoy });
       }
-      throw new Error('JSZip লাইব্রেরি লোড হয়নি, অনুগ্রহ করে পেজটি রিফ্রেশ দিন');
+      throw new Error('JSZip লাইব্রেরি লোড হয়নি, অনুগ্রহ করে ইন্টারনেট সংযোগ চেক করে পেজটি রিফ্রেশ দিন');
     }
 
     const pageSizeVal = customOptions.pageSize || (elements.pageSizeSelect ? elements.pageSizeSelect.value : 'a4');
