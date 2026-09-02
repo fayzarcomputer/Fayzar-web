@@ -451,8 +451,118 @@
           </div>
         </div>
 
-        <!-- Result Box populated dynamically by main.js -->
-        <div id="calc-result-display" class="fade-in min-h-[140px]"></div>
+        <!-- Result Box populated dynamically by main.js (Pre-rendered default for zero blank-state) -->
+        <div id="calc-result-display" class="fade-in min-h-[140px]">
+          <div class="space-y-4 animate-fade-in text-slate-800 dark:text-slate-100">
+            <!-- Top Service Info Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-slate-100 via-slate-50 to-emerald-50/50 dark:from-slate-900/90 dark:via-slate-800/80 dark:to-emerald-950/30 border border-slate-200 dark:border-slate-700/80 shadow-xs">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white shadow-md flex items-center justify-center text-xl flex-shrink-0">
+                  <i class="fas fa-landmark"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                      সর্বাধিক জনপ্রিয় ভূমিসেবা
+                    </span>
+                    <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 flex items-center gap-1">
+                      <i class="fas fa-clock text-[9px]"></i> ডেলিভারি: ২৮ কর্মদিবস (সাধারণত)
+                    </span>
+                  </div>
+                  <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-1">ই-নামজারি ও রেকর্ড খারিজ (E-Mutation)</h3>
+                </div>
+              </div>
+              <div class="self-start sm:self-auto">
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-2xs">
+                  <i class="fas fa-globe text-emerald-600"></i> mutation.land.gov.bd
+                </span>
+              </div>
+            </div>
+
+            <!-- Description / Summary -->
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60">
+              <i class="fas fa-circle-info text-emerald-600 mr-1.5"></i> জমি ক্রয়, হেবা, দান বা ওয়ারিশসূত্রে প্রাপ্ত জমির মালিকানা পরিবর্তন ও নতুন খতিয়ান তৈরি।
+            </p>
+
+            <!-- Fee Breakdown Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="p-4 rounded-2xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                    <i class="fas fa-building-columns text-slate-500"></i> সরকারি রাজস্ব ফি
+                  </span>
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">অফিসিয়াল</span>
+                </div>
+                <div class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
+                  ১,১৭০ ৳ (কোর্ট ফি ২০৳ + নোটিশ ফি ৫০৳ + রেকর্ড সংশোধন ফি ১,০০০৳ + খতিয়ান ফি ১০০৳)
+                </div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                    <i class="fas fa-desktop text-emerald-600"></i> কম্পিউটার সার্ভিস চার্জ
+                  </span>
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200">দোকান ফি</span>
+                </div>
+                <div class="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400">
+                  ৩০০ - ৫০০ ৳
+                </div>
+              </div>
+            </div>
+
+            <!-- Required Documents Checklist -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-900/90 border-2 border-emerald-500/20 shadow-xs space-y-3">
+              <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+                <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <i class="fas fa-list-check text-emerald-600"></i> সাথে যা যা আনতে হবে (কাগজপত্রের চেকলিস্ট):
+                </h4>
+                <span class="text-[11px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
+                  ৬ টি কাগজপত্র
+                </span>
+              </div>
+
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-800 dark:text-slate-200">
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">১</span>
+                  <span class="font-bold leading-relaxed">মূল দলিল / বায়া দলিলের সার্টিফাইড ফটোকপি</span>
+                </li>
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">২</span>
+                  <span class="font-bold leading-relaxed">পূর্ববর্তী খতিয়ানসমূহ (CS, SA, RS, হাল খতিয়ান)</span>
+                </li>
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">৩</span>
+                  <span class="font-bold leading-relaxed">সর্বশেষ পরিশোধিত ভূমি উন্নয়ন কর (খাজনা) দাখিলা</span>
+                </li>
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">৪</span>
+                  <span class="font-bold leading-relaxed">ক্রেতা ও বিক্রেতার জাতীয় পরিচয়পত্র (NID) নম্বর ও ছবি</span>
+                </li>
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">৫</span>
+                  <span class="font-bold leading-relaxed">ওয়ারিশান সনদ ও মৃত্যু সনদ (ওয়ারিশ সূত্রে প্রাপ্ত জমির ক্ষেত্রে)</span>
+                </li>
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                  <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">৬</span>
+                  <span class="font-bold leading-relaxed">জমির হাত নকশা বা সীমানা বিবরণী (প্রযোজ্য ক্ষেত্রে)</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Quick Action CTA Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+              <a href="https://wa.me/8801717101919?text=আসসালামু%20আলাইকুম%2C%20আমি%20%22ই-নামজারি%20ও%20রেকর্ড%20খারিজ%20(E-Mutation)%22%20সেবাটি%20নিতে%20আগ্রহী।" target="_blank" rel="noopener" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-extrabold py-3 px-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fab fa-whatsapp text-base text-emerald-200"></i>
+                <span>এই সেবার জন্য WhatsApp-এ মেসেজ দিন</span>
+              </a>
+              <a href="tel:01717101919" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-black transition flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 shadow-xs">
+                <i class="fas fa-phone-alt text-emerald-600"></i>
+                <span>সরাসরি কল: 01717-101919</span>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="mt-4 text-center text-xs text-slate-500 dark:text-slate-400 font-semibold flex items-center justify-center gap-1.5">
@@ -1027,7 +1137,7 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js?v=3.6.2" defer></script>
 
   <!-- =========================================================================
        ফ্লোটিং CTA বাটন — WhatsApp ও Call (Desktop: নিচে ডানে স্থায়ী)
