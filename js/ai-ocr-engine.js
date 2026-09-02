@@ -800,7 +800,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
 
   // Gemini Execution Engine: sends ALL media parts in 1 single contents array with live SSE Streaming
   async function executeGeminiRequest(apiKey, mediaInput, onStreamChunk = null) {
-    let currentApiKey = (apiKey && apiKey.trim().length > 10) ? apiKey.trim() : BACKUP_GEMINI_API_KEY;
+    let currentApiKey = (apiKey && apiKey.trim().length > 10) ? apiKey.trim() : (getBackupApiKey() || getActiveApiKey());
 
     let mediaItems = [];
     if (Array.isArray(mediaInput)) {
@@ -838,13 +838,13 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     };
 
     let candidateModels = [
-      'gemini-2.5-flash',
-      'gemini-2.0-flash',
-      'gemini-1.5-flash',
-      'gemini-1.5-pro',
-      'gemini-2.5-pro',
-      'gemini-2.0-flash-lite',
-      'gemini-1.5-flash-8b'
+      'gemini-2.5-flash-lite',
+      'gemini-3.5-flash',
+      'gemini-flash-lite-latest',
+      'gemini-flash-latest',
+      'gemini-3.6-flash',
+      'gemini-3.7-flash',
+      'gemini-pro-latest'
     ];
 
     if (state.selectedModel && state.selectedModel !== 'auto') {
@@ -997,7 +997,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
           }
 
           // 3. Standard non-streaming fallback
-          const fallbackRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+          const fallbackRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${currentApiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -1029,8 +1029,8 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     try {
       setLoading(true, 'বিকল্প ব্যাকআপ মডেলে স্বয়ংক্রিয় রিকভারি চেষ্টা চলছে...', 88);
       await sleep(1500);
-      const retryModel = 'gemini-1.5-flash-8b';
-      const retryEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent?key=${apiKey}`;
+      const retryModel = 'gemini-2.5-flash-lite';
+      const retryEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent?key=${currentApiKey}`;
       const retryRes = await fetchWithTimeout(retryEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1049,7 +1049,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     // Dynamic Discovery Fallback
     try {
       setLoading(true, 'আপনার API Key-এর জন্য উপলব্ধ মডেল তালিকা খোঁজা হচ্ছে...', 92);
-      const listRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {}, 6000);
+      const listRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models?key=${currentApiKey}`, {}, 6000);
       if (listRes.ok) {
         const listData = await listRes.json();
         const available = (listData.models || [])
@@ -1060,7 +1060,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
         for (const dynModel of available) {
           if (candidateModels.includes(dynModel)) continue;
           try {
-            const dynRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${dynModel}:generateContent?key=${apiKey}`, {
+            const dynRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${dynModel}:generateContent?key=${currentApiKey}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload)
@@ -1164,7 +1164,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
       elements.successCard.classList.remove('hidden');
       elements.successCard.classList.add('flex');
       setTimeout(() => {
-        elements.successCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        elements.successCard?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
       }, 100);
     }
   }
