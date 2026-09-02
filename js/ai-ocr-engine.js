@@ -107,11 +107,33 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
 10. ACCURATE BENGALI TYPOGRAPHY:
     - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
+  const savedKey = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '') : '');
+  const savedGas = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '') : '');
+  const rawDemoSetting = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.DEMO_MODE) : null;
+  const isDemo = (rawDemoSetting === 'true');
+
+  const state = {
+    freeUsesCount: typeof localStorage !== 'undefined' ? parseInt(localStorage.getItem(STORAGE_KEYS.FREE_COUNT) || '0', 10) : 0,
+    byokApiKey: savedKey,
+    gasUrl: savedGas,
+    demoMode: isDemo,
+    selectedModel: typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto') : 'auto',
+
+    filesQueue: [],
+    selectedFile: null,
+    imageBase64: '',
+    imageMimeType: '',
+    isProcessing: false,
+    unicodeText: '',
+    bijoyText: '',
+    activeViewTab: 'unicode'
+  };
+
   // Dynamic API Key Vault Connector (Securely loads deobfuscated keys from fayzar-ocr-config.js)
   function getActiveApiKey() {
     const customKey = (state && state.byokApiKey ? state.byokApiKey : '').trim();
     if (customKey && customKey.length > 10) return customKey;
-    const localKey = (localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '').trim();
+    const localKey = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '') : '').trim();
     if (localKey && localKey.length > 10) return localKey;
     if (typeof window !== 'undefined' && window.FayzarOcrConfig && typeof window.FayzarOcrConfig.getActiveApiKey === 'function') {
       return window.FayzarOcrConfig.getActiveApiKey();
@@ -126,30 +148,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     return '';
   }
 
-  const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '';
-  const savedGas = localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '';
   const hasValidConfig = Boolean(savedKey || savedGas || getActiveApiKey());
-
-  const rawDemoSetting = localStorage.getItem(STORAGE_KEYS.DEMO_MODE);
-  // Default to Live mode (false) when API key is available
-  const isDemo = (rawDemoSetting === 'true');
-
-  const state = {
-    freeUsesCount: parseInt(localStorage.getItem(STORAGE_KEYS.FREE_COUNT) || '0', 10),
-    byokApiKey: savedKey,
-    gasUrl: savedGas,
-    demoMode: isDemo,
-    selectedModel: localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto',
-
-    filesQueue: [],
-    selectedFile: null,
-    imageBase64: '',
-    imageMimeType: '',
-    isProcessing: false,
-    unicodeText: '',
-    bijoyText: '',
-    activeViewTab: 'unicode'
-  };
 
   let elements = {};
   let _dictLoaded = false;
