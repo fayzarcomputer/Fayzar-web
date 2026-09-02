@@ -2538,7 +2538,19 @@ function initUnifiedConverterEngine() {
     }
 
     try {
-      const res = await window.FayzarAiOcrEngine.startUnifiedOcr(
+      const ocrEngine = window.FayzarAiOcrEngine || window.AiOcrEngine;
+      if (!ocrEngine || typeof ocrEngine.startUnifiedOcr !== 'function') {
+        throw new Error('AI OCR ইঞ্জিন ব্রাউজারে লোড হতে পারেনি। দয়া করে পেজটি একবার রিফ্রেশ (Ctrl + F5 / Shift + Reload) করুন।');
+      }
+
+      // Ensure files are queued in the engine if not already present
+      if (currentScanResult && currentScanResult.files && currentScanResult.files.length > 0) {
+        if (!ocrEngine.state || !ocrEngine.state.filesQueue || ocrEngine.state.filesQueue.length === 0) {
+          await ocrEngine.handleFiles(currentScanResult.files);
+        }
+      }
+
+      const res = await ocrEngine.startUnifiedOcr(
         selectedAiTargetFormat,
         (statusText, pct) => {
           const pt = document.getElementById('wizardProgressTitle') || wizardProgressTitle;
@@ -2590,10 +2602,10 @@ function initUnifiedConverterEngine() {
       if (wizardResultStatsBadge) wizardResultStatsBadge.textContent = `${modeLabel} এ সফলভাবে রূপান্তর হয়েছে`;
 
       if (wizardDlDocBtn) {
-        wizardDlDocBtn.onclick = () => window.FayzarAiOcrEngine.downloadWordDocument('doc');
+        wizardDlDocBtn.onclick = () => (window.FayzarAiOcrEngine || window.AiOcrEngine)?.downloadWordDocument('doc');
       }
       if (wizardDlDocxBtn) {
-        wizardDlDocxBtn.onclick = () => window.FayzarAiOcrEngine.downloadWordDocument(selectedAiTargetFormat === 'unicode_docx' ? 'unicode_docx' : 'bijoy_docx');
+        wizardDlDocxBtn.onclick = () => (window.FayzarAiOcrEngine || window.AiOcrEngine)?.downloadWordDocument(selectedAiTargetFormat === 'unicode_docx' ? 'unicode_docx' : 'bijoy_docx');
       }
 
       // Show Instant Download Alert
