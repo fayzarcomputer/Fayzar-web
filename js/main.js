@@ -1205,6 +1205,224 @@ function renderHomepageComponents() {
     renderHomeNoticeBatch(0);
     startNoticeAutoTimer();
   }
+
+  // ৩. ডিজিটাল ও ভূমিসেবামূল্য এবং চেকলিস্ট ক্যালকুলেটর কন্ট্রোলার (Dynamic Checklist - Auto-Rotate)
+  const checklistResultDisplay = document.getElementById('calc-result-display');
+  const calcSelect = document.getElementById('calc-service-select');
+  if (checklistResultDisplay && calcSelect) {
+    const checklistServices = allServices.filter(s => s.includeInChecklist !== false);
+    const list = checklistServices.length > 0 ? checklistServices : allServices;
+
+    let currentChecklistIdx = 0;
+    let checklistAutoTimer = null;
+    let isChecklistHovered = false;
+    let isChecklistSelectFocused = false;
+
+    const checklistIndicator = document.getElementById('checklist-service-indicator');
+    const checklistPrevBtn = document.getElementById('checklist-prev-btn');
+    const checklistNextBtn = document.getElementById('checklist-next-btn');
+    const checklistCycleStatus = document.getElementById('checklist-cycle-status');
+    const checklistCard = checklistResultDisplay.closest('.rounded-3xl') || checklistResultDisplay;
+
+    function updateChecklistCycleStatus(paused) {
+      if (!checklistCycleStatus) return;
+      if (paused) {
+        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (মাউস রাখা হয়েছে)';
+        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
+      } else {
+        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
+        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
+      }
+    }
+
+    function renderChecklist(idx) {
+      if (list.length === 0) {
+        checklistResultDisplay.innerHTML = '<div class="text-center py-6 text-slate-400 font-bold text-xs">কোনো চেকলিস্ট তথ্য পাওয়া যায়নি।</div>';
+        return;
+      }
+
+      currentChecklistIdx = (idx + list.length) % list.length;
+      const s = list[currentChecklistIdx];
+
+      // ড্রপডাউন ভ্যালু সিঙ্ক
+      if (calcSelect.value !== s.id) {
+        calcSelect.value = s.id;
+      }
+
+      // ইনডিকেটর আপডেট
+      if (checklistIndicator) {
+        checklistIndicator.textContent = `সেবা ${toBanglaNumber(currentChecklistIdx + 1)}/${toBanglaNumber(list.length)}`;
+      }
+
+      const docs = Array.isArray(s.documents) ? s.documents : [];
+      const whatsappMsg = `আসসালামু আলাইকুম, আমি "${s.title}" সেবাটি নিতে আগ্রহী। প্রয়োজনীয় কাগজপত্র ও ফি সম্পর্কে বিস্তারিত জানতে চাচ্ছি।`;
+
+      checklistResultDisplay.innerHTML = `
+        <div class="space-y-4 animate-fade-in text-slate-800 dark:text-slate-100">
+          <!-- Top Service Info Bar -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-slate-100 via-slate-50 to-emerald-50/50 dark:from-slate-900/90 dark:via-slate-800/80 dark:to-emerald-950/30 border border-slate-200 dark:border-slate-700/80 shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${getServiceIconBg(s.category)} shadow-md flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas ${s.icon || 'fa-landmark'}"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${getServiceBadgeClass(s.category)}">
+                    ${s.badge || 'জনপ্রিয় সেবা'}
+                  </span>
+                  ${s.duration ? `
+                    <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 flex items-center gap-1">
+                      <i class="fas fa-clock text-[9px]"></i> ডেলিভারি: ${s.duration}
+                    </span>
+                  ` : ''}
+                </div>
+                <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-1">${s.title}</h3>
+              </div>
+            </div>
+            ${s.portal ? `
+              <div class="self-start sm:self-auto">
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-2xs">
+                  <i class="fas fa-globe text-emerald-600"></i> ${s.portal}
+                </span>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Description / Summary -->
+          ${s.summary ? `
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60">
+              <i class="fas fa-circle-info text-emerald-600 mr-1.5"></i> ${s.summary}
+            </p>
+          ` : ''}
+
+          <!-- Fee Breakdown Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="p-4 rounded-2xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                  <i class="fas fa-building-columns text-slate-500"></i> সরকারি রাজস্ব ফি
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">অফিসিয়াল</span>
+              </div>
+              <div class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
+                ${s.govtFee || 'সরকারি নির্ধারিত ফি'}
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                  <i class="fas fa-desktop text-emerald-600"></i> কম্পিউটার সার্ভিস চার্জ
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200">দোকান ফি</span>
+              </div>
+              <div class="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400">
+                ${s.serviceFee || '৫০ - ১০০ ৳'}
+              </div>
+            </div>
+          </div>
+
+          <!-- Required Documents Checklist -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-900/90 border-2 border-emerald-500/20 shadow-xs space-y-3">
+            <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+              <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fas fa-list-check text-emerald-600"></i> সাথে যা যা আনতে হবে (কাগজপত্রের চেকলিস্ট):
+              </h4>
+              <span class="text-[11px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
+                ${toBanglaNumber(docs.length)} টি কাগজপত্র
+              </span>
+            </div>
+
+            ${docs.length > 0 ? `
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-800 dark:text-slate-200">
+                ${docs.map((doc, dIdx) => `
+                  <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                    <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">
+                      ${toBanglaNumber(dIdx + 1)}
+                    </span>
+                    <span class="font-bold leading-relaxed">${doc}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            ` : `
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">এই সেবার জন্য সরাসরি দোকানে যোগাযোগ করুন অথবা প্রয়োজনীয় নথি সাথে নিয়ে আসুন।</p>
+            `}
+          </div>
+
+          <!-- Quick Action CTA Buttons -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <a href="https://wa.me/8801717101919?text=${encodeURIComponent(whatsappMsg)}" target="_blank" rel="noopener" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-extrabold py-3 px-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+              <i class="fab fa-whatsapp text-base text-emerald-200"></i>
+              <span>এই সেবার জন্য WhatsApp-এ মেসেজ দিন</span>
+            </a>
+            <a href="tel:01717101919" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-black transition flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 shadow-xs">
+              <i class="fas fa-phone-alt text-emerald-600"></i>
+              <span>সরাসরি কল: 01717-101919</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function startChecklistAutoTimer() {
+      clearInterval(checklistAutoTimer);
+      checklistAutoTimer = setInterval(() => {
+        if (!isChecklistHovered && !isChecklistSelectFocused) {
+          renderChecklist(currentChecklistIdx + 1);
+        }
+      }, 3000);
+    }
+
+    function resetChecklistAutoTimer() {
+      startChecklistAutoTimer();
+    }
+
+    // Prev / Next বাটন
+    checklistPrevBtn?.addEventListener('click', () => {
+      renderChecklist(currentChecklistIdx - 1);
+      resetChecklistAutoTimer();
+    });
+
+    checklistNextBtn?.addEventListener('click', () => {
+      renderChecklist(currentChecklistIdx + 1);
+      resetChecklistAutoTimer();
+    });
+
+    // ড্রপডাউন সিলেক্ট ইভেন্ট
+    calcSelect.addEventListener('change', (e) => {
+      const selectedId = e.target.value;
+      const foundIdx = list.findIndex(s => s.id === selectedId);
+      if (foundIdx !== -1) {
+        renderChecklist(foundIdx);
+        resetChecklistAutoTimer();
+      }
+    });
+
+    calcSelect.addEventListener('focus', () => {
+      isChecklistSelectFocused = true;
+      updateChecklistCycleStatus(true);
+    });
+
+    calcSelect.addEventListener('blur', () => {
+      isChecklistSelectFocused = false;
+      updateChecklistCycleStatus(false);
+    });
+
+    // মাউস নিলে অটো-রোটেশন বিরতি
+    checklistCard.addEventListener('mouseenter', () => {
+      isChecklistHovered = true;
+      updateChecklistCycleStatus(true);
+    });
+
+    checklistCard.addEventListener('mouseleave', () => {
+      isChecklistHovered = false;
+      updateChecklistCycleStatus(false);
+    });
+
+    // প্রথম রেন্ডার ও টাইমার শুরু
+    renderChecklist(0);
+    startChecklistAutoTimer();
+  }
 }
 
 function renderServicesPage() {
@@ -3034,4 +3252,56 @@ function downloadBlob(blob, filename) {
   a.click();
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// ৪. শপ রেট চার্ট (দোকানের কাজের মূল্য তালিকা) লাইভ সার্চ ও ক্যাটাগরি ফিল্টার কন্ট্রোলার
+function initRateChartController() {
+  const searchInput = document.getElementById('rate-search-input');
+  const tabBtns = document.querySelectorAll('.rate-tab-btn');
+  const cards = document.querySelectorAll('.rate-category-card');
+
+  if (!cards.length) return;
+
+  let activeCat = 'all';
+  let searchQuery = '';
+
+  function filterRateCards() {
+    cards.forEach(card => {
+      const cardCat = card.dataset.rateCategory;
+      const textContent = card.textContent.toLowerCase();
+      
+      const matchesCat = (activeCat === 'all' || cardCat === activeCat);
+      const matchesSearch = (!searchQuery || textContent.includes(searchQuery));
+
+      if (matchesCat && matchesSearch) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => {
+        b.className = 'rate-tab-btn px-3 py-2 rounded-xl text-xs font-bold border bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer';
+      });
+      btn.className = 'rate-tab-btn active px-3.5 py-2 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-xs transition cursor-pointer';
+      activeCat = btn.dataset.rateCat || 'all';
+      filterRateCards();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim().toLowerCase();
+      filterRateCards();
+    });
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRateChartController);
+} else {
+  initRateChartController();
 }
