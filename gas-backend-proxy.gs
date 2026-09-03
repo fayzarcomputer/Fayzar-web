@@ -22,23 +22,26 @@
  */
 
 const CANDIDATE_MODELS = [
-  'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
-  'gemini-1.5-pro',
-  'gemini-2.5-pro'
+  'gemini-3.5-flash',
+  'gemini-3.6-flash',
+  'gemini-flash-latest',
+  'gemini-3.7-flash',
+  'gemini-pro-latest'
 ];
 
-const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, Academic Proofreader, and LaTeX-to-Word formatting specialist.
-Your goal is to extract, verify, correct, and compose a COMPLETE, UNTRUNCATED, FLAWLESSLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
+const GEMINI_PROMPT = `তুমি একজন বিশেষজ্ঞ একাডেমিক প্রশ্নপত্র OCR ট্রান্সক্রাইবার এবং LaTeX/Word ডকুমেন্ট বিশেষজ্ঞ। তোমার কাজ হলো প্রদত্ত স্ক্যান করা প্রশ্নপত্র, বই বা নথির ছবি থেকে ১০০% নির্ভুল বাংলা ইউনিকোড টেক্সট ও LaTeX গাণিতিক সমীকরণ এক্সট্রাক্ট করা এবং সোর্স ফাইলের অবিকল কাঠামো তৈরি করা।
 
-CRITICAL RULES:
-1. Extract all text, equations, and tables across all images sequentially without skipping.
-2. Fix broken conjuncts (যুক্তবর্ণ), OCR mistakes, and mathematical notations into standard Bengali and LaTeX ($...$, $$...$$).
-3. Never put Bengali text or units inside LaTeX blocks ($...$).
-4. Format tables into standard Markdown tables.
-5. Never wrap Roman numerals in asterisks (*i.* -> i.).
-6. Output clean document text followed by verification notes.`;
+১. হুবহু ট্রান্সক্রিপশন (Pure OCR):
+   - মূল ছবিতে যেভাবে যে লাইন, সমীকরণ ও বাংলা লেখা রয়েছে, ঠিক অবিকল সেভাবেই হুবহু লিখবে।
+   - নিজে থেকে কোনো নতুন সমীকরণ সমাধান করবে না বা অপ্রয়োজনীয় লেখা ("নিচের সমীকরণগুলো সমাধান কর") বানাবে না।
+   - ২-কলাম থাকলে প্রথম কলামের সম্পূর্ণ অংশ লিখে তারপর দ্বিতীয় কলামের অংশ লিখবে।
+
+২. সমীকরণ ও সূত্র (LaTeX):
+   - সমস্ত গাণিতিক সমীকরণ $...$ বা $$...$$ ফরম্যাটে লিখবে।
+   - লেটেক্স কোডের ভেতরে কোনো বাংলা শব্দ রাখবে না।
+
+৩. পুনরাবৃত্তি বর্জন (Anti-Loop):
+   - কোনো অবস্থাতেই একই সমীকরণ বা লাইন বারবার পুনরাবৃত্তি করবে না। প্রতিটি সমীকরণ ও লাইন একবারই লিখবে।`;
 
 function doPost(e) {
   try {
