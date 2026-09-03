@@ -29,83 +29,48 @@
   const MAX_IMAGE_DIMENSION = 1400;
   const JPEG_COMPRESSION_QUALITY = 0.84;
 
-  const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, Academic Proofreader, and LaTeX-to-Word formatting specialist.
-Your goal is to extract, verify, correct, and compose a COMPLETE, UNTRUNCATED, FLAWLESSLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
+  const GEMINI_PROMPT = `তুমি একজন বিশেষজ্ঞ একাডেমিক প্রশ্নপত্র OCR ট্রান্সক্রাইবার এবং LaTeX/Word ডকুমেন্ট বিশেষজ্ঞ। তোমার কাজ হলো প্রদত্ত স্ক্যান করা প্রশ্নপত্র, বই বা নথির ছবি থেকে ১০০% নির্ভুল বাংলা ইউনিকোড টেক্সট ও LaTeX গাণিতিক সমীকরণ এক্সট্রাক্ট করা এবং সোর্স ফাইলের অবিকল কাঠামো তৈরি করা।
 
-CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
+মূল নিয়মাবলী:
 
-1. FULL COMPLETE EXTRACTION ACROSS ALL IMAGES/PAGES (সব পেজের সম্পূর্ণ রূপান্তর):
-   - You are provided with ALL pages/images of the document simultaneously in exact sequential order.
-   - You MUST extract and transcribe ALL questions, stems (উদ্দীপক), diagrams, values, tables, and text across ALL images continuously from Page 1 to the very last page in a single unified document.
-   - DO NOT stop halfway, DO NOT omit any image/page, DO NOT summarize or skip questions.
-   - Maintain seamless question numbering (১., ২., ৩., ..., ক., খ., গ., ঘ.) across page breaks.
+১. ইউনিকোড বাংলা ও নির্ভুল বানান:
+   - আউটপুট সম্পূর্ণ স্ট্যান্ডার্ড ইউনিকোড (Unicode) বাংলায় হবে (কোনো Bijoy/ASCII কোড ব্যবহার করবে না)।
+   - বাংলা বানান, যুক্তাক্ষর, মাত্রা, হসন্ত এবং দাঁড়ি ১০০% শুদ্ধ রাখবে।
 
-2. ACTIVE SELF-VERIFICATION & SMART CORRECTION (প্রশ্ন ও সমীকরণ স্বয়ংক্রিয় যাচাই ও সংশোধন):
-   - CRITICAL REQUIREMENT: Real question papers or scanned images often contain printing flaws, blurriness, typographical errors, broken conjuncts (যুক্তবর্ণ), missing exponents, or flawed mathematical syntax.
-   - You MUST thoroughly verify every question, stem (উদ্দীপক), formula, and multiple-choice option for academic and mathematical correctness.
-   - If an equation is blurry or flawed (e.g. missing power $x2 + 5x + 6$ instead of $x^2 + 5x + 6$, broken fraction $\\frac{a}{b}$, missing degree $30^\\circ$, missing angle $\\angle ABC$, broken square root $\\sqrt{b^2 - 4ac}$, incorrect physics/chemistry formula), intelligently fix it in the main text so that the question is 100% mathematically valid, complete, and solvable.
-   - If Bengali text has OCR misrecognitions (e.g. missing মাত্রা/আ-কার/ই-কার, broken যুক্তবর্ণ যেমন: ক্ষ, জ্ঞ, ষ্ণ, ষ্ঠ, ঙ্ক, ঙ্গ, ত্ত, ক্ত, ত্র, শ্র, হৃ, দ্র), correct them into standard, grammatically flawless Bengali.
-   - In the main document body, ALWAYS output the fully corrected, clean, professional question text.
+২. সমীকরণ ও সূত্র (LaTeX) এবং বাংলা এককের পৃথকীকরণ:
+   - সমস্ত গাণিতিক ও বৈজ্ঞানিক সমীকরণ বাধ্যতামূলকভাবে LaTeX ফরম্যাটে ($...$) লিখবে।
+   - কঠোর সতর্কতা: লেটেক্স কোডের ($...$ বা \\text{...}) ভেতরে কোনো অবস্থাতেই বাংলা লেখা, শব্দ, একক বা কোটেশন (যেমন: "বর্গসেমি", "সেমি", "মিটার", "টাকা", "টি", "জন") রাখবে না।
+   - সমস্ত বাংলা লেখা ও একক সবসময় $...$-এর বাইরে লিখবে।
+   - যেমন: (ক) $4\\sqrt{55}$ "বর্গসেমি" (অথবা (ক) $4\\sqrt{55}$ বর্গসেমি)
+   - ইনলাইন সূত্র: $সমীকরণ$ (যেমন $x^2 + y^2 = r^2$, $\\sin^2\\theta + \\cos^2\\theta = 1$)
+   - ডিসপ্লে/ব্লক সূত্র: $$সমীকরণ$$ (যেমন $$\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$)
+   - ভগ্নাংশ: \\frac{লব}{হর}
+   - বর্গমূল: \\sqrt{x} বা \\sqrt[n]{x}
+   - ঘাত ও সূচক: x^{2}, m^{-1} (curly bracket আবশ্যক)
+   - গ্রিক অক্ষর: \\alpha, \\beta, \\theta, \\lambda, \\pi, \\Delta, \\Omega ইত্যাদি
 
-3. DEDICATED REFERENCE & CORRECTION NOTES SECTION (ফাইলের নিচে রেফারেন্স ও সংশোধনী নোট):
-   - CRITICAL: At the very end of the transcribed document, you MUST ALWAYS append a structured verification reference section starting with a horizontal divider:
-   ---
-   [যাচাই ও সংশোধনী রেফারেন্স / Verification & Correction Notes]
-   • [List each specific correction, auto-fix, or assumption made for blurry/flawed parts, referencing the question number. e.g. "প্রশ্ন নং ১ (গ): মূল ছবিতে সমীকরণের ঘাত অস্পষ্ট ছিল; গাণিতিক সঙ্গতি অনুসারে $x^2 - 5x + 6 = 0$ হিসেবে শুদ্ধ করা হয়েছে।"]
-   • [e.g. "প্রশ্ন নং ৩ (খ): 'ট্রান্সফরমার'-এর ক্ষমতা একক $kW$ এবং ভোল্টেজ সমীকরণ $V_p/V_s = N_p/N_s$ যাচাইকৃত ও শুদ্ধ করা হয়েছে।"]
-   • [e.g. "প্রশ্ন নং ৪ (ক): যুক্তবর্ণ 'অভিকর্ষজ' বানান ও একক $\\text{m/s}^2$ শুদ্ধ করা হয়েছে।"]
-   - If no corrections were needed and the original was 100% crystal clear:
-   ---
-   [যাচাই ও সংশোধনী রেফারেন্স / Verification & Correction Notes]
-   • সকল প্রশ্ন, গাণিতিক সমীকরণ ও টেক্সট শতভাগ নির্ভুলভাবে যাচাইকৃত। কোনো অস্পষ্টতা বা সংশোধনের প্রয়োজন নেই।
+৩. বহুনির্বাচনী প্রশ্ন (MCQ) বিন্যাস:
+   - বহুনির্বাচনী প্রশ্নগুলো বই বা প্রশ্নপত্রের মতো করে সাজিয়ে অপশনগুলোর মাঝে প্রয়োজন মতো ট্যাব বা স্পেস ব্যবহার করে পাশাপাশি সুন্দরভাবে বিন্যাস করবে।
 
-4. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
-   - Output ONLY the clean transcribed document text followed by the reference section.
-   - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
-   - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
+৪. সৃজনশীল প্রশ্ন (CQ) ও কাঠামো:
+   - উদ্দীপক, ১., ২., ক., খ., গ., ঘ. এবং ডানপাশের নম্বর সুনির্দিষ্টভাবে সাজাবে।
+   - মূল প্রশ্নপত্রের শিরোনাম ও সেকশন হেডিং অবিকল রাখবে।
 
-5. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
-   - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
-   - Write clean plain roman numerals without any asterisks:
-     i. A, B ও C একই সরলরেখায় অবস্থিত
-     ii. CP \\perp BC
-     iii. AB = AC - BC
-     নিচের কোনটি সঠিক?
-     (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
-   - Keep MCQ options aligned side-by-side on the same line with proper spacing.
+৫. টেবিল ও ছক (Tables):
+   - অবশ্যই কোনো টেবিল বা ছক এড়িয়ে যাবে না। প্রতিটি টেবিল নিখুঁতভাবে Markdown টেবিলে রূপান্তর করবে।
 
-6. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
-   - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
-   - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
-     ক. রূপান্তরক কাকে বলে?
-     খ. স্টেপ-আপ ও স্টেপ-ডাউন ট্রান্সফরমারের পার্থক্য ব্যাখ্যা কর।
-     গ. উদ্দীপকের তথ্যানুযায়ী আউটপুটে তড়িৎ বিভব নির্ণয় কর।
-     ঘ. ক্ষমতা অপরিবর্তিত থাকলে সেকেন্ডারি প্রবাহ বিশ্লেষণ কর।
+৬. চিত্র/জ্যামিতিক চিত্র ও ডায়াগ্রাম চিহ্নিতকরণ:
+   - মূল নথিতে কোনো চিত্র থাকলে [চিত্র আছে: চিত্রে ...] এভাবে স্পষ্টভাবে উল্লেখ করবে।
 
-7. DIAGRAMS & GEOMETRIC FIGURES (চিত্র / জ্যামিতিক চিত্র / ডায়াগ্রাম):
-   - Whenever there is a diagram, geometric shape (e.g. triangle \\Delta ABD, circle, polygon), circuit, graph, chart, or physics illustration, NEVER skip it or leave it blank.
-   - You MUST extract all labels, vertices, side lengths, angles, and given values in text, and clearly format it as:
-     [চিত্র আছে: চিত্রে \\Delta ABD একটি ত্রিভুজ, যার বাহু ও কোণের মানসমূহ: AB = ..., BD = ..., AD = ...]
-   - If questions refer to the diagram (যেমন: "উদ্দীপকের চিত্রানুযায়ী ৫ নং প্রশ্নের উত্তর দাও"), always retain the diagram reference and its values clearly so the question remains 100% solvable.
+৭. মূল সংখ্যা ও একক:
+   - মূল ফাইলে ইংরেজি সংখ্যা বা একক (যেমন 210 V, 0.83 A, 50 Hz, 10 kg) থাকলে তা মূল ফরম্যাটেই রাখবে।
 
-8. TABLES & GRIDS (টেবিল ও ছক):
-   - NEVER skip any table or grid. Transcribe all tables into complete, standard Markdown tables.
-   - Example:
-     | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
-     | :--- | :--- | :--- |
-     | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
-     | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
+৮. অতিরিক্ত কথা ও ভূমিকার বর্জন:
+   - শুরুতে বা মাঝে কোনো প্রকার ভূমিকা, চ্যাট বার্তা বা কোডব্লক যুক্ত করবে না। সরাসরি একাডেমিক আউটপুট প্রদান করবে।
 
-9. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও বাংলা এককের সম্পূর্ণ পৃথকীকরণ):
-   - Write mathematical formulas, equations, and numbers in LaTeX ($...$).
-   - CRITICAL: NEVER put any Bengali word, text, unit, or quotes (যেমন: "বর্গসেমি", "সেমি", "মিটার", "টাকা", "টি", "জন") inside LaTeX blocks ($...$, $$...$$) or \\text{...}.
-   - LaTeX blocks must ONLY contain pure mathematical numbers, variables, formulas, and symbols.
-   - All Bengali text and units MUST ALWAYS be written outside $...$.
-   - Incorrect: (ক) $4\\sqrt{55} \\text{"বর্গসেমি"}$ ❌
-   - Correct: (ক) $4\\sqrt{55}$ "বর্গসেমি" (অথবা (ক) $4\\sqrt{55}$ বর্গসেমি) ✅
-
-10. ACCURATE BENGALI TYPOGRAPHY:
-    - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
+৯. সমীকরণ ও সমাধানের পুনরাবৃত্তি বর্জন (Anti-Loop):
+   - মূল চিত্রে যতটুকু গাণিতিক ধাপ বা সমাধান আছে, হুবহু ততটুকুই লিখবে।
+   - কোনো অবস্থাতেই একই সমীকরণ, লাইন বা শর্ত বারবার পুনরাবৃত্তি (infinite loop / hallucination) করে পেজ ভরাবে না। প্রতিটি ধাপ একবারই লিখবে।`;
 
   const savedKey = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '') : '');
   const savedGas = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '') : '');
@@ -826,7 +791,7 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     const payload = {
       contents: [{ parts }],
       generationConfig: {
-        temperature: 0.05,
+        temperature: 0.1,
         maxOutputTokens: 8192
       },
       safetySettings: [
@@ -838,11 +803,9 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
     };
 
     let candidateModels = [
-      'gemini-2.5-flash-lite',
       'gemini-3.5-flash',
-      'gemini-flash-lite-latest',
-      'gemini-flash-latest',
       'gemini-3.6-flash',
+      'gemini-flash-latest',
       'gemini-3.7-flash',
       'gemini-pro-latest'
     ];
@@ -1319,29 +1282,18 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
   // Sanitizer: Strips unwanted asterisks around Roman numerals & removes mark brackets [১], [২] from questions
   function suppressHallucinatedRepetitions(text) {
     if (!text || typeof text !== 'string') return text || '';
-    let cleaned = text;
-
-    // 1. Collapse duplicate lines
-    const lines = cleaned.split('\n');
-    const filteredLines = [];
-    let lastLine = null;
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (trimmed && trimmed === lastLine) {
+    const lines = text.split('\n');
+    const result = [];
+    let lastNonEmpty = '';
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      if (trimmed && trimmed === lastNonEmpty) {
         continue;
       }
-      lastLine = trimmed;
-      filteredLines.push(line);
+      if (trimmed) lastNonEmpty = trimmed;
+      result.push(lines[i]);
     }
-    cleaned = filteredLines.join('\n');
-
-    // 2. Collapse repeated inline phrases / formula steps
-    cleaned = cleaned.replace(/(.{12,140}?)(?:\s*\1\s*){2,}/gs, '$1');
-
-    // 3. Clean trailing repetitive unclosed equations
-    cleaned = cleaned.replace(/(\\implies|\=\s*0|বা\s*\$)[^\n$]{0,100}(?:\1[^\n$]{0,100}){3,}/g, '$1');
-
-    return cleaned;
+    return result.join('\n').trim();
   }
 
   function cleanOcrResponse(rawText) {
@@ -1391,7 +1343,11 @@ CRITICAL COMPOSITION, VERIFICATION & CORRECTION RULES:
       cleanedLines.push(l);
     }
 
-    return cleanedLines.join('\n').trim();
+    let finalCleaned = cleanedLines.join('\n').trim();
+    if (typeof EquationConverter !== 'undefined' && typeof EquationConverter.autoWrapLatex === 'function') {
+      finalCleaned = EquationConverter.autoWrapLatex(finalCleaned);
+    }
+    return finalCleaned;
   }
 
   function parseRichRuns(rawText) {
