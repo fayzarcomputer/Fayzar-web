@@ -2177,14 +2177,15 @@ function initUnifiedConverterEngine() {
 
     if (isImageOrPdf) {
       if (window.FayzarAiOcrEngine && typeof window.FayzarAiOcrEngine.handleFiles === 'function') {
-        window.FayzarAiOcrEngine.handleFiles(files);
+        await window.FayzarAiOcrEngine.handleFiles(files);
       }
+      const queueLen = window.FayzarAiOcrEngine?.state?.filesQueue?.length || files.length;
       currentScanResult = {
         file: firstFile,
         files: files,
         ext: ext,
         isAiOcr: true,
-        totalFiles: files.length,
+        totalFiles: queueLen,
         totalBytes: files.reduce((acc, f) => acc + f.size, 0)
       };
       renderStep2Options(currentScanResult);

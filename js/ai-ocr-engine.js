@@ -25,17 +25,21 @@
   };
 
   const MAX_FREE_USES = 5;
-  const REQUEST_TIMEOUT_MS = 14000; // 14s timeout for fast failover
-  const MAX_IMAGE_DIMENSION = 1280; // 1280px provides crisp OCR while reducing payload
-  const JPEG_COMPRESSION_QUALITY = 0.78; // High quality with ~40% smaller payload
+  const REQUEST_TIMEOUT_MS = 180000; // 180s (3 minutes) timeout for complete multi-page extraction
+  const MAX_IMAGE_DIMENSION = 1600; // 1600px provides ultra-crisp OCR for small text & equations
+  const JPEG_COMPRESSION_QUALITY = 0.85; // High quality JPEG for math fidelity
   const modelCooldowns = new Map(); // Tracks models with 429 quota exhaustion (model -> expireTimestamp)
 
   const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, and LaTeX-to-Word formatting specialist.
 Your goal is to extract and compose a COMPLETE, UNTRUNCATED, BEAUTIFULLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
 
 CRITICAL COMPOSITION & FORMATTING RULES:
-1. ACCURATE SEQUENTIAL QUESTION NUMBERING & COMPLETE EXTRACTION (ধারাবাহিক ক্রমিক নম্বর ও সম্পূর্ণ রূপান্তর):
-   - You MUST extract all questions, text, tables, and math continuously from Page 1 to the very last page in a single unified document.
+1. UNTRUNCATED, FULL COMPLETE EXTRACTION OF ALL QUESTIONS (সকল প্রশ্নের শতভাগ সম্পূর্ণ রূপান্তর):
+   - MANDATORY: You MUST transcribe and extract EVERY SINGLE QUESTION from the very first question to the very last question across all pages.
+   - For example: If the document contains 11 creative questions (১ থেকে ১১), you MUST output all 11 questions completely (১., ২., ৩., ৪., ৫., ৬., ৭., ৮., ৯., ১০., ১১.).
+   - If it contains 30 MCQs, you MUST output all 30 MCQs completely (১ থেকে ৩০).
+   - If it has multiple pages (Page 1, Page 2, Page 3...), you MUST process every single page until the very end.
+   - CRITICAL: NEVER STOP HALFWAY, NEVER SKIP ANY QUESTION, NEVER SUMMARIZE, AND NEVER TRUNCATE!
    - SEQUENTIAL NUMBERING: Organize and re-sequence all question numbers strictly in continuous serial order (১., ২., ৩., ৪., ৫., ...) without any missing, skipped, or duplicated numbers.
    - For Creative Questions (CQ/সৃজনশীল), strictly maintain standard sequential sub-question labels (উদ্দীপক, ১., ক., খ., গ., ঘ.).
 
@@ -330,6 +334,49 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     if (elements.saveByokBtn) elements.saveByokBtn.addEventListener('click', saveByokKey);
   }
 
+  // Extract all pages from a PDF as crisp images
+  async function convertPdfToImages(file) {
+    const pdfLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+    if (!pdfLib) {
+      return null;
+    }
+    try {
+      if (pdfLib.GlobalWorkerOptions && !pdfLib.GlobalWorkerOptions.workerSrc) {
+        pdfLib.GlobalWorkerOptions.workerSrc = 'js/vendor/pdf.worker.min.js';
+      }
+      const arrayBuffer = await file.arrayBuffer();
+      const loadingTask = pdfLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      const numPages = pdf.numPages;
+      if (!numPages || numPages <= 0) return null;
+
+      const pageItems = [];
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        // Scale 1.8x provides crisp 150-200 DPI OCR resolution without excessive memory
+        const viewport = page.getViewport({ scale: 1.8 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        const base64 = canvas.toDataURL('image/jpeg', JPEG_COMPRESSION_QUALITY);
+        pageItems.push({
+          file: file,
+          name: `${file.name} (পৃষ্ঠা ${toBengaliNumber(pageNum)})`,
+          size: Math.round(base64.length * 0.75),
+          isPdf: false,
+          mimeType: 'image/jpeg',
+          base64: base64
+        });
+      }
+      return pageItems;
+    } catch (err) {
+      console.warn('PDF.js rendering fallback to raw PDF:', err);
+      return null;
+    }
+  }
+
   // Fast image optimization: resize on canvas
   async function fastOptimizeImageFile(file) {
     return new Promise((resolve) => {
@@ -398,6 +445,18 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       }
 
       totalBytes += file.size;
+
+      if (isPdf) {
+        // High-fidelity multi-page PDF rendering via pdf.js
+        const renderedPages = await convertPdfToImages(file);
+        if (renderedPages && renderedPages.length > 0) {
+          for (let p of renderedPages) {
+            state.filesQueue.push(p);
+          }
+          continue;
+        }
+      }
+
       state.filesQueue.push({
         file: file,
         name: file.name,
@@ -410,43 +469,51 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 
     if (state.filesQueue.length === 0) return;
 
-    // Single file handling
+    // Single file/page handling
     if (state.filesQueue.length === 1) {
       const single = state.filesQueue[0];
       state.selectedFile = single.file;
       state.imageMimeType = single.mimeType;
       if (elements.fileName) elements.fileName.textContent = single.name;
       if (elements.fileSize) elements.fileSize.textContent = formatBytes(single.size);
-      if (elements.fileCountBadge) elements.fileCountBadge.textContent = '১টি ফাইল প্রস্তুত';
+      if (elements.fileCountBadge) elements.fileCountBadge.textContent = '১টি পেজ প্রস্তুত';
 
-      // Pre-optimize in the background for zero-latency execution
-      fastOptimizeImageFile(single.file).then((opt) => {
-        state.imageBase64 = opt.base64;
-        state.imageMimeType = opt.mimeType;
-        single.base64 = opt.base64;
-        single.mimeType = opt.mimeType;
+      if (single.base64) {
+        state.imageBase64 = single.base64;
+        if (elements.imagePreview) elements.imagePreview.src = single.base64;
+        elements.imagePreview?.classList.remove('hidden');
+        elements.pdfPreviewIcon?.classList.add('hidden');
+      } else {
+        fastOptimizeImageFile(single.file).then((opt) => {
+          state.imageBase64 = opt.base64;
+          state.imageMimeType = opt.mimeType;
+          single.base64 = opt.base64;
+          single.mimeType = opt.mimeType;
 
-        if (single.isPdf) {
-          elements.imagePreview?.classList.add('hidden');
-          elements.pdfPreviewIcon?.classList.remove('hidden');
-        } else {
-          if (elements.imagePreview) elements.imagePreview.src = opt.base64;
-          elements.imagePreview?.classList.remove('hidden');
-          elements.pdfPreviewIcon?.classList.add('hidden');
-        }
-      });
+          if (single.isPdf) {
+            elements.imagePreview?.classList.add('hidden');
+            elements.pdfPreviewIcon?.classList.remove('hidden');
+          } else {
+            if (elements.imagePreview) elements.imagePreview.src = opt.base64;
+            elements.imagePreview?.classList.remove('hidden');
+            elements.pdfPreviewIcon?.classList.add('hidden');
+          }
+        });
+      }
 
       elements.uploadPrompt?.classList.add('hidden');
       elements.previewContainer?.classList.remove('hidden');
       elements.multiThumbs?.classList.add('hidden');
+      const multiThumbsContainer = document.getElementById('aiOcrMultiThumbsContainer');
+      if (multiThumbsContainer) multiThumbsContainer.classList.add('hidden');
       if (elements.convertBtn) elements.convertBtn.disabled = false;
       elements.successCard?.classList.add('hidden');
       return;
     }
 
-    // Multiple files handling: All files will be sent to Gemini in a SINGLE request!
+    // Multiple files/pages handling: All pages will be sent to Gemini in a SINGLE request!
     state.selectedFile = state.filesQueue[0].file;
-    if (elements.fileName) elements.fileName.textContent = `${toBengaliNumber(state.filesQueue.length)}টি ফাইল নির্বাচিত`;
+    if (elements.fileName) elements.fileName.textContent = `${toBengaliNumber(state.filesQueue.length)}টি পেজ নির্বাচিত`;
     if (elements.fileSize) elements.fileSize.textContent = `মোট ${formatBytes(totalBytes)}`;
     if (elements.fileCountBadge) elements.fileCountBadge.textContent = `${toBengaliNumber(state.filesQueue.length)}টি পেজ একসাথে প্রসেস হবে`;
 
@@ -455,6 +522,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     elements.uploadPrompt?.classList.add('hidden');
     elements.previewContainer?.classList.remove('hidden');
 
+    const multiThumbsContainer = document.getElementById('aiOcrMultiThumbsContainer');
+    if (multiThumbsContainer) multiThumbsContainer.classList.remove('hidden');
+
     if (elements.multiThumbs) {
       elements.multiThumbs.innerHTML = '';
       elements.multiThumbs.classList.remove('hidden');
@@ -462,7 +532,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       state.filesQueue.forEach((item, idx) => {
         const thumbDiv = document.createElement('div');
         thumbDiv.className = 'w-14 h-14 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative flex-shrink-0';
-        if (item.isPdf) {
+        if (item.base64) {
+          thumbDiv.innerHTML = `<img src="${item.base64}" class="w-full h-full object-cover"><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">P${idx+1}: ${item.name}</span>`;
+        } else if (item.isPdf) {
           thumbDiv.innerHTML = `<i class="fa-solid fa-file-pdf text-rose-500 text-lg"></i><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">P${idx+1}: ${item.name}</span>`;
           fastOptimizeImageFile(item.file).then(opt => {
             item.base64 = opt.base64;
@@ -481,7 +553,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 
     if (elements.convertBtn) elements.convertBtn.disabled = false;
     elements.successCard?.classList.add('hidden');
-    showToast(`মোট ${toBengaliNumber(state.filesQueue.length)}টি পেজ প্রস্তুত! সবগুলো একসাথে রূপান্তর হবে।`, 'info');
+    showToast(`মোট ${toBengaliNumber(state.filesQueue.length)}টি পেজ প্রস্তুত! সবগুলো একসাথে সম্পূর্ণ রূপান্তর হবে।`, 'info');
   }
 
   function clearImage() {
@@ -497,6 +569,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       elements.multiThumbs.innerHTML = '';
       elements.multiThumbs.classList.add('hidden');
     }
+    const multiThumbsContainer = document.getElementById('aiOcrMultiThumbsContainer');
+    if (multiThumbsContainer) multiThumbsContainer.classList.add('hidden');
     if (elements.convertBtn) elements.convertBtn.disabled = true;
     if (elements.successCard) {
       elements.successCard.classList.add('hidden');
@@ -677,7 +751,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       contents: [{ parts: mediaParts }],
       generationConfig: {
         temperature: 0.05,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 65536,
         thinkingConfig: { thinkingBudget: 0 }
       },
       safetySettings: [
@@ -747,8 +821,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
             throw new Error('Gemini API Key সঠিক নয়। Google AI Studio থেকে সঠিক Key দিন।');
           }
 
-          // If proxy/endpoint rejects system_instruction or thinkingConfig, fallback payload format
-          if (res.status === 400 && (errMsg.includes('system_instruction') || errMsg.includes('thinkingConfig') || errMsg.includes('Unknown field'))) {
+          // If proxy/endpoint rejects system_instruction, thinkingConfig or maxOutputTokens, fallback payload format
+          if (res.status === 400 && (errMsg.includes('system_instruction') || errMsg.includes('thinkingConfig') || errMsg.includes('maxOutputTokens') || errMsg.includes('exceed') || errMsg.includes('Unknown field'))) {
             payload = {
               contents: [{ parts: [{ text: GEMINI_PROMPT }, ...mediaParts] }],
               generationConfig: {
@@ -774,16 +848,22 @@ CRITICAL COMPOSITION & FORMATTING RULES:
           continue;
         }
 
-        // Read and parse SSE stream chunks in real-time with UI throttling
+        // Read and parse SSE stream chunks in real-time with activity keep-alive
         if (res.body && typeof res.body.getReader === 'function') {
           const reader = res.body.getReader();
           const decoder = new TextDecoder('utf-8');
           let buffer = '';
           let fullStreamedText = '';
           let lastChunkTime = 0;
+          const STREAM_IDLE_TIMEOUT_MS = 60000; // 60s idle timeout between chunks
 
           while (true) {
-            const { done, value } = await reader.read();
+            let chunkTimeoutId;
+            const chunkTimeoutPromise = new Promise((_, reject) => {
+              chunkTimeoutId = setTimeout(() => reject(new Error('স্ট্রিমিং চলাকালীন সংযোগ বিচ্ছিন্ন হয়েছে (Idle Timeout)')), STREAM_IDLE_TIMEOUT_MS);
+            });
+
+            const { done, value } = await Promise.race([reader.read(), chunkTimeoutPromise]).finally(() => clearTimeout(chunkTimeoutId));
             if (done) break;
             buffer += decoder.decode(value, { stream: true });
             const lines = buffer.split('\n');
@@ -796,7 +876,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
                 if (!dataJson || dataJson === '[DONE]') continue;
                 try {
                   const chunkObj = JSON.parse(dataJson);
-                  const chunkPart = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                  const candidate = chunkObj.candidates?.[0];
+                  const chunkPart = candidate?.content?.parts?.[0]?.text || '';
                   if (chunkPart) {
                     fullStreamedText += chunkPart;
                     const cTime = Date.now();
@@ -805,6 +886,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
                       lastChunkTime = cTime;
                       if (onStreamChunk) onStreamChunk(fullStreamedText);
                     }
+                  }
+                  if (candidate?.finishReason === 'MAX_TOKENS') {
+                    console.warn('Gemini reached MAX_TOKENS ceiling.');
                   }
                 } catch (pe) { /* partial chunk */ }
               }
