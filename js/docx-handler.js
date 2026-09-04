@@ -716,10 +716,16 @@
           let innerHtml = "";
           for (let seg of segments) {
             if (seg.type === 'math') {
-              const mathHtml = (typeof EquationConverter !== 'undefined' && typeof EquationConverter.latexToHtmlMath === 'function')
-                ? EquationConverter.latexToHtmlMath(seg.value, isBijoy)
-                : (typeof EquationConverter !== 'undefined' ? EquationConverter.sanitizeSimpleMath(seg.value, isBijoy) : seg.value);
-              innerHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${mathHtml}</span>`;
+              if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
+                const cleanText = EquationConverter.sanitizeSimpleMath(seg.value, isBijoy);
+                const escaped = (cleanText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                innerHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escaped}</span>`;
+              } else {
+                const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
+                const cleanEq = (eqCode || '').trim();
+                const cleanEqCode = cleanEq.startsWith('EQ ') ? cleanEq.slice(3).trim() : cleanEq;
+                innerHtml += `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${cleanEqCode} <span style='mso-element:field-end'></span></span><![endif]-->`;
+              }
             } else if (seg.value) {
               const mixedParts = (typeof BanglaConverter !== 'undefined' && typeof BanglaConverter.splitMixedBengaliAndEnglish === 'function')
                 ? BanglaConverter.splitMixedBengaliAndEnglish(seg.value)
