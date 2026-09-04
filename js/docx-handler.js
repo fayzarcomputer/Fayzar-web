@@ -563,10 +563,10 @@
       const fontName = isBijoy ? 'SutonnyMJ' : (opts.targetFont || opts.fontName || 'Kalpurush');
 
       const zip = new JSZip();
-      const lines = (text || '').split(/\r?\n/);
+      const lines = (text || '').replace(/\*\*/g, '').replace(/\r/g, '').split('\n').filter(l => l.trim().length > 0);
       
       const paragraphsXml = lines.map(line => {
-        if (!line) return '<w:p><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr><w:r><w:t></w:t></w:r></w:p>';
+        if (!line) return '<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/></w:pPr><w:r><w:t></w:t></w:r></w:p>';
 
         const hasMath = typeof EquationConverter !== 'undefined' && 
                         (/\$\$[\s\S]*?\$\$|\$[^\$]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/.test(line));
@@ -624,7 +624,7 @@
               }
             }
           }
-          return `<w:p><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr>${runsXml}</w:p>`;
+          return `<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/></w:pPr>${runsXml}</w:p>`;
         }
 
         const segments = isBijoy
@@ -644,7 +644,7 @@
             runsXml += `<w:r><w:rPr><w:rFonts w:ascii="${fontName}" w:hAnsi="${fontName}" w:cs="${fontName}" ${isBijoy ? 'w:hint="ascii"' : 'w:hint="cs"'}/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr><w:t xml:space="preserve">${escaped}</w:t></w:r>`;
           }
         }
-        return `<w:p><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr>${runsXml}</w:p>`;
+        return `<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/></w:pPr>${runsXml}</w:p>`;
       }).join('\n');
 
       const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -704,7 +704,7 @@
      * Generate an Office 2003 .doc Blob from raw text with 100% font & math preservation
      */
     static createDocFromText(text, fontName = 'SutonnyMJ', isBijoy = true, baseFontSizePt = 12) {
-      let sanitizedText = text || '';
+      let sanitizedText = (text || '').replace(/\*\*/g, '').replace(/\r/g, '');
 
       // 0. Extract ALL Bengali text out of math mode so words like 'এবং', 'অথবা' are NEVER inside equations
       sanitizedText = sanitizedText.replace(/\\(?:text|mathrm|textmd|textbf|textit|mbox)\{\s*([^{}]*?[\u0980-\u09FF][^{}]*?)\s*\}/g, ' $1 ');
@@ -932,7 +932,7 @@
           }
 
           if (parsedRows.length > 0) {
-            let tableHtml = `<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" align="center" style="border-collapse:collapse; border:none; mso-border-alt:solid windowtext .5pt; mso-yfti-tbllook:1184; mso-padding-alt:2.0pt 5.4pt 2.0pt 5.4pt; margin:6pt auto; width:auto;">\n`;
+            let tableHtml = `<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" align="center" style="border-collapse:collapse; border:none; mso-border-alt:solid windowtext .5pt; mso-yfti-tbllook:1184; mso-padding-alt:2.0pt 5.4pt 2.0pt 5.4pt; margin:4pt auto; width:auto;">\n`;
             for (let rIdx = 0; rIdx < parsedRows.length; rIdx++) {
               const row = parsedRows[rIdx];
               tableHtml += `  <tr class="MsoTableRow" style="mso-yfti-irow:${rIdx};">\n`;
@@ -940,7 +940,7 @@
                 const cellVal = row[cIdx];
                 const renderedCell = renderFormattedRun(cellVal);
                 tableHtml += `    <td class="MsoTableCell" style="border:solid windowtext 1.0pt; mso-border-alt:solid windowtext .5pt; padding:2.0pt 5.4pt 2.0pt 5.4pt; text-align:center; vertical-align:middle;">\n`;
-                tableHtml += `      <p class="MsoNormal" align="center" style="margin:0; text-align:center; line-height:normal; font-size:${baseFontSizePt}pt;">${renderedCell || '&nbsp;'}</p>\n`;
+                tableHtml += `      <p class="MsoNormal" align="center" style="margin:0cm;margin-bottom:.0001pt;text-align:center;line-height:normal;mso-line-height-rule:auto;font-size:${baseFontSizePt}pt;">${renderedCell || '&nbsp;'}</p>\n`;
                 tableHtml += `    </td>\n`;
               }
               tableHtml += `  </tr>\n`;
@@ -951,12 +951,13 @@
           }
         }
 
-        // Regular paragraph line
+        // Regular paragraph line (skip empty lines / extra enters)
         if (!trimmed) {
-          htmlBlocks.push(`<p class="MsoNormal" style="margin: 0 0 5pt 0; font-size: ${baseFontSizePt}pt;">&nbsp;</p>`);
+          i++;
+          continue;
         } else {
           const contentHtml = renderFormattedRun(line);
-          htmlBlocks.push(`<p class="MsoNormal" style="margin: 0 0 5pt 0; font-size: ${baseFontSizePt}pt; line-height: 1.35;">${contentHtml || '&nbsp;'}</p>`);
+          htmlBlocks.push(`<p class="MsoNormal" style="margin:0cm;margin-bottom:.0001pt;line-height:normal;mso-line-height-rule:auto;font-size:${baseFontSizePt}pt;">${contentHtml || '&nbsp;'}</p>`);
         }
         i++;
       }
@@ -969,8 +970,12 @@
 @page Section1 { size: 595.35pt 841.95pt; margin: 72pt 72pt 72pt 72pt; mso-header-margin: 36pt; mso-footer-margin: 36pt; }
 div.Section1 { page: Section1; }
 p.MsoNormal, li.MsoNormal, div.MsoNormal {
-  margin: 0 0 5pt 0;
+  margin: 0cm;
+  margin-bottom: .0001pt;
+  mso-pagination: widow-orphan;
   font-size: ${baseFontSizePt}pt;
+  line-height: normal;
+  mso-line-height-rule: auto;
   font-family: "${fontName}", Arial, sans-serif;
   mso-ascii-font-family: "Times New Roman";
   mso-hansi-font-family: "Times New Roman";
@@ -982,7 +987,7 @@ table.MsoTableGrid {
   mso-table-layout-alt: auto;
   border: none;
   mso-border-alt: solid windowtext .5pt;
-  margin: 6pt auto;
+  margin: 4pt auto;
 }
 td.MsoTableCell {
   border: solid windowtext 1.0pt;
@@ -996,7 +1001,7 @@ body {
   mso-bidi-font-family: "${fontName}";
   font-size: ${baseFontSizePt}pt;
 }
-p { margin: 0 0 5pt 0; }
+p { margin: 0cm; margin-bottom: .0001pt; line-height: normal; mso-line-height-rule: auto; }
 </style>
 </head>
 <body>

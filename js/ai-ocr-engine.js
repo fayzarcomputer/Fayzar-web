@@ -69,12 +69,17 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      [ছবি আছে-পৃ:০১]
      ক. রূপান্তরক কাকে বলে?
 
-6. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
+6. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS / NO MARKDOWN ASTERISKS):
    - Output ONLY the clean transcribed document text directly.
+   - CRITICAL MANDATE: NEVER use markdown bold asterisks (**). NEVER write **পঞ্চম শ্রেণি** or **১. সঠিক উত্তর:**. Output completely plain text without any ** asterisks.
    - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
    - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
 
-7. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
+7. NO EXTRA ENTERS OR BLANK LINES (অতিরিক্ত ফাঁকা লাইন বা ডাবল এন্টার নিষেধ):
+   - CRITICAL: DO NOT insert empty blank lines or double Enters between questions, sub-questions, or lines.
+   - Each question, sub-question, and option must follow immediately on the next line without empty blank lines in between. (কোথাও প্রয়োজন হলে ব্যবহারকারী নিজে ম্যানুয়ালি স্পেস বা এন্টার দেবেন).
+
+8. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
    - CRITICAL: MCQ প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... ৩০. সতন্ত্রভাবে ১ থেকে শুরু করতে হবে (সৃজনশীল প্রশ্নের ক্রমিকের সাথে মিলিয়ে নয়)।
    - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
    - Write clean plain roman numerals without any asterisks:
@@ -85,15 +90,15 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
    - Keep MCQ options aligned side-by-side on the same line with proper spacing.
 
-8. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
+9. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
    - CRITICAL: সৃজনশীল প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... ১১. সতন্ত্রভাবে ১ থেকে শুরু করতে হবে।
    - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
    - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
 
-9. SHORT QUESTIONS (সংক্ষিপ্ত ও অতি সংক্ষিপ্ত প্রশ্নপত্র):
-   - সংক্ষিপ্ত প্রশ্ন, অতি সংক্ষিপ্ত প্রশ্ন বা এক কথায় উত্তরের ক্ষেত্রেও ক্রমিক নম্বর সতন্ত্রভাবে ১., ২., ৩., ... থেকে শুরু করতে হবে।
+10. SHORT QUESTIONS (সংক্ষিপ্ত ও অতি সংক্ষিপ্ত প্রশ্নপত্র):
+    - সংক্ষিপ্ত প্রশ্ন, অতি সংক্ষিপ্ত প্রশ্ন বা এক কথায় উত্তরের ক্ষেত্রেও ক্রমিক নম্বর সতন্ত্রভাবে ১., ২., ৩., ... থেকে শুরু করতে হবে।
 
-10. TABLES & GRIDS (টেবিল ও ছক):
+11. TABLES & GRIDS (টেবিল ও ছক):
     - Transcribe all tables into complete, standard Markdown tables.
     - Example:
       | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
@@ -101,7 +106,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
       | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-11. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
+12. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
     - Write mathematical formulas, algebraic equations, variables, sets, and expressions in LaTeX ($...$).
     - CRITICAL: DO NOT wrap plain numbers, lists of numbers, counts, or simple measurements in $...$!
       - Plain numbers & counts: 50 জন (NOT $50$ জন), 30 জন (NOT $30$ জন), 65, 62.5 (NOT $65$, $62.5$)
@@ -116,7 +121,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
       - NEVER put Bengali words or quotes inside LaTeX blocks.
 
-12. ACCURATE BENGALI TYPOGRAPHY:
+13. ACCURATE BENGALI TYPOGRAPHY:
     - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
   const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
@@ -1262,6 +1267,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     text = text.replace(/^[=\-\s]*End of OCR[^\n]*[=\-\s]*\n?/gim, '');
     text = text.replace(/^[=\-\s]*Page\s*\d+[^\n]*[=\-\s]*\n?/gim, '');
 
+    // CRITICAL: Strip any markdown bold asterisks (**)
+    text = text.replace(/\*\*/g, '');
+
     // 1. Clean asterisks around Roman numerals: *i.* -> i., *ii.* -> ii., *iii.* -> iii.
     text = text.replace(/\*+\s*(i{1,4}|iv|v|vi{0,3}|ix|x)\s*\.\s*\*+/gi, '$1.');
     
@@ -1278,6 +1286,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     for (let i = 0; i < rawLines.length; i++) {
       let l = rawLines[i];
       const trimmed = l.trim();
+      if (!trimmed) continue; // Skip empty lines / extra enters!
 
       // Skip OCR delimiter lines
       if (/^[=\-]{2,}/.test(trimmed) && /ocr/i.test(trimmed)) {
@@ -1285,8 +1294,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       }
 
       // 4. Remove score marks [১], [২], [৩], [৪], [৮], [১০], (১), (২) at the end of creative questions
-      l = l.replace(/(\?|।|[a-zA-Z\u0980-\u09FF"'”’\$])\s*\[\s*[০-৯0-9\s]+\s*\]\s*$/g, '$1');
-      l = l.replace(/(\?|।|[a-zA-Z\u0980-\u09FF"'”’\$])\s*[\(（]\s*[০-৯0-9\s]+\s*[\)）]\s*$/g, '$1');
+      l = l.replace(/(\?|।|:|[a-zA-Z\u0980-\u09FF"'”’\$])\s*\[\s*[০-৯0-9\s]+\s*\]\s*$/g, '$1');
+      l = l.replace(/(\?|।|:|[a-zA-Z\u0980-\u09FF"'”’\$])\s*[\(（]\s*[০-৯0-9\s]+\s*[\)）]\s*$/g, '$1');
       
       // If line is a CQ subquestion (e.g. ক. ... ১) with trailing mark digit, remove trailing digit
       if (/^[কখগঘabcd]\./i.test(trimmed)) {
@@ -1335,6 +1344,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     finalOutput = finalOutput.replace(/(?<!\$)\b([a-zA-Z])(?!\$)(?=\s+(?:এর|হলে|কে|তে|মান|নির্ণয়|সমান|মানটি|থেকে|পর্যন্ত|সংখ্যক|তম|পদ)(?:[\s।\?,\.]|$))/g, '$$$1$$');
     finalOutput = finalOutput.replace(/(?<!\$)\b([A-Z])(?!\$)(?=\s+(?:অন্বয়|সেট|তালিকা|ফাংশন|সম্পর্ক|কে|নির্ণয়))/g, '$$$1$$');
     finalOutput = finalOutput.replace(/(?<!\$)\b([a-zA-Z]\s*[-+]\s*[a-zA-Z]\s*=\s*-?\d+)(?!\$)/g, '$$$1$$');
+
+    // Strip any remaining ** marks and collapse extra enters/blank lines
+    finalOutput = finalOutput.replace(/\*\*/g, '').replace(/\r/g, '').replace(/\n\s*\n+/g, '\n').trim();
 
     return finalOutput;
   }
@@ -1418,8 +1430,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
             } else {
               const textContent = node.textContent.trim();
               if (textContent) {
-                const isHeading = /^h[1-6]$/.test(tag);
-                blocks.push({ type: 'paragraph', text: isHeading ? `**${textContent}**` : textContent });
+                blocks.push({ type: 'paragraph', text: textContent });
               }
             }
           } else if (node.nodeType === 3 && node.textContent.trim()) {
@@ -1433,7 +1444,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       }
     }
 
-    const lines = text.split('\n');
+    const lines = (text || '').replace(/\*\*/g, '').split('\n').filter(l => l.trim().length > 0);
     const blocks = [];
     let i = 0;
 
@@ -1834,35 +1845,21 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
     const pageMar = MARGINS[marginVal] || MARGINS['normal'];
     const printableWidth = pageDim.w - pageMar.left - pageMar.right;
 
-    const blocks = parseDocumentBlocks(text);
+    const cleanInput = (text || '').replace(/\*\*/g, '').replace(/\r/g, '');
+    const blocks = parseDocumentBlocks(cleanInput);
 
     let bodyContentXml = '';
 
     for (const block of blocks) {
       if (block.type === 'paragraph') {
         const trimmed = block.text.trim();
-        if (!trimmed) {
-          bodyContentXml += `    <w:p>
-      <w:pPr>
-        <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>
-      </w:pPr>
-      <w:r>
-        <w:rPr>
-          <w:rFonts w:ascii="${isBijoy ? 'SutonnyMJ' : 'Kalpurush'}" w:hAnsi="${isBijoy ? 'SutonnyMJ' : 'Kalpurush'}" w:cs="${isBijoy ? 'SutonnyMJ' : 'Kalpurush'}"/>
-          <w:sz w:val="${fontSizeHalfPt}"/>
-          <w:szCs w:val="${fontSizeHalfPt}"/>
-        </w:rPr>
-        <w:t xml:space="preserve"> </w:t>
-      </w:r>
-    </w:p>\n`;
-        } else {
-          const runsXml = renderRunsForOoxml(block.text, isBijoy, fontSizeHalfPt);
-          bodyContentXml += `    <w:p>
+        if (!trimmed) continue;
+        const runsXml = renderRunsForOoxml(block.text, isBijoy, fontSizeHalfPt);
+        bodyContentXml += `    <w:p>
       <w:pPr>
         <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/>
       </w:pPr>
 ${runsXml}    </w:p>\n`;
-        }
       } else if (block.type === 'table') {
         const rows = block.rows;
         if (rows.length === 0) continue;
@@ -1916,7 +1913,7 @@ ${cellRuns || '            <w:r><w:t xml:space="preserve"> </w:t></w:r>'}
       <w:tblGrid>${gridColsXml}</w:tblGrid>
 ${rowsXml}
     </w:tbl>
-    <w:p/>\n`;
+    <w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto"/></w:pPr></w:p>\n`;
       }
     }
 
