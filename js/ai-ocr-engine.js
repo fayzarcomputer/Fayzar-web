@@ -29,60 +29,80 @@
   const MAX_IMAGE_DIMENSION = 1400;
   const JPEG_COMPRESSION_QUALITY = 0.84;
 
-  const GEMINI_PROMPT = `তুমি একজন বিশেষজ্ঞ একাডেমিক প্রশ্নপত্র OCR ট্রান্সক্রাইবার এবং LaTeX/Word ডকুমেন্ট বিশেষজ্ঞ। তোমার কাজ হলো প্রদত্ত স্ক্যান করা প্রশ্নপত্র, বই বা নথির ছবি থেকে ১০০% নির্ভুল বাংলা ইউনিকোড টেক্সট ও LaTeX গাণিতিক সমীকরণ এক্সট্রাক্ট করা এবং সোর্স ফাইলের অবিকল কাঠামো তৈরি করা।
+  const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, and LaTeX-to-Word formatting specialist.
+Your goal is to extract and compose a COMPLETE, UNTRUNCATED, BEAUTIFULLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
 
-মূল নিয়মাবলী:
+CRITICAL COMPOSITION & FORMATTING RULES:
+1. FULL COMPLETE EXTRACTION ACROSS ALL IMAGES/PAGES (সব পেজের সম্পূর্ণ রূপান্তর):
+   - You are provided with ALL pages/images of the document simultaneously in exact sequential order.
+   - You MUST extract and transcribe ALL questions, diagrams, values, tables, and text across ALL images continuously from Page 1 to the very last page in a single unified document.
+   - DO NOT stop halfway, DO NOT omit any image/page, DO NOT summarize or skip questions.
+   - Maintain seamless question numbering (১., ২., ৩., ..., ক., খ., গ., ঘ.) across page breaks.
 
-১. ইউনিকোড বাংলা ও নির্ভুল বানান:
-   - আউটপুট সম্পূর্ণ স্ট্যান্ডার্ড ইউনিকোড (Unicode) বাংলায় হবে (কোনো Bijoy/ASCII কোড ব্যবহার করবে না)।
-   - বাংলা বানান, যুক্তাক্ষর, মাত্রা, হসন্ত এবং দাঁড়ি ১০০% শুদ্ধ রাখবে।
+2. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
+   - Output ONLY the clean transcribed document text directly.
+   - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
+   - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
 
-২. সমীকরণ ও সূত্র (LaTeX) এবং বাংলা এককের পৃথকীকরণ:
-   - সমস্ত গাণিতিক ও বৈজ্ঞানিক সমীকরণ বাধ্যতামূলকভাবে LaTeX ফরম্যাটে ($...$) লিখবে।
-   - কঠোর সতর্কতা: লেটেক্স কোডের ($...$ বা \\text{...}) ভেতরে কোনো অবস্থাতেই বাংলা লেখা, শব্দ, একক বা কোটেশন (যেমন: "বর্গসেমি", "সেমি", "মিটার", "টাকা", "টি", "জন") রাখবে না।
-   - সমস্ত বাংলা লেখা ও একক সবসময় $...$-এর বাইরে লিখবে।
-   - যেমন: (ক) $4\\sqrt{55}$ "বর্গসেমি" (অথবা (ক) $4\\sqrt{55}$ বর্গসেমি)
-   - ইনলাইন সূত্র: $সমীকরণ$ (যেমন $x^2 + y^2 = r^2$, $\\sin^2\\theta + \\cos^2\\theta = 1$)
-   - ডিসপ্লে/ব্লক সূত্র: $$সমীকরণ$$ (যেমন $$\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$)
-   - ভগ্নাংশ: \\frac{লব}{হর}
-   - বর্গমূল: \\sqrt{x} বা \\sqrt[n]{x}
-   - ঘাত ও সূচক: x^{2}, m^{-1} (curly bracket আবশ্যক)
-   - গ্রিক অক্ষর: \\alpha, \\beta, \\theta, \\lambda, \\pi, \\Delta, \\Omega ইত্যাদি
+3. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
+   - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
+   - Write clean plain roman numerals without any asterisks:
+     i. A, B ও C একই সরলরেখায় অবস্থিত
+     ii. CP \\perp BC
+     iii. AB = AC - BC
+     নিচের কোনটি সঠিক?
+     (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
+   - Keep MCQ options aligned side-by-side on the same line with proper spacing.
 
-৩. বহুনির্বাচনী প্রশ্ন (MCQ) বিন্যাস:
-   - বহুনির্বাচনী প্রশ্নগুলো বই বা প্রশ্নপত্রের মতো করে সাজিয়ে অপশনগুলোর মাঝে প্রয়োজন মতো ট্যাব বা স্পেস ব্যবহার করে পাশাপাশি সুন্দরভাবে বিন্যাস করবে।
+4. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
+   - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
+   - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
+     ক. রূপান্তরক কাকে বলে?
+     খ. স্টেপ-আপ ও স্টেপ-ডাউন ট্রান্সফরমারের পার্থক্য ব্যাখ্যা কর।
+     গ. উদ্দীপকের তথ্যানুযায়ী আউটপুটে তড়িৎ বিভব নির্ণয় কর।
+     ঘ. ক্ষমতা অপরিবর্তিত থাকলে সেকেন্ডারি প্রবাহ বিশ্লেষণ কর।
 
-৪. সৃজনশীল প্রশ্ন (CQ) ও কাঠামো:
-   - উদ্দীপক, ১., ২., ক., খ., গ., ঘ. এবং ডানপাশের নম্বর সুনির্দিষ্টভাবে সাজাবে।
-   - মূল প্রশ্নপত্রের শিরোনাম ও সেকশন হেডিং অবিকল রাখবে।
+5. DIAGRAMS & GEOMETRIC FIGURES (চিত্র / জ্যামিতিক চিত্র / ডায়াগ্রাম):
+   - Whenever there is a diagram, geometric shape (e.g. triangle \\Delta ABD, circle, polygon), circuit, graph, chart, or physics illustration, NEVER skip it or leave it blank.
+   - You MUST extract all labels, vertices, side lengths, angles, and given values in text, and clearly format it as:
+     [চিত্র আছে: চিত্রে \\Delta ABD একটি ত্রিভুজ, যার বাহু ও কোণের মানসমূহ: AB = ..., BD = ..., AD = ...]
+   - If questions refer to the diagram (যেমন: "উদ্দীপকের চিত্রানুযায়ী ৫ নং প্রশ্নের উত্তর দাও"), always retain the diagram reference and its values clearly so the question remains 100% solvable.
 
-৫. টেবিল ও ছক (Tables):
-   - অবশ্যই কোনো টেবিল বা ছক এড়িয়ে যাবে না। প্রতিটি টেবিল নিখুঁতভাবে Markdown টেবিলে রূপান্তর করবে।
+6. TABLES & GRIDS (টেবিল ও ছক):
+   - NEVER skip any table or grid. Transcribe all tables into complete, standard Markdown tables.
+   - Example:
+     | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
+     | :--- | :--- | :--- |
+     | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
+     | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-৬. চিত্র/জ্যামিতিক চিত্র ও ডায়াগ্রাম চিহ্নিতকরণ:
-   - মূল নথিতে কোনো চিত্র থাকলে [চিত্র আছে: চিত্রে ...] এভাবে স্পষ্টভাবে উল্লেখ করবে।
+7. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও বাংলা এককের সম্পূর্ণ পৃথকীকরণ):
+   - Write mathematical formulas, equations, and numbers in LaTeX ($...$).
+   - CRITICAL: NEVER put any Bengali word, text, unit, or quotes (যেমন: "বর্গসেমি", "সেমি", "মিটার", "টাকা", "টি", "জন") inside LaTeX blocks ($...$, $$...$$) or \\text{...}.
+   - LaTeX blocks must ONLY contain pure mathematical numbers, variables, formulas, and symbols.
+   - All Bengali text and units MUST ALWAYS be written outside $...$.
+   - Incorrect: (ক) $4\\sqrt{55} \\text{"বর্গসেমি"}$ ❌
+   - Correct: (ক) $4\\sqrt{55}$ "বর্গসেমি" (অথবা (ক) $4\\sqrt{55}$ বর্গসেমি) ✅
 
-৭. মূল সংখ্যা ও একক:
-   - মূল ফাইলে ইংরেজি সংখ্যা বা একক (যেমন 210 V, 0.83 A, 50 Hz, 10 kg) থাকলে তা মূল ফরম্যাটেই রাখবে।
+8. ACCURATE BENGALI TYPOGRAPHY:
+   - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
-৮. অতিরিক্ত কথা ও ভূমিকার বর্জন:
-   - শুরুতে বা মাঝে কোনো প্রকার ভূমিকা, চ্যাট বার্তা বা কোডব্লক যুক্ত করবে না। সরাসরি একাডেমিক আউটপুট প্রদান করবে।
+  const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
 
-৯. সমীকরণ ও সমাধানের পুনরাবৃত্তি বর্জন (Anti-Loop):
-   - মূল চিত্রে যতটুকু গাণিতিক ধাপ বা সমাধান আছে, হুবহু ততটুকুই লিখবে।
-   - কোনো অবস্থাতেই একই সমীকরণ, লাইন বা শর্ত বারবার পুনরাবৃত্তি (infinite loop / hallucination) করে পেজ ভরাবে না। প্রতিটি ধাপ একবারই লিখবে।`;
+  const savedKey = localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || DEFAULT_GEMINI_API_KEY;
+  const savedGas = localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '';
+  const hasValidConfig = Boolean(savedKey || savedGas);
 
-  const savedKey = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '') : '');
-  const savedGas = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.GAS_URL) || localStorage.getItem('bengali_ocr_gas_url') || '') : '');
-  const rawDemoSetting = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.DEMO_MODE) : null;
+  const rawDemoSetting = localStorage.getItem(STORAGE_KEYS.DEMO_MODE);
+  // Default to Live mode (false) when API key is available
   const isDemo = (rawDemoSetting === 'true');
 
   const state = {
-    freeUsesCount: typeof localStorage !== 'undefined' ? parseInt(localStorage.getItem(STORAGE_KEYS.FREE_COUNT) || '0', 10) : 0,
+    freeUsesCount: parseInt(localStorage.getItem(STORAGE_KEYS.FREE_COUNT) || '0', 10),
     byokApiKey: savedKey,
     gasUrl: savedGas,
     demoMode: isDemo,
-    selectedModel: typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto') : 'auto',
+    selectedModel: localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto',
 
     filesQueue: [],
     selectedFile: null,
@@ -93,27 +113,6 @@
     bijoyText: '',
     activeViewTab: 'unicode'
   };
-
-  // Dynamic API Key Vault Connector (Securely loads deobfuscated keys from fayzar-ocr-config.js)
-  function getActiveApiKey() {
-    const customKey = (state && state.byokApiKey ? state.byokApiKey : '').trim();
-    if (customKey && customKey.length > 10) return customKey;
-    const localKey = (typeof localStorage !== 'undefined' ? (localStorage.getItem(STORAGE_KEYS.BYOK_KEY) || localStorage.getItem('bengali_ocr_gemini_key') || '') : '').trim();
-    if (localKey && localKey.length > 10) return localKey;
-    if (typeof window !== 'undefined' && window.FayzarOcrConfig && typeof window.FayzarOcrConfig.getActiveApiKey === 'function') {
-      return window.FayzarOcrConfig.getActiveApiKey();
-    }
-    return '';
-  }
-
-  function getBackupApiKey() {
-    if (typeof window !== 'undefined' && window.FayzarOcrConfig && typeof window.FayzarOcrConfig.getBackupApiKey === 'function') {
-      return window.FayzarOcrConfig.getBackupApiKey();
-    }
-    return '';
-  }
-
-  const hasValidConfig = Boolean(savedKey || savedGas || getActiveApiKey());
 
   let elements = {};
   let _dictLoaded = false;
@@ -195,13 +194,13 @@
       fontSizeSelect: document.getElementById('ai-target-font-size') || document.getElementById('ai-ocr-font-size'),
       lineSpacingSelect: document.getElementById('ai-ocr-line-spacing'),
 
-      openSettingsBtn: document.getElementById('ai-ocr-open-settings-btn') || document.getElementById('ai-ocr-settings-btn'),
+      openSettingsBtn: document.getElementById('ai-ocr-open-settings-btn'),
       settingsModal: document.getElementById('ai-ocr-settings-modal'),
-      closeSettingsBtn: document.getElementById('ai-ocr-settings-close-btn') || document.getElementById('ai-ocr-close-settings-btn'),
-      saveSettingsBtn: document.getElementById('ai-ocr-settings-save-btn') || document.getElementById('ai-ocr-save-settings-btn'),
+      closeSettingsBtn: document.getElementById('ai-ocr-close-settings-btn'),
+      saveSettingsBtn: document.getElementById('ai-ocr-save-settings-btn'),
       demoToggle: document.getElementById('ai-ocr-demo-toggle'),
-      geminiKeyInput: document.getElementById('ai-ocr-settings-api-key') || document.getElementById('ai-ocr-gemini-key-input'),
-      modelSelect: document.getElementById('ai-ocr-settings-model-select') || document.getElementById('ai-ocr-model-select'),
+      geminiKeyInput: document.getElementById('ai-ocr-gemini-key-input'),
+      modelSelect: document.getElementById('ai-ocr-model-select'),
       gasUrlInput: document.getElementById('ai-ocr-gas-url-input'),
       resetCreditsBtn: document.getElementById('ai-ocr-reset-credits-btn'),
 
@@ -220,23 +219,23 @@
   }
 
   function updateBadges() {
-    const activeKey = getActiveApiKey();
+    const remaining = Math.max(0, MAX_FREE_USES - state.freeUsesCount);
     if (elements.creditBadge) {
-      if (activeKey) {
-        elements.creditBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300";
-        elements.creditBadge.textContent = "AI OCR সক্রিয় (ফ্রি)";
+      elements.creditBadge.textContent = `ফ্রি ক্রেডিট: ${toBengaliNumber(remaining)}/${toBengaliNumber(MAX_FREE_USES)}`;
+      if (remaining === 0) {
+        elements.creditBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300";
+        elements.creditBadge.textContent = "ফ্রি শেষ (BYOK)";
       } else {
-        const remaining = Math.max(0, MAX_FREE_USES - state.freeUsesCount);
-        elements.creditBadge.textContent = `ফ্রি ক্রেডিট: ${toBengaliNumber(remaining)}/${toBengaliNumber(MAX_FREE_USES)}`;
+        elements.creditBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-300";
       }
     }
     if (elements.modeBadge) {
       if (state.demoMode) {
         elements.modeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-300 inline-flex items-center gap-1.5";
         elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> অফলাইন ডেমো`;
-      } else if (activeKey) {
+      } else if (state.byokApiKey) {
         elements.modeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 inline-flex items-center gap-1.5";
-        elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> লাইভ AI সচল`;
+        elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> লাইভ API সচল`;
       } else {
         elements.modeBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-300 inline-flex items-center gap-1.5";
         elements.modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500"></span> ফ্রি প্রক্সি`;
@@ -312,127 +311,13 @@
     if (elements.saveByokBtn) elements.saveByokBtn.addEventListener('click', saveByokKey);
   }
 
-  // =========================================================================
-  // DYNAMIC SCRIPT LAZY-LOADER & FAILSAFE UTILITIES
-  // =========================================================================
-
-  async function ensureExternalScript(globalVarName, url) {
-    if (typeof window !== 'undefined' && window[globalVarName]) {
-      return window[globalVarName];
-    }
-    return new Promise((resolve, reject) => {
-      const existing = document.querySelector(`script[src="${url}"]`);
-      if (existing) {
-        existing.addEventListener('load', () => resolve(window[globalVarName]));
-        existing.addEventListener('error', () => reject(new Error(`লাইব্রেরি লোড হতে ব্যর্থ: ${url}`)));
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = url;
-      script.async = true;
-      script.onload = () => resolve(window[globalVarName]);
-      script.onerror = () => reject(new Error(`লাইব্রেরি স্ক্রিপ্ট লোড হতে ব্যর্থ: ${url}`));
-      document.head.appendChild(script);
-    });
-  }
-
-  async function ensurePdfJs() {
-    if (typeof window !== 'undefined' && typeof window.pdfjsLib !== 'undefined') {
-      if (!window.pdfjsLib.GlobalWorkerOptions?.workerSrc) {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      }
-      return window.pdfjsLib;
-    }
-    if (typeof window !== 'undefined' && window['pdfjs-dist/build/pdf']) {
-      const lib = window['pdfjs-dist/build/pdf'];
-      if (!lib.GlobalWorkerOptions?.workerSrc) {
-        lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      }
-      return lib;
-    }
-    try {
-      await ensureExternalScript('pdfjsLib', 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-      if (window.pdfjsLib) {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        return window.pdfjsLib;
-      }
-    } catch (e) {
-      console.warn('PDF.js dynamic load failed:', e);
-    }
-    return window.pdfjsLib || window['pdfjs-dist/build/pdf'] || null;
-  }
-
-  // Multi-page PDF to High-DPI JPEG Canvas Renderer
-  async function renderPdfFileToPages(file, maxPages = 25) {
-    const pdfLib = await ensurePdfJs();
-    if (!pdfLib) {
-      throw new Error('PDF.js লাইব্রেরি লোড হয়নি। দয়া করে ইন্টারনেট সংযোগ চেক করে পেজ রিফ্রেশ দিন।');
-    }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await pdfLib.getDocument({ data: arrayBuffer }).promise;
-    const numPages = Math.min(pdfDoc.numPages, maxPages);
-    const pages = [];
-
-    for (let pNum = 1; pNum <= numPages; pNum++) {
-      const page = await pdfDoc.getPage(pNum);
-      const unscaled = page.getViewport({ scale: 1.0 });
-
-      // Optimal scale for Bengali conjuncts & mathematical OCR (1.8x, capped at MAX_IMAGE_DIMENSION)
-      let scale = 1.8;
-      if (unscaled.width * scale > MAX_IMAGE_DIMENSION || unscaled.height * scale > MAX_IMAGE_DIMENSION) {
-        scale = Math.min(MAX_IMAGE_DIMENSION / unscaled.width, MAX_IMAGE_DIMENSION / unscaled.height);
-      }
-
-      const viewport = page.getViewport({ scale });
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(viewport.width);
-      canvas.height = Math.round(viewport.height);
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-
-      await page.render({ canvasContext: ctx, viewport }).promise;
-
-      const base64 = canvas.toDataURL('image/jpeg', JPEG_COMPRESSION_QUALITY);
-      pages.push({
-        file: file,
-        name: `${file.name} (পেজ ${toBengaliNumber(pNum)})`,
-        originalName: file.name,
-        pageNum: pNum,
-        totalPages: pdfDoc.numPages,
-        isPdfPage: true,
-        size: Math.round((base64.length * 3) / 4),
-        base64: base64,
-        mimeType: 'image/jpeg'
-      });
-    }
-
-    return pages;
-  }
-
   // Fast image optimization: resize on canvas
   async function fastOptimizeImageFile(file) {
     return new Promise((resolve) => {
-      if (!file) {
-        resolve({ base64: '', mimeType: 'image/jpeg' });
-        return;
-      }
-
-      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-        renderPdfFileToPages(file, 1).then(pages => {
-          if (pages.length > 0) {
-            resolve({ base64: pages[0].base64, mimeType: 'image/jpeg' });
-          } else {
-            const reader = new FileReader();
-            reader.onload = e => resolve({ base64: e.target.result, mimeType: 'application/pdf' });
-            reader.readAsDataURL(file);
-          }
-        }).catch(() => {
-          const reader = new FileReader();
-          reader.onload = e => resolve({ base64: e.target.result, mimeType: 'application/pdf' });
-          reader.readAsDataURL(file);
-        });
+      if (!file || file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        const reader = new FileReader();
+        reader.onload = e => resolve({ base64: e.target.result, mimeType: 'application/pdf' });
+        reader.readAsDataURL(file);
         return;
       }
 
@@ -461,7 +346,7 @@
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
+          ctx.imageSmoothingQuality = 'medium';
           ctx.drawImage(img, 0, 0, w, h);
           resolve({ base64: canvas.toDataURL('image/jpeg', quality), mimeType: 'image/jpeg' });
         };
@@ -480,78 +365,58 @@
     state.filesQueue = [];
     let totalBytes = 0;
 
-    setLoading(true, 'ফাইল প্রসেসিং ও পেজ রেন্ডারিং হচ্ছে...', 15);
+    for (let file of files) {
+      const isImage = file.type.match('image.*') || /\.(png|jpe?g|webp|bmp|jfif)$/i.test(file.name);
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
-    try {
-      for (let file of files) {
-        const isImage = file.type.match('image.*') || /\.(png|jpe?g|webp|bmp|jfif)$/i.test(file.name);
-        const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-
-        if (!isImage && !isPdf) {
-          showToast(`'${file.name}' ফরম্যাট সমর্থিত নয়! শুধুমাত্র PDF বা ছবি দিন।`, 'warning');
-          continue;
-        }
-        if (file.size > 50 * 1024 * 1024) {
-          showToast(`'${file.name}' সাইজ ৫০MB-র বেশি!`, 'warning');
-          continue;
-        }
-
-        totalBytes += file.size;
-
-        if (isPdf) {
-          try {
-            const pdfPages = await renderPdfFileToPages(file);
-            for (const p of pdfPages) {
-              state.filesQueue.push(p);
-            }
-          } catch (pdfErr) {
-            console.warn('PDF page rendering fallback:', pdfErr);
-            const opt = await fastOptimizeImageFile(file);
-            state.filesQueue.push({
-              file: file,
-              name: file.name,
-              size: file.size,
-              isPdf: true,
-              mimeType: opt.mimeType,
-              base64: opt.base64
-            });
-          }
-        } else {
-          const opt = await fastOptimizeImageFile(file);
-          state.filesQueue.push({
-            file: file,
-            name: file.name,
-            size: file.size,
-            isPdf: false,
-            mimeType: opt.mimeType,
-            base64: opt.base64
-          });
-        }
+      if (!isImage && !isPdf) {
+        showToast(`'${file.name}' ফরম্যাট সমর্থিত নয়! শুধুমাত্র PDF বা ছবি দিন।`, 'warning');
+        continue;
       }
-    } catch (processErr) {
-      console.error('File queue processing error:', processErr);
-    } finally {
-      setLoading(false);
+      if (file.size > 50 * 1024 * 1024) {
+        showToast(`'${file.name}' সাইজ ৫০MB-র বেশি!`, 'warning');
+        continue;
+      }
+
+      totalBytes += file.size;
+      state.filesQueue.push({
+        file: file,
+        name: file.name,
+        size: file.size,
+        isPdf: isPdf,
+        mimeType: isPdf ? 'application/pdf' : (file.type || 'image/jpeg'),
+        base64: ''
+      });
     }
 
     if (state.filesQueue.length === 0) return;
 
-    // Single item / page handling
+    // Single file handling
     if (state.filesQueue.length === 1) {
       const single = state.filesQueue[0];
       state.selectedFile = single.file;
       state.imageMimeType = single.mimeType;
-      state.imageBase64 = single.base64;
-
       if (elements.fileName) elements.fileName.textContent = single.name;
       if (elements.fileSize) elements.fileSize.textContent = formatBytes(single.size);
-      if (elements.fileCountBadge) elements.fileCountBadge.textContent = '১টি পেজ প্রস্তুত';
+      if (elements.fileCountBadge) elements.fileCountBadge.textContent = '১টি ফাইল প্রস্তুত';
 
-      if (elements.imagePreview) {
-        elements.imagePreview.src = single.base64;
-        elements.imagePreview.classList.remove('hidden');
-      }
-      elements.pdfPreviewIcon?.classList.add('hidden');
+      // Pre-optimize in the background for zero-latency execution
+      fastOptimizeImageFile(single.file).then((opt) => {
+        state.imageBase64 = opt.base64;
+        state.imageMimeType = opt.mimeType;
+        single.base64 = opt.base64;
+        single.mimeType = opt.mimeType;
+
+        if (single.isPdf) {
+          elements.imagePreview?.classList.add('hidden');
+          elements.pdfPreviewIcon?.classList.remove('hidden');
+        } else {
+          if (elements.imagePreview) elements.imagePreview.src = opt.base64;
+          elements.imagePreview?.classList.remove('hidden');
+          elements.pdfPreviewIcon?.classList.add('hidden');
+        }
+      });
+
       elements.uploadPrompt?.classList.add('hidden');
       elements.previewContainer?.classList.remove('hidden');
       elements.multiThumbs?.classList.add('hidden');
@@ -560,19 +425,13 @@
       return;
     }
 
-    // Multiple pages / files handling
+    // Multiple files handling: All files will be sent to Gemini in a SINGLE request!
     state.selectedFile = state.filesQueue[0].file;
-    state.imageBase64 = state.filesQueue[0].base64;
-    state.imageMimeType = state.filesQueue[0].mimeType;
-
-    if (elements.fileName) elements.fileName.textContent = `${toBengaliNumber(state.filesQueue.length)}টি পেজ নির্বাচিত`;
+    if (elements.fileName) elements.fileName.textContent = `${toBengaliNumber(state.filesQueue.length)}টি ফাইল নির্বাচিত`;
     if (elements.fileSize) elements.fileSize.textContent = `মোট ${formatBytes(totalBytes)}`;
     if (elements.fileCountBadge) elements.fileCountBadge.textContent = `${toBengaliNumber(state.filesQueue.length)}টি পেজ একসাথে প্রসেস হবে`;
 
-    if (elements.imagePreview) {
-      elements.imagePreview.src = state.filesQueue[0].base64;
-      elements.imagePreview.classList.remove('hidden');
-    }
+    elements.imagePreview?.classList.add('hidden');
     elements.pdfPreviewIcon?.classList.add('hidden');
     elements.uploadPrompt?.classList.add('hidden');
     elements.previewContainer?.classList.remove('hidden');
@@ -583,23 +442,27 @@
 
       state.filesQueue.forEach((item, idx) => {
         const thumbDiv = document.createElement('div');
-        thumbDiv.className = 'w-16 h-18 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center relative flex-shrink-0 cursor-pointer shadow-sm hover:border-indigo-500 transition';
-        thumbDiv.innerHTML = `
-          <img src="${item.base64}" class="w-full h-full object-cover" alt="Page ${idx + 1}">
-          <div class="absolute inset-x-0 bottom-0 bg-slate-900/80 backdrop-blur-xs py-0.5 text-[8px] font-bold text-white text-center truncate px-1">
-            P${toBengaliNumber(idx + 1)}
-          </div>
-        `;
-        thumbDiv.addEventListener('click', () => {
-          if (elements.imagePreview) elements.imagePreview.src = item.base64;
-        });
+        thumbDiv.className = 'w-14 h-14 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative flex-shrink-0';
+        if (item.isPdf) {
+          thumbDiv.innerHTML = `<i class="fa-solid fa-file-pdf text-rose-500 text-lg"></i><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">P${idx+1}: ${item.name}</span>`;
+          fastOptimizeImageFile(item.file).then(opt => {
+            item.base64 = opt.base64;
+            item.mimeType = opt.mimeType;
+          });
+        } else {
+          fastOptimizeImageFile(item.file).then(opt => {
+            item.base64 = opt.base64;
+            item.mimeType = opt.mimeType;
+            thumbDiv.innerHTML = `<img src="${opt.base64}" class="w-full h-full object-cover"><span class="absolute bottom-0 inset-x-0 bg-slate-900/80 text-[7px] text-white text-center truncate px-0.5">P${idx+1}: ${item.name}</span>`;
+          });
+        }
         elements.multiThumbs.appendChild(thumbDiv);
       });
     }
 
     if (elements.convertBtn) elements.convertBtn.disabled = false;
     elements.successCard?.classList.add('hidden');
-    showToast(`মোট ${toBengaliNumber(state.filesQueue.length)}টি পেজ প্রস্তুত! সবগুলো একসাথে নিখুঁতভাবে রূপান্তর হবে।`, 'info');
+    showToast(`মোট ${toBengaliNumber(state.filesQueue.length)}টি পেজ প্রস্তুত! সবগুলো একসাথে রূপান্তর হবে।`, 'info');
   }
 
   function clearImage() {
@@ -633,13 +496,12 @@
       return;
     }
 
-    const key = getActiveApiKey();
-    if (key) {
-      await runDirectGeminiOcr(key);
+    if (state.byokApiKey && state.byokApiKey.trim().length > 0) {
+      await runDirectGeminiOcr(state.byokApiKey.trim());
       return;
     }
 
-    if (state.gasUrl && state.gasUrl.trim().length > 0) {
+    if (state.gasUrl && state.gasUrl.trim().length > 0 && state.freeUsesCount < MAX_FREE_USES) {
       await runGasProxyOcr();
       return;
     }
@@ -676,22 +538,24 @@
 
     if (onProgress) onProgress(total > 1 ? `সবগুলো (${toBengaliNumber(total)}টি) পেজ একসাথে AI-তে পাঠানো হচ্ছে...` : 'Gemini AI দিয়ে রূপান্তর হচ্ছে...', 45);
 
-    const apiKey = getActiveApiKey();
+    const apiKey = state.byokApiKey ? state.byokApiKey.trim() : '';
 
     let rawText = '';
-    if (state.demoMode && !apiKey) {
-      if (onProgress) onProgress('অফলাইন ডেমো সিমুলেশন চলছে...', 60);
-      await sleep(700);
-      rawText = DEMO_SAMPLE_TEXT;
-      if (onStream) onStream(rawText);
-    } else if (apiKey) {
+    if (state.demoMode || !apiKey) {
+      if (state.demoMode) {
+        if (onProgress) onProgress('অফলাইন ডেমো সিমুলেশন চলছে...', 60);
+        await sleep(700);
+        rawText = DEMO_SAMPLE_TEXT;
+        if (onStream) onStream(rawText);
+      } else {
+        toggleModal(elements.byokModal, true);
+        throw new Error('অনুগ্রহ করে আপনার Gemini API Key প্রদান করুন বা সেটিংস থেকে ডেমো মোড চালু করুন।');
+      }
+    } else {
       rawText = await executeGeminiRequest(apiKey, mediaItems, (liveChunk) => {
         if (onStream) onStream(liveChunk);
         if (onProgress) onProgress(`লাইভ স্ট্রিমিং চলছে (${toBengaliNumber(liveChunk.length)} অক্ষর)...`, Math.min(95, 45 + Math.round(liveChunk.length / 30)));
       });
-    } else {
-      toggleModal(elements.byokModal, true);
-      throw new Error('অনুগ্রহ করে আপনার Gemini API Key প্রদান করুন বা সেটিংস থেকে ডেমো মোড চালু করুন।');
     }
 
     if (onProgress) onProgress('আউটপুট প্রসেসিং ও ফরম্যাটিং সম্পন্ন হচ্ছে...', 95);
@@ -765,8 +629,6 @@
 
   // Gemini Execution Engine: sends ALL media parts in 1 single contents array with live SSE Streaming
   async function executeGeminiRequest(apiKey, mediaInput, onStreamChunk = null) {
-    let currentApiKey = (apiKey && apiKey.trim().length > 10) ? apiKey.trim() : (getBackupApiKey() || getActiveApiKey());
-
     let mediaItems = [];
     if (Array.isArray(mediaInput)) {
       mediaItems = mediaInput;
@@ -791,7 +653,7 @@
     const payload = {
       contents: [{ parts }],
       generationConfig: {
-        temperature: 0.1,
+        temperature: 0.05,
         maxOutputTokens: 8192
       },
       safetySettings: [
@@ -803,11 +665,11 @@
     };
 
     let candidateModels = [
-      'gemini-3.5-flash',
-      'gemini-3.6-flash',
-      'gemini-flash-latest',
-      'gemini-3.7-flash',
-      'gemini-pro-latest'
+      'gemini-2.0-flash',
+      'gemini-2.0-flash-lite',
+      'gemini-1.5-flash',
+      'gemini-1.5-flash-8b',
+      'gemini-1.5-pro'
     ];
 
     if (state.selectedModel && state.selectedModel !== 'auto') {
@@ -815,204 +677,131 @@
     }
 
     let lastError = null;
-    const BACKOFF_DELAYS = [2000, 4000, 8000]; // 2s -> 4s -> 8s exponential backoff
+    let isRateLimited = false;
 
     for (let i = 0; i < candidateModels.length; i++) {
       const model = candidateModels[i];
-      let retryCount = 0;
-      let modelSucceeded = false;
 
-      while (retryCount <= BACKOFF_DELAYS.length) {
-        if (retryCount > 0) {
-          const delayMs = BACKOFF_DELAYS[retryCount - 1] + Math.floor(Math.random() * 300);
-          const delaySec = Math.round(delayMs / 1000);
-          setLoading(true, `[${model} কোটা ব্যস্ত] ${toBengaliNumber(delaySec)} সেকেন্ড অপেক্ষা করে পুনরায় চেষ্টা করা হচ্ছে (চেষ্টা ${toBengaliNumber(retryCount)}/৩)...`, 50 + (i * 7));
-          await sleep(delayMs);
+      // 1. Try Fast Real-Time SSE Stream Endpoint
+      const streamEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+
+      try {
+        const res = await fetchWithTimeout(streamEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }, REQUEST_TIMEOUT_MS);
+
+        if (res.status === 404) continue;
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = errData.error?.message || `HTTP ${res.status}`;
+          if (res.status === 400 && errMsg.includes('API_KEY_INVALID')) {
+            throw new Error('Gemini API Key সঠিক নয়। Google AI Studio থেকে সঠিক Key দিন।');
+          } else if (res.status === 429) {
+            isRateLimited = true;
+            const nextModel = candidateModels[i + 1] || 'বিকল্প মডেল';
+            setLoading(true, `[${model} কোটা ব্যস্ত] বিকল্প মডেল (${nextModel})-এ সুইচ হচ্ছে...`, 50 + (i * 8));
+            lastError = new Error(`${model} রেট লিমিট অতিক্রম করেছে।`);
+            await sleep(350);
+            continue;
+          } else {
+            lastError = new Error(errMsg);
+            continue;
+          }
         }
 
-        // 1. Try Fast Real-Time SSE Stream Endpoint
-        const streamEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${currentApiKey}`;
+        // Read and parse SSE stream chunks in real-time
+        if (res.body && typeof res.body.getReader === 'function') {
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let buffer = '';
+          let fullStreamedText = '';
 
-        try {
-          const res = await fetchWithTimeout(streamEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          }, REQUEST_TIMEOUT_MS);
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
 
-          if (res.status === 404) {
-            // Model not supported, break inner loop to try next model
-            break;
-          }
-
-          if (res.status === 429 || res.status === 503) {
-            retryCount++;
-            if (retryCount <= BACKOFF_DELAYS.length) {
-              lastError = new Error(`${model} রেট লিমিট (HTTP ${res.status})`);
-              continue; // Retry with next backoff
-            } else {
-              const nextModel = candidateModels[i + 1] || 'বিকল্প মডেল';
-              setLoading(true, `[${model} লিমিট শেষ] বিকল্প মডেল (${nextModel})-এ সুইচ হচ্ছে...`, 50 + ((i + 1) * 7));
-              lastError = new Error(`${model} রেট লিমিট অতিক্রম করেছে।`);
-              break; // Exhausted retries, proceed to next model
-            }
-          }
-
-          if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            const errMsg = errData.error?.message || `HTTP ${res.status}`;
-            if (res.status === 400 && errMsg.includes('API_KEY_INVALID')) {
-              const backupKey = getBackupApiKey();
-              if (currentApiKey !== backupKey) {
-                currentApiKey = backupKey;
-                continue;
-              }
-              throw new Error('Gemini API Key সঠিক নয়। Google AI Studio থেকে সঠিক Key প্রদান করুন।');
-            }
-            lastError = new Error(errMsg);
-            break; // Non-retryable error, try next candidate model
-          }
-
-          // 2. Read and parse SSE stream chunks with robust event-boundary buffering (Zero Data Loss)
-          if (res.body && typeof res.body.getReader === 'function') {
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder('utf-8');
-            let streamBuffer = '';
-            let fullStreamedText = '';
-
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              streamBuffer += decoder.decode(value, { stream: true });
-
-              // Split on complete SSE event boundaries (\n\n or \r\n\r\n)
-              const events = streamBuffer.split(/\r?\n\r?\n/);
-              // Preserve the last partial chunk in streamBuffer
-              streamBuffer = events.pop() || '';
-
-              for (const ev of events) {
-                if (!ev.trim()) continue;
-                const lines = ev.split(/\r?\n/);
-                let eventPayload = '';
-
-                for (const line of lines) {
-                  const trimmed = line.trim();
-                  if (trimmed.startsWith('data:')) {
-                    const dataPart = trimmed.slice(5).trim();
-                    if (dataPart && dataPart !== '[DONE]') {
-                      eventPayload += (eventPayload ? '\n' : '') + dataPart;
-                    }
-                  }
-                }
-
-                if (!eventPayload) continue;
-
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data:')) {
+                const dataJson = trimmed.slice(5).trim();
+                if (!dataJson || dataJson === '[DONE]') continue;
                 try {
-                  const chunkObj = JSON.parse(eventPayload);
-                  const candidates = chunkObj.candidates || [];
-                  for (const cand of candidates) {
-                    const partsList = cand.content?.parts || [];
-                    for (const p of partsList) {
-                      if (p.text) {
-                        fullStreamedText += p.text;
-                        if (onStreamChunk) onStreamChunk(fullStreamedText);
-                      }
-                    }
-                  }
-                } catch (pe) {
-                  // Fallback: Attempt line by line parsing if multiple JSON payloads were joined
-                  const splitLines = eventPayload.split('\n');
-                  for (const sLine of splitLines) {
-                    try {
-                      const chunkObj = JSON.parse(sLine);
-                      const text = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                      if (text) {
-                        fullStreamedText += text;
-                        if (onStreamChunk) onStreamChunk(fullStreamedText);
-                      }
-                    } catch (pe2) {
-                      // Keep partial line in streamBuffer for next read packet
-                      streamBuffer = `data: ${sLine}\n\n` + streamBuffer;
-                    }
-                  }
-                }
-              }
-            }
-
-            // Flush any remaining final data
-            if (streamBuffer.trim().startsWith('data:')) {
-              const remaining = streamBuffer.trim().slice(5).trim();
-              if (remaining && remaining !== '[DONE]') {
-                try {
-                  const chunkObj = JSON.parse(remaining);
-                  const text = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                  if (text) {
-                    fullStreamedText += text;
+                  const chunkObj = JSON.parse(dataJson);
+                  const chunkPart = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                  if (chunkPart) {
+                    fullStreamedText += chunkPart;
                     if (onStreamChunk) onStreamChunk(fullStreamedText);
                   }
-                } catch (e) { /* ignore end */ }
+                } catch (pe) { /* partial chunk */ }
               }
             }
-
-            if (fullStreamedText.trim()) {
-              return cleanOcrResponse(fullStreamedText);
-            }
           }
 
-          // 3. Standard non-streaming fallback
-          const fallbackRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${currentApiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          }, REQUEST_TIMEOUT_MS);
-
-          if (fallbackRes.ok) {
-            const fbData = await fallbackRes.json().catch(() => ({}));
-            const fbCandidate = fbData.candidates?.[0];
-            if (fbCandidate && fbCandidate.content && fbCandidate.content.parts) {
-              return cleanOcrResponse(fbCandidate.content.parts.map(p => p.text || '').join('\n'));
-            }
+          if (fullStreamedText.trim()) {
+            return cleanOcrResponse(fullStreamedText);
           }
-
-        } catch (err) {
-          if (err.name === 'AbortError') {
-            lastError = new Error(`${model} রেসপন্স দিতে দেরি করছে, পরের মডেল চেষ্টা করা হচ্ছে...`);
-            break;
-          }
-          if (err.message.includes('API Key') || err.message.includes('Safety Filter')) {
-            throw err;
-          }
-          lastError = err;
-          break;
         }
+
+        // Standard non-streaming fallback
+        const fallbackRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }, REQUEST_TIMEOUT_MS);
+
+        if (fallbackRes.ok) {
+          const fbData = await fallbackRes.json().catch(() => ({}));
+          const fbCandidate = fbData.candidates?.[0];
+          if (fbCandidate && fbCandidate.content && fbCandidate.content.parts) {
+            return cleanOcrResponse(fbCandidate.content.parts.map(p => p.text || '').join('\n'));
+          }
+        }
+
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          lastError = new Error(`${model} রেসপন্স দিতে দেরি করছে, পরের মডেল চেষ্টা করা হচ্ছে...`);
+          continue;
+        }
+        if (err.message.includes('API Key') || err.message.includes('Safety Filter')) {
+          throw err;
+        }
+        lastError = err;
       }
     }
 
-    // Cooldown auto-retry on fallback model
-    try {
-      setLoading(true, 'বিকল্প ব্যাকআপ মডেলে স্বয়ংক্রিয় রিকভারি চেষ্টা চলছে...', 88);
-      await sleep(1500);
-      const retryModel = 'gemini-2.5-flash-lite';
-      const retryEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent?key=${currentApiKey}`;
-      const retryRes = await fetchWithTimeout(retryEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }, REQUEST_TIMEOUT_MS);
+    // Cooldown auto-retry on 8B model
+    if (isRateLimited) {
+      try {
+        setLoading(true, 'রেট লিমিট কুলডাউন চলছে (১.৫ সেকেন্ড অপেক্ষা)...', 85);
+        await sleep(1500);
+        const retryModel = 'gemini-1.5-flash-8b';
+        const retryEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent?key=${apiKey}`;
+        const retryRes = await fetchWithTimeout(retryEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }, REQUEST_TIMEOUT_MS);
 
-      if (retryRes.ok) {
-        const retryData = await retryRes.json().catch(() => ({}));
-        const parts = retryData.candidates?.[0]?.content?.parts;
-        if (parts && parts.length > 0) {
-          return cleanOcrResponse(parts.map(p => p.text || '').join('\n'));
+        if (retryRes.ok) {
+          const retryData = await retryRes.json().catch(() => ({}));
+          const parts = retryData.candidates?.[0]?.content?.parts;
+          if (parts && parts.length > 0) {
+            return cleanOcrResponse(parts.map(p => p.text || '').join('\n'));
+          }
         }
-      }
-    } catch (retryErr) { /* ignore */ }
+      } catch (retryErr) { /* ignore */ }
+    }
 
     // Dynamic Discovery Fallback
     try {
-      setLoading(true, 'আপনার API Key-এর জন্য উপলব্ধ মডেল তালিকা খোঁজা হচ্ছে...', 92);
-      const listRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models?key=${currentApiKey}`, {}, 6000);
+      setLoading(true, 'আপনার API Key-এর জন্য উপলব্ধ মডেল তালিকা খোঁজা হচ্ছে...', 90);
+      const listRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {}, 6000);
       if (listRes.ok) {
         const listData = await listRes.json();
         const available = (listData.models || [])
@@ -1023,7 +812,7 @@
         for (const dynModel of available) {
           if (candidateModels.includes(dynModel)) continue;
           try {
-            const dynRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${dynModel}:generateContent?key=${currentApiKey}`, {
+            const dynRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${dynModel}:generateContent?key=${apiKey}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload)
@@ -1127,7 +916,7 @@
       elements.successCard.classList.remove('hidden');
       elements.successCard.classList.add('flex');
       setTimeout(() => {
-        elements.successCard?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+        elements.successCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }, 100);
     }
   }
@@ -1280,25 +1069,9 @@
   }
 
   // Sanitizer: Strips unwanted asterisks around Roman numerals & removes mark brackets [১], [২] from questions
-  function suppressHallucinatedRepetitions(text) {
-    if (!text || typeof text !== 'string') return text || '';
-    const lines = text.split('\n');
-    const result = [];
-    let lastNonEmpty = '';
-    for (let i = 0; i < lines.length; i++) {
-      const trimmed = lines[i].trim();
-      if (trimmed && trimmed === lastNonEmpty) {
-        continue;
-      }
-      if (trimmed) lastNonEmpty = trimmed;
-      result.push(lines[i]);
-    }
-    return result.join('\n').trim();
-  }
-
   function cleanOcrResponse(rawText) {
     if (!rawText) return '';
-    let text = suppressHallucinatedRepetitions(sanitizeMathBengaliSeparation(rawText.trim()));
+    let text = sanitizeMathBengaliSeparation(rawText.trim());
 
     if (text.startsWith('```')) {
       text = text.replace(/^```[a-zA-Z]*\n?/, '').replace(/\n?```$/, '');
@@ -1343,11 +1116,7 @@
       cleanedLines.push(l);
     }
 
-    let finalCleaned = cleanedLines.join('\n').trim();
-    if (typeof EquationConverter !== 'undefined' && typeof EquationConverter.autoWrapLatex === 'function') {
-      finalCleaned = EquationConverter.autoWrapLatex(finalCleaned);
-    }
-    return finalCleaned;
+    return cleanedLines.join('\n').trim();
   }
 
   function parseRichRuns(rawText) {
@@ -1403,20 +1172,6 @@
     return runs.length > 0 ? runs : [{ text: clean }];
   }
 
-  function isTableDividerLine(line) {
-    const trimmed = (line || '').trim();
-    return /^\s*\|?[\s\-:]+(\|[\s\-:]+)+\|?\s*$/.test(trimmed) && trimmed.includes('-');
-  }
-
-  function isTableRowCandidate(line) {
-    const trimmed = (line || '').trim();
-    if (!trimmed) return false;
-    if (isTableDividerLine(trimmed)) return true;
-    if (!trimmed.includes('|')) return false;
-    const parts = trimmed.replace(/^\s*\||\|\s*$/g, '').split('|');
-    return parts.length >= 2;
-  }
-
   function parseDocumentBlocks(text) {
     if (!text || !text.trim()) return [];
 
@@ -1466,33 +1221,22 @@
       const line = lines[i];
       const trimmed = line.trim();
 
-      if (isTableRowCandidate(trimmed)) {
+      if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.includes('|')) {
         const tableLines = [];
-        while (i < lines.length && isTableRowCandidate(lines[i].trim())) {
+        while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
           tableLines.push(lines[i].trim());
           i++;
         }
 
-        const hasDivider = tableLines.some(l => isTableDividerLine(l));
-        if (hasDivider || tableLines.length >= 2) {
-          const parsedRows = [];
-          for (const tLine of tableLines) {
-            if (isTableDividerLine(tLine)) continue;
-            const cleanLine = tLine.replace(/^\s*\|/, '').replace(/\|\s*$/, '');
-            const cells = cleanLine.split('|').map(c => c.trim());
-            if (cells.length > 0 && cells.some(c => c.length > 0)) {
-              parsedRows.push(cells);
-            }
-          }
+        const parsedRows = [];
+        for (const tLine of tableLines) {
+          if (/^\|[\s\-:]+(\|[\s\-:]+)+\|$/.test(tLine)) continue;
+          const cells = tLine.split('|').slice(1, -1).map(c => c.trim());
+          if (cells.length > 0) parsedRows.push(cells);
+        }
 
-          if (parsedRows.length > 0) {
-            blocks.push({ type: 'table', rows: parsedRows });
-            continue;
-          }
-        } else {
-          for (const tLine of tableLines) {
-            blocks.push({ type: 'paragraph', text: tLine });
-          }
+        if (parsedRows.length > 0) {
+          blocks.push({ type: 'table', rows: parsedRows });
           continue;
         }
       }
@@ -1832,26 +1576,15 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
   }
 
   async function createDocxBlob(text, isBijoy = false, customOptions = {}) {
-    let ZipConstructor = (typeof JSZip !== 'undefined')
+    const ZipConstructor = (typeof JSZip !== 'undefined')
       ? JSZip
       : (typeof window !== 'undefined' && window.JSZip ? window.JSZip : (typeof global !== 'undefined' && global.JSZip ? global.JSZip : null));
-
-    if (!ZipConstructor) {
-      try {
-        await ensureExternalScript('JSZip', 'js/jszip.min.js');
-      } catch (e1) {
-        try {
-          await ensureExternalScript('JSZip', 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
-        } catch (e2) { /* ignore */ }
-      }
-      ZipConstructor = (typeof JSZip !== 'undefined') ? JSZip : (typeof window !== 'undefined' ? window.JSZip : null);
-    }
 
     if (!ZipConstructor) {
       if (typeof DocxHandler !== 'undefined' && typeof DocxHandler.createDocxFromText === 'function') {
         return await DocxHandler.createDocxFromText(text, { isBijoy });
       }
-      throw new Error('JSZip লাইব্রেরি লোড হয়নি, অনুগ্রহ করে ইন্টারনেট সংযোগ চেক করে পেজটি রিফ্রেশ দিন');
+      throw new Error('JSZip লাইব্রেরি লোড হয়নি, অনুগ্রহ করে পেজটি রিফ্রেশ দিন');
     }
 
     const pageSizeVal = customOptions.pageSize || (elements.pageSizeSelect ? elements.pageSizeSelect.value : 'a4');
@@ -2179,8 +1912,13 @@ ${bodyContentXml}
     return new Promise(r => setTimeout(r, ms));
   }
 
-  // Instant global engine export (available immediately before DOMContentLoaded)
-  const FayzarAiOcrEngine = {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  global.FayzarAiOcrEngine = {
     init,
     startOcrConversion,
     startUnifiedOcr,
@@ -2191,26 +1929,5 @@ ${bodyContentXml}
     cleanOcrResponse,
     state
   };
-
-  if (typeof window !== 'undefined') {
-    window.FayzarAiOcrEngine = FayzarAiOcrEngine;
-    window.AiOcrEngine = FayzarAiOcrEngine;
-  }
-  global.FayzarAiOcrEngine = FayzarAiOcrEngine;
-
-  // Safe DOM Initialization
-  try {
-    if (typeof document !== 'undefined') {
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          try { init(); } catch (e) { console.warn('AI OCR engine DOM init warning:', e); }
-        });
-      } else {
-        try { init(); } catch (e) { console.warn('AI OCR engine init warning:', e); }
-      }
-    }
-  } catch (e) {
-    console.warn('AI OCR auto-init warning:', e);
-  }
 
 })(typeof window !== 'undefined' ? window : this);
