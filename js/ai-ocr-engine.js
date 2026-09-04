@@ -34,18 +34,36 @@
 Your goal is to extract and compose a COMPLETE, UNTRUNCATED, BEAUTIFULLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
 
 CRITICAL COMPOSITION & FORMATTING RULES:
-1. FULL COMPLETE EXTRACTION ACROSS ALL IMAGES/PAGES (সব পেজের সম্পূর্ণ রূপান্তর):
-   - You are provided with ALL pages/images of the document simultaneously in exact sequential order.
-   - You MUST extract and transcribe ALL questions, diagrams, values, tables, and text across ALL images continuously from Page 1 to the very last page in a single unified document.
-   - DO NOT stop halfway, DO NOT omit any image/page, DO NOT summarize or skip questions.
-   - Maintain seamless question numbering (১., ২., ৩., ..., ক., খ., গ., ঘ.) across page breaks.
+1. ACCURATE SEQUENTIAL QUESTION NUMBERING & COMPLETE EXTRACTION (ধারাবাহিক ক্রমিক নম্বর ও সম্পূর্ণ রূপান্তর):
+   - You MUST extract all questions, text, tables, and math continuously from Page 1 to the very last page in a single unified document.
+   - SEQUENTIAL NUMBERING: Organize and re-sequence all question numbers strictly in continuous serial order (১., ২., ৩., ৪., ৫., ...) without any missing, skipped, or duplicated numbers.
+   - For Creative Questions (CQ/সৃজনশীল), strictly maintain standard sequential sub-question labels (উদ্দীপক, ১., ক., খ., গ., ঘ.).
 
-2. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
+2. STRICT FIDELITY TO SOURCE & MANDATORY NOTE FOR CORRECTIONS (মূল ফাইলের সাথে হুবহু মিল ও সংশোধনী নোট):
+   - CRITICAL: DO NOT alter, rewrite, rephrase, summarize, or modify the original text, question contents, equations, or numbers on your own. You must follow the source image 100% faithfully.
+   - Perform a strict self-check against the original images to ensure exact fidelity.
+   - If you make any unavoidable correction to an obvious printing typo or blurred illegible character, you MUST explicitly document it at the very bottom of the document in a separate note block:
+     [নোট: ...সংশোধনের বিবরণ...]
+   - If no corrections or modifications were made, do NOT add any note.
+
+3. NO REFERENCES OR CITATIONS (কোন প্রকার রেফারেন্স বা উৎস রাখা যাবে না):
+   - CRITICAL: DO NOT include any references, board tags, school/college names, exam years, citations, or source brackets!
+   - Completely omit brackets and tags such as: [ঢাকা বোর্ড-২০২৩], [দিনাজপুর বোর্ড ২০২১], [কুমিল্লা ক্যাডেট কলেজ], [রাজশাহী জিলা স্কুল], (বোর্ড প্রশ্ন), [অধ্যায়-৩], মান: ১০ ইত্যাদি সম্পূর্ণ বাদ দিন।
+
+4. DIAGRAMS & IMAGES (ছবি বা ডায়াগ্রামের ক্ষেত্রে শুধুমাত্র পেজ নম্বর উল্লেখ, কোনো বর্ণনা নয়):
+   - Whenever there is a diagram, geometric figure, circuit, chart, or image, DO NOT write any description or details of the picture.
+   - Simply write: [ছবি আছে-পৃ:০১] (বা পেজ নম্বর অনুযায়ী [ছবি আছে-পৃ:০২], [ছবি আছে-পৃ:০৩] ইত্যাদি)।
+   - Example:
+     ১. উদ্দীপকটি লক্ষ্য কর:
+     [ছবি আছে-পৃ:০১]
+     ক. রূপান্তরক কাকে বলে?
+
+5. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
    - Output ONLY the clean transcribed document text directly.
    - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
    - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
 
-3. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
+6. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
    - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
    - Write clean plain roman numerals without any asterisks:
      i. A, B ও C একই সরলরেখায় অবস্থিত
@@ -55,29 +73,19 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
    - Keep MCQ options aligned side-by-side on the same line with proper spacing.
 
-4. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
+7. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
    - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
    - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
-     ক. রূপান্তরক কাকে বলে?
-     খ. স্টেপ-আপ ও স্টেপ-ডাউন ট্রান্সফরমারের পার্থক্য ব্যাখ্যা কর।
-     গ. উদ্দীপকের তথ্যানুযায়ী আউটপুটে তড়িৎ বিভব নির্ণয় কর।
-     ঘ. ক্ষমতা অপরিবর্তিত থাকলে সেকেন্ডারি প্রবাহ বিশ্লেষণ কর।
 
-5. DIAGRAMS & GEOMETRIC FIGURES (চিত্র / জ্যামিতিক চিত্র / ডায়াগ্রাম):
-   - Whenever there is a diagram, geometric shape (e.g. triangle \\Delta ABD, circle, polygon), circuit, graph, chart, or physics illustration, NEVER skip it or leave it blank.
-   - You MUST extract all labels, vertices, side lengths, angles, and given values in text, and clearly format it as:
-     [চিত্র আছে: চিত্রে \\Delta ABD একটি ত্রিভুজ, যার বাহু ও কোণের মানসমূহ: AB = ..., BD = ..., AD = ...]
-   - If questions refer to the diagram (যেমন: "উদ্দীপকের চিত্রানুযায়ী ৫ নং প্রশ্নের উত্তর দাও"), always retain the diagram reference and its values clearly so the question remains 100% solvable.
-
-6. TABLES & GRIDS (টেবিল ও ছক):
-   - NEVER skip any table or grid. Transcribe all tables into complete, standard Markdown tables.
+8. TABLES & GRIDS (টেবিল ও ছক):
+   - Transcribe all tables into complete, standard Markdown tables.
    - Example:
      | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
      | :--- | :--- | :--- |
      | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
      | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-7. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
+9. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
    - Write mathematical formulas, algebraic equations, variables, sets, and expressions in LaTeX ($...$).
    - CRITICAL: DO NOT wrap plain numbers, lists of numbers, counts, or simple measurements in $...$!
      - Plain numbers & counts: 50 জন (NOT $50$ জন), 30 জন (NOT $30$ জন), 65, 62.5 (NOT $65$, $62.5$)
@@ -85,15 +93,15 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      - Standard units & measurements: 8 m, 6 m, 20 cm, 7 সে.মি. (NOT $8 m$, $6 m$, $20 cm$, $7 সে.মি.$)
    - DO wrap actual math variables, terms, set notations, and equations in $...$:
      - Variables: $x$ এর মান, $n$ এর মান, $3n$ সংখ্যক পদ
-     - Sets & Functions: $P(A)$ নির্ণয় কর, $S$ অন্বয়টিকে, $A = \{ ... \}$, $B = \{ ... \}$
-     - Expressions & Equations: $y - x = -1$, $x^2 > 7$, $y^2 + 3y + 2 = 0$, $b = 2, c = 8, d = 3, p = \frac{1}{3}$
-     - Series & Sequences: Use \dots for series e.g. $5 + 8 + 11 + \dots$ or $\log 2 + \log 4 + \log 8 + \dots$
+     - Sets & Functions: $P(A)$ নির্ণয় কর, $S$ অন্বয়টিকে, $A = \\{ ... \\}$, $B = \\{ ... \\}$
+     - Expressions & Equations: $y - x = -1$, $x^2 > 7$, $y^2 + 3y + 2 = 0$, $b = 2, c = 8, d = 3, p = \\frac{1}{3}$
+     - Series & Sequences: Use \\dots for series e.g. $5 + 8 + 11 + \\dots$ or $\\log 2 + \\log 4 + \\log 8 + \\dots$
    - SCIENTIFIC UNITS & QUOTATIONS:
-     - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
+     - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
      - NEVER put Bengali words or quotes inside LaTeX blocks.
 
-8. ACCURATE BENGALI TYPOGRAPHY:
-   - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
+10. ACCURATE BENGALI TYPOGRAPHY:
+    - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
   const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
 
@@ -1188,6 +1196,18 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       if (/^[কখগঘabcd]\./i.test(trimmed)) {
         l = l.replace(/(\?|।)\s+[০-৯0-9]\s*$/g, '$1');
       }
+
+      // 4a. Remove references & source brackets (e.g. [ঢাকা বোর্ড-২০২৩], [ক্যাডেট কলেজ], (দিনাজপুর বোর্ড), [অধ্যায়-৩], মান: ১ ইত্যাদি)
+      l = l.replace(/\s*\[\s*(?:[^\]\n]*(?:বোর্ড|কলেজ|স্কুল|মাদ্রাসা|ক্যাডেট|অধ্যায়|অনুশীলনী|পরিপত্র|[০-৯0-9]{4}))[^\]\n]*\]\s*/gi, ' ');
+      l = l.replace(/\s*\(\s*(?:[^\)\n]*(?:বোর্ড|কলেজ|স্কুল|মাদ্রাসা|ক্যাডেট|অধ্যায়|অনুশীলনী|[০-৯0-9]{4}))[^\)\n]*\)\s*/gi, ' ');
+      l = l.replace(/(\?|।|[a-zA-Z\u0980-\u09FF])\s*মান\s*[:\s]*[০-৯0-9]+\s*$/g, '$1');
+
+      // 4b. Format diagram/image tags strictly as [ছবি আছে-পৃ:০১] without any description
+      l = l.replace(/\[\s*(?:চিত্র|ছবি)\s*আছে\s*[:\-]\s*(?:পৃ(?:ষ্ঠা)?[:\s]*([০-৯0-9]+))?[^\]]*\]/gi, function(match, pageNum) {
+        let p = pageNum ? toBengaliNumber(pageNum.replace(/[^\d০-৯]/g, '').padStart(2, '0')) : '০১';
+        return `[ছবি আছে-পৃ:${p}]`;
+      });
+      l = l.replace(/\[\s*চিত্র\s*:\s*[^\]]+\]/gi, '[ছবি আছে-পৃ:০১]');
 
       cleanedLines.push(l);
     }
