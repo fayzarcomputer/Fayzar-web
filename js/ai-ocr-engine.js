@@ -34,27 +34,34 @@
 Your goal is to extract and compose a COMPLETE, UNTRUNCATED, BEAUTIFULLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
 
 CRITICAL COMPOSITION & FORMATTING RULES:
-1. UNTRUNCATED, FULL COMPLETE EXTRACTION OF ALL QUESTIONS (সকল প্রশ্নের শতভাগ সম্পূর্ণ রূপান্তর):
-   - MANDATORY: You MUST transcribe and extract EVERY SINGLE QUESTION from the very first question to the very last question across all pages.
+1. CATEGORY & SECTION-BASED INDEPENDENT SEQUENTIAL NUMBERING (ক্যাটাগরি ও বিভাগ অনুযায়ী আলাদা ক্রমিক নম্বর):
+   - CRITICAL MANDATE: NEVER merge all questions into a single continuous global serial number across different question categories or sections!
+   - You MUST assign separate, independent sequential numbering starting from ১ (1) for each distinct question category / section:
+     * সৃজনশীল প্রশ্ন (Creative Questions / CQ): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে (১., ২., ৩., ৪., ৫., ... ১১.)। প্রতিটি সৃজনশীল প্রশ্নের অধীনে উপ-প্রশ্নগুলো হবে: উদ্দীপক, ক., খ., গ., ঘ.।
+     * বহুনির্বাচনী প্রশ্ন (Multiple Choice Questions / MCQ): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে এবং এটি পুনরায় ১ থেকে শুরু হবে (১., ২., ৩., ৪., ... ৩০.)। কখনোই সৃজনশীল প্রশ্নের ক্রমিকের সাথে মিলিয়ে একটানা ক্রমিক (যেমন: ১২, ১৩, ১৪...) দেওয়া যাবে না।
+     * সংক্ষিপ্ত প্রশ্ন / অতি সংক্ষিপ্ত প্রশ্ন / শূন্যস্থান পূরণ (Short Questions): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে এবং এটিও পুনরায় ১ থেকে শুরু হবে (১., ২., ৩., ৪., ৫., ...)।
+     * বিভাগ ভিত্তিক কাঠামো (Section-wise): প্রশ্নপত্রে যদি বিভিন্ন বিভাগ বা অংশ থাকে (যেমন: 'ক-বিভাগ: বহুনির্বাচনী', 'খ-বিভাগ: সৃজনশীল' অথবা 'ক-অংশ', 'খ-অংশ', 'গ-অংশ'), তবে প্রতিটি বিভাগে ক্রমিক নম্বর সতন্ত্রভাবে ১., ২., ৩., ... থেকে শুরু হবে।
+
+2. UNTRUNCATED, FULL COMPLETE EXTRACTION OF ALL QUESTIONS (সকল প্রশ্নের শতভাগ সম্পূর্ণ রূপান্তর):
+   - MANDATORY: You MUST transcribe and extract EVERY SINGLE QUESTION from the very first question to the very last question across all pages, categories, and sections.
    - For example: If the document contains 11 creative questions (১ থেকে ১১), you MUST output all 11 questions completely (১., ২., ৩., ৪., ৫., ৬., ৭., ৮., ৯., ১০., ১১.).
-   - If it contains 30 MCQs, you MUST output all 30 MCQs completely (১ থেকে ৩০).
+   - If it contains 30 MCQs, you MUST output all 30 MCQs completely (১ থেকে ৩০)।
+   - If it contains short questions, you MUST output all of them completely.
    - If it has multiple pages (Page 1, Page 2, Page 3...), you MUST process every single page until the very end.
    - CRITICAL: NEVER STOP HALFWAY, NEVER SKIP ANY QUESTION, NEVER SUMMARIZE, AND NEVER TRUNCATE!
-   - SEQUENTIAL NUMBERING: Organize and re-sequence all question numbers strictly in continuous serial order (১., ২., ৩., ৪., ৫., ...) without any missing, skipped, or duplicated numbers.
-   - For Creative Questions (CQ/সৃজনশীল), strictly maintain standard sequential sub-question labels (উদ্দীপক, ১., ক., খ., গ., ঘ.).
 
-2. STRICT FIDELITY TO SOURCE & MANDATORY NOTE FOR CORRECTIONS (মূল ফাইলের সাথে হুবহু মিল ও সংশোধনী নোট):
+3. STRICT FIDELITY TO SOURCE & MANDATORY NOTE FOR CORRECTIONS (মূল ফাইলের সাথে হুবহু মিল ও সংশোধনী নোট):
    - CRITICAL: DO NOT alter, rewrite, rephrase, summarize, or modify the original text, question contents, equations, or numbers on your own. You must follow the source image 100% faithfully.
    - Perform a strict self-check against the original images to ensure exact fidelity.
    - If you make any unavoidable correction to an obvious printing typo or blurred illegible character, you MUST explicitly document it at the very bottom of the document in a separate note block:
      [নোট: ...সংশোধনের বিবরণ...]
    - If no corrections or modifications were made, do NOT add any note.
 
-3. NO REFERENCES OR CITATIONS (কোন প্রকার রেফারেন্স বা উৎস রাখা যাবে না):
+4. NO REFERENCES OR CITATIONS (কোন প্রকার রেফারেন্স বা উৎস রাখা যাবে না):
    - CRITICAL: DO NOT include any references, board tags, school/college names, exam years, citations, or source brackets!
    - Completely omit brackets and tags such as: [ঢাকা বোর্ড-২০২৩], [দিনাজপুর বোর্ড ২০২১], [কুমিল্লা ক্যাডেট কলেজ], [রাজশাহী জিলা স্কুল], (বোর্ড প্রশ্ন), [অধ্যায়-৩], মান: ১০ ইত্যাদি সম্পূর্ণ বাদ দিন।
 
-4. DIAGRAMS & IMAGES (ছবি বা ডায়াগ্রামের ক্ষেত্রে শুধুমাত্র পেজ নম্বর উল্লেখ, কোনো বর্ণনা নয়):
+5. DIAGRAMS & IMAGES (ছবি বা ডায়াগ্রামের ক্ষেত্রে শুধুমাত্র পেজ নম্বর উল্লেখ, কোনো বর্ণনা নয়):
    - Whenever there is a diagram, geometric figure, circuit, chart, or image, DO NOT write any description or details of the picture.
    - Simply write: [ছবি আছে-পৃ:০১] (বা পেজ নম্বর অনুযায়ী [ছবি আছে-পৃ:০২], [ছবি আছে-পৃ:০৩] ইত্যাদি)।
    - Example:
@@ -62,12 +69,13 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      [ছবি আছে-পৃ:০১]
      ক. রূপান্তরক কাকে বলে?
 
-5. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
+6. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS):
    - Output ONLY the clean transcribed document text directly.
    - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
    - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
 
-6. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
+7. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
+   - CRITICAL: MCQ প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... ৩০. সতন্ত্রভাবে ১ থেকে শুরু করতে হবে (সৃজনশীল প্রশ্নের ক্রমিকের সাথে মিলিয়ে নয়)।
    - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
    - Write clean plain roman numerals without any asterisks:
      i. A, B ও C একই সরলরেখায় অবস্থিত
@@ -77,34 +85,38 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
    - Keep MCQ options aligned side-by-side on the same line with proper spacing.
 
-7. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
+8. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
+   - CRITICAL: সৃজনশীল প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... ১১. সতন্ত্রভাবে ১ থেকে শুরু করতে হবে।
    - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
    - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
 
-8. TABLES & GRIDS (টেবিল ও ছক):
-   - Transcribe all tables into complete, standard Markdown tables.
-   - Example:
-     | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
-     | :--- | :--- | :--- |
-     | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
-     | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
+9. SHORT QUESTIONS (সংক্ষিপ্ত ও অতি সংক্ষিপ্ত প্রশ্নপত্র):
+   - সংক্ষিপ্ত প্রশ্ন, অতি সংক্ষিপ্ত প্রশ্ন বা এক কথায় উত্তরের ক্ষেত্রেও ক্রমিক নম্বর সতন্ত্রভাবে ১., ২., ৩., ... থেকে শুরু করতে হবে।
 
-9. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
-   - Write mathematical formulas, algebraic equations, variables, sets, and expressions in LaTeX ($...$).
-   - CRITICAL: DO NOT wrap plain numbers, lists of numbers, counts, or simple measurements in $...$!
-     - Plain numbers & counts: 50 জন (NOT $50$ জন), 30 জন (NOT $30$ জন), 65, 62.5 (NOT $65$, $62.5$)
-     - Comma-separated numbers series: 75, 65, 80, 55, 60... (CRITICAL: NEVER wrap comma-separated numbers in $...$!)
-     - Standard units & measurements: 8 m, 6 m, 20 cm, 7 সে.মি. (NOT $8 m$, $6 m$, $20 cm$, $7 সে.মি.$)
-   - DO wrap actual math variables, terms, set notations, and equations in $...$:
-     - Variables: $x$ এর মান, $n$ এর মান, $3n$ সংখ্যক পদ
-     - Sets & Functions: $P(A)$ নির্ণয় কর, $S$ অন্বয়টিকে, $A = \\{ ... \\}$, $B = \\{ ... \\}$
-     - Expressions & Equations: $y - x = -1$, $x^2 > 7$, $y^2 + 3y + 2 = 0$, $b = 2, c = 8, d = 3, p = \\frac{1}{3}$
-     - Series & Sequences: Use \\dots for series e.g. $5 + 8 + 11 + \\dots$ or $\\log 2 + \\log 4 + \\log 8 + \\dots$
-   - SCIENTIFIC UNITS & QUOTATIONS:
-     - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
-     - NEVER put Bengali words or quotes inside LaTeX blocks.
+10. TABLES & GRIDS (টেবিল ও ছক):
+    - Transcribe all tables into complete, standard Markdown tables.
+    - Example:
+      | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
+      | :--- | :--- | :--- |
+      | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
+      | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-10. ACCURATE BENGALI TYPOGRAPHY:
+11. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
+    - Write mathematical formulas, algebraic equations, variables, sets, and expressions in LaTeX ($...$).
+    - CRITICAL: DO NOT wrap plain numbers, lists of numbers, counts, or simple measurements in $...$!
+      - Plain numbers & counts: 50 জন (NOT $50$ জন), 30 জন (NOT $30$ জন), 65, 62.5 (NOT $65$, $62.5$)
+      - Comma-separated numbers series: 75, 65, 80, 55, 60... (CRITICAL: NEVER wrap comma-separated numbers in $...$!)
+      - Standard units & measurements: 8 m, 6 m, 20 cm, 7 সে.মি. (NOT $8 m$, $6 m$, $20 cm$, $7 সে.মি.$)
+    - DO wrap actual math variables, terms, set notations, and equations in $...$:
+      - Variables: $x$ এর মান, $n$ এর মান, $3n$ সংখ্যক পদ
+      - Sets & Functions: $P(A)$ নির্ণয় কর, $S$ অন্বয়টিকে, $A = \\{ ... \\}$, $B = \\{ ... \\}$
+      - Expressions & Equations: $y - x = -1$, $x^2 > 7$, $y^2 + 3y + 2 = 0$, $b = 2, c = 8, d = 3, p = \\frac{1}{3}$
+      - Series & Sequences: Use \\dots for series e.g. $5 + 8 + 11 + \\dots$ or $\\log 2 + \\log 4 + \\log 8 + \\dots$
+    - SCIENTIFIC UNITS & QUOTATIONS:
+      - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
+      - NEVER put Bengali words or quotes inside LaTeX blocks.
+
+12. ACCURATE BENGALI TYPOGRAPHY:
     - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
   const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
