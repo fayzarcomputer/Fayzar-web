@@ -146,41 +146,56 @@ function showToast(message, type = 'info') {
 async function initAdminSuite() {
   try {
     // ১. নোটিশ লোড
-    const nRes = await fetch('data/notices.json');
-    if (nRes.ok) {
-      noticesList = await nRes.json();
-    } else {
+    let nLoaded = false;
+    try {
+      const nRes = await fetch('data/notices.json');
+      if (nRes.ok) {
+        noticesList = await nRes.json();
+        nLoaded = true;
+      }
+    } catch(e) {}
+    if (!nLoaded || !noticesList || noticesList.length === 0) {
       const nLocal = JSON.parse(localStorage.getItem('fayzar_notices') || '[]');
-      if (nLocal.length > 0) noticesList = nLocal;
+      noticesList = nLocal.length > 0 ? nLocal : (window.OFFLINE_DATA?.notices || []);
     }
   } catch (e) {
-    noticesList = JSON.parse(localStorage.getItem('fayzar_notices') || '[]');
+    noticesList = window.OFFLINE_DATA?.notices || [];
   }
 
   try {
     // ২. সেবাসমূহ লোড
-    const sRes = await fetch('data/services.json');
-    if (sRes.ok) {
-      servicesList = await sRes.json();
-    } else {
+    let sLoaded = false;
+    try {
+      const sRes = await fetch('data/services.json');
+      if (sRes.ok) {
+        servicesList = await sRes.json();
+        sLoaded = true;
+      }
+    } catch(e) {}
+    if (!sLoaded || !servicesList || servicesList.length === 0) {
       const sLocal = JSON.parse(localStorage.getItem('fayzar_services') || '[]');
-      if (sLocal.length > 0) servicesList = sLocal;
+      servicesList = sLocal.length > 0 ? sLocal : (window.OFFLINE_DATA?.services || []);
     }
   } catch (e) {
-    servicesList = JSON.parse(localStorage.getItem('fayzar_services') || '[]');
+    servicesList = window.OFFLINE_DATA?.services || [];
   }
 
   try {
     // ৩. কনফিগারেশন লোড
-    const cRes = await fetch('data/site_config.json');
-    if (cRes.ok) {
-      siteConfig = await cRes.json();
-    } else {
+    let cLoaded = false;
+    try {
+      const cRes = await fetch('data/site_config.json');
+      if (cRes.ok) {
+        siteConfig = await cRes.json();
+        cLoaded = true;
+      }
+    } catch(e) {}
+    if (!cLoaded || !siteConfig || Object.keys(siteConfig).length === 0) {
       const cLocal = JSON.parse(localStorage.getItem('fayzar_site_config') || '{}');
-      if (Object.keys(cLocal).length > 0) siteConfig = cLocal;
+      siteConfig = Object.keys(cLocal).length > 0 ? cLocal : (window.OFFLINE_DATA?.site_config || {});
     }
   } catch (e) {
-    siteConfig = JSON.parse(localStorage.getItem('fayzar_site_config') || '{}');
+    siteConfig = window.OFFLINE_DATA?.site_config || {};
   }
 
   try {
@@ -229,15 +244,20 @@ async function initAdminSuite() {
 
   try {
     // ৫. কাস্টম ডিকশনারি লোড
-    const dRes = await fetch('data/converter_dict.json');
-    if (dRes.ok) {
-      dictionaryList = await dRes.json();
-    } else {
+    let dLoaded = false;
+    try {
+      const dRes = await fetch('data/converter_dict.json');
+      if (dRes.ok) {
+        dictionaryList = await dRes.json();
+        dLoaded = true;
+      }
+    } catch(e) {}
+    if (!dLoaded || !dictionaryList || dictionaryList.length === 0) {
       const dLocal = JSON.parse(localStorage.getItem('fayzar_converter_dict') || '[]');
-      if (dLocal.length > 0) dictionaryList = dLocal;
+      dictionaryList = dLocal.length > 0 ? dLocal : (window.OFFLINE_DATA?.converter_dict || []);
     }
   } catch (e) {
-    dictionaryList = JSON.parse(localStorage.getItem('fayzar_converter_dict') || '[]');
+    dictionaryList = window.OFFLINE_DATA?.converter_dict || [];
   }
 
   try {
@@ -253,6 +273,9 @@ async function initAdminSuite() {
         const cLocal = await fetch('data/candidates.json');
         if (cLocal.ok) cItems = await cLocal.json();
       } catch(err) {}
+    }
+    if (!cItems || cItems.length === 0) {
+      cItems = (window.OFFLINE_DATA?.candidates ? [...window.OFFLINE_DATA.candidates] : []);
     }
 
     // Merge from LocalStorage

@@ -703,67 +703,264 @@
     /**
      * Generate an Office 2003 .doc Blob from raw text with 100% font & math preservation
      */
-    static createDocFromText(text, fontName = 'SutonnyMJ', isBijoy = true) {
-      const lines = (text || '').split(/\r?\n/);
-      const paragraphsHtml = lines.map(line => {
-        if (!line || !line.trim()) return `<p class="MsoNormal" style="margin: 0 0 6pt 0; font-size: 14pt;">&nbsp;</p>`;
+    static createDocFromText(text, fontName = 'SutonnyMJ', isBijoy = true, baseFontSizePt = 12) {
+      let sanitizedText = text || '';
 
+      // 0. Extract ALL Bengali text out of math mode so words like 'এবং', 'অথবা' are NEVER inside equations
+      sanitizedText = sanitizedText.replace(/\\(?:text|mathrm|textmd|textbf|textit|mbox)\{\s*([^{}]*?[\u0980-\u09FF][^{}]*?)\s*\}/g, ' $1 ');
+      sanitizedText = sanitizedText.replace(/["“'’](\s*[\u0980-\u09FF\s]+\s*)["”'’]/g, ' $1 ');
+      sanitizedText = sanitizedText.replace(/(\}\s*)([A-Za-z]\s*=)/g, (match, g1, g2) => `${g1.trim()}, ${g2}`);
+      sanitizedText = sanitizedText.replace(/\$\$([\s\S]*?)\$\$|\$([^\$]+?)\$|\\\[([\s\S]*?\\\])|\\\(([\s\S]*?)\\\)/g, (match, d1, s1, b1, p1) => {
+        const isDouble = Boolean(d1 || b1);
+        const inner = (d1 || s1 || b1 || p1 || '').trim();
+        if (!/[\u0980-\u09FF]/.test(inner)) return match;
+        const parts = inner.split(/([\u0980-\u09FF]+(?:\s+[\u0980-\u09FF]+)*)/);
+        let out = [];
+        for (let p of parts) {
+          p = (p || '').trim();
+          if (!p) continue;
+          if (/[\u0980-\u09FF]/.test(p)) {
+            out.push(p);
+          } else {
+            if (/^[.,;:]+$/.test(p)) {
+              out.push(p);
+            } else {
+              out.push(isDouble ? `$$${p}$$` : `$${p}$`);
+            }
+          }
+        }
+        return out.join(' ');
+      });
+      sanitizedText = sanitizedText.replace(/\$\$\s*\$\$/g, '').replace(/\$\s*\$/g, '');
+      sanitizedText = sanitizedText.replace(/,\s*,/g, ',');
+
+      // 1. Strip stray quotes around scientific & standard units and convert cubic/square units to superscripts
+      sanitizedText = sanitizedText.replace(/(?<=\d|\))\s*["']\s*(cm|mm|m|km|gm|kg|sec|s|hr|min|V|W|kW|A|mA|Hz|N|Pa|J)\s*["']\s*(\^?\d+)?/gi, function(match, unit, exp) {
+        let cleanExp = exp ? exp.replace('^', '') : '';
+        return cleanExp ? ` ${unit}<sup>${cleanExp}</sup>` : ` ${unit}`;
+      });
+      sanitizedText = sanitizedText.replace(/["']\s*(cm|mm|m|km|gm|kg|sec|s|hr|min|V|W|kW|A|mA|Hz|N|Pa|J)\s*["']/gi, '$1');
+      // Convert e.g. "cm 3", "cm 2", "cm^3", "m 3", "m^3" to superscripts
+      sanitizedText = sanitizedText.replace(/\b(cm|mm|m|km)\s*(\^?([23]))\b/gi, '$1<sup>$3</sup>');
+
+      // 2. UNWRAP comma-separated lists of numbers (e.g. 75, 65, 80... in Q11)
+      // These must NEVER be treated as EQ fields, which cause Word's "!Syntax Error" / "Error!"
+      sanitizedText = sanitizedText.replace(/\$\s*([০-৯0-9\s,.\-]+(?:\s*,\s*[০-৯0-9\s,.\-]+)+)\s*\$/g, '$1');
+
+      // 3. UNWRAP plain isolated numbers in $...$ (e.g. $50$, $65$, $62.5$, $30$, $7$)
+      sanitizedText = sanitizedText.replace(/\$\s*([০-৯0-9]+(?:\.[০-৯0-9]+)?)\s*\$/g, '$1');
+
+      // 4. UNWRAP plain measurements in $...$ (e.g. $8 m$, $6 m$, $20 cm$)
+      sanitizedText = sanitizedText.replace(/\$\s*([০-৯0-9]+(?:\.[০-৯0-9]+)?\s*(?:m|cm|mm|km|gm|kg|sec|s|hr|min|V|W|kW|A|mA|Hz|N|Pa|J))\s*\$/gi, '$1');
+
+      // 5. UNWRAP Bengali abbreviations in $...$ (e.g. $7 সে.মি.$, $7 সে. মি.$)
+      sanitizedText = sanitizedText.replace(/\$\s*([০-৯0-9]+(?:\.[০-৯0-9]+)?\s*[\u0980-\u09FF\s.]+)\s*\$/g, '$1');
+
+      // 6. ONLY auto-wrap isolated math variables and expressions before Bengali postpositions (strictly [a-zA-Z], NEVER \d*[a-zA-Z])
+      sanitizedText = sanitizedText.replace(/(?<!\$)\b([a-zA-Z]\([a-zA-Z0-9,\s]+\))(?!\$)(?=\s+(?:এর|হলে|নির্ণয়|মান|কে|তালিকা|প্রকাশ)(?:[\s।\?,\.]|$))/g, '$$$1$$');
+      sanitizedText = sanitizedText.replace(/(?<!\$)\b([a-zA-Z])(?!\$)(?=\s+(?:এর|হলে|কে|তে|মান|নির্ণয়|সমান|মানটি|থেকে|পর্যন্ত|সংখ্যক|তম|পদ)(?:[\s।\?,\.]|$))/g, '$$$1$$');
+      sanitizedText = sanitizedText.replace(/(?<!\$)\b([A-Z])(?!\$)(?=\s+(?:অন্বয়|সেট|তালিকা|ফাংশন|সম্পর্ক|কে|নির্ণয়))/g, '$$$1$$');
+      sanitizedText = sanitizedText.replace(/(?<!\$)\b([a-zA-Z]\s*[-+]\s*[a-zA-Z]\s*=\s*-?\d+(?:\s*\\?\}|\s*\})?)(?!\$)/g, '$$$1$$');
+
+      function renderFormattedRun(str) {
+        if (!str || !str.trim()) return "";
         const hasMath = typeof EquationConverter !== 'undefined' && 
-                        (/\$\$[\s\S]*?\$\$|\$[^\$]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/.test(line));
+                        (/\$\$[\s\S]*?\$\$|\$[^\$]+?\$|\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/.test(str));
 
         if (hasMath) {
-          const segments = EquationConverter.splitTextAndMath(line);
+          const segments = EquationConverter.splitTextAndMath(str);
           let innerHtml = "";
           for (let seg of segments) {
             if (seg.type === 'math') {
-              if (typeof EquationConverter !== 'undefined' && EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
-                const cleanText = EquationConverter.sanitizeSimpleMath(seg.value, isBijoy);
-                const escaped = (cleanText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                innerHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escaped}</span>`;
-              } else {
-                const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
-                const cleanEq = (eqCode || '').trim();
-                const cleanEqCode = cleanEq.startsWith('EQ ') ? cleanEq.slice(3).trim() : cleanEq;
-                innerHtml += `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${cleanEqCode} <span style='mso-element:field-end'></span></span><![endif]-->`;
+              const rawMath = seg.value;
+              const cleanContent = rawMath.replace(/^\$\$|\$\$$|^\$|\$$|^\\\[|\\\]$|^\\\(|\\\)$/g, '').trim();
+
+              // If comma-separated numbers or pure numbers, render as plain text (NEVER EQ field!)
+              if (/^[\d\s,.\u09E6-\u09EF\-]+$/.test(cleanContent) || /^[\d\s,.\u09E6-\u09EF]+[a-zA-Z\u0980-\u09FF\s.]+$/.test(cleanContent)) {
+                innerHtml += renderMixedWithHtmlTags(cleanContent);
+                continue;
               }
-            } else if (seg.value) {
-              const mixedParts = (typeof BanglaConverter !== 'undefined' && typeof BanglaConverter.splitMixedBengaliAndEnglish === 'function')
-                ? BanglaConverter.splitMixedBengaliAndEnglish(seg.value)
-                : [{ type: 'bengali', text: seg.value }];
-              
-              for (const part of mixedParts) {
-                const escaped = (part.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                if (part.type === 'english') {
-                  innerHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escaped}</span>`;
+
+              // If segment contains any Bengali characters, NEVER send to Word EQ field!
+              if (/[\u0980-\u09FF]/.test(cleanContent)) {
+                if (/\^|\_/.test(cleanContent)) {
+                  innerHtml += renderSuperscriptsAndSubscripts(cleanContent, isBijoy, fontName, baseFontSizePt);
                 } else {
-                  const targetText = isBijoy && typeof BanglaConverter !== 'undefined' ? BanglaConverter.unicodeToBijoy(part.text) : part.text;
-                  const escapedBn = (targetText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                  innerHtml += `<span style="font-family:'${fontName}',Arial,sans-serif;mso-ascii-font-family:'${fontName}';mso-hansi-font-family:'${fontName}';mso-bidi-font-family:'${fontName}';">${escapedBn}</span>`;
+                  innerHtml += renderMixedWithHtmlTags(cleanContent);
                 }
+                continue;
               }
+
+              // Check if it genuinely needs a Word EQ field
+              const needsEq = typeof EquationConverter !== 'undefined' && typeof EquationConverter.needsEqField === 'function'
+                ? EquationConverter.needsEqField(rawMath)
+                : false;
+
+              if (!needsEq) {
+                if (/\^|\_/.test(cleanContent)) {
+                  innerHtml += renderSuperscriptsAndSubscripts(cleanContent, isBijoy, fontName, baseFontSizePt);
+                } else {
+                  const sanitized = typeof EquationConverter !== 'undefined' && typeof EquationConverter.sanitizeSimpleMath === 'function'
+                    ? EquationConverter.sanitizeSimpleMath(rawMath, isBijoy)
+                    : cleanContent;
+                  innerHtml += renderMixedWithHtmlTags(sanitized);
+                }
+                continue;
+              }
+
+              // Complex equation: generate compliant Word 2003 Field
+              const eqCode = EquationConverter.latexToEqField(rawMath, isBijoy);
+              const cleanEq = (eqCode || '').trim();
+              const cleanEqCode = cleanEq.startsWith('EQ ') ? cleanEq.slice(3).trim() : cleanEq;
+
+              const formattedEq = (typeof EquationConverter !== 'undefined' && typeof EquationConverter.formatEqCodeToWordHtml === 'function')
+                ? EquationConverter.formatEqCodeToWordHtml(cleanEqCode, baseFontSizePt, isBijoy)
+                : cleanEqCode.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+              // Standard Word 2003 field markup with math variable italics and small 8pt scripts:
+              innerHtml += `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',serif;"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${formattedEq} <span style='mso-element:field-end'></span></span><![endif]-->`;
+            } else if (seg.value) {
+              innerHtml += renderMixedWithHtmlTags(seg.value);
             }
           }
-          return `<p class="MsoNormal" style="margin: 0 0 6pt 0; font-size: 14pt; line-height: 1.4;">${innerHtml || '&nbsp;'}</p>`;
+          return innerHtml;
         }
 
-        // Plain line without LaTeX delimiters: check mixed Bengali & English/Math
-        const mixedParts = (typeof BanglaConverter !== 'undefined' && typeof BanglaConverter.splitMixedBengaliAndEnglish === 'function')
-          ? BanglaConverter.splitMixedBengaliAndEnglish(line)
-          : [{ type: 'bengali', text: line }];
+        return renderMixedWithHtmlTags(str);
+      }
 
-        let lineHtml = "";
+      function renderSuperscriptsAndSubscripts(str, isBijoy, fontName, baseFontSizePt) {
+        let s = str;
+        const scriptSize = '8.0'; // crisp small font size for superscripts & subscripts
+
+        s = s.replace(/\^\{([^}]+)\}|\^\(([^)]+)\)|\^([a-zA-Z0-9\u09E6-\u09EF+\-]+)/g, (m, g1, g2, g3) => {
+          const val = g1 || g2 || g3;
+          const rendered = renderPlainMixedText(val);
+          return `<sup style="font-size:${scriptSize}pt;vertical-align:super;mso-text-raise:3.0pt;">${rendered}</sup>`;
+        });
+
+        s = s.replace(/_\{([^}]+)\}|_\(([^)]+)\)|_([a-zA-Z0-9\u09E6-\u09EF+\-]+)/g, (m, g1, g2, g3) => {
+          const val = g1 || g2 || g3;
+          const rendered = renderPlainMixedText(val);
+          return `<sub style="font-size:${scriptSize}pt;vertical-align:sub;mso-text-raise:-2.0pt;">${rendered}</sub>`;
+        });
+
+        return renderMixedWithHtmlTags(s);
+      }
+
+      function renderMixedWithHtmlTags(str) {
+        if (!str) return "";
+        if (!/<\/?(sup|sub|i|b|span|table|tr|td)[^>]*>/i.test(str)) {
+          return renderPlainMixedText(str);
+        }
+        const tagRegex = /(<\/?(?:sup|sub|i|b|span|table|tr|td)[^>]*>)/gi;
+        const parts = str.split(tagRegex);
+        let result = "";
+        for (const p of parts) {
+          if (tagRegex.test(p)) {
+            result += p;
+          } else if (p) {
+            result += renderPlainMixedText(p);
+          }
+        }
+        return result;
+      }
+
+      function renderPlainMixedText(str) {
+        if (!str) return "";
+        if (/^\s+$/.test(str)) {
+          return "<span style='mso-spacerun:yes'>&nbsp;</span>";
+        }
+        const mixedParts = (typeof BanglaConverter !== 'undefined' && typeof BanglaConverter.splitMixedBengaliAndEnglish === 'function')
+          ? BanglaConverter.splitMixedBengaliAndEnglish(str)
+          : [{ type: 'bengali', text: str }];
+        
+        let out = "";
         for (const part of mixedParts) {
+          const escaped = (part.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
           if (part.type === 'english') {
-            const escapedEn = (part.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            lineHtml += `<span lang="EN-US" style="font-family:'Times New Roman',Arial,serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escapedEn}</span>`;
+            const trimmedEn = part.text.trim();
+            const leadSp = /^\s+/.test(part.text) ? "<span style='mso-spacerun:yes'>&nbsp;</span>" : "";
+            const trailSp = /\s+$/.test(part.text) ? "<span style='mso-spacerun:yes'>&nbsp;</span>" : "";
+            // Single math variable letter (e.g. x, y, n, a, b, N) -> render in italic!
+            if (/^[a-zA-Z]$/.test(trimmedEn)) {
+              out += `${leadSp}<i style="font-family:'Times New Roman',serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escaped.trim()}</i>${trailSp}`;
+            } else if (/^\d+[a-zA-Z]$/.test(trimmedEn)) { // e.g. 3n
+              const numPart = trimmedEn.slice(0, -1);
+              const varPart = trimmedEn.slice(-1);
+              out += `${leadSp}<span lang="EN-US" style="font-family:'Times New Roman',serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${numPart}<i>${varPart}</i></span>${trailSp}`;
+            } else if (/^[a-zA-Z]\([a-zA-Z0-9,\s]+\)$/.test(trimmedEn)) { // e.g. P(A), f(x)
+              const formattedFn = escaped.replace(/([a-zA-Z])/g, '<i>$1</i>');
+              out += `${leadSp}<span lang="EN-US" style="font-family:'Times New Roman',serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${formattedFn}</span>${trailSp}`;
+            } else if (/[=+\-*/<>]/.test(trimmedEn)) {
+              // Mathematical expression containing variable letters and operators e.g. y - x = -1}
+              const formattedExpr = escaped.replace(/\b([a-zA-Z])\b/g, '<i>$1</i>');
+              out += `${leadSp}<span lang="EN-US" style="font-family:'Times New Roman',serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${formattedExpr}</span>${trailSp}`;
+            } else {
+              out += `<span lang="EN-US" style="font-family:'Times New Roman',serif;mso-ascii-font-family:'Times New Roman';mso-hansi-font-family:'Times New Roman';">${escaped}</span>`;
+            }
           } else {
             const targetText = isBijoy && typeof BanglaConverter !== 'undefined' ? BanglaConverter.unicodeToBijoy(part.text) : part.text;
             const escapedBn = (targetText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            lineHtml += `<span style="font-family:'${fontName}',Arial,sans-serif;mso-ascii-font-family:'${fontName}';mso-hansi-font-family:'${fontName}';mso-bidi-font-family:'${fontName}';">${escapedBn}</span>`;
+            out += `<span style="font-family:'${fontName}',Arial,sans-serif;mso-ascii-font-family:'${fontName}';mso-hansi-font-family:'${fontName}';mso-bidi-font-family:'${fontName}';">${escapedBn}</span>`;
           }
         }
-        return `<p class="MsoNormal" style="margin: 0 0 6pt 0; font-size: 14pt; line-height: 1.4;">${lineHtml || '&nbsp;'}</p>`;
-      }).join('\n');
+        return out;
+      }
+
+      const lines = sanitizedText.split(/\r?\n/);
+      let i = 0;
+      const htmlBlocks = [];
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        // Check if line is a markdown table row
+        if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.includes('|')) {
+          const tableLines = [];
+          while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+            tableLines.push(lines[i].trim());
+            i++;
+          }
+
+          const parsedRows = [];
+          for (const tLine of tableLines) {
+            if (/^\|[\s\-:]+(\|[\s\-:]+)+\|$/.test(tLine)) continue; // skip markdown divider |:---|:---|
+            const cells = tLine.split('|').slice(1, -1).map(c => c.trim());
+            if (cells.length > 0) parsedRows.push(cells);
+          }
+
+          if (parsedRows.length > 0) {
+            let tableHtml = `<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" align="center" style="border-collapse:collapse; border:none; mso-border-alt:solid windowtext .5pt; mso-yfti-tbllook:1184; mso-padding-alt:2.0pt 5.4pt 2.0pt 5.4pt; margin:6pt auto; width:auto;">\n`;
+            for (let rIdx = 0; rIdx < parsedRows.length; rIdx++) {
+              const row = parsedRows[rIdx];
+              tableHtml += `  <tr class="MsoTableRow" style="mso-yfti-irow:${rIdx};">\n`;
+              for (let cIdx = 0; cIdx < row.length; cIdx++) {
+                const cellVal = row[cIdx];
+                const renderedCell = renderFormattedRun(cellVal);
+                tableHtml += `    <td class="MsoTableCell" style="border:solid windowtext 1.0pt; mso-border-alt:solid windowtext .5pt; padding:2.0pt 5.4pt 2.0pt 5.4pt; text-align:center; vertical-align:middle;">\n`;
+                tableHtml += `      <p class="MsoNormal" align="center" style="margin:0; text-align:center; line-height:normal; font-size:${baseFontSizePt}pt;">${renderedCell || '&nbsp;'}</p>\n`;
+                tableHtml += `    </td>\n`;
+              }
+              tableHtml += `  </tr>\n`;
+            }
+            tableHtml += `</table>`;
+            htmlBlocks.push(tableHtml);
+            continue;
+          }
+        }
+
+        // Regular paragraph line
+        if (!trimmed) {
+          htmlBlocks.push(`<p class="MsoNormal" style="margin: 0 0 5pt 0; font-size: ${baseFontSizePt}pt;">&nbsp;</p>`);
+        } else {
+          const contentHtml = renderFormattedRun(line);
+          htmlBlocks.push(`<p class="MsoNormal" style="margin: 0 0 5pt 0; font-size: ${baseFontSizePt}pt; line-height: 1.35;">${contentHtml || '&nbsp;'}</p>`);
+        }
+        i++;
+      }
+      const paragraphsHtml = htmlBlocks.join('\n');
 
       const docHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
@@ -772,22 +969,34 @@
 @page Section1 { size: 595.35pt 841.95pt; margin: 72pt 72pt 72pt 72pt; mso-header-margin: 36pt; mso-footer-margin: 36pt; }
 div.Section1 { page: Section1; }
 p.MsoNormal, li.MsoNormal, div.MsoNormal {
-  margin: 0 0 6pt 0;
-  font-size: 14pt;
+  margin: 0 0 5pt 0;
+  font-size: ${baseFontSizePt}pt;
   font-family: "${fontName}", Arial, sans-serif;
   mso-ascii-font-family: "Times New Roman";
   mso-hansi-font-family: "Times New Roman";
   mso-fareast-font-family: "Times New Roman";
   mso-bidi-font-family: "${fontName}";
 }
+table.MsoTableGrid {
+  border-collapse: collapse;
+  mso-table-layout-alt: auto;
+  border: none;
+  mso-border-alt: solid windowtext .5pt;
+  margin: 6pt auto;
+}
+td.MsoTableCell {
+  border: solid windowtext 1.0pt;
+  mso-border-alt: solid windowtext .5pt;
+  padding: 2.0pt 5.4pt;
+}
 body {
   font-family: "${fontName}", Arial, sans-serif;
   mso-ascii-font-family: "Times New Roman";
   mso-hansi-font-family: "Times New Roman";
   mso-bidi-font-family: "${fontName}";
-  font-size: 14pt;
+  font-size: ${baseFontSizePt}pt;
 }
-p { margin: 0 0 6pt 0; }
+p { margin: 0 0 5pt 0; }
 </style>
 </head>
 <body>

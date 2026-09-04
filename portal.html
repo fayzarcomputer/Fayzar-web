@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="bn" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
@@ -33,14 +33,12 @@
   <meta name="twitter:image" content="https://fayzarcomputer.com.bd/assets/og-preview.jpg">
 
   <!-- Google Fonts (unified Bengali + Latin typography) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="css/google-fonts.css">
+  <link rel="stylesheet" href="css/font-awesome/all.min.css">
   
   <!-- Tailwind CSS CDN (unified config) -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/vendor/tailwindcss.js"></script>
+  <script src="js/offline-data.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -1095,72 +1093,85 @@
         }
       } catch(e) {}
 
-      // 2. Fetch live data from Google Sheet CSV
-      try {
-        const res = await fetch(GOOGLE_SHEET_CSV_URL);
-        if (!res.ok) throw new Error('Sheet fetch status: ' + res.status);
-        const text = await res.text();
-        const rows = parseCSV(text);
+      // 2. Fetch live data from Google Sheet CSV (skip if offline)
+      if (typeof navigator === 'undefined' || navigator.onLine !== false) {
+        try {
+          const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
+          const res = await fetch(GOOGLE_SHEET_CSV_URL, { signal: controller ? controller.signal : undefined });
+          if (timeoutId) clearTimeout(timeoutId);
+          if (!res.ok) throw new Error('Sheet fetch status: ' + res.status);
+          const text = await res.text();
+          const rows = parseCSV(text);
 
-        if (rows && rows.length > 1) {
-          const parsedJobs = rows.slice(1).map((r, i) => {
-            const rawType = String(r[0] || '').trim();
-            const orgName = String(r[1] || '').trim();
-            const postTitle = String(r[2] || '').trim();
-            const qualificationDesc = String(r[3] || '').trim();
-            const startDate = String(r[4] || '').trim();
-            const deadlineDate = String(r[5] || '').trim();
-            const dinajpur = String(r[6] || '').trim();
-            const applyUrl = String(r[7] || '').trim();
-            const isHotNotice = String(r[8] || '').toUpperCase() === 'TRUE' || r[8] === true;
-            const daysRemaining = String(r[9] || '').trim();
+          if (rows && rows.length > 1) {
+            const parsedJobs = rows.slice(1).map((r, i) => {
+              const rawType = String(r[0] || '').trim();
+              const orgName = String(r[1] || '').trim();
+              const postTitle = String(r[2] || '').trim();
+              const qualificationDesc = String(r[3] || '').trim();
+              const startDate = String(r[4] || '').trim();
+              const deadlineDate = String(r[5] || '').trim();
+              const dinajpur = String(r[6] || '').trim();
+              const applyUrl = String(r[7] || '').trim();
+              const isHotNotice = String(r[8] || '').toUpperCase() === 'TRUE' || r[8] === true;
+              const daysRemaining = String(r[9] || '').trim();
 
-            let badgeStyle = 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
-            if (rawType.includes('ব্যাংক')) badgeStyle = 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white';
-            else if (rawType.includes('বেসরকারি')) badgeStyle = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white';
+              let badgeStyle = 'bg-gradient-to-r from-amber-500 to-orange-600 text-white';
+              if (rawType.includes('ব্যাংক')) badgeStyle = 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white';
+              else if (rawType.includes('বেসরকারি')) badgeStyle = 'bg-gradient-to-r from-purple-600 to-pink-600 text-white';
 
-            return {
-              id: 'job-gsheet-' + (i + 1),
-              type: rawType || 'সরকারি চাকরি',
-              badgeStyle: badgeStyle,
-              title: postTitle || 'চাকরি বিজ্ঞপ্তি',
-              org: orgName || 'সরকারি প্রতিষ্ঠান',
-              qualification: qualificationDesc,
-              startDate: startDate,
-              deadline: deadlineDate,
-              daysLeft: daysRemaining ? `${daysRemaining} দিন বাকি` : 'আবেদন সচল',
-              dinajpurEligible: dinajpur,
-              applyLink: applyUrl,
-              isHot: isHotNotice
-            };
-          }).filter(n => n.title && n.title !== 'নোটিশের শিরোনাম / পদের নাম');
+              return {
+                id: 'job-gsheet-' + (i + 1),
+                type: rawType || 'সরকারি চাকরি',
+                badgeStyle: badgeStyle,
+                title: postTitle || 'চাকরি বিজ্ঞপ্তি',
+                org: orgName || 'সরকারি প্রতিষ্ঠান',
+                qualification: qualificationDesc,
+                startDate: startDate,
+                deadline: deadlineDate,
+                daysLeft: daysRemaining ? `${daysRemaining} দিন বাকি` : 'আবেদন সচল',
+                dinajpurEligible: dinajpur,
+                applyLink: applyUrl,
+                isHot: isHotNotice
+              };
+            }).filter(n => n.title && n.title !== 'নোটিশের শিরোনাম / পদের নাম');
 
-          if (parsedJobs.length > 0) {
-            portalAllJobs = parsedJobs;
-            try { localStorage.setItem('fayzar_cached_portal_jobs', JSON.stringify(portalAllJobs)); } catch(e){}
-            if (countBadge) {
-              countBadge.textContent = `${toBanglaNumber(portalAllJobs.length)}টি সক্রিয় সার্কুলার`;
+            if (parsedJobs.length > 0) {
+              portalAllJobs = parsedJobs;
+              try { localStorage.setItem('fayzar_cached_portal_jobs', JSON.stringify(portalAllJobs)); } catch(e){}
+              if (countBadge) {
+                countBadge.textContent = `${toBanglaNumber(portalAllJobs.length)}টি সক্রিয় সার্কুলার`;
+              }
+              renderPortalJobs();
+              return;
             }
-            renderPortalJobs();
-            return;
           }
+        } catch (err) {
+          console.warn('Google Sheet Live Sync Warning:', err);
         }
-      } catch (err) {
-        console.warn('Google Sheet Live Sync Warning:', err);
       }
 
-      // 3. If live fetch failed and no cache, fallback to data/notices.json
+      // 3. Fallback to window.OFFLINE_DATA or data/notices.json
       if (portalAllJobs.length === 0) {
-        try {
-          const fbRes = await fetch('data/notices.json');
-          const fbNotices = await fbRes.json();
-          portalAllJobs = fbNotices.filter(n => n.category === 'jobs' || !n.category);
+        if (typeof window !== 'undefined' && window.OFFLINE_DATA?.notices) {
+          portalAllJobs = window.OFFLINE_DATA.notices.filter(n => n.category === 'jobs' || !n.category);
           if (countBadge && portalAllJobs.length > 0) {
             countBadge.textContent = `${toBanglaNumber(portalAllJobs.length)}টি সক্রিয় সার্কুলার`;
           }
           renderPortalJobs();
-        } catch(e) {
-          container.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400 text-xs">বিজ্ঞপ্তি লোড করা সম্ভব হয়নি। পেজটি রিফ্রেশ দিন।</div>';
+        } else {
+          try {
+            const fbRes = await fetch('data/notices.json');
+            const fbNotices = await fbRes.json();
+            portalAllJobs = fbNotices.filter(n => n.category === 'jobs' || !n.category);
+            if (countBadge && portalAllJobs.length > 0) {
+              countBadge.textContent = `${toBanglaNumber(portalAllJobs.length)}টি সক্রিয় সার্কুলার`;
+            }
+            renderPortalJobs();
+          } catch(e) {
+            container.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400 text-xs">বিজ্ঞপ্তি লোড করা সম্ভব হয়নি। পেজটি রিফ্রেশ দিন।</div>';
+          }
         }
       }
     }

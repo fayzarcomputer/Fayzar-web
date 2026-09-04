@@ -447,8 +447,14 @@
                 const rawEq = fieldCode.trim();
                 const cleanEq = rawEq.startsWith('EQ ') ? rawEq.slice(3).trim() : rawEq;
 
-                // Word 2003 EQ field code MUST be plain text without HTML span tags inside the field instruction!
-                const fieldHtml = `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',Arial,serif"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${this._escapeHtml(cleanEq)} <span style='mso-element:field-end'></span></span><![endif]-->`;
+                let formattedEq = "";
+                if (typeof EquationConverter !== 'undefined' && typeof EquationConverter.formatEqCodeToWordHtml === 'function') {
+                  formattedEq = EquationConverter.formatEqCodeToWordHtml(cleanEq, 12, true);
+                } else {
+                  formattedEq = this._escapeHtml(cleanEq);
+                }
+
+                const fieldHtml = `<!--[if supportFields]><span class="MsoFieldCode" style="font-family:'Times New Roman',serif;"><span style='mso-element:field-begin'></span><span style='mso-spacerun:yes'>&nbsp;</span>EQ ${formattedEq} <span style='mso-element:field-end'></span></span><![endif]-->`;
                 runsHtml.push(fieldHtml);
                 inField = false;
                 fieldCode = "";

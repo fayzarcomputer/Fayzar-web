@@ -421,16 +421,13 @@ const ALL_NOTICES_DATA = [
   }
 ];
 
-let allServices = ALL_SERVICES_DATA;
-let allNotices = ALL_NOTICES_DATA;
+let allServices = (typeof window !== 'undefined' && window.OFFLINE_DATA?.services) || ALL_SERVICES_DATA;
+let allNotices = (typeof window !== 'undefined' && window.OFFLINE_DATA?.notices) || ALL_NOTICES_DATA;
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initShopStatus();
   initMobileMenu();
-  // ১. তাৎক্ষণিক সিঙ্ক্রোনাস প্রাথমিক রেন্ডার (কোনো ফাঁকা UI বা বিলম্ব হবে না)
-  renderAllViews();
-  // ২. ব্যাকগ্রাউন্ডে নতুন ডেটা ও গুগল শিট ফেচ
   loadDataAndRender();
   initHeroSearch();
   initToolsIfPresent();
@@ -692,8 +689,14 @@ function parseNoticeCSV(str) {
 }
 
 async function fetchLiveGoogleSheetNotices() {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return null;
+  }
   try {
-    const res = await fetch(GOOGLE_SHEET_NOTICE_CSV_URL);
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 2500) : null;
+    const res = await fetch(GOOGLE_SHEET_NOTICE_CSV_URL, { signal: controller ? controller.signal : undefined });
+    if (timeoutId) clearTimeout(timeoutId);
     if (!res.ok) throw new Error('Sheet fetch status: ' + res.status);
     const text = await res.text();
     const rows = parseNoticeCSV(text);
@@ -755,62 +758,93 @@ async function fetchLiveGoogleSheetNotices() {
   return null;
 }
 
-function renderAllViews() {
-  try { populateServiceSelects(); } catch(e) { console.warn('populateServiceSelects error:', e); }
-  try { renderHomepageComponents(); } catch(e) { console.warn('renderHomepageComponents error:', e); }
-  try { renderServicesPage(); } catch(e) { console.warn('renderServicesPage error:', e); }
-  try { renderNoticesPage(); } catch(e) { console.warn('renderNoticesPage error:', e); }
-}
-
 async function loadDataAndRender() {
   try {
-    const sRes = await fetch('data/services.json');
-    if (sRes.ok) {
-      const fetchedServices = await sRes.json();
-      if (Array.isArray(fetchedServices) && fetchedServices.length > 0) {
-        allServices = fetchedServices;
-        renderAllViews();
+    if (window.location.protocol === 'file:' && window.OFFLINE_DATA?.services) {
+      allServices = window.OFFLINE_DATA.services;
+    } else {
+      const sRes = await fetch('data/services.json');
+      if (sRes.ok) {
+        const fetchedServices = await sRes.json();
+        if (Array.isArray(fetchedServices) && fetchedServices.length > 0) {
+          allServices = fetchedServices;
+        }
+      } else if (window.OFFLINE_DATA?.services) {
+        allServices = window.OFFLINE_DATA.services;
       }
     }
   } catch(e) {
-    allServices = ALL_SERVICES_DATA;
+    allServices = window.OFFLINE_DATA?.services || ALL_SERVICES_DATA;
   }
 
-  // লাইভ গুগল শিট নোটিশ সিঙ্ক (https://docs.google.com/spreadsheets/d/1HqbHGm1RnduSp8T1iLfDASs2urGziEwcBWsta1r3WwE/edit)
+  // লাইভ গুগল শিট নোটিশ সিঙ্ক
   try {
-    const liveGNotices = await fetchLiveGoogleSheetNotices();
-    if (liveGNotices && liveGNotices.length > 0) {
-      allNotices = liveGNotices;
-      renderAllViews();
+    if (window.location.protocol === 'file:' && window.OFFLINE_DATA?.notices) {
+      allNotices = window.OFFLINE_DATA.notices;
     } else {
-      const nRes = await fetch('data/notices.json');
-      if (nRes.ok) {
-        const fetchedNotices = await nRes.json();
-        if (Array.isArray(fetchedNotices) && fetchedNotices.length > 0) {
-          allNotices = fetchedNotices;
-          renderAllViews();
+      let loadedNotices = null;
+      try {
+        const liveGNotices = await fetchLiveGoogleSheetNotices();
+        if (liveGNotices && liveGNotices.length > 0) {
+          loadedNotices = liveGNotices;
+        }
+      } catch(sheetErr) {}
+
+      if (loadedNotices) {
+        allNotices = loadedNotices;
+      } else {
+        const nRes = await fetch('data/notices.json');
+        if (nRes.ok) {
+          const fetchedNotices = await nRes.json();
+          if (Array.isArray(fetchedNotices) && fetchedNotices.length > 0) {
+            allNotices = fetchedNotices;
+          }
+        } else if (window.OFFLINE_DATA?.notices) {
+          allNotices = window.OFFLINE_DATA.notices;
         }
       }
     }
   } catch(e) {
-    allNotices = ALL_NOTICES_DATA;
+    allNotices = window.OFFLINE_DATA?.notices || ALL_NOTICES_DATA;
   }
 
   // সাইট কনফিগারেশন লোড (অ্যাডমিন প্যানেল থেকে সংরক্ষিত)
   try {
-    const cfgRes = await fetch('data/site_config.json');
-    if (cfgRes.ok) {
-      const siteConfig = await cfgRes.json();
-      if (siteConfig && siteConfig.sections) {
-        if (siteConfig.sections.checklist === false) {
-          const chkSec = document.getElementById('home-checklist-section');
-          if (chkSec) chkSec.style.display = 'none';
-        }
+    let siteConfig = null;
+    if (window.location.protocol === 'file:' && window.OFFLINE_DATA?.site_config) {
+      siteConfig = window.OFFLINE_DATA.site_config;
+    } else {
+      const cfgRes = await fetch('data/site_config.json');
+      if (cfgRes.ok) {
+        siteConfig = await cfgRes.json();
+      } else if (window.OFFLINE_DATA?.site_config) {
+        siteConfig = window.OFFLINE_DATA.site_config;
       }
     }
-  } catch(e) {}
+    if (siteConfig && siteConfig.sections) {
+      if (siteConfig.sections.checklist === false) {
+        const chkSec = document.getElementById('home-checklist-section');
+        if (chkSec) chkSec.style.display = 'none';
+      }
+    }
+  } catch(e) {
+    if (window.OFFLINE_DATA?.site_config?.sections?.checklist === false) {
+      const chkSec = document.getElementById('home-checklist-section');
+      if (chkSec) chkSec.style.display = 'none';
+    }
+  }
 
-  renderAllViews();
+  // Populate Dropdowns in forms
+  populateServiceSelects();
+
+  // Render on Homepage
+  renderHomepageComponents();
+
+  // Render on Services Page (All 19 Services)
+  renderServicesPage();
+
+  // Render on Notices Page
+  renderNoticesPage();
 }
 
 function populateServiceSelects() {
@@ -849,596 +883,582 @@ function toBanglaNumber(num) {
 // Homepage Renderer with Viewport-Aware Auto-Rotation & Card-Only Hover Pause
 function renderHomepageComponents() {
   // ১. সেবাসমূহ কম্পোনেন্ট কন্ট্রোলার
-  try {
-    const serviceContainer = document.getElementById('home-services-container');
-    if (serviceContainer) {
-      const serviceBatchSize = 6;
-      let activeHomeCategory = 'all';
-      let homeSearchQuery = '';
-      let currentServiceBatch = 0;
-      let serviceAutoTimer = null;
-      let isServiceCardHovered = false;
-      let isSearchBoxFocused = false;
+  const serviceContainer = document.getElementById('home-services-container');
+  if (serviceContainer) {
+    const serviceBatchSize = 6;
+    let activeHomeCategory = 'all';
+    let homeSearchQuery = '';
+    let currentServiceBatch = 0;
+    let serviceAutoTimer = null;
+    let isServiceCardHovered = false;
+    let isSearchBoxFocused = false;
 
-      const serviceIndicator = document.getElementById('service-batch-indicator');
-      const serviceDotsContainer = document.getElementById('service-dots-container');
-      const servicePrevBtn = document.getElementById('service-prev-btn');
-      const serviceNextBtn = document.getElementById('service-next-btn');
-      const servicesCycleStatus = document.getElementById('services-cycle-status');
-      const homeSearchInput = document.getElementById('home-service-search-input');
-      const homeTabBtns = document.querySelectorAll('.home-service-tab-btn');
+    const serviceIndicator = document.getElementById('service-batch-indicator');
+    const serviceDotsContainer = document.getElementById('service-dots-container');
+    const servicePrevBtn = document.getElementById('service-prev-btn');
+    const serviceNextBtn = document.getElementById('service-next-btn');
+    const servicesCycleStatus = document.getElementById('services-cycle-status');
+    const homeSearchInput = document.getElementById('home-service-search-input');
+    const homeTabBtns = document.querySelectorAll('.home-service-tab-btn');
 
-      function updateServiceCycleStatus(hovered) {
-        if (!servicesCycleStatus) return;
-        if (hovered) {
-          servicesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (সেবা কার্ডে মাউস)';
-          servicesCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
-        } else {
-          servicesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
-          servicesCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
-        }
+    function updateServiceCycleStatus(hovered) {
+      if (!servicesCycleStatus) return;
+      if (hovered) {
+        servicesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (সেবা কার্ডে মাউস)';
+        servicesCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
+      } else {
+        servicesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
+        servicesCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
       }
+    }
 
-      // Update Category Badges Count
-      const landCount = allServices.filter(s => s.category === 'land').length;
-      const onlineCount = allServices.filter(s => s.category === 'online').length;
-      const computerCount = allServices.filter(s => s.category === 'computer').length;
+    // Update Category Badges Count
+    const landCount = allServices.filter(s => s.category === 'land').length;
+    const onlineCount = allServices.filter(s => s.category === 'online').length;
+    const computerCount = allServices.filter(s => s.category === 'computer').length;
 
-      const countLandEl = document.getElementById('home-count-land');
-      const countOnlineEl = document.getElementById('home-count-online');
-      const countComputerEl = document.getElementById('home-count-computer');
-      const countAllEl = document.getElementById('home-count-all');
+    const countLandEl = document.getElementById('home-count-land');
+    const countOnlineEl = document.getElementById('home-count-online');
+    const countComputerEl = document.getElementById('home-count-computer');
+    const countAllEl = document.getElementById('home-count-all');
 
-      if (countLandEl) countLandEl.textContent = toBanglaNumber(landCount);
-      if (countOnlineEl) countOnlineEl.textContent = toBanglaNumber(onlineCount);
-      if (countComputerEl) countComputerEl.textContent = toBanglaNumber(computerCount);
-      if (countAllEl) countAllEl.textContent = toBanglaNumber(allServices.length);
+    if (countLandEl) countLandEl.textContent = toBanglaNumber(landCount);
+    if (countOnlineEl) countOnlineEl.textContent = toBanglaNumber(onlineCount);
+    if (countComputerEl) countComputerEl.textContent = toBanglaNumber(computerCount);
+    if (countAllEl) countAllEl.textContent = toBanglaNumber(allServices.length);
 
-      function getFilteredServices() {
-        let list = allServices;
-        if (activeHomeCategory !== 'all') {
-          list = list.filter(s => s.category === activeHomeCategory);
-        }
-        if (homeSearchQuery.trim()) {
-          const q = homeSearchQuery.toLowerCase();
-          list = list.filter(s => s.title.toLowerCase().includes(q) || (s.summary && s.summary.toLowerCase().includes(q)));
-        }
-        return list;
+    function getFilteredServices() {
+      let list = allServices;
+      if (activeHomeCategory !== 'all') {
+        list = list.filter(s => s.category === activeHomeCategory);
       }
+      if (homeSearchQuery.trim()) {
+        const q = homeSearchQuery.toLowerCase();
+        list = list.filter(s => s.title.toLowerCase().includes(q) || (s.summary && s.summary.toLowerCase().includes(q)));
+      }
+      return list;
+    }
 
-      function renderServiceBatch(batchIdx) {
-        const filtered = getFilteredServices();
-        const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
-        currentServiceBatch = (batchIdx + totalBatches) % totalBatches;
-        
-        const start = currentServiceBatch * serviceBatchSize;
-        const end = Math.min(start + serviceBatchSize, filtered.length);
-        const servicesToShow = filtered.slice(start, end);
+    function renderServiceBatch(batchIdx) {
+      const filtered = getFilteredServices();
+      const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
+      currentServiceBatch = (batchIdx + totalBatches) % totalBatches;
+      
+      const start = currentServiceBatch * serviceBatchSize;
+      const end = Math.min(start + serviceBatchSize, filtered.length);
+      const servicesToShow = filtered.slice(start, end);
 
-        if (filtered.length === 0) {
-          serviceContainer.innerHTML = `
-            <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
-              <i class="fas fa-search text-4xl text-slate-400 mb-3"></i>
-              <p class="text-xs font-extrabold text-slate-500">কোনো সেবা পাওয়া যায়নি।</p>
-            </div>
-          `;
-          if (serviceIndicator) serviceIndicator.textContent = '০ টি সেবা';
-          if (serviceDotsContainer) serviceDotsContainer.innerHTML = '';
-          return;
-        }
-
-        serviceContainer.innerHTML = servicesToShow.map((s, idx) => `
-          <div class="service-card card-accent-${s.category || 'land'} p-5 sm:p-6 flex flex-col justify-between rotate-card-enter stagger-${(idx % 6) + 1}">
-            <div>
-              <div class="flex items-center gap-3.5 mb-3">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${getServiceIconBg(s.category)} shadow-md flex items-center justify-center text-xl flex-shrink-0">
-                  <i class="fas ${s.icon || 'fa-landmark'}"></i>
-                </div>
-                <div>
-                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${getServiceBadgeClass(s.category)}">
-                    ${s.badge || 'ডিজিটাল সেবা'}
-                  </span>
-                  <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug mt-1">${s.title}</h3>
-                </div>
-              </div>
-
-              <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">${s.summary || ''}</p>
-              
-              <div class="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-900/90 dark:to-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1.5 text-xs mb-4">
-                <div class="text-slate-800 dark:text-slate-200 font-semibold flex justify-between">
-                  <span class="text-slate-500 dark:text-slate-400">সরকারি ফি:</span>
-                  <strong class="text-slate-900 dark:text-white text-right">${s.govtFee || 'নির্ধারিত ফি'}</strong>
-                </div>
-                <div class="text-emerald-800 dark:text-emerald-300 font-extrabold flex justify-between pt-1 border-t border-slate-200 dark:border-slate-700">
-                  <span>দোকান চার্জ:</span>
-                  <span class="bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded text-emerald-800 dark:text-emerald-300">${s.serviceFee || '৫০ - ১০০ ৳'}</span>
-                </div>
-              </div>
-            </div>
-
-            <a href="services.html" class="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-              <span>কাগজপত্রের চেকলিস্ট দেখুন</span>
-              <i class="fas fa-arrow-right text-[11px]"></i>
-            </a>
+      if (filtered.length === 0) {
+        serviceContainer.innerHTML = `
+          <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
+            <i class="fas fa-search text-4xl text-slate-400 mb-3"></i>
+            <p class="text-xs font-extrabold text-slate-500">কোনো সেবা পাওয়া যায়নি।</p>
           </div>
+        `;
+        if (serviceIndicator) serviceIndicator.textContent = '০ টি সেবা';
+        if (serviceDotsContainer) serviceDotsContainer.innerHTML = '';
+        return;
+      }
+
+      serviceContainer.innerHTML = servicesToShow.map((s, idx) => `
+        <div class="service-card card-accent-${s.category || 'land'} p-5 sm:p-6 flex flex-col justify-between rotate-card-enter stagger-${(idx % 6) + 1}">
+          <div>
+            <div class="flex items-center gap-3.5 mb-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${getServiceIconBg(s.category)} shadow-md flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas ${s.icon || 'fa-landmark'}"></i>
+              </div>
+              <div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${getServiceBadgeClass(s.category)}">
+                  ${s.badge || 'ডিজিটাল সেবা'}
+                </span>
+                <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug mt-1">${s.title}</h3>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">${s.summary || ''}</p>
+            
+            <div class="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-900/90 dark:to-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-1.5 text-xs mb-4">
+              <div class="text-slate-800 dark:text-slate-200 font-semibold flex justify-between">
+                <span class="text-slate-500 dark:text-slate-400">সরকারি ফি:</span>
+                <strong class="text-slate-900 dark:text-white text-right">${s.govtFee || 'নির্ধারিত ফি'}</strong>
+              </div>
+              <div class="text-emerald-800 dark:text-emerald-300 font-extrabold flex justify-between pt-1 border-t border-slate-200 dark:border-slate-700">
+                <span>দোকান চার্জ:</span>
+                <span class="bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded text-emerald-800 dark:text-emerald-300">${s.serviceFee || '৫০ - ১০০ ৳'}</span>
+              </div>
+            </div>
+          </div>
+
+          <a href="services.html" class="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+            <span>কাগজপত্রের চেকলিস্ট দেখুন</span>
+            <i class="fas fa-arrow-right text-[11px]"></i>
+          </a>
+        </div>
+      `).join('');
+
+      if (serviceIndicator) {
+        serviceIndicator.textContent = `সেবা ${toBanglaNumber(start + 1)}-${toBanglaNumber(end)} / ${toBanglaNumber(filtered.length)}`;
+      }
+
+      if (serviceDotsContainer) {
+        serviceDotsContainer.innerHTML = Array.from({ length: totalBatches }).map((_, i) => `
+          <button type="button" aria-label="ব্যাচ ${i + 1}" class="h-2 rounded-full transition-all duration-300 ${i === currentServiceBatch ? 'w-7 bg-emerald-600 dark:bg-emerald-400' : 'w-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" onclick="window.setHomeServiceBatch(${i})"></button>
         `).join('');
+      }
+    }
 
-        if (serviceIndicator) {
-          serviceIndicator.textContent = `সেবা ${toBanglaNumber(start + 1)}-${toBanglaNumber(end)} / ${toBanglaNumber(filtered.length)}`;
+    window.setHomeServiceBatch = function(idx) {
+      renderServiceBatch(idx);
+      resetServiceAutoTimer();
+    };
+
+    function nextServiceBatch() {
+      const filtered = getFilteredServices();
+      const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
+      renderServiceBatch((currentServiceBatch + 1) % totalBatches);
+    }
+
+    function prevServiceBatch() {
+      const filtered = getFilteredServices();
+      const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
+      renderServiceBatch((currentServiceBatch - 1 + totalBatches) % totalBatches);
+    }
+
+    function startServiceAutoTimer() {
+      clearInterval(serviceAutoTimer);
+      serviceAutoTimer = setInterval(() => {
+        if (!isServiceCardHovered && !isSearchBoxFocused && !homeSearchQuery.trim() && activeHomeCategory === 'all') {
+          nextServiceBatch();
         }
+      }, 3000);
+    }
 
-        if (serviceDotsContainer) {
-          serviceDotsContainer.innerHTML = Array.from({ length: totalBatches }).map((_, i) => `
-            <button type="button" aria-label="ব্যাচ ${i + 1}" class="h-2 rounded-full transition-all duration-300 ${i === currentServiceBatch ? 'w-7 bg-emerald-600 dark:bg-emerald-400' : 'w-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'}" onclick="window.setHomeServiceBatch(${i})"></button>
-          `).join('');
-        }
-      }
-
-      window.setHomeServiceBatch = function(idx) {
-        renderServiceBatch(idx);
-        resetServiceAutoTimer();
-      };
-
-      function nextServiceBatch() {
-        const filtered = getFilteredServices();
-        const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
-        renderServiceBatch((currentServiceBatch + 1) % totalBatches);
-      }
-
-      function prevServiceBatch() {
-        const filtered = getFilteredServices();
-        const totalBatches = Math.max(1, Math.ceil(filtered.length / serviceBatchSize));
-        renderServiceBatch((currentServiceBatch - 1 + totalBatches) % totalBatches);
-      }
-
-      function startServiceAutoTimer() {
-        clearInterval(serviceAutoTimer);
-        serviceAutoTimer = setInterval(() => {
-          if (!isServiceCardHovered && !isSearchBoxFocused && !homeSearchQuery.trim() && activeHomeCategory === 'all') {
-            nextServiceBatch();
-          }
-        }, 3000);
-      }
-
-      function resetServiceAutoTimer() {
-        startServiceAutoTimer();
-      }
-
-      servicePrevBtn?.addEventListener('click', () => { prevServiceBatch(); resetServiceAutoTimer(); });
-      serviceNextBtn?.addEventListener('click', () => { nextServiceBatch(); resetServiceAutoTimer(); });
-
-      // Category Tabs click listeners
-      homeTabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          homeTabBtns.forEach(b => {
-            b.className = 'home-service-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold border bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition shadow-xs flex items-center gap-1.5';
-          });
-          btn.className = 'home-service-tab-btn active px-4 py-2.5 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-md transition flex items-center gap-1.5';
-          activeHomeCategory = btn.dataset.homeCategory || 'all';
-          renderServiceBatch(0);
-          resetServiceAutoTimer();
-        });
-      });
-
-      // Search Input listener
-      if (homeSearchInput) {
-        homeSearchInput.addEventListener('input', (e) => {
-          homeSearchQuery = e.target.value;
-          renderServiceBatch(0);
-          resetServiceAutoTimer();
-        });
-        homeSearchInput.addEventListener('focus', () => {
-          isSearchBoxFocused = true;
-          updateServiceCycleStatus(true);
-        });
-        homeSearchInput.addEventListener('blur', () => {
-          isSearchBoxFocused = false;
-          updateServiceCycleStatus(false);
-        });
-      }
-
-      // শুধুমাত্র সেবা কার্ডের ওপর মাউস নিলে বিরতি, ফাঁকা অংশে বা বাইরে থাকলে অটো-রোটেট চলবে
-      serviceContainer.addEventListener('mouseover', (e) => {
-        if (e.target.closest('.service-card')) {
-          isServiceCardHovered = true;
-          updateServiceCycleStatus(true);
-        }
-      });
-
-      serviceContainer.addEventListener('mouseout', (e) => {
-        const card = e.target.closest('.service-card');
-        const nextCard = e.relatedTarget?.closest('.service-card');
-        if (card && card !== nextCard) {
-          isServiceCardHovered = false;
-          updateServiceCycleStatus(false);
-        }
-      });
-
-      renderServiceBatch(0);
+    function resetServiceAutoTimer() {
       startServiceAutoTimer();
     }
-  } catch (err1) {
-    console.warn('Home services controller error:', err1);
+
+    servicePrevBtn?.addEventListener('click', () => { prevServiceBatch(); resetServiceAutoTimer(); });
+    serviceNextBtn?.addEventListener('click', () => { nextServiceBatch(); resetServiceAutoTimer(); });
+
+    // Category Tabs click listeners
+    homeTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        homeTabBtns.forEach(b => {
+          b.className = 'home-service-tab-btn px-4 py-2.5 rounded-xl text-xs font-bold border bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition shadow-xs flex items-center gap-1.5';
+        });
+        btn.className = 'home-service-tab-btn active px-4 py-2.5 rounded-xl text-xs font-black border bg-emerald-600 text-white shadow-md transition flex items-center gap-1.5';
+        activeHomeCategory = btn.dataset.homeCategory || 'all';
+        renderServiceBatch(0);
+        resetServiceAutoTimer();
+      });
+    });
+
+    // Search Input listener
+    if (homeSearchInput) {
+      homeSearchInput.addEventListener('input', (e) => {
+        homeSearchQuery = e.target.value;
+        renderServiceBatch(0);
+        resetServiceAutoTimer();
+      });
+      homeSearchInput.addEventListener('focus', () => {
+        isSearchBoxFocused = true;
+        updateServiceCycleStatus(true);
+      });
+      homeSearchInput.addEventListener('blur', () => {
+        isSearchBoxFocused = false;
+        updateServiceCycleStatus(false);
+      });
+    }
+
+    // শুধুমাত্র সেবা কার্ডের ওপর মাউস নিলে বিরতি, ফাঁকা অংশে বা বাইরে থাকলে অটো-রোটেট চলবে
+    serviceContainer.addEventListener('mouseover', (e) => {
+      if (e.target.closest('.service-card')) {
+        isServiceCardHovered = true;
+        updateServiceCycleStatus(true);
+      }
+    });
+
+    serviceContainer.addEventListener('mouseout', (e) => {
+      const card = e.target.closest('.service-card');
+      const nextCard = e.relatedTarget?.closest('.service-card');
+      if (card && card !== nextCard) {
+        isServiceCardHovered = false;
+        updateServiceCycleStatus(false);
+      }
+    });
+
+    renderServiceBatch(0);
+    startServiceAutoTimer();
   }
 
   // ২. স্কুল ও কলেজ সংক্রান্ত নোটিশ বুলেটিন কম্পোনেন্ট কন্ট্রোলার (Homepage School/College Notice Bulletin)
-  try {
-    const homeNoticeContainer = document.getElementById('home-notices-container');
-    if (homeNoticeContainer) {
-      const noticeBatchSize = 3;
-      let currentNoticeBatch = 0;
-      let noticeAutoTimer = null;
-      let isNoticeHovered = false;
+  const homeNoticeContainer = document.getElementById('home-notices-container');
+  if (homeNoticeContainer) {
+    const noticeBatchSize = 3;
+    let currentNoticeBatch = 0;
+    let noticeAutoTimer = null;
+    let isNoticeHovered = false;
 
-      const noticeIndicator = document.getElementById('notice-page-indicator');
-      const noticeDotsContainer = document.getElementById('notice-dots-container');
-      const noticePrevBtn = document.getElementById('notice-prev-btn');
-      const noticeNextBtn = document.getElementById('notice-next-btn');
-      const noticesCycleStatus = document.getElementById('notices-cycle-status');
+    const noticeIndicator = document.getElementById('notice-page-indicator');
+    const noticeDotsContainer = document.getElementById('notice-dots-container');
+    const noticePrevBtn = document.getElementById('notice-prev-btn');
+    const noticeNextBtn = document.getElementById('notice-next-btn');
+    const noticesCycleStatus = document.getElementById('notices-cycle-status');
 
-      // Filter school/college/admission/exam notices
-      let schoolCollegeNotices = (Array.isArray(allNotices) ? allNotices : []).filter(n => 
-        n && (
-          n.category === 'admissions' || 
-          n.category === 'college' || 
-          n.category === 'results' ||
-          (n.org && (n.org.includes('কলেজ') || n.org.includes('বিশ্ববিদ্যালয়') || n.org.includes('বোর্ড') || n.org.includes('স্কুল') || n.org.includes('অধিদপ্তর'))) ||
-          (n.title && (n.title.includes('ফরম পূরণ') || n.title.includes('ভর্তি') || n.title.includes('পরীক্ষা') || n.title.includes('ডিগ্রি') || n.title.includes('অনার্স') || n.title.includes('প্রবেশপত্র')))
-        )
-      );
+    // Filter school/college/admission/exam notices
+    let schoolCollegeNotices = allNotices.filter(n => 
+      n.category === 'admissions' || 
+      n.category === 'college' || 
+      n.category === 'results' ||
+      (n.org && (n.org.includes('কলেজ') || n.org.includes('বিশ্ববিদ্যালয়') || n.org.includes('বোর্ড') || n.org.includes('স্কুল') || n.org.includes('অধিদপ্তর'))) ||
+      (n.title && (n.title.includes('ফরম পূরণ') || n.title.includes('ভর্তি') || n.title.includes('পরীক্ষা') || n.title.includes('ডিগ্রি') || n.title.includes('অনার্স') || n.title.includes('প্রবেশপত্র')))
+    );
 
-      if (schoolCollegeNotices.length === 0) {
-        schoolCollegeNotices = ALL_NOTICES_DATA.filter(n => n.category === 'admissions' || n.category === 'results' || (n.org && n.org.includes('কলেজ')));
-        if (schoolCollegeNotices.length === 0) schoolCollegeNotices = allNotices;
-      }
-
-      const totalNoticeBatches = Math.max(1, Math.ceil(schoolCollegeNotices.length / noticeBatchSize));
-
-      function renderHomeNoticeBatch(batchIdx) {
-        currentNoticeBatch = (batchIdx + totalNoticeBatches) % totalNoticeBatches;
-        const start = currentNoticeBatch * noticeBatchSize;
-        const end = Math.min(start + noticeBatchSize, schoolCollegeNotices.length);
-        const batchList = schoolCollegeNotices.slice(start, end);
-
-        if (batchList.length === 0) {
-          homeNoticeContainer.innerHTML = '<div class="col-span-full text-center py-6 text-slate-300 text-xs font-bold">বর্তমানে কোনো স্কুল বা কলেজের নোটিশ নেই।</div>';
-          return;
-        }
-
-        homeNoticeContainer.innerHTML = batchList.map(n => {
-          const typeBadge = n.type || 'কলেজ নোটিশ';
-          const deadline = n.deadline || 'চলমান';
-          const org = n.org || 'ফুলবাড়ী সরকারি কলেজ';
-          const pdfLink = n.pdfUrl || n.sourceUrl || 'portal.html';
-          const whatsappMsg = `আসসালামু আলাইকুম, আমি "${n.title}" (${org}) নোটিশ সম্পর্কে অনলাইন আবেদন/ফরম পূরণের সেবা নিতে চাচ্ছি।`;
-
-          return `
-            <div class="p-5 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-white/20 dark:border-slate-700/60 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-3 group text-slate-800 dark:text-slate-100">
-              <div class="space-y-2">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
-                    <i class="fas fa-graduation-cap mr-1"></i> ${typeBadge}
-                  </span>
-                  <span class="text-[10px] font-extrabold text-amber-700 dark:text-amber-400 flex items-center gap-1">
-                    <i class="far fa-calendar-alt"></i> ${deadline}
-                  </span>
-                </div>
-
-                <div class="text-[11px] font-black text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                  <i class="fas fa-school text-xs"></i>
-                  <span class="truncate">${org}</span>
-                </div>
-
-                <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
-                  ${n.title}
-                </h4>
-
-                <p class="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
-                  ${n.details || n.qualification || n.summary || 'বিস্তারিত তথ্যের জন্য ক্লিক করুন।'}
-                </p>
-              </div>
-
-              <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
-                <a href="https://wa.me/8801717101919?text=${encodeURIComponent(whatsappMsg)}" target="_blank" class="font-extrabold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1">
-                  <i class="fab fa-whatsapp text-emerald-600"></i> <span>হেল্পলাইন</span>
-                </a>
-                ${n.sourceUrl || n.pdfUrl ? `
-                  <a href="${pdfLink}" target="_blank" rel="noopener" class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-[11px] font-black transition flex items-center gap-1">
-                    <span>বিজ্ঞপ্তি দেখুন</span>
-                    <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
-                  </a>
-                ` : `
-                  <a href="portal.html" class="px-3 py-1 rounded-xl bg-emerald-600 text-white text-[11px] font-black transition flex items-center gap-1">
-                    <span>জব পোর্টাল</span>
-                    <i class="fas fa-arrow-right text-[9px]"></i>
-                  </a>
-                `}
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        if (noticeIndicator) {
-          noticeIndicator.textContent = `${toBanglaNumber(currentNoticeBatch + 1)}/${toBanglaNumber(totalNoticeBatches)}`;
-        }
-
-        if (noticeDotsContainer) {
-          noticeDotsContainer.innerHTML = Array.from({ length: totalNoticeBatches }).map((_, i) => `
-            <button type="button" aria-label="নোটিশ ব্যাচ ${i + 1}" class="h-2 rounded-full transition-all duration-300 ${i === currentNoticeBatch ? 'w-6 bg-amber-400' : 'w-2 bg-white/40 hover:bg-white/70'}" onclick="window.setHomeNoticeBatch(${i})"></button>
-          `).join('');
-        }
-      }
-
-      window.setHomeNoticeBatch = function(idx) {
-        renderHomeNoticeBatch(idx);
-        resetNoticeAutoTimer();
-      };
-
-      function nextHomeNoticeBatch() {
-        renderHomeNoticeBatch(currentNoticeBatch + 1);
-      }
-
-      function prevHomeNoticeBatch() {
-        renderHomeNoticeBatch(currentNoticeBatch - 1);
-      }
-
-      function startNoticeAutoTimer() {
-        clearInterval(noticeAutoTimer);
-        noticeAutoTimer = setInterval(() => {
-          if (!isNoticeHovered) {
-            nextHomeNoticeBatch();
-          }
-        }, 4000);
-      }
-
-      function resetNoticeAutoTimer() {
-        startNoticeAutoTimer();
-      }
-
-      noticePrevBtn?.addEventListener('click', () => { prevHomeNoticeBatch(); resetNoticeAutoTimer(); });
-      noticeNextBtn?.addEventListener('click', () => { nextHomeNoticeBatch(); resetNoticeAutoTimer(); });
-
-      homeNoticeContainer.addEventListener('mouseenter', () => {
-        isNoticeHovered = true;
-        if (noticesCycleStatus) {
-          noticesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span> বিরতি (মাউস রাখা হয়েছে)';
-        }
-      });
-
-      homeNoticeContainer.addEventListener('mouseleave', () => {
-        isNoticeHovered = false;
-        if (noticesCycleStatus) {
-          noticesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 status-dot-open"></span> অটো-রোটেশন সচল';
-        }
-      });
-
-      renderHomeNoticeBatch(0);
-      startNoticeAutoTimer();
+    if (schoolCollegeNotices.length === 0) {
+      schoolCollegeNotices = ALL_NOTICES_DATA.filter(n => n.category === 'admissions' || n.category === 'results' || (n.org && n.org.includes('কলেজ')));
+      if (schoolCollegeNotices.length === 0) schoolCollegeNotices = allNotices;
     }
-  } catch (err2) {
-    console.warn('Home notice bulletin controller error:', err2);
-  }
 
-  // ৩. ডিজিটাল ও ভূমিসেবামূল্য এবং চেকলিস্ট ক্যালকুলেটর কন্ট্রোলার (Dynamic Checklist - Auto-Rotate)
-  try {
-    const checklistResultDisplay = document.getElementById('calc-result-display');
-    const calcSelect = document.getElementById('calc-service-select');
-    if (checklistResultDisplay && calcSelect) {
-      const checklistServices = allServices.filter(s => s.includeInChecklist !== false);
-      const list = checklistServices.length > 0 ? checklistServices : allServices;
+    const totalNoticeBatches = Math.max(1, Math.ceil(schoolCollegeNotices.length / noticeBatchSize));
 
-      let currentChecklistIdx = 0;
-      let checklistAutoTimer = null;
-      let isChecklistHovered = false;
-      let isChecklistSelectFocused = false;
+    function renderHomeNoticeBatch(batchIdx) {
+      currentNoticeBatch = (batchIdx + totalNoticeBatches) % totalNoticeBatches;
+      const start = currentNoticeBatch * noticeBatchSize;
+      const end = Math.min(start + noticeBatchSize, schoolCollegeNotices.length);
+      const batchList = schoolCollegeNotices.slice(start, end);
 
-      const checklistIndicator = document.getElementById('checklist-service-indicator');
-      const checklistPrevBtn = document.getElementById('checklist-prev-btn');
-      const checklistNextBtn = document.getElementById('checklist-next-btn');
-      const checklistCycleStatus = document.getElementById('checklist-cycle-status');
-      const checklistCard = checklistResultDisplay.closest('.rounded-3xl') || checklistResultDisplay;
-
-      function updateChecklistCycleStatus(paused) {
-        if (!checklistCycleStatus) return;
-        if (paused) {
-          checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (মাউস রাখা হয়েছে)';
-          checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
-        } else {
-          checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
-          checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
-        }
+      if (batchList.length === 0) {
+        homeNoticeContainer.innerHTML = '<div class="col-span-full text-center py-6 text-slate-300 text-xs font-bold">বর্তমানে কোনো স্কুল বা কলেজের নোটিশ নেই।</div>';
+        return;
       }
 
-      function renderChecklist(idx) {
-        if (list.length === 0) {
-          checklistResultDisplay.innerHTML = '<div class="text-center py-6 text-slate-400 font-bold text-xs">কোনো চেকলিস্ট তথ্য পাওয়া যায়নি।</div>';
-          return;
-        }
+      homeNoticeContainer.innerHTML = batchList.map(n => {
+        const typeBadge = n.type || 'কলেজ নোটিশ';
+        const deadline = n.deadline || 'চলমান';
+        const org = n.org || 'ফুলবাড়ী সরকারি কলেজ';
+        const pdfLink = n.pdfUrl || n.sourceUrl || 'portal.html';
+        const whatsappMsg = `আসসালামু আলাইকুম, আমি "${n.title}" (${org}) নোটিশ সম্পর্কে অনলাইন আবেদন/ফরম পূরণের সেবা নিতে চাচ্ছি।`;
 
-        currentChecklistIdx = (idx + list.length) % list.length;
-        const s = list[currentChecklistIdx];
-
-        // ড্রপডাউন ভ্যালু সিঙ্ক
-        if (calcSelect.value !== s.id) {
-          calcSelect.value = s.id;
-        }
-
-        // ইনডিকেটর আপডেট
-        if (checklistIndicator) {
-          checklistIndicator.textContent = `সেবা ${toBanglaNumber(currentChecklistIdx + 1)}/${toBanglaNumber(list.length)}`;
-        }
-
-        const docs = Array.isArray(s.documents) ? s.documents : [];
-        const whatsappMsg = `আসসালামু আলাইকুম, আমি "${s.title}" সেবাটি নিতে আগ্রহী। প্রয়োজনীয় কাগজপত্র ও ফি সম্পর্কে বিস্তারিত জানতে চাচ্ছি।`;
-
-        checklistResultDisplay.innerHTML = `
-          <div class="space-y-4 animate-fade-in text-slate-800 dark:text-slate-100">
-            <!-- Top Service Info Bar -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-slate-100 via-slate-50 to-emerald-50/50 dark:from-slate-900/90 dark:via-slate-800/80 dark:to-emerald-950/30 border border-slate-200 dark:border-slate-700/80 shadow-xs">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${getServiceIconBg(s.category)} shadow-md flex items-center justify-center text-xl flex-shrink-0">
-                  <i class="fas ${s.icon || 'fa-landmark'}"></i>
-                </div>
-                <div>
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${getServiceBadgeClass(s.category)}">
-                      ${s.badge || 'জনপ্রিয় সেবা'}
-                    </span>
-                    ${s.duration ? `
-                      <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 flex items-center gap-1">
-                        <i class="fas fa-clock text-[9px]"></i> ডেলিভারি: ${s.duration}
-                      </span>
-                    ` : ''}
-                  </div>
-                  <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-1">${s.title}</h3>
-                </div>
-              </div>
-              ${s.portal ? `
-                <div class="self-start sm:self-auto">
-                  <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-2xs">
-                    <i class="fas fa-globe text-emerald-600"></i> ${s.portal}
-                  </span>
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- Description / Summary -->
-            ${s.summary ? `
-              <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60">
-                <i class="fas fa-circle-info text-emerald-600 mr-1.5"></i> ${s.summary}
-              </p>
-            ` : ''}
-
-            <!-- Fee Breakdown Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div class="p-4 rounded-2xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                    <i class="fas fa-building-columns text-slate-500"></i> সরকারি রাজস্ব ফি
-                  </span>
-                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">অফিসিয়াল</span>
-                </div>
-                <div class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
-                  ${s.govtFee || 'সরকারি নির্ধারিত ফি'}
-                </div>
-              </div>
-
-              <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                    <i class="fas fa-desktop text-emerald-600"></i> কম্পিউটার সার্ভিস চার্জ
-                  </span>
-                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200">দোকান ফি</span>
-                </div>
-                <div class="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400">
-                  ${s.serviceFee || '৫০ - ১০০ ৳'}
-                </div>
-              </div>
-            </div>
-
-            <!-- Required Documents Checklist -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-900/90 border-2 border-emerald-500/20 shadow-xs space-y-3">
-              <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
-                <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <i class="fas fa-list-check text-emerald-600"></i> সাথে যা যা আনতে হবে (কাগজপত্রের চেকলিস্ট):
-                </h4>
-                <span class="text-[11px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
-                  ${toBanglaNumber(docs.length)} টি কাগজপত্র
+        return `
+          <div class="p-5 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-white/20 dark:border-slate-700/60 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-3 group text-slate-800 dark:text-slate-100">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
+                  <i class="fas fa-graduation-cap mr-1"></i> ${typeBadge}
+                </span>
+                <span class="text-[10px] font-extrabold text-amber-700 dark:text-amber-400 flex items-center gap-1">
+                  <i class="far fa-calendar-alt"></i> ${deadline}
                 </span>
               </div>
 
-              ${docs.length > 0 ? `
-                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-800 dark:text-slate-200">
-                  ${docs.map((doc, dIdx) => `
-                    <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
-                      <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">
-                        ${toBanglaNumber(dIdx + 1)}
-                      </span>
-                      <span class="font-bold leading-relaxed">${doc}</span>
-                    </li>
-                  `).join('')}
-                </ul>
-              ` : `
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">এই সেবার জন্য সরাসরি দোকানে যোগাযোগ করুন অথবা প্রয়োজনীয় নথি সাথে নিয়ে আসুন।</p>
-              `}
+              <div class="text-[11px] font-black text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                <i class="fas fa-school text-xs"></i>
+                <span class="truncate">${org}</span>
+              </div>
+
+              <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                ${n.title}
+              </h4>
+
+              <p class="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                ${n.details || n.qualification || n.summary || 'বিস্তারিত তথ্যের জন্য ক্লিক করুন।'}
+              </p>
             </div>
 
-            <!-- Quick Action CTA Buttons -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-              <a href="https://wa.me/8801717101919?text=${encodeURIComponent(whatsappMsg)}" target="_blank" rel="noopener" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-extrabold py-3 px-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fab fa-whatsapp text-base text-emerald-200"></i>
-                <span>এই সেবার জন্য WhatsApp-এ মেসেজ দিন</span>
+            <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+              <a href="https://wa.me/8801717101919?text=${encodeURIComponent(whatsappMsg)}" target="_blank" class="font-extrabold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1">
+                <i class="fab fa-whatsapp text-emerald-600"></i> <span>হেল্পলাইন</span>
               </a>
-              <a href="tel:01717101919" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-black transition flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 shadow-xs">
-                <i class="fas fa-phone-alt text-emerald-600"></i>
-                <span>সরাসরি কল: 01717-101919</span>
-              </a>
+              ${n.sourceUrl || n.pdfUrl ? `
+                <a href="${pdfLink}" target="_blank" rel="noopener" class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-200 text-[11px] font-black transition flex items-center gap-1">
+                  <span>বিজ্ঞপ্তি দেখুন</span>
+                  <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+                </a>
+              ` : `
+                <a href="portal.html" class="px-3 py-1 rounded-xl bg-emerald-600 text-white text-[11px] font-black transition flex items-center gap-1">
+                  <span>জব পোর্টাল</span>
+                  <i class="fas fa-arrow-right text-[9px]"></i>
+                </a>
+              `}
             </div>
           </div>
         `;
+      }).join('');
+
+      if (noticeIndicator) {
+        noticeIndicator.textContent = `${toBanglaNumber(currentNoticeBatch + 1)}/${toBanglaNumber(totalNoticeBatches)}`;
       }
 
-      function startChecklistAutoTimer() {
-        clearInterval(checklistAutoTimer);
-        checklistAutoTimer = setInterval(() => {
-          if (!isChecklistHovered && !isChecklistSelectFocused) {
-            renderChecklist(currentChecklistIdx + 1);
-          }
-        }, 3000);
+      if (noticeDotsContainer) {
+        noticeDotsContainer.innerHTML = Array.from({ length: totalNoticeBatches }).map((_, i) => `
+          <button type="button" aria-label="নোটিশ ব্যাচ ${i + 1}" class="h-2 rounded-full transition-all duration-300 ${i === currentNoticeBatch ? 'w-6 bg-amber-400' : 'w-2 bg-white/40 hover:bg-white/70'}" onclick="window.setHomeNoticeBatch(${i})"></button>
+        `).join('');
       }
+    }
 
-      function resetChecklistAutoTimer() {
-        startChecklistAutoTimer();
-      }
+    window.setHomeNoticeBatch = function(idx) {
+      renderHomeNoticeBatch(idx);
+      resetNoticeAutoTimer();
+    };
 
-      // Prev / Next বাটন
-      checklistPrevBtn?.addEventListener('click', () => {
-        renderChecklist(currentChecklistIdx - 1);
-        resetChecklistAutoTimer();
-      });
+    function nextHomeNoticeBatch() {
+      renderHomeNoticeBatch(currentNoticeBatch + 1);
+    }
 
-      checklistNextBtn?.addEventListener('click', () => {
-        renderChecklist(currentChecklistIdx + 1);
-        resetChecklistAutoTimer();
-      });
+    function prevHomeNoticeBatch() {
+      renderHomeNoticeBatch(currentNoticeBatch - 1);
+    }
 
-      // ড্রপডাউন সিলেক্ট ইভেন্ট
-      calcSelect.addEventListener('change', (e) => {
-        const selectedId = e.target.value;
-        const foundIdx = list.findIndex(s => s.id === selectedId);
-        if (foundIdx !== -1) {
-          renderChecklist(foundIdx);
-          resetChecklistAutoTimer();
+    function startNoticeAutoTimer() {
+      clearInterval(noticeAutoTimer);
+      noticeAutoTimer = setInterval(() => {
+        if (!isNoticeHovered) {
+          nextHomeNoticeBatch();
         }
-      });
+      }, 4000);
+    }
 
-      calcSelect.addEventListener('focus', () => {
-        isChecklistSelectFocused = true;
-        updateChecklistCycleStatus(true);
-      });
+    function resetNoticeAutoTimer() {
+      startNoticeAutoTimer();
+    }
 
-      calcSelect.addEventListener('blur', () => {
-        isChecklistSelectFocused = false;
-        updateChecklistCycleStatus(false);
-      });
+    noticePrevBtn?.addEventListener('click', () => { prevHomeNoticeBatch(); resetNoticeAutoTimer(); });
+    noticeNextBtn?.addEventListener('click', () => { nextHomeNoticeBatch(); resetNoticeAutoTimer(); });
 
-      // মাউস নিলে অটো-রোটেশন বিরতি
-      checklistCard.addEventListener('mouseenter', () => {
-        isChecklistHovered = true;
-        updateChecklistCycleStatus(true);
-      });
+    homeNoticeContainer.addEventListener('mouseenter', () => {
+      isNoticeHovered = true;
+      if (noticesCycleStatus) {
+        noticesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400"></span> বিরতি (মাউস রাখা হয়েছে)';
+      }
+    });
 
-      checklistCard.addEventListener('mouseleave', () => {
-        isChecklistHovered = false;
-        updateChecklistCycleStatus(false);
-      });
+    homeNoticeContainer.addEventListener('mouseleave', () => {
+      isNoticeHovered = false;
+      if (noticesCycleStatus) {
+        noticesCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 status-dot-open"></span> অটো-রোটেশন সচল';
+      }
+    });
 
-      // প্রথম রেন্ডার ও টাইমার শুরু
-      renderChecklist(0);
+    renderHomeNoticeBatch(0);
+    startNoticeAutoTimer();
+  }
+
+  // ৩. ডিজিটাল ও ভূমিসেবামূল্য এবং চেকলিস্ট ক্যালকুলেটর কন্ট্রোলার (Dynamic Checklist - Auto-Rotate)
+  const checklistResultDisplay = document.getElementById('calc-result-display');
+  const calcSelect = document.getElementById('calc-service-select');
+  if (checklistResultDisplay && calcSelect) {
+    const checklistServices = allServices.filter(s => s.includeInChecklist !== false);
+    const list = checklistServices.length > 0 ? checklistServices : allServices;
+
+    let currentChecklistIdx = 0;
+    let checklistAutoTimer = null;
+    let isChecklistHovered = false;
+    let isChecklistSelectFocused = false;
+
+    const checklistIndicator = document.getElementById('checklist-service-indicator');
+    const checklistPrevBtn = document.getElementById('checklist-prev-btn');
+    const checklistNextBtn = document.getElementById('checklist-next-btn');
+    const checklistCycleStatus = document.getElementById('checklist-cycle-status');
+    const checklistCard = checklistResultDisplay.closest('.rounded-3xl') || checklistResultDisplay;
+
+    function updateChecklistCycleStatus(paused) {
+      if (!checklistCycleStatus) return;
+      if (paused) {
+        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> বিরতি (মাউস রাখা হয়েছে)';
+        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800';
+      } else {
+        checklistCycleStatus.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-open"></span> অটো-রোটেশন সচল (প্রতি ৩ সে.)';
+        checklistCycleStatus.className = 'inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
+      }
+    }
+
+    function renderChecklist(idx) {
+      if (list.length === 0) {
+        checklistResultDisplay.innerHTML = '<div class="text-center py-6 text-slate-400 font-bold text-xs">কোনো চেকলিস্ট তথ্য পাওয়া যায়নি।</div>';
+        return;
+      }
+
+      currentChecklistIdx = (idx + list.length) % list.length;
+      const s = list[currentChecklistIdx];
+
+      // ড্রপডাউন ভ্যালু সিঙ্ক
+      if (calcSelect.value !== s.id) {
+        calcSelect.value = s.id;
+      }
+
+      // ইনডিকেটর আপডেট
+      if (checklistIndicator) {
+        checklistIndicator.textContent = `সেবা ${toBanglaNumber(currentChecklistIdx + 1)}/${toBanglaNumber(list.length)}`;
+      }
+
+      const docs = Array.isArray(s.documents) ? s.documents : [];
+      const whatsappMsg = `আসসালামু আলাইকুম, আমি "${s.title}" সেবাটি নিতে আগ্রহী। প্রয়োজনীয় কাগজপত্র ও ফি সম্পর্কে বিস্তারিত জানতে চাচ্ছি।`;
+
+      checklistResultDisplay.innerHTML = `
+        <div class="space-y-4 animate-fade-in text-slate-800 dark:text-slate-100">
+          <!-- Top Service Info Bar -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-slate-100 via-slate-50 to-emerald-50/50 dark:from-slate-900/90 dark:via-slate-800/80 dark:to-emerald-950/30 border border-slate-200 dark:border-slate-700/80 shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${getServiceIconBg(s.category)} shadow-md flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas ${s.icon || 'fa-landmark'}"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${getServiceBadgeClass(s.category)}">
+                    ${s.badge || 'জনপ্রিয় সেবা'}
+                  </span>
+                  ${s.duration ? `
+                    <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 flex items-center gap-1">
+                      <i class="fas fa-clock text-[9px]"></i> ডেলিভারি: ${s.duration}
+                    </span>
+                  ` : ''}
+                </div>
+                <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-1">${s.title}</h3>
+              </div>
+            </div>
+            ${s.portal ? `
+              <div class="self-start sm:self-auto">
+                <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-2xs">
+                  <i class="fas fa-globe text-emerald-600"></i> ${s.portal}
+                </span>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Description / Summary -->
+          ${s.summary ? `
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60">
+              <i class="fas fa-circle-info text-emerald-600 mr-1.5"></i> ${s.summary}
+            </p>
+          ` : ''}
+
+          <!-- Fee Breakdown Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="p-4 rounded-2xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                  <i class="fas fa-building-columns text-slate-500"></i> সরকারি রাজস্ব ফি
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">অফিসিয়াল</span>
+              </div>
+              <div class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
+                ${s.govtFee || 'সরকারি নির্ধারিত ফি'}
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 flex flex-col justify-between space-y-1.5 shadow-2xs">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                  <i class="fas fa-desktop text-emerald-600"></i> কম্পিউটার সার্ভিস চার্জ
+                </span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-200 dark:bg-emerald-900 text-emerald-900 dark:text-emerald-200">দোকান ফি</span>
+              </div>
+              <div class="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400">
+                ${s.serviceFee || '৫০ - ১০০ ৳'}
+              </div>
+            </div>
+          </div>
+
+          <!-- Required Documents Checklist -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/90 dark:bg-slate-900/90 border-2 border-emerald-500/20 shadow-xs space-y-3">
+            <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+              <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fas fa-list-check text-emerald-600"></i> সাথে যা যা আনতে হবে (কাগজপত্রের চেকলিস্ট):
+              </h4>
+              <span class="text-[11px] font-extrabold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
+                ${toBanglaNumber(docs.length)} টি কাগজপত্র
+              </span>
+            </div>
+
+            ${docs.length > 0 ? `
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-800 dark:text-slate-200">
+                ${docs.map((doc, dIdx) => `
+                  <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/70 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                    <span class="w-5 h-5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center flex-shrink-0 text-[10px] font-black mt-0.5">
+                      ${toBanglaNumber(dIdx + 1)}
+                    </span>
+                    <span class="font-bold leading-relaxed">${doc}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            ` : `
+              <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">এই সেবার জন্য সরাসরি দোকানে যোগাযোগ করুন অথবা প্রয়োজনীয় নথি সাথে নিয়ে আসুন।</p>
+            `}
+          </div>
+
+          <!-- Quick Action CTA Buttons -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <a href="https://wa.me/8801717101919?text=${encodeURIComponent(whatsappMsg)}" target="_blank" rel="noopener" class="w-full sm:w-auto flex-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-extrabold py-3 px-5 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+              <i class="fab fa-whatsapp text-base text-emerald-200"></i>
+              <span>এই সেবার জন্য WhatsApp-এ মেসেজ দিন</span>
+            </a>
+            <a href="tel:01717101919" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-black transition flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 shadow-xs">
+              <i class="fas fa-phone-alt text-emerald-600"></i>
+              <span>সরাসরি কল: 01717-101919</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function startChecklistAutoTimer() {
+      clearInterval(checklistAutoTimer);
+      checklistAutoTimer = setInterval(() => {
+        if (!isChecklistHovered && !isChecklistSelectFocused) {
+          renderChecklist(currentChecklistIdx + 1);
+        }
+      }, 3000);
+    }
+
+    function resetChecklistAutoTimer() {
       startChecklistAutoTimer();
     }
-  } catch (err3) {
-    console.warn('Checklist controller error:', err3);
+
+    // Prev / Next বাটন
+    checklistPrevBtn?.addEventListener('click', () => {
+      renderChecklist(currentChecklistIdx - 1);
+      resetChecklistAutoTimer();
+    });
+
+    checklistNextBtn?.addEventListener('click', () => {
+      renderChecklist(currentChecklistIdx + 1);
+      resetChecklistAutoTimer();
+    });
+
+    // ড্রপডাউন সিলেক্ট ইভেন্ট
+    calcSelect.addEventListener('change', (e) => {
+      const selectedId = e.target.value;
+      const foundIdx = list.findIndex(s => s.id === selectedId);
+      if (foundIdx !== -1) {
+        renderChecklist(foundIdx);
+        resetChecklistAutoTimer();
+      }
+    });
+
+    calcSelect.addEventListener('focus', () => {
+      isChecklistSelectFocused = true;
+      updateChecklistCycleStatus(true);
+    });
+
+    calcSelect.addEventListener('blur', () => {
+      isChecklistSelectFocused = false;
+      updateChecklistCycleStatus(false);
+    });
+
+    // মাউস নিলে অটো-রোটেশন বিরতি
+    checklistCard.addEventListener('mouseenter', () => {
+      isChecklistHovered = true;
+      updateChecklistCycleStatus(true);
+    });
+
+    checklistCard.addEventListener('mouseleave', () => {
+      isChecklistHovered = false;
+      updateChecklistCycleStatus(false);
+    });
+
+    // প্রথম রেন্ডার ও টাইমার শুরু
+    renderChecklist(0);
+    startChecklistAutoTimer();
   }
 }
 
@@ -2538,19 +2558,7 @@ function initUnifiedConverterEngine() {
     }
 
     try {
-      const ocrEngine = window.FayzarAiOcrEngine || window.AiOcrEngine;
-      if (!ocrEngine || typeof ocrEngine.startUnifiedOcr !== 'function') {
-        throw new Error('AI OCR ইঞ্জিন ব্রাউজারে লোড হতে পারেনি। দয়া করে পেজটি একবার রিফ্রেশ (Ctrl + F5 / Shift + Reload) করুন।');
-      }
-
-      // Ensure files are queued in the engine if not already present
-      if (currentScanResult && currentScanResult.files && currentScanResult.files.length > 0) {
-        if (!ocrEngine.state || !ocrEngine.state.filesQueue || ocrEngine.state.filesQueue.length === 0) {
-          await ocrEngine.handleFiles(currentScanResult.files);
-        }
-      }
-
-      const res = await ocrEngine.startUnifiedOcr(
+      const res = await window.FayzarAiOcrEngine.startUnifiedOcr(
         selectedAiTargetFormat,
         (statusText, pct) => {
           const pt = document.getElementById('wizardProgressTitle') || wizardProgressTitle;
@@ -2602,10 +2610,10 @@ function initUnifiedConverterEngine() {
       if (wizardResultStatsBadge) wizardResultStatsBadge.textContent = `${modeLabel} এ সফলভাবে রূপান্তর হয়েছে`;
 
       if (wizardDlDocBtn) {
-        wizardDlDocBtn.onclick = () => (window.FayzarAiOcrEngine || window.AiOcrEngine)?.downloadWordDocument('doc');
+        wizardDlDocBtn.onclick = () => window.FayzarAiOcrEngine.downloadWordDocument('doc');
       }
       if (wizardDlDocxBtn) {
-        wizardDlDocxBtn.onclick = () => (window.FayzarAiOcrEngine || window.AiOcrEngine)?.downloadWordDocument(selectedAiTargetFormat === 'unicode_docx' ? 'unicode_docx' : 'bijoy_docx');
+        wizardDlDocxBtn.onclick = () => window.FayzarAiOcrEngine.downloadWordDocument(selectedAiTargetFormat === 'unicode_docx' ? 'unicode_docx' : 'bijoy_docx');
       }
 
       // Show Instant Download Alert

@@ -25,9 +25,10 @@
   };
 
   const MAX_FREE_USES = 5;
-  const REQUEST_TIMEOUT_MS = 25000;
-  const MAX_IMAGE_DIMENSION = 1400;
-  const JPEG_COMPRESSION_QUALITY = 0.84;
+  const REQUEST_TIMEOUT_MS = 14000; // 14s timeout for fast failover
+  const MAX_IMAGE_DIMENSION = 1280; // 1280px provides crisp OCR while reducing payload
+  const JPEG_COMPRESSION_QUALITY = 0.78; // High quality with ~40% smaller payload
+  const modelCooldowns = new Map(); // Tracks models with 429 quota exhaustion (model -> expireTimestamp)
 
   const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, and LaTeX-to-Word formatting specialist.
 Your goal is to extract and compose a COMPLETE, UNTRUNCATED, BEAUTIFULLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
@@ -76,13 +77,20 @@ CRITICAL COMPOSITION & FORMATTING RULES:
      | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
      | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-7. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও বাংলা এককের সম্পূর্ণ পৃথকীকরণ):
-   - Write mathematical formulas, equations, and numbers in LaTeX ($...$).
-   - CRITICAL: NEVER put any Bengali word, text, unit, or quotes (যেমন: "বর্গসেমি", "সেমি", "মিটার", "টাকা", "টি", "জন") inside LaTeX blocks ($...$, $$...$$) or \\text{...}.
-   - LaTeX blocks must ONLY contain pure mathematical numbers, variables, formulas, and symbols.
-   - All Bengali text and units MUST ALWAYS be written outside $...$.
-   - Incorrect: (ক) $4\\sqrt{55} \\text{"বর্গসেমি"}$ ❌
-   - Correct: (ক) $4\\sqrt{55}$ "বর্গসেমি" (অথবা (ক) $4\\sqrt{55}$ বর্গসেমি) ✅
+7. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
+   - Write mathematical formulas, algebraic equations, variables, sets, and expressions in LaTeX ($...$).
+   - CRITICAL: DO NOT wrap plain numbers, lists of numbers, counts, or simple measurements in $...$!
+     - Plain numbers & counts: 50 জন (NOT $50$ জন), 30 জন (NOT $30$ জন), 65, 62.5 (NOT $65$, $62.5$)
+     - Comma-separated numbers series: 75, 65, 80, 55, 60... (CRITICAL: NEVER wrap comma-separated numbers in $...$!)
+     - Standard units & measurements: 8 m, 6 m, 20 cm, 7 সে.মি. (NOT $8 m$, $6 m$, $20 cm$, $7 সে.মি.$)
+   - DO wrap actual math variables, terms, set notations, and equations in $...$:
+     - Variables: $x$ এর মান, $n$ এর মান, $3n$ সংখ্যক পদ
+     - Sets & Functions: $P(A)$ নির্ণয় কর, $S$ অন্বয়টিকে, $A = \{ ... \}$, $B = \{ ... \}$
+     - Expressions & Equations: $y - x = -1$, $x^2 > 7$, $y^2 + 3y + 2 = 0$, $b = 2, c = 8, d = 3, p = \frac{1}{3}$
+     - Series & Sequences: Use \dots for series e.g. $5 + 8 + 11 + \dots$ or $\log 2 + \log 4 + \log 8 + \dots$
+   - SCIENTIFIC UNITS & QUOTATIONS:
+     - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
+     - NEVER put Bengali words or quotes inside LaTeX blocks.
 
 8. ACCURATE BENGALI TYPOGRAPHY:
    - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
@@ -127,6 +135,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     } catch (e) { /* ignore */ }
 
     if (!dict.length) {
+      if (typeof window !== 'undefined' && window.OFFLINE_DATA?.converter_dict) {
+        dict = window.OFFLINE_DATA.converter_dict;
+      }
       try {
         const res = await fetch('data/converter_dict.json?t=' + Date.now());
         if (res.ok) {
@@ -194,13 +205,13 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       fontSizeSelect: document.getElementById('ai-target-font-size') || document.getElementById('ai-ocr-font-size'),
       lineSpacingSelect: document.getElementById('ai-ocr-line-spacing'),
 
-      openSettingsBtn: document.getElementById('ai-ocr-open-settings-btn'),
+      openSettingsBtn: document.getElementById('ai-ocr-open-settings-btn') || document.getElementById('ai-ocr-settings-btn'),
       settingsModal: document.getElementById('ai-ocr-settings-modal'),
-      closeSettingsBtn: document.getElementById('ai-ocr-close-settings-btn'),
-      saveSettingsBtn: document.getElementById('ai-ocr-save-settings-btn'),
+      closeSettingsBtn: document.getElementById('ai-ocr-settings-close-btn') || document.getElementById('ai-ocr-close-settings-btn'),
+      saveSettingsBtn: document.getElementById('ai-ocr-settings-save-btn') || document.getElementById('ai-ocr-save-settings-btn'),
       demoToggle: document.getElementById('ai-ocr-demo-toggle'),
-      geminiKeyInput: document.getElementById('ai-ocr-gemini-key-input'),
-      modelSelect: document.getElementById('ai-ocr-model-select'),
+      geminiKeyInput: document.getElementById('ai-ocr-settings-api-key') || document.getElementById('ai-ocr-gemini-key-input'),
+      modelSelect: document.getElementById('ai-ocr-settings-model-select') || document.getElementById('ai-ocr-model-select'),
       gasUrlInput: document.getElementById('ai-ocr-gas-url-input'),
       resetCreditsBtn: document.getElementById('ai-ocr-reset-credits-btn'),
 
@@ -627,7 +638,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     }
   }
 
-  // Gemini Execution Engine: sends ALL media parts in 1 single contents array with live SSE Streaming
+  // Gemini Execution Engine: sends media parts with Google's official system_instruction & live SSE Streaming
   async function executeGeminiRequest(apiKey, mediaInput, onStreamChunk = null) {
     let mediaItems = [];
     if (Array.isArray(mediaInput)) {
@@ -638,23 +649,28 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       mediaItems = [{ data: mediaInput, mimeType: 'image/jpeg' }];
     }
 
-    // Build the unified contents parts array containing the prompt followed by ALL images/pages
-    const parts = [{ text: GEMINI_PROMPT }];
+    // Build media items array (JPEG / PDF)
+    const mediaParts = [];
     for (const item of mediaItems) {
       const cleanBase64 = item.data.includes('base64,')
         ? item.data.split('base64,')[1]
         : item.data;
       const finalMime = item.mimeType === 'application/pdf' ? 'application/pdf' : 'image/jpeg';
-      parts.push({
+      mediaParts.push({
         inlineData: { mimeType: finalMime, data: cleanBase64 }
       });
     }
 
-    const payload = {
-      contents: [{ parts }],
+    // Primary modern payload using official system_instruction for server-side prompt caching + thinkingBudget: 0 for instant streaming
+    let payload = {
+      system_instruction: {
+        parts: [{ text: GEMINI_PROMPT }]
+      },
+      contents: [{ parts: mediaParts }],
       generationConfig: {
         temperature: 0.05,
-        maxOutputTokens: 8192
+        maxOutputTokens: 8192,
+        thinkingConfig: { thinkingBudget: 0 }
       },
       safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
@@ -664,25 +680,43 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       ]
     };
 
-    let candidateModels = [
-      'gemini-2.0-flash',
-      'gemini-2.0-flash-lite',
-      'gemini-1.5-flash',
-      'gemini-1.5-flash-8b',
-      'gemini-1.5-pro'
+    // Active Google Gemini Models ordered by OCR capability and speed:
+    const allActiveModels = [
+      // 1. Intelligent Flash (Primary OCR: Highest speed & multimodal quality)
+      'gemini-2.5-flash',
+      'gemini-3.8-flash',
+      'gemini-3.7-flash',
+      'gemini-3.6-flash',
+      'gemini-3.5-flash',
+      'gemini-3-flash-preview',
+
+      // 2. Ultra-Fast Flash-Lite (Instant Quota Failover)
+      'gemini-2.5-flash-lite',
+      'gemini-3.5-flash-lite',
+      'gemini-3.1-flash-lite',
+
+      // 3. Pro Models (Complex math & deep reasoning fallback)
+      'gemini-2.5-pro',
+      'gemini-3.1-pro-preview'
     ];
 
+    let candidateModels = allActiveModels.slice();
     if (state.selectedModel && state.selectedModel !== 'auto') {
       candidateModels = [state.selectedModel, ...candidateModels.filter(m => m !== state.selectedModel)];
     }
 
+    // Filter out models currently in 429 quota cooldown (unless all are in cooldown)
+    const nowTime = Date.now();
+    const readyModels = candidateModels.filter(m => !modelCooldowns.has(m) || nowTime >= modelCooldowns.get(m));
+    const modelsToTry = readyModels.length > 0 ? readyModels : candidateModels;
+
     let lastError = null;
     let isRateLimited = false;
 
-    for (let i = 0; i < candidateModels.length; i++) {
-      const model = candidateModels[i];
+    for (let i = 0; i < modelsToTry.length; i++) {
+      const model = modelsToTry[i];
 
-      // 1. Try Fast Real-Time SSE Stream Endpoint
+      // 1. Fast Real-Time SSE Stream Endpoint
       const streamEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
       try {
@@ -692,32 +726,53 @@ CRITICAL COMPOSITION & FORMATTING RULES:
           body: JSON.stringify(payload)
         }, REQUEST_TIMEOUT_MS);
 
-        if (res.status === 404) continue;
+        if (res.status === 404) {
+          // Model deprecated / not found on this API key tier -> immediately try next
+          continue;
+        }
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
           const errMsg = errData.error?.message || `HTTP ${res.status}`;
+
           if (res.status === 400 && errMsg.includes('API_KEY_INVALID')) {
             throw new Error('Gemini API Key সঠিক নয়। Google AI Studio থেকে সঠিক Key দিন।');
-          } else if (res.status === 429) {
-            isRateLimited = true;
-            const nextModel = candidateModels[i + 1] || 'বিকল্প মডেল';
-            setLoading(true, `[${model} কোটা ব্যস্ত] বিকল্প মডেল (${nextModel})-এ সুইচ হচ্ছে...`, 50 + (i * 8));
-            lastError = new Error(`${model} রেট লিমিট অতিক্রম করেছে।`);
-            await sleep(350);
-            continue;
-          } else {
-            lastError = new Error(errMsg);
+          }
+
+          // If proxy/endpoint rejects system_instruction or thinkingConfig, fallback payload format
+          if (res.status === 400 && (errMsg.includes('system_instruction') || errMsg.includes('thinkingConfig') || errMsg.includes('Unknown field'))) {
+            payload = {
+              contents: [{ parts: [{ text: GEMINI_PROMPT }, ...mediaParts] }],
+              generationConfig: {
+                temperature: 0.05,
+                maxOutputTokens: 8192
+              },
+              safetySettings: payload.safetySettings
+            };
+            i--; // Retry this model with compatible payload
             continue;
           }
+
+          if (res.status === 429) {
+            isRateLimited = true;
+            modelCooldowns.set(model, Date.now() + 60000); // 60-second cooldown
+            const nextModel = modelsToTry[i + 1] || 'বিকল্প মডেল';
+            setLoading(true, `[${model} কোটা ব্যস্ত] পরবর্তী মডেল (${nextModel})-এ তাৎক্ষণিক স্থানান্তর হচ্ছে...`, 50 + (i * 4));
+            lastError = new Error(`${model} রেট লিমিট অতিক্রম করেছে।`);
+            continue;
+          }
+
+          lastError = new Error(errMsg);
+          continue;
         }
 
-        // Read and parse SSE stream chunks in real-time
+        // Read and parse SSE stream chunks in real-time with UI throttling
         if (res.body && typeof res.body.getReader === 'function') {
           const reader = res.body.getReader();
           const decoder = new TextDecoder('utf-8');
           let buffer = '';
           let fullStreamedText = '';
+          let lastChunkTime = 0;
 
           while (true) {
             const { done, value } = await reader.read();
@@ -736,7 +791,12 @@ CRITICAL COMPOSITION & FORMATTING RULES:
                   const chunkPart = chunkObj.candidates?.[0]?.content?.parts?.[0]?.text || '';
                   if (chunkPart) {
                     fullStreamedText += chunkPart;
-                    if (onStreamChunk) onStreamChunk(fullStreamedText);
+                    const cTime = Date.now();
+                    // 60ms UI stream throttle for silky smooth 60fps rendering
+                    if (cTime - lastChunkTime > 60 || fullStreamedText.length < 80) {
+                      lastChunkTime = cTime;
+                      if (onStreamChunk) onStreamChunk(fullStreamedText);
+                    }
                   }
                 } catch (pe) { /* partial chunk */ }
               }
@@ -744,6 +804,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
           }
 
           if (fullStreamedText.trim()) {
+            if (onStreamChunk) onStreamChunk(fullStreamedText);
             return cleanOcrResponse(fullStreamedText);
           }
         }
@@ -759,7 +820,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
           const fbData = await fallbackRes.json().catch(() => ({}));
           const fbCandidate = fbData.candidates?.[0];
           if (fbCandidate && fbCandidate.content && fbCandidate.content.parts) {
-            return cleanOcrResponse(fbCandidate.content.parts.map(p => p.text || '').join('\n'));
+            const fullText = fbCandidate.content.parts.map(p => p.text || '').join('\n');
+            if (onStreamChunk) onStreamChunk(fullText);
+            return cleanOcrResponse(fullText);
           }
         }
 
@@ -775,12 +838,11 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       }
     }
 
-    // Cooldown auto-retry on 8B model
+    // Cooldown auto-retry on gemini-2.5-flash-lite
     if (isRateLimited) {
       try {
-        setLoading(true, 'রেট লিমিট কুলডাউন চলছে (১.৫ সেকেন্ড অপেক্ষা)...', 85);
-        await sleep(1500);
-        const retryModel = 'gemini-1.5-flash-8b';
+        setLoading(true, 'রেট লিমিট কুলডাউন চলছে (দ্রুততম মডেল gemini-2.5-flash-lite চেষ্টা হচ্ছে)...', 88);
+        const retryModel = 'gemini-2.5-flash-lite';
         const retryEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${retryModel}:generateContent?key=${apiKey}`;
         const retryRes = await fetchWithTimeout(retryEndpoint, {
           method: 'POST',
@@ -792,7 +854,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
           const retryData = await retryRes.json().catch(() => ({}));
           const parts = retryData.candidates?.[0]?.content?.parts;
           if (parts && parts.length > 0) {
-            return cleanOcrResponse(parts.map(p => p.text || '').join('\n'));
+            const fullText = parts.map(p => p.text || '').join('\n');
+            if (onStreamChunk) onStreamChunk(fullText);
+            return cleanOcrResponse(fullText);
           }
         }
       } catch (retryErr) { /* ignore */ }
@@ -800,7 +864,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 
     // Dynamic Discovery Fallback
     try {
-      setLoading(true, 'আপনার API Key-এর জন্য উপলব্ধ মডেল তালিকা খোঁজা হচ্ছে...', 90);
+      setLoading(true, 'আপনার API Key-এর জন্য উপলব্ধ মডেল তালিকা খোঁজা হচ্ছে...', 92);
       const listRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {}, 6000);
       if (listRes.ok) {
         const listData = await listRes.json();
@@ -810,7 +874,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
           .filter(m => m.includes('flash') || m.includes('pro'));
 
         for (const dynModel of available) {
-          if (candidateModels.includes(dynModel)) continue;
+          if (modelsToTry.includes(dynModel)) continue;
           try {
             const dynRes = await fetchWithTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${dynModel}:generateContent?key=${apiKey}`, {
               method: 'POST',
@@ -822,7 +886,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
               const dynData = await dynRes.json();
               const parts = dynData?.candidates?.[0]?.content?.parts;
               if (parts && parts.length > 0) {
-                return cleanOcrResponse(parts.map(p => p.text || '').join('\n'));
+                const fullText = parts.map(p => p.text || '').join('\n');
+                if (onStreamChunk) onStreamChunk(fullText);
+                return cleanOcrResponse(fullText);
               }
             }
           } catch (dynErr) { /* try next */ }
@@ -1038,33 +1104,44 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     if (!rawText || typeof rawText !== 'string') return rawText || '';
     let s = rawText;
 
-    s = s.replace(/\\text(?:rm|md|bf|it)?\{\s*([^{}]*?[\u0980-\u09FF][^{}]*?)\s*\}/g, '$1');
+    // 1. Unpack any \text{...} that contains Bengali characters so Bengali words are never trapped in equations
+    s = s.replace(/\\(?:text|mathrm|textmd|textbf|textit|mbox)\{\s*([^{}]*?[\u0980-\u09FF][^{}]*?)\s*\}/g, ' $1 ');
 
+    // 2. Strip quotes around Bengali words
+    s = s.replace(/["“'’](\s*[\u0980-\u09FF\s]+\s*)["”'’]/g, ' $1 ');
+
+    // 3. Separate multiple adjacent definitions: "} B =" -> "}, B ="
+    s = s.replace(/(\}\s*)([A-Za-z]\s*=)/g, (match, g1, g2) => `${g1.trim()}, ${g2}`);
+
+    // 4. Process all math delimiters and extract ALL Bengali text completely outside
     s = s.replace(/\$\$([\s\S]*?)\$\$|\$([^\$]+?)\$|\\\[([\s\S]*?\\\])|\\\(([\s\S]*?)\\\)/g, (match, d1, s1, b1, p1) => {
       const isDouble = Boolean(d1 || b1);
-      const inner = d1 || s1 || b1 || p1 || '';
+      const inner = (d1 || s1 || b1 || p1 || '').trim();
 
       if (!/[\u0980-\u09FF]/.test(inner)) {
         return match;
       }
 
-      const tokenRegex = /([^\u0980-\u09FF"'”’]+)|(["'”’]*[\u0980-\u09FF]+(?:[\s\-_/]+[\u0980-\u09FF]+)*["'”’]*)/g;
-      let parts = [];
-      let m;
-      while ((m = tokenRegex.exec(inner)) !== null) {
-        if (m[1]) {
-          const mathChunk = m[1].trim();
-          if (mathChunk) parts.push(isDouble ? `$$${mathChunk}$$` : `$${mathChunk}$`);
-        } else if (m[2]) {
-          const bnChunk = m[2].trim();
-          if (bnChunk) parts.push(bnChunk);
+      const parts = inner.split(/([\u0980-\u09FF]+(?:\s+[\u0980-\u09FF]+)*)/);
+      let out = [];
+      for (let p of parts) {
+        p = (p || '').trim();
+        if (!p) continue;
+        if (/[\u0980-\u09FF]/.test(p)) {
+          out.push(p);
+        } else {
+          if (/^[.,;:]+$/.test(p)) {
+            out.push(p);
+          } else {
+            out.push(isDouble ? `$$${p}$$` : `$${p}$`);
+          }
         }
       }
-
-      return parts.join(' ');
+      return out.join(' ');
     });
 
     s = s.replace(/\$\$\s*\$\$/g, '').replace(/\$\s*\$/g, '');
+    s = s.replace(/,\s*,/g, ',');
     return s;
   }
 
@@ -1104,7 +1181,6 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       }
 
       // 4. Remove score marks [১], [২], [৩], [৪], [৮], [১০], (১), (২) at the end of creative questions
-      // e.g. "ক. রূপান্তরক কাকে বলে? [১]" -> "ক. রূপান্তরক কাকে বলে?"
       l = l.replace(/(\?|।|[a-zA-Z\u0980-\u09FF"'”’\$])\s*\[\s*[০-৯0-9\s]+\s*\]\s*$/g, '$1');
       l = l.replace(/(\?|।|[a-zA-Z\u0980-\u09FF"'”’\$])\s*[\(（]\s*[০-৯0-9\s]+\s*[\)）]\s*$/g, '$1');
       
@@ -1116,7 +1192,35 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       cleanedLines.push(l);
     }
 
-    return cleanedLines.join('\n').trim();
+    let finalOutput = cleanedLines.join('\n').trim();
+
+    // 5. Clean stray quotes around units e.g. 2262 "cm" 3, "cm"^3, "cm"
+    finalOutput = finalOutput.replace(/(?<=\d|\))\s*["']\s*(cm|mm|m|km|gm|kg|sec|s|hr|min|V|W|kW|A|mA|Hz|N|Pa|J)\s*["']\s*(\^?\d+)?/gi, function(match, unit, exp) {
+      let cleanExp = exp ? exp.replace('^', '') : '';
+      return cleanExp ? ` $${unit}^{${cleanExp}}$` : ` ${unit}`;
+    });
+    finalOutput = finalOutput.replace(/["']\s*(cm|mm|m|km|gm|kg|sec|s|hr|min|V|W|kW|A|mA|Hz|N|Pa|J)\s*["']/gi, '$1');
+    finalOutput = finalOutput.replace(/\b(cm|mm|m|km)\s*(\^?([23]))\b/gi, '$1^$3');
+
+    // 6. UNWRAP comma-separated number lists (e.g. $75, 65, 80...$ in Q11)
+    finalOutput = finalOutput.replace(/\$\s*([০-৯0-9\s,.\-]+(?:\s*,\s*[০-৯0-9\s,.\-]+)+)\s*\$/g, '$1');
+
+    // 7. UNWRAP plain isolated numbers in $...$ (e.g. $50$, $65$, $62.5$, $30$, $7$)
+    finalOutput = finalOutput.replace(/\$\s*([০-৯0-9]+(?:\.[০-৯0-9]+)?)\s*\$/g, '$1');
+
+    // 8. UNWRAP plain measurements in $...$ (e.g. $8 m$, $6 m$, $20 cm$)
+    finalOutput = finalOutput.replace(/\$\s*([০-৯0-9]+(?:\.[০-৯0-9]+)?\s*(?:m|cm|mm|km|gm|kg|sec|s|hr|min|V|W|kW|A|mA|Hz|N|Pa|J))\s*\$/gi, '$1');
+
+    // 9. UNWRAP Bengali abbreviations in $...$ (e.g. $7 সে.মি.$, $7 সে. মি.$)
+    finalOutput = finalOutput.replace(/\$\s*([০-৯0-9]+(?:\.[০-৯0-9]+)?\s*[\u0980-\u09FF\s.]+)\s*\$/g, '$1');
+
+    // 10. Auto-wrap isolated math variables and expressions before Bengali postpositions (strictly [a-zA-Z], NEVER \d*[a-zA-Z])
+    finalOutput = finalOutput.replace(/(?<!\$)\b([a-zA-Z]\([a-zA-Z0-9,\s]+\))(?!\$)(?=\s+(?:এর|হলে|নির্ণয়|মান|কে|তালিকা|প্রকাশ)(?:[\s।\?,\.]|$))/g, '$$$1$$');
+    finalOutput = finalOutput.replace(/(?<!\$)\b([a-zA-Z])(?!\$)(?=\s+(?:এর|হলে|কে|তে|মান|নির্ণয়|সমান|মানটি|থেকে|পর্যন্ত|সংখ্যক|তম|পদ)(?:[\s।\?,\.]|$))/g, '$$$1$$');
+    finalOutput = finalOutput.replace(/(?<!\$)\b([A-Z])(?!\$)(?=\s+(?:অন্বয়|সেট|তালিকা|ফাংশন|সম্পর্ক|কে|নির্ণয়))/g, '$$$1$$');
+    finalOutput = finalOutput.replace(/(?<!\$)\b([a-zA-Z]\s*[-+]\s*[a-zA-Z]\s*=\s*-?\d+)(?!\$)/g, '$$$1$$');
+
+    return finalOutput;
   }
 
   function parseRichRuns(rawText) {
@@ -1255,7 +1359,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       let rtf = '';
       for (const seg of segments) {
         if (seg.type === 'math') {
-          if (EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
+          if (/[\u0980-\u09FF]/.test(seg.value)) {
+            rtf += renderRunsForRtfPlain(seg.value, isBijoy, fontSizeHalfPt, false);
+          } else if (EquationConverter.needsEqField && !EquationConverter.needsEqField(seg.value)) {
             const clean = EquationConverter.sanitizeSimpleMath ? EquationConverter.sanitizeSimpleMath(seg.value, isBijoy) : seg.value.replace(/\$/g, '');
             rtf += renderSimpleMathRtf(clean, isBijoy, fontSizeHalfPt, false);
           } else {
@@ -1361,7 +1467,9 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       let runsXml = '';
       for (const seg of segments) {
         if (seg.type === 'math') {
-          if (typeof EquationConverter !== 'undefined' && typeof EquationConverter.latexToOmml === 'function') {
+          if (/[\u0980-\u09FF]/.test(seg.value)) {
+            runsXml += renderRunsForOoxmlPlain(seg.value, isBijoy, fontSizeHalfPt, false);
+          } else if (typeof EquationConverter !== 'undefined' && typeof EquationConverter.latexToOmml === 'function') {
             runsXml += EquationConverter.latexToOmml(seg.value, isBijoy);
           } else {
             const eqCode = EquationConverter.latexToEqField(seg.value, isBijoy);
@@ -1507,8 +1615,8 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
 
     const pageSizeVal = elements.pageSizeSelect ? elements.pageSizeSelect.value : 'a4';
     const marginVal = elements.pageMarginSelect ? elements.pageMarginSelect.value : 'normal';
-    const fontSizeVal = elements.fontSizeSelect ? elements.fontSizeSelect.value : '14';
-    const fontSizePt = parseInt(fontSizeVal, 10) || 14;
+    const fontSizeVal = elements.fontSizeSelect ? elements.fontSizeSelect.value : '12';
+    const fontSizePt = parseInt(fontSizeVal, 10) || 12;
 
     const rawName = state.selectedFile?.name || state.filesQueue?.[0]?.name || 'Question_Paper';
     const baseName = rawName.replace(/\.[^/.]+$/, '');
@@ -1520,7 +1628,7 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
       try {
         let docBlob = null;
         if (typeof DocxHandler !== 'undefined' && typeof DocxHandler.createDocFromText === 'function') {
-          docBlob = DocxHandler.createDocFromText(text, 'SutonnyMJ', true);
+          docBlob = DocxHandler.createDocFromText(text, 'SutonnyMJ', true, fontSizePt);
         } else if (typeof DocxToDocConverter !== 'undefined') {
           const docxBlob = await createDocxBlob(text, true, { pageSize: pageSizeVal, margin: marginVal, fontSize: fontSizeVal });
           const docxConverter = new DocxToDocConverter();
@@ -1589,8 +1697,8 @@ ${rpr('Times New Roman', fontSizeHalfPt)}
 
     const pageSizeVal = customOptions.pageSize || (elements.pageSizeSelect ? elements.pageSizeSelect.value : 'a4');
     const marginVal = customOptions.margin || (elements.pageMarginSelect ? elements.pageMarginSelect.value : 'normal');
-    const fontSizeVal = customOptions.fontSize || (elements.fontSizeSelect ? elements.fontSizeSelect.value : '14');
-    const fontSizePt = parseInt(fontSizeVal, 10) || 14;
+    const fontSizeVal = customOptions.fontSize || (elements.fontSizeSelect ? elements.fontSizeSelect.value : '12');
+    const fontSizePt = parseInt(fontSizeVal, 10) || 12;
     const fontSizeHalfPt = fontSizePt * 2;
 
     const PAGE_SIZES = {
