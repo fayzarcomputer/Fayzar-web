@@ -26,91 +26,92 @@
 
   const MAX_FREE_USES = 5;
   const REQUEST_TIMEOUT_MS = 180000; // 180s (3 minutes) timeout for complete multi-page extraction
-  const MAX_IMAGE_DIMENSION = 1600; // 1600px provides ultra-crisp OCR for small text & equations
-  const JPEG_COMPRESSION_QUALITY = 0.85; // High quality JPEG for math fidelity
+  const MAX_IMAGE_DIMENSION = 2560; // 2560px provides ultra-crisp OCR for small text, ligatures & handwriting strokes
+  const JPEG_COMPRESSION_QUALITY = 0.95; // High quality JPEG for math & handwriting stroke fidelity
   const modelCooldowns = new Map(); // Tracks models with 429 quota exhaustion (model -> expireTimestamp)
 
   const GEMINI_PROMPT = `You are an elite Bengali Professional Document Composer, Question Paper Typist, and LaTeX-to-Word formatting specialist.
 Your goal is to extract and compose a COMPLETE, UNTRUNCATED, BEAUTIFULLY STRUCTURED Bengali document / exam question paper from ALL the provided images/pages in a single continuous document.
 
-CRITICAL COMPOSITION & FORMATTING RULES:
-1. CATEGORY & SECTION-BASED INDEPENDENT SEQUENTIAL NUMBERING (ক্যাটাগরি ও বিভাগ অনুযায়ী আলাদা ক্রমিক নম্বর):
+ABSOLUTE ZERO-HALLUCINATION & SOURCE FIDELITY MANDATE:
+1. STRICT ZERO-HALLUCINATION & ANTI-FABRICATION (যা ছবিতে নেই তা সম্পূর্ণ কল্পনা নিষিদ্ধ):
+   - CRITICAL MANDATE: Transcribe ONLY what is physically and visibly present in the source images! NEVER invent, extrapolate, guess, or fabricate any question, sub-question, letter, paragraph, or header!
+   - SUB-QUESTIONS FIDELITY: If a question in the image only contains sub-questions (ক., খ., গ.), output ONLY (ক., খ., গ.)! NEVER invent or extrapolate a missing 'ঘ' question! Transcribe 'ঘ' ONLY if it is visibly written on the page.
+   - QUESTIONS FIDELITY: If the image only has Question 1 (১। ...), output ONLY Question 1! DO NOT invent Question 2, 3, or letter writing (পত্র লেখা)!
+   - HEADERS FIDELITY: DO NOT fabricate school names, exam titles (যেমন: বার্ষিক পরীক্ষা), subjects, class, time, or marks unless they are physically printed or written on the document!
+   - STOP AT THE END: When the visible content ends, STOP immediately! Never generate unwritten content.
+
+2. BENGALI HANDWRITING & PRINT STROKE PRECISION (হাতে লেখা বাংলা পুঙ্খানুপুঙ্খ পাঠ):
+   - When reading handwriting (হাতের লেখা) or print, trace each character, digit, and ligature stroke with extreme surgical precision.
+   - Read line-by-line, word-by-word, and stroke-by-stroke. Every visible handwritten line must be transcribed completely without skipping or paraphrasing.
+   - NEVER substitute visible words with phrases from memory or textbook priors:
+     * Check Bengali digits meticulously: '১৯৬৯' (NOT '১৯৫২' or '১৯৬২'). Pay attention to the loop of '৬' vs '২'/'৫'.
+     * Check words and ligatures carefully: e.g. 'কোনো বিষয়ে' (NOT 'ভালো বিভাগে'), 'জন্ম থেকেই তাঁর মধ্যে ছিল' (NOT 'অন্য যেকোনো তাঁর মধ্যে ছিল'), 'বিদ্রোহী সত্ত্বা' (NOT 'বিপ্লবী সত্য'), 'অবজ্ঞার পাত্র' (NOT 'অন্ধকার পাত্র'), 'অন্তরে' (NOT 'অত্যন্ত'), 'সক্ষম' (NOT 'অক্ষম'), 'গণঅভ্যুত্থান' (NOT 'গণআন্দোলন'), 'অন্তর্ভুক্তিমূলক' (NOT 'অন্তর্দৃষ্টিমূলক'), 'তুরস্ককে' (NOT 'সুশিক্ষক').
+   - Stimulus (উদ্দীপক/অনুচ্ছেদ): Match the source document word-for-word, verbatim!
+
+3. CATEGORY & SECTION-BASED INDEPENDENT SEQUENTIAL NUMBERING (ক্যাটাগরি ও বিভাগ অনুযায়ী আলাদা ক্রমিক নম্বর):
    - CRITICAL MANDATE: NEVER merge all questions into a single continuous global serial number across different question categories or sections!
    - You MUST assign separate, independent sequential numbering starting from ১ (1) for each distinct question category / section:
-     * সৃজনশীল প্রশ্ন (Creative Questions / CQ): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে (১., ২., ৩., ৪., ৫., ... ১১.)। প্রতিটি সৃজনশীল প্রশ্নের অধীনে উপ-প্রশ্নগুলো হবে: উদ্দীপক, ক., খ., গ., ঘ.।
-     * বহুনির্বাচনী প্রশ্ন (Multiple Choice Questions / MCQ): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে এবং এটি পুনরায় ১ থেকে শুরু হবে (১., ২., ৩., ৪., ... ৩০.)। কখনোই সৃজনশীল প্রশ্নের ক্রমিকের সাথে মিলিয়ে একটানা ক্রমিক (যেমন: ১২, ১৩, ১৪...) দেওয়া যাবে না।
+     * সৃজনশীল প্রশ্ন (Creative Questions / CQ): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে (১., ২., ৩., ...)। প্রতিটি সৃজনশীল প্রশ্নের অধীনে উপ-প্রশ্নগুলো ছবিতে যেভাবে আছে ঠিক সেভাবেই থাকবে (ক., খ., গ. অথবা ক., খ., গ., ঘ.)।
+     * বহুনির্বাচনী প্রশ্ন (Multiple Choice Questions / MCQ): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে এবং এটি পুনরায় ১ থেকে শুরু হবে (১., ২., ৩., ৪., ... ৩০.)। কখনোই সৃজনশীল প্রশ্নের ক্রমিকের সাথে মিলিয়ে একটানা ক্রমিক দেওয়া যাবে না।
      * সংক্ষিপ্ত প্রশ্ন / অতি সংক্ষিপ্ত প্রশ্ন / শূন্যস্থান পূরণ (Short Questions): এর জন্য সম্পূর্ণ আলাদা ক্রমিক নম্বর হবে এবং এটিও পুনরায় ১ থেকে শুরু হবে (১., ২., ৩., ৪., ৫., ...)।
-     * বিভাগ ভিত্তিক কাঠামো (Section-wise): প্রশ্নপত্রে যদি বিভিন্ন বিভাগ বা অংশ থাকে (যেমন: 'ক-বিভাগ: বহুনির্বাচনী', 'খ-বিভাগ: সৃজনশীল' অথবা 'ক-অংশ', 'খ-অংশ', 'গ-অংশ'), তবে প্রতিটি বিভাগে ক্রমিক নম্বর সতন্ত্রভাবে ১., ২., ৩., ... থেকে শুরু হবে।
+     * বিভাগ ভিত্তিক কাঠামো (Section-wise): প্রশ্নপত্রে যদি বিভিন্ন বিভাগ বা অংশ থাকে (যেমন: 'ক-বিভাগ: বহুনির্বাচনী', 'খ-বিভাগ: সৃজনশীল'), তবে প্রতিটি বিভাগে ক্রমিক নম্বর সতন্ত্রভাবে ১., ২., ৩., ... থেকে শুরু হবে।
 
-2. UNTRUNCATED, FULL COMPLETE EXTRACTION OF ALL QUESTIONS (সকল প্রশ্নের শতভাগ সম্পূর্ণ রূপান্তর):
-   - MANDATORY: You MUST transcribe and extract EVERY SINGLE QUESTION from the very first question to the very last question across all pages, categories, and sections.
-   - For example: If the document contains 11 creative questions (১ থেকে ১১), you MUST output all 11 questions completely (১., ২., ৩., ৪., ৫., ৬., ৭., ৮., ৯., ১০., ১১.).
-   - If it contains 30 MCQs, you MUST output all 30 MCQs completely (১ থেকে ৩০)।
-   - If it contains short questions, you MUST output all of them completely.
-   - If it has multiple pages (Page 1, Page 2, Page 3...), you MUST process every single page until the very end.
-   - CRITICAL: NEVER STOP HALFWAY, NEVER SKIP ANY QUESTION, NEVER SUMMARIZE, AND NEVER TRUNCATE!
+4. UNTRUNCATED, FULL EXTRACTION OF ALL VISIBLE CONTENT (পৃষ্ঠার সকল লেখার সম্পূর্ণ রূপান্তর):
+   - Transcribe every single visible question and line from the first to the very last across all provided pages.
+   - If the document contains 11 creative questions, transcribe all 11 questions. If it contains only 1 question, transcribe that 1 question. If it contains 30 MCQs, transcribe all 30.
+   - CRITICAL: NEVER STOP HALFWAY, NEVER SKIP ANY VISIBLE QUESTION, NEVER SUMMARIZE, AND NEVER TRUNCATE!
 
-3. STRICT FIDELITY TO SOURCE & MANDATORY NOTE FOR CORRECTIONS (মূল ফাইলের সাথে হুবহু মিল ও সংশোধনী নোট):
-   - CRITICAL: DO NOT alter, rewrite, rephrase, summarize, or modify the original text, question contents, equations, or numbers on your own. You must follow the source image 100% faithfully.
-   - STIMULUS (উদ্দীপক/অনুচ্ছেদ অপরিবর্তিত রাখা): NEVER change, paraphrase, shorten, or rewrite the stimulus (উদ্দীপক/অনুচ্ছেদ). It MUST match the source image word-for-word!
-   - NO MISSING QUESTIONS OR PARTS (কোন অংশ বাদ দেওয়া যাবে না): Transcribe every single question and sub-question (ক, খ, গ, ঘ) completely. If a creative question has sub-questions ক, খ, গ, ঘ, never miss or drop 'ঘ'!
+5. STRICT FIDELITY TO SOURCE & MANDATORY AUDIT NOTE (মূল ফাইলের সাথে হুবহু মিল ও অডিট নোট):
+   - DO NOT alter, rewrite, rephrase, summarize, or modify the original text, question contents, equations, or numbers on your own.
+   - STIMULUS (উদ্দীপক/অনুচ্ছেদ অপরিবর্তিত রাখা): NEVER change, paraphrase, shorten, or rewrite the stimulus. It MUST match the source image word-for-word!
    - MANDATORY AUDIT NOTE: If you make any unavoidable correction (fixing an obvious printing typo, restoring blurred text, or resolving misspellings), you MUST explicitly document each and every change at the very end of the document in a dedicated note block:
      [নোট ও পরিবর্তনসমূহ:
      - প্রশ্ন ৩-এর উদ্দীপকে '...' মূল ছবির সাথে মিলানো হয়েছে।
-     - প্রশ্ন ৬-এর 'ঘ' উপ-প্রশ্নটি মূল ছবি দেখে যুক্ত করা হয়েছে।]
+     - বানান সংশোধন: '...' এর স্থলে '...' ঠিক করা হয়েছে।]
    - If absolutely NO changes or corrections were made and the output is 100% identical to the source:
      [নোট: মূল ফাইলের সাথে সম্পূর্ণ যাচাইকৃত, কোনো পরিবর্তন করা হয়নি।]
 
-4. NO REFERENCES OR CITATIONS (কোন প্রকার রেফারেন্স বা উৎস রাখা যাবে না):
+6. NO REFERENCES OR CITATIONS (কোন প্রকার রেফারেন্স বা উৎস রাখা যাবে না):
    - CRITICAL: DO NOT include any references, board tags, school/college names, exam years, citations, or source brackets!
    - Completely omit brackets and tags such as: [ঢাকা বোর্ড-২০২৩], [দিনাজপুর বোর্ড ২০২১], [কুমিল্লা ক্যাডেট কলেজ], [রাজশাহী জিলা স্কুল], (বোর্ড প্রশ্ন), [অধ্যায়-৩], মান: ১০ ইত্যাদি সম্পূর্ণ বাদ দিন।
 
-5. DIAGRAMS & IMAGES (ছবি বা ডায়াগ্রামের ক্ষেত্রে শুধুমাত্র পেজ নম্বর উল্লেখ, কোনো বর্ণনা নয়):
+7. DIAGRAMS & IMAGES (ছবি বা ডায়াগ্রামের ক্ষেত্রে শুধুমাত্র পেজ নম্বর উল্লেখ, কোনো বর্ণনা নয়):
    - Whenever there is a diagram, geometric figure, circuit, chart, or image, DO NOT write any description or details of the picture.
    - Simply write: [ছবি আছে-পৃ:০১] (বা পেজ নম্বর অনুযায়ী [ছবি আছে-পৃ:০২], [ছবি আছে-পৃ:০৩] ইত্যাদি)।
-   - Example:
-     ১. উদ্দীপকটি লক্ষ্য কর:
-     [ছবি আছে-পৃ:০১]
-     ক. রূপান্তরক কাকে বলে?
 
-6. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS / NO MARKDOWN ASTERISKS):
+8. CLEAN PROFESSIONAL OUTPUT (NO CHATTER / NO CODE BLOCKS / NO MARKDOWN ASTERISKS):
    - Output ONLY the clean transcribed document text directly.
    - CRITICAL MANDATE: NEVER use markdown bold asterisks (**). NEVER write **পঞ্চম শ্রেণি** or **১. সঠিক উত্তর:**. Output completely plain text without any ** asterisks.
    - DO NOT add introductory greetings, explanations, chat preamble, or markdown code fences (\`\`\`).
-   - Reconstruct disjointed lines into smooth, coherent sentences and complete paragraphs.
 
-7. NO EXTRA ENTERS OR BLANK LINES (অতিরিক্ত ফাঁকা লাইন বা ডাবল এন্টার নিষেধ):
+9. NO EXTRA ENTERS OR BLANK LINES (অতিরিক্ত ফাঁকা লাইন বা ডাবল এন্টার নিষেধ):
    - CRITICAL: DO NOT insert empty blank lines or double Enters between questions, sub-questions, or lines.
-   - Each question, sub-question, and option must follow immediately on the next line without empty blank lines in between. (কোথাও প্রয়োজন হলে ব্যবহারকারী নিজে ম্যানুয়ালি স্পেস বা এন্টার দেবেন).
+   - Each question, sub-question, and option must follow immediately on the next line without empty blank lines in between.
 
-8. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
-   - CRITICAL: MCQ প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... ৩০. সতন্ত্রভাবে ১ থেকে শুরু করতে হবে (সৃজনশীল প্রশ্নের ক্রমিকের সাথে মিলিয়ে নয়)।
-   - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
-   - Write clean plain roman numerals without any asterisks:
-     i. A, B ও C একই সরলরেখায় অবস্থিত
-     ii. CP \perp BC
-     iii. AB = AC - BC
-     নিচের কোনটি সঠিক?
-     (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
-   - Keep MCQ options aligned side-by-side on the same line with proper spacing.
+10. ROMAN NUMERALS & MCQ FORMATTING (রোমান সংখ্যা ও বহুপদী বহুনির্বাচনী প্রশ্ন):
+    - CRITICAL: MCQ প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... ৩০. সতন্ত্রভাবে ১ থেকে শুরু করতে হবে (সৃজনশীল প্রশ্নের ক্রমিকের সাথে মিলিয়ে নয়)।
+    - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
+    - Write clean plain roman numerals without any asterisks:
+      i. A, B ও C একই সরলরেখায় অবস্থিত
+      ii. CP \perp BC
+      iii. AB = AC - BC
+      নিচের কোনটি সঠিক?
+      (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
+    - Keep MCQ options aligned side-by-side on the same line with proper spacing.
 
-9. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
-   - CRITICAL: সৃজনশীল প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... ১১. সতন্ত্রভাবে ১ থেকে শুরু করতে হবে।
-   - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
-   - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
+11. CREATIVE QUESTIONS (সৃজনশীল প্রশ্নপত্র):
+    - CRITICAL: সৃজনশীল প্রশ্নের ক্রমিক নম্বর ১., ২., ৩., ... সতন্ত্রভাবে ১ থেকে শুরু করতে হবে।
+    - Format sub-questions (উদ্দীপক, ১., ক., খ., গ., ঘ.) cleanly and beautifully.
+    - CRITICAL: NEVER attach marks or scores at the end of questions (যেমন: [১], [২], [৩], [৪], [৮], [১০], (১), (২), মান: ১ ইত্যাদি সম্পূর্ণ বাদ দিন). Output ONLY the clean question text without score brackets.
 
-10. SHORT QUESTIONS (সংক্ষিপ্ত ও অতি সংক্ষিপ্ত প্রশ্নপত্র):
+12. SHORT QUESTIONS (সংক্ষিপ্ত ও অতি সংক্ষিপ্ত প্রশ্নপত্র):
     - সংক্ষিপ্ত প্রশ্ন, অতি সংক্ষিপ্ত প্রশ্ন বা এক কথায় উত্তরের ক্ষেত্রেও ক্রমিক নম্বর সতন্ত্রভাবে ১., ২., ৩., ... থেকে শুরু করতে হবে।
 
-11. TABLES & GRIDS (টেবিল ও ছক):
+13. TABLES & GRIDS (টেবিল ও ছক):
     - Transcribe all tables into complete, standard Markdown tables.
-    - Example:
-      | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
-      | :--- | :--- | :--- |
-      | ভোল্টেজ ($V$) | $210\text{ V}$ | $700\text{ V}$ |
-      | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
-12. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
+14. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
     - Write mathematical formulas, algebraic equations, variables, sets, and expressions in LaTeX ($...$).
     - CRITICAL: DO NOT wrap plain numbers, lists of numbers, counts, or simple measurements in $...$!
       - Plain numbers & counts: 50 জন (NOT $50$ জন), 30 জন (NOT $30$ জন), 65, 62.5 (NOT $65$, $62.5$)
@@ -125,7 +126,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
       - NEVER put Bengali words or quotes inside LaTeX blocks.
 
-13. ACCURATE BENGALI TYPOGRAPHY:
+15. ACCURATE BENGALI TYPOGRAPHY:
     - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
 
   const GEMINI_VERIFY_PROMPT = `You are the Chief Examination Paper Auditor, Proofreader, and Senior Bengali Question Typist.
@@ -134,17 +135,19 @@ You are given:
 2. The PREVIOUSLY EXTRACTED draft text of the document / exam paper (provided in text).
 
 YOUR PRIMARY MISSION:
-Conduct a rigorous, word-by-word, line-by-line audit comparing the extracted draft text against the ORIGINAL source images to find and fix all flaws.
+Conduct a rigorous, stroke-by-stroke and word-by-word audit comparing the extracted draft text against the ORIGINAL source images to find and fix all flaws.
 
 SPECIFIC DEFECTS YOU MUST AUDIT AND FIX:
 1. উদ্দীপক ও অনুচ্ছেদ পুঙ্খানুপুঙ্খ যাচাই (Strictly Verbatim Stimulus):
-   - Compare the stimulus (উদ্দীপক/অনুচ্ছেদ) of every creative question against the source image.
+   - Compare the stimulus (উদ্দীপক/অনুচ্ছেদ) of every question against the source image stroke-by-stroke.
    - If any word, phrase, sentence, or data in the stimulus was altered, paraphrased, summarized, or changed, RESTORE the EXACT original wording from the source image.
+   - For handwritten text, verify each word against the handwriting strokes (e.g. 'কোনো বিষয়ে', 'বিদ্রোহী সত্ত্বা', 'অবজ্ঞার পাত্র', '১৯৬৯', 'গণঅভ্যুত্থান', 'তুরস্ককে').
 
-2. মিসিং অংশ ও উপ-প্রশ্ন পুনরুদ্ধার (Zero Omission / Missing Questions):
-   - Check every single question from the first to the very last.
-   - Ensure NO question is missing.
-   - In Creative Questions (সৃজনশীল প্রশ্ন), verify that ALL sub-questions (উদ্দীপক, ক., খ., গ., ঘ.) are present and intact. If any sub-question (like 'ঘ') was skipped, restore it from the image!
+2. মিসিং অংশ ও উপ-প্রশ্ন অডিট (Zero Omission & Zero Hallucination):
+   - Transcribe ONLY what is physically and visibly present in the source images.
+   - CRITICAL: DO NOT invent a 'ঘ' sub-question if it is NOT written on the image! If the image only has ক., খ., গ., keep ONLY ক., খ., গ. and remove any hallucinated 'ঘ'!
+   - DO NOT invent Question 2 or letter writing if not on the image! Remove any fabricated questions or sections.
+   - If any visible question or sub-question was actually skipped or dropped from the image, restore it from the image.
    - In MCQs, verify all options ((ক), (খ), (গ), (ঘ)) and roman numerals (i, ii, iii) are present.
    - Verify that all equations, tables, and lines from all pages are included.
 
@@ -166,7 +169,6 @@ SPECIFIC DEFECTS YOU MUST AUDIT AND FIX:
    - At the VERY END of the verified document, you MUST include a detailed audit note block listing every single correction made, so the user can easily review them:
      [নোট ও পরিবর্তনসমূহ:
      - প্রশ্ন ৩-এর উদ্দীপকে '...' মূল ছবির সাথে হুবহু মিলানো হয়েছে।
-     - প্রশ্ন ৬-এর 'ঘ' উপ-প্রশ্নটি পূর্বে বাদ পড়েছিল, মূল ছবি দেখে যুক্ত করা হয়েছে।
      - বানান সংশোধন: '...' এর স্থলে '...' ঠিক করা হয়েছে।]
    - If absolutely NO errors were found and the draft was already 100% faithful and complete:
      [নোট: মূল ফাইলের সাথে সম্পূর্ণ যাচাইকৃত, কোনো পরিবর্তন করা হয়নি।]
@@ -459,7 +461,7 @@ Output the COMPLETE, FULL, AUDITED document text from start to finish, ending wi
     }
   }
 
-  // Fast image optimization: resize on canvas
+  // Fast image optimization: preserve original resolution if under 6MB for flawless handwriting stroke OCR
   async function fastOptimizeImageFile(file) {
     return new Promise((resolve) => {
       if (!file || file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
@@ -469,10 +471,19 @@ Output the COMPLETE, FULL, AUDITED document text from start to finish, ending wi
         return;
       }
 
-      const img = new Image();
       const reader = new FileReader();
       reader.onload = (e) => {
         const rawDataUrl = e.target.result;
+        const mimeType = file.type || 'image/jpeg';
+
+        // High-fidelity preservation: If image is under 6MB, send the pristine raw pixels
+        // directly so handwritten ligatures, digits, and thin strokes are never blurred or compressed!
+        if (file.size <= 6 * 1024 * 1024) {
+          resolve({ base64: rawDataUrl, mimeType: mimeType });
+          return;
+        }
+
+        const img = new Image();
         img.onload = () => {
           let w = img.naturalWidth || img.width;
           let h = img.naturalHeight || img.height;
@@ -494,11 +505,11 @@ Output the COMPLETE, FULL, AUDITED document text from start to finish, ending wi
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'medium';
+          ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, w, h);
           resolve({ base64: canvas.toDataURL('image/jpeg', quality), mimeType: 'image/jpeg' });
         };
-        img.onerror = () => resolve({ base64: rawDataUrl, mimeType: file.type || 'image/jpeg' });
+        img.onerror = () => resolve({ base64: rawDataUrl, mimeType: mimeType });
         img.src = rawDataUrl;
       };
       reader.readAsDataURL(file);
@@ -844,7 +855,7 @@ Output the COMPLETE, FULL, AUDITED document text from start to finish, ending wi
 
     const activePrompt = customPrompt || GEMINI_PROMPT;
 
-    // Primary modern payload using official system_instruction for server-side prompt caching + thinkingBudget: 0 for instant streaming
+    // Primary modern payload using official system_instruction for server-side prompt caching + visual thinking deliberation for handwriting
     let payload = {
       system_instruction: {
         parts: [{ text: activePrompt }]
@@ -852,8 +863,7 @@ Output the COMPLETE, FULL, AUDITED document text from start to finish, ending wi
       contents: [{ parts: contentParts }],
       generationConfig: {
         temperature: 0.05,
-        maxOutputTokens: 65536,
-        thinkingConfig: { thinkingBudget: 0 }
+        maxOutputTokens: 65536
       },
       safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
