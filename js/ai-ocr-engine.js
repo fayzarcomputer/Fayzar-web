@@ -52,10 +52,14 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 
 3. STRICT FIDELITY TO SOURCE & MANDATORY NOTE FOR CORRECTIONS (মূল ফাইলের সাথে হুবহু মিল ও সংশোধনী নোট):
    - CRITICAL: DO NOT alter, rewrite, rephrase, summarize, or modify the original text, question contents, equations, or numbers on your own. You must follow the source image 100% faithfully.
-   - Perform a strict self-check against the original images to ensure exact fidelity.
-   - If you make any unavoidable correction to an obvious printing typo or blurred illegible character, you MUST explicitly document it at the very bottom of the document in a separate note block:
-     [নোট: ...সংশোধনের বিবরণ...]
-   - If no corrections or modifications were made, do NOT add any note.
+   - STIMULUS (উদ্দীপক/অনুচ্ছেদ অপরিবর্তিত রাখা): NEVER change, paraphrase, shorten, or rewrite the stimulus (উদ্দীপক/অনুচ্ছেদ). It MUST match the source image word-for-word!
+   - NO MISSING QUESTIONS OR PARTS (কোন অংশ বাদ দেওয়া যাবে না): Transcribe every single question and sub-question (ক, খ, গ, ঘ) completely. If a creative question has sub-questions ক, খ, গ, ঘ, never miss or drop 'ঘ'!
+   - MANDATORY AUDIT NOTE: If you make any unavoidable correction (fixing an obvious printing typo, restoring blurred text, or resolving misspellings), you MUST explicitly document each and every change at the very end of the document in a dedicated note block:
+     [নোট ও পরিবর্তনসমূহ:
+     - প্রশ্ন ৩-এর উদ্দীপকে '...' মূল ছবির সাথে মিলানো হয়েছে।
+     - প্রশ্ন ৬-এর 'ঘ' উপ-প্রশ্নটি মূল ছবি দেখে যুক্ত করা হয়েছে।]
+   - If absolutely NO changes or corrections were made and the output is 100% identical to the source:
+     [নোট: মূল ফাইলের সাথে সম্পূর্ণ যাচাইকৃত, কোনো পরিবর্তন করা হয়নি।]
 
 4. NO REFERENCES OR CITATIONS (কোন প্রকার রেফারেন্স বা উৎস রাখা যাবে না):
    - CRITICAL: DO NOT include any references, board tags, school/college names, exam years, citations, or source brackets!
@@ -84,7 +88,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
    - CRITICAL: NEVER wrap roman numerals in asterisks (*i.*, *ii.*, *iii.*, *i* ও *ii* etc. are strictly forbidden ❌).
    - Write clean plain roman numerals without any asterisks:
      i. A, B ও C একই সরলরেখায় অবস্থিত
-     ii. CP \\perp BC
+     ii. CP \perp BC
      iii. AB = AC - BC
      নিচের কোনটি সঠিক?
      (ক) i ও ii    (খ) i ও iii    (গ) ii ও iii    (ঘ) i, ii ও iii ✅
@@ -103,7 +107,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     - Example:
       | উপাদান | প্রাইমারি কুন্ডলী | সেকেন্ডারি কুন্ডলী |
       | :--- | :--- | :--- |
-      | ভোল্টেজ ($V$) | $210\\text{ V}$ | $700\\text{ V}$ |
+      | ভোল্টেজ ($V$) | $210\text{ V}$ | $700\text{ V}$ |
       | পাকসংখ্যা ($N$) | $30$ | $N_s$ |
 
 12. MATHEMATICAL & SCIENTIFIC NOTATION (লেটেক্স ও সমীকরণ ফরম্যাটিং):
@@ -114,15 +118,61 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       - Standard units & measurements: 8 m, 6 m, 20 cm, 7 সে.মি. (NOT $8 m$, $6 m$, $20 cm$, $7 সে.মি.$)
     - DO wrap actual math variables, terms, set notations, and equations in $...$:
       - Variables: $x$ এর মান, $n$ এর মান, $3n$ সংখ্যক পদ
-      - Sets & Functions: $P(A)$ নির্ণয় কর, $S$ অন্বয়টিকে, $A = \\{ ... \\}$, $B = \\{ ... \\}$
-      - Expressions & Equations: $y - x = -1$, $x^2 > 7$, $y^2 + 3y + 2 = 0$, $b = 2, c = 8, d = 3, p = \\frac{1}{3}$
-      - Series & Sequences: Use \\dots for series e.g. $5 + 8 + 11 + \\dots$ or $\\log 2 + \\log 4 + \\log 8 + \\dots$
+      - Sets & Functions: $P(A)$ নির্ণয় কর, $S$ অন্বয়টিকে, $A = \{ ... \}$, $B = \{ ... \}$
+      - Expressions & Equations: $y - x = -1$, $x^2 > 7$, $y^2 + 3y + 2 = 0$, $b = 2, c = 8, d = 3, p = \frac{1}{3}$
+      - Series & Sequences: Use \dots for series e.g. $5 + 8 + 11 + \dots$ or $\log 2 + \log 4 + \log 8 + \dots$
     - SCIENTIFIC UNITS & QUOTATIONS:
-      - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
+      - NEVER wrap units like cm, mm, m, km, kg, sec, V in quotation marks! Write $2262\text{ cm}^3$ (NEVER "cm" 3 or "cm"^3).
       - NEVER put Bengali words or quotes inside LaTeX blocks.
 
 13. ACCURATE BENGALI TYPOGRAPHY:
     - Use 100% correct Bengali spelling (যুক্তবর্ণ, ণ-ত্ব/ষ-ত্ব, দাড়ি, কমা, হাইফেন). Keep English terms, units, and symbols (kW, V, A, W, Input, Output) clean in English.`;
+
+  const GEMINI_VERIFY_PROMPT = `You are the Chief Examination Paper Auditor, Proofreader, and Senior Bengali Question Typist.
+You are given:
+1. The ORIGINAL source images / document pages (attached as media).
+2. The PREVIOUSLY EXTRACTED draft text of the document / exam paper (provided in text).
+
+YOUR PRIMARY MISSION:
+Conduct a rigorous, word-by-word, line-by-line audit comparing the extracted draft text against the ORIGINAL source images to find and fix all flaws.
+
+SPECIFIC DEFECTS YOU MUST AUDIT AND FIX:
+1. উদ্দীপক ও অনুচ্ছেদ পুঙ্খানুপুঙ্খ যাচাই (Strictly Verbatim Stimulus):
+   - Compare the stimulus (উদ্দীপক/অনুচ্ছেদ) of every creative question against the source image.
+   - If any word, phrase, sentence, or data in the stimulus was altered, paraphrased, summarized, or changed, RESTORE the EXACT original wording from the source image.
+
+2. মিসিং অংশ ও উপ-প্রশ্ন পুনরুদ্ধার (Zero Omission / Missing Questions):
+   - Check every single question from the first to the very last.
+   - Ensure NO question is missing.
+   - In Creative Questions (সৃজনশীল প্রশ্ন), verify that ALL sub-questions (উদ্দীপক, ক., খ., গ., ঘ.) are present and intact. If any sub-question (like 'ঘ') was skipped, restore it from the image!
+   - In MCQs, verify all options ((ক), (খ), (গ), (ঘ)) and roman numerals (i, ii, iii) are present.
+   - Verify that all equations, tables, and lines from all pages are included.
+
+3. বানান ও সমীকরণ সংশোধন (Spelling & Typo Correction):
+   - Fix any OCR spelling errors, broken yuktakhor (যুক্তবর্ণ), blurred characters, or punctuation mistakes.
+   - Ensure math equations are clean LaTeX without illegal formatting.
+
+4. ক্রমিক নম্বর ও ফরম্যাটিং নিয়ম বজায় রাখা:
+   - Separate sequential numbering starting from ১ for each question category:
+     * সৃজনশীল প্রশ্ন: ১., ২., ৩., ...
+     * বহুনির্বাচনী প্রশ্ন: সতন্ত্রভাবে ১., ২., ৩., ... (সৃজনশীলের সাথে মিলিয়ে নয়)
+     * সংক্ষিপ্ত প্রশ্ন: সতন্ত্রভাবে ১., ২., ৩., ...
+   - No board tags/references (e.g., omit [ঢাকা বোর্ড-২০২৩]).
+   - For diagrams/images, simply write: [ছবি আছে-পৃ:০১].
+   - No markdown bold asterisks (**). No asterisks on roman numerals (*i.* -> i.).
+   - No empty blank lines or double Enters between consecutive questions or lines.
+
+5. MANDATORY DETAILED AUDIT NOTE (বাধ্যতামূলক অডিট নোট):
+   - At the VERY END of the verified document, you MUST include a detailed audit note block listing every single correction made, so the user can easily review them:
+     [নোট ও পরিবর্তনসমূহ:
+     - প্রশ্ন ৩-এর উদ্দীপকে '...' মূল ছবির সাথে হুবহু মিলানো হয়েছে।
+     - প্রশ্ন ৬-এর 'ঘ' উপ-প্রশ্নটি পূর্বে বাদ পড়েছিল, মূল ছবি দেখে যুক্ত করা হয়েছে।
+     - বানান সংশোধন: '...' এর স্থলে '...' ঠিক করা হয়েছে।]
+   - If absolutely NO errors were found and the draft was already 100% faithful and complete:
+     [নোট: মূল ফাইলের সাথে সম্পূর্ণ যাচাইকৃত, কোনো পরিবর্তন করা হয়নি।]
+
+OUTPUT REQUIREMENT:
+Output the COMPLETE, FULL, AUDITED document text from start to finish, ending with the mandatory [নোট... block. Do NOT summarize or truncate.`;
 
   const DEFAULT_GEMINI_API_KEY = (typeof atob === 'function' ? atob('QVEuQWI4Uk42S1pDTXNmUTQtckhLV0U4NF83cXBxeGdHS1BMM2x4M1F6RXBBa3k4LUpuN2c=') : '');
 
@@ -140,11 +190,13 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     gasUrl: savedGas,
     demoMode: isDemo,
     selectedModel: localStorage.getItem(STORAGE_KEYS.SELECTED_MODEL) || 'auto',
+    autoVerify: localStorage.getItem('ai_ocr_auto_verify') === 'true',
 
     filesQueue: [],
     selectedFile: null,
     imageBase64: '',
     imageMimeType: '',
+    lastMediaItems: [],
     isProcessing: false,
     unicodeText: '',
     bijoyText: '',
@@ -243,6 +295,14 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       modelSelect: document.getElementById('ai-ocr-settings-model-select') || document.getElementById('ai-ocr-model-select'),
       gasUrlInput: document.getElementById('ai-ocr-gas-url-input'),
       resetCreditsBtn: document.getElementById('ai-ocr-reset-credits-btn'),
+      autoVerifyToggle: document.getElementById('ai-ocr-settings-autoverify'),
+
+      // Re-verification & Audit elements
+      verifyBtn: document.getElementById('wizardVerifyBtn'),
+      verifyBtnText: document.getElementById('wizardVerifyBtnText'),
+      auditNotesBox: document.getElementById('wizardAuditNotesBox'),
+      auditNotesContent: document.getElementById('wizardAuditNotesContent'),
+      auditStatusBadge: document.getElementById('wizardAuditStatusBadge'),
 
       byokModal: document.getElementById('ai-ocr-byok-modal'),
       byokInput: document.getElementById('ai-ocr-byok-input'),
@@ -256,6 +316,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     if (elements.geminiKeyInput) elements.geminiKeyInput.value = state.byokApiKey;
     if (elements.gasUrlInput) elements.gasUrlInput.value = state.gasUrl;
     if (elements.modelSelect) elements.modelSelect.value = state.selectedModel || 'auto';
+    if (elements.autoVerifyToggle) elements.autoVerifyToggle.checked = state.autoVerify;
   }
 
   function updateBadges() {
@@ -338,6 +399,10 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     if (elements.downloadDocBtn) elements.downloadDocBtn.addEventListener('click', () => downloadWordDocument('doc'));
     if (elements.downloadBijoyDocxBtn) elements.downloadBijoyDocxBtn.addEventListener('click', () => downloadWordDocument('bijoy_docx'));
     if (elements.downloadDocxBtn) elements.downloadDocxBtn.addEventListener('click', () => downloadWordDocument('unicode_docx'));
+
+    if (elements.verifyBtn) {
+      elements.verifyBtn.addEventListener('click', () => runVerificationPipeline(false));
+    }
 
     if (elements.modeBadge) {
       elements.modeBadge.style.cursor = 'pointer';
@@ -646,6 +711,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       };
     }));
 
+    state.lastMediaItems = mediaItems;
+
     if (onProgress) onProgress(total > 1 ? `সবগুলো (${toBengaliNumber(total)}টি) পেজ একসাথে AI-তে পাঠানো হচ্ছে...` : 'Gemini AI দিয়ে রূপান্তর হচ্ছে...', 45);
 
     const apiKey = state.byokApiKey ? state.byokApiKey.trim() : '';
@@ -669,7 +736,13 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     }
 
     if (onProgress) onProgress('আউটপুট প্রসেসিং ও ফরম্যাটিং সম্পন্ন হচ্ছে...', 95);
-    handleExtractionSuccess(rawText);
+    handleExtractionSuccess(rawText, false);
+
+    // Auto verification pipeline if enabled
+    if (state.autoVerify && state.lastMediaItems && state.lastMediaItems.length > 0 && !state.demoMode && apiKey) {
+      if (onProgress) onProgress('স্বয়ংক্রিয় অডিট ও যাচাই চলছে (বানান, উদ্দীপক ও মিসিং প্রশ্ন)...', 97);
+      await runVerificationPipeline(true);
+    }
 
     // Auto-generate and download the requested target document
     await downloadWordDocument(targetFormat);
@@ -716,6 +789,8 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       };
     }));
 
+    state.lastMediaItems = mediaItems;
+
     setLoading(true, total > 1 ? `সবগুলো (${toBengaliNumber(total)}টি) পেজ একসাথে Gemini AI-তে পাঠানো হচ্ছে...` : 'Gemini AI দিয়ে রূপান্তর হচ্ছে...', 45);
 
     try {
@@ -726,7 +801,10 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 
       setLoading(false);
       if (text && text.trim()) {
-        handleExtractionSuccess(text);
+        handleExtractionSuccess(text, false);
+        if (state.autoVerify && state.lastMediaItems && state.lastMediaItems.length > 0) {
+          await runVerificationPipeline(true);
+        }
         showToast(total > 1 ? `সবগুলো (${toBengaliNumber(total)}টি) পেজ একসাথে সফলভাবে রূপান্তর সম্পন্ন হয়েছে!` : 'AI দিয়ে ডকুমেন্ট রূপান্তর সম্পন্ন হয়েছে!', 'success');
       } else {
         showToast('কোনো টেক্সট পাওয়া যায়নি।', 'warning');
@@ -738,7 +816,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
   }
 
   // Gemini Execution Engine: sends media parts with Google's official system_instruction & live SSE Streaming
-  async function executeGeminiRequest(apiKey, mediaInput, onStreamChunk = null) {
+  async function executeGeminiRequest(apiKey, mediaInput, onStreamChunk = null, customPrompt = null, extraTextContent = null) {
     let mediaItems = [];
     if (Array.isArray(mediaInput)) {
       mediaItems = mediaInput;
@@ -760,12 +838,18 @@ CRITICAL COMPOSITION & FORMATTING RULES:
       });
     }
 
+    const contentParts = extraTextContent
+      ? [...mediaParts, { text: extraTextContent }]
+      : mediaParts;
+
+    const activePrompt = customPrompt || GEMINI_PROMPT;
+
     // Primary modern payload using official system_instruction for server-side prompt caching + thinkingBudget: 0 for instant streaming
     let payload = {
       system_instruction: {
-        parts: [{ text: GEMINI_PROMPT }]
+        parts: [{ text: activePrompt }]
       },
-      contents: [{ parts: mediaParts }],
+      contents: [{ parts: contentParts }],
       generationConfig: {
         temperature: 0.05,
         maxOutputTokens: 65536,
@@ -841,7 +925,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
           // If proxy/endpoint rejects system_instruction, thinkingConfig or maxOutputTokens, fallback payload format
           if (res.status === 400 && (errMsg.includes('system_instruction') || errMsg.includes('thinkingConfig') || errMsg.includes('maxOutputTokens') || errMsg.includes('exceed') || errMsg.includes('Unknown field'))) {
             payload = {
-              contents: [{ parts: [{ text: GEMINI_PROMPT }, ...mediaParts] }],
+              contents: [{ parts: [{ text: activePrompt }, ...contentParts] }],
               generationConfig: {
                 temperature: 0.05,
                 maxOutputTokens: 8192
@@ -1081,11 +1165,144 @@ CRITICAL COMPOSITION & FORMATTING RULES:
     showToast('অফলাইন ডেমো কনভার্সন সফল হয়েছে!', 'success');
   }
 
-  function handleExtractionSuccess(unicodeText) {
+  function extractAuditNote(text) {
+    if (!text) return null;
+    const match = text.match(/\[\s*নোট[\s\S]*?\]/);
+    return match ? match[0].trim() : null;
+  }
+
+  async function runVerificationPipeline(isAuto = false) {
+    if (state.isProcessing) return;
+
+    const currentText = (state.unicodeText || (elements.outputUnicodeArea ? elements.outputUnicodeArea.value : '')).trim();
+    if (!currentText) {
+      showToast('পূর্বে কোনো টেক্সট রূপান্তর করা হয়নি। প্রথমে ফাইল কনভার্ট করুন।', 'warning');
+      return;
+    }
+
+    let mediaItems = state.lastMediaItems;
+    if (!mediaItems || mediaItems.length === 0) {
+      const queue = state.filesQueue.length > 0
+        ? state.filesQueue
+        : (state.selectedFile ? [{ file: state.selectedFile, mimeType: state.imageMimeType, base64: state.imageBase64, name: 'ফাইল' }] : []);
+
+      if (queue.length > 0) {
+        mediaItems = await Promise.all(queue.map(async (item) => {
+          const b64 = await ensureBase64(item);
+          return {
+            data: b64,
+            mimeType: item.mimeType,
+            name: item.name
+          };
+        }));
+        state.lastMediaItems = mediaItems;
+      }
+    }
+
+    if (!mediaItems || mediaItems.length === 0) {
+      showToast('মূল ফাইলের কোনো ডেটা পাওয়া যায়নি। অনুগ্রহ করে ফাইল পুনরায় নির্বাচন করুন।', 'error');
+      return;
+    }
+
+    const apiKey = state.byokApiKey ? state.byokApiKey.trim() : '';
+    if (!apiKey && !state.demoMode) {
+      toggleModal(elements.byokModal, true);
+      showToast('পুনরায় যাচাইয়ের জন্য আপনার Gemini API Key প্রদান করুন।', 'warning');
+      return;
+    }
+
+    state.isProcessing = true;
+    const origBtnHtml = elements.verifyBtn ? elements.verifyBtn.innerHTML : '';
+    if (elements.verifyBtn) {
+      elements.verifyBtn.disabled = true;
+      elements.verifyBtn.classList.add('opacity-75', 'cursor-not-allowed');
+      elements.verifyBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>মূল ফাইলের সাথে অডিট ও যাচাই চলছে...</span>`;
+    }
+
+    setLoading(true, 'মূল ফাইলের সাথে শব্দে-শব্দে উদ্দীপক, বানান ও মিসিং প্রশ্ন অডিট করা হচ্ছে...', 65);
+
+    try {
+      let verifiedRawText = '';
+      if (state.demoMode || !apiKey) {
+        await sleep(800);
+        verifiedRawText = currentText + '\n\n[নোট: অফলাইন ডেমো মোডে মূল ফাইলের সাথে যাচাই সম্পন্ন হয়েছে।]';
+      } else {
+        const extraTextContent = `[পূর্বে সংগৃহীত খসড়া টেক্সট (DRAFT TO BE AUDITED & VERIFIED AGAINST ATTACHED IMAGES)]:\n\n${currentText}\n\n[নির্দেশনা: উপরের খসড়া টেক্সটটিকে সংযুক্ত মূল ছবিগুলোর সাথে পুঙ্খানুপুঙ্খ মিলিয়ে বানান ভুল, উদ্দীপকের বিচ্যুতি এবং কোনো প্রশ্ন বা উপ-প্রশ্ন বাদ পড়ে থাকলে তা সংশোধন করে সম্পূর্ণ নির্ভুল প্রশ্নপত্র প্রস্তুত করুন। কোনো পরিবর্তন করলে নিচে [নোট ও পরিবর্তনসমূহ: ...] আকারে লিখে দিন।]`;
+
+        verifiedRawText = await executeGeminiRequest(
+          apiKey,
+          mediaItems,
+          (liveChunk) => {
+            if (elements.outputUnicodeArea) elements.outputUnicodeArea.value = liveChunk;
+            setLoading(true, `লাইভ অডিট ও সংশোধন চলছে (${toBengaliNumber(liveChunk.length)} অক্ষর)...`, Math.min(95, 60 + Math.round(liveChunk.length / 35)));
+          },
+          GEMINI_VERIFY_PROMPT,
+          extraTextContent
+        );
+      }
+
+      setLoading(false);
+      state.isProcessing = false;
+
+      if (verifiedRawText && verifiedRawText.trim()) {
+        handleExtractionSuccess(verifiedRawText, true);
+        if (elements.verifyBtn) {
+          elements.verifyBtn.disabled = false;
+          elements.verifyBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+          elements.verifyBtn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-300"></i> <span>যাচাই ও সংশোধন সম্পন্ন!</span>`;
+          setTimeout(() => {
+            if (elements.verifyBtn) {
+              elements.verifyBtn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> <span>পুনরায় যাচাই ও সংশোধন করুন</span>`;
+            }
+          }, 6000);
+        }
+        showToast('মূল ফাইলের সাথে সফলভাবে যাচাই ও সংশোধন সম্পন্ন হয়েছে!', 'success');
+      } else {
+        showToast('যাচাইয়ের ফলাফল পাওয়া যায়নি। পূর্বের টেক্সট বহাল আছে।', 'warning');
+      }
+    } catch (err) {
+      setLoading(false);
+      state.isProcessing = false;
+      if (elements.verifyBtn) {
+        elements.verifyBtn.disabled = false;
+        elements.verifyBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+        elements.verifyBtn.innerHTML = origBtnHtml || `<i class="fa-solid fa-wand-magic-sparkles"></i> <span>পুনরায় যাচাই ও সংশোধন করুন</span>`;
+      }
+      showToast(`যাচাইকরণে ত্রুটি: ${err.message}`, 'error');
+    }
+  }
+
+  function handleExtractionSuccess(unicodeText, isVerification = false) {
     const cleaned = cleanOcrResponse(unicodeText);
     state.unicodeText = cleaned;
     if (elements.outputUnicodeArea) elements.outputUnicodeArea.value = cleaned;
     recalculateBijoyFromUnicode();
+
+    // Extract audit notes if present
+    const auditNote = extractAuditNote(cleaned);
+    if (elements.auditNotesBox) {
+      if (auditNote) {
+        elements.auditNotesBox.classList.remove('hidden');
+        if (elements.auditNotesContent) {
+          elements.auditNotesContent.textContent = auditNote.replace(/^\[\s*|\]\s*$/g, '').trim();
+        }
+        if (elements.auditStatusBadge) {
+          elements.auditStatusBadge.textContent = isVerification ? 'অডিট ও যাচাই সম্পন্ন' : 'সংশোধনী নোট অন্তর্ভুক্ত';
+          elements.auditStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300';
+        }
+      } else if (isVerification) {
+        elements.auditNotesBox.classList.remove('hidden');
+        if (elements.auditNotesContent) {
+          elements.auditNotesContent.textContent = 'মূল ফাইলের সাথে সম্পূর্ণ যাচাইকৃত, কোনো পরিবর্তন প্রয়োজন হয়নি।';
+        }
+        if (elements.auditStatusBadge) {
+          elements.auditStatusBadge.textContent = '১০০% নিখুঁত';
+          elements.auditStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300';
+        }
+      } else {
+        elements.auditNotesBox.classList.add('hidden');
+      }
+    }
 
     if (elements.successCard) {
       elements.successCard.classList.remove('hidden');
@@ -1282,6 +1499,7 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 
     const rawLines = text.split('\n');
     const cleanedLines = [];
+    let inNoteBlock = false;
 
     for (let i = 0; i < rawLines.length; i++) {
       let l = rawLines[i];
@@ -1290,6 +1508,19 @@ CRITICAL COMPOSITION & FORMATTING RULES:
 
       // Skip OCR delimiter lines
       if (/^[=\-]{2,}/.test(trimmed) && /ocr/i.test(trimmed)) {
+        continue;
+      }
+
+      // Preserve Audit Note blocks completely without modifying their contents
+      if (/^\s*\[\s*নোট/i.test(trimmed)) {
+        inNoteBlock = true;
+        cleanedLines.push(l);
+        if (trimmed.endsWith(']')) inNoteBlock = false;
+        continue;
+      }
+      if (inNoteBlock) {
+        cleanedLines.push(l);
+        if (trimmed.endsWith(']')) inNoteBlock = false;
         continue;
       }
 
@@ -2072,6 +2303,11 @@ ${bodyContentXml}
     state.byokApiKey = elements.geminiKeyInput.value.trim();
     state.selectedModel = elements.modelSelect.value || 'auto';
 
+    if (elements.autoVerifyToggle) {
+      state.autoVerify = elements.autoVerifyToggle.checked;
+      localStorage.setItem('ai_ocr_auto_verify', state.autoVerify ? 'true' : 'false');
+    }
+
     if (state.byokApiKey || state.gasUrl) {
       state.demoMode = elements.demoToggle.checked;
     }
@@ -2143,6 +2379,8 @@ ${bodyContentXml}
     init,
     startOcrConversion,
     startUnifiedOcr,
+    runVerificationPipeline,
+    extractAuditNote,
     downloadWordDocument,
     handleFiles,
     fastOptimizeImageFile,

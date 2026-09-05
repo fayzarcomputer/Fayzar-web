@@ -912,6 +912,8 @@
       let i = 0;
       const htmlBlocks = [];
 
+      let isInsideNote = false;
+
       while (i < lines.length) {
         const line = lines[i];
         const trimmed = line.trim();
@@ -957,7 +959,12 @@
           continue;
         } else {
           const contentHtml = renderFormattedRun(line);
-          htmlBlocks.push(`<p class="MsoNormal" style="margin:0cm;margin-bottom:.0001pt;line-height:normal;mso-line-height-rule:auto;font-size:${baseFontSizePt}pt;">${contentHtml || '&nbsp;'}</p>`);
+          const isNoteHeader = /^\s*\[\s*নোট/i.test(trimmed);
+          if (isNoteHeader) isInsideNote = true;
+          const isNoteLine = isNoteHeader || isInsideNote;
+          const noteStyle = isNoteLine ? (isNoteHeader ? 'color:#334155;font-weight:bold;padding-top:6pt;' : 'color:#334155;padding-left:10pt;') : '';
+          if (trimmed.endsWith(']')) isInsideNote = false;
+          htmlBlocks.push(`<p class="MsoNormal" style="margin:0cm;margin-bottom:.0001pt;line-height:normal;mso-line-height-rule:auto;font-size:${baseFontSizePt}pt;${noteStyle}">${contentHtml || '&nbsp;'}</p>`);
         }
         i++;
       }

@@ -709,6 +709,38 @@
               </button>
             </div>
 
+            <!-- AI Re-Verification & Audit Action Bar -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#152033]/90 border-2 border-indigo-200/80 dark:border-indigo-800/60 shadow-sm backdrop-blur-xs">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg flex-shrink-0 shadow-md shadow-indigo-500/20">
+                  <i class="fa-solid fa-spell-check" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <h5 class="text-xs sm:text-sm font-black text-slate-800 dark:text-white flex items-center gap-2 flex-wrap">
+                    <span>মূল ফাইলের সাথে পুনরায় অডিট ও যাচাই</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold border border-indigo-200 dark:border-indigo-800">AI Auditor</span>
+                  </h5>
+                  <p class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">বানান ভুল, উদ্দীপক পরিবর্তন বা কোনো প্রশ্ন মিসিং আছে কিনা মূল ছবির সাথে পুঙ্খানুপুঙ্খ মিলিয়ে সংশোধন করুন</p>
+                </div>
+              </div>
+              <button type="button" id="wizardVerifyBtn" class="px-4 py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 cursor-pointer whitespace-nowrap transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                <span id="wizardVerifyBtnText">পুনরায় যাচাই ও সংশোধন করুন</span>
+              </button>
+            </div>
+
+            <!-- Verification Audit Notes Log Box (displays modifications or 100% fidelity note) -->
+            <div id="wizardAuditNotesBox" class="hidden p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-950/40 border border-amber-300/80 dark:border-amber-700/60 text-xs flex-col gap-2 animate-fade-in shadow-xs">
+              <div class="flex items-center justify-between border-b border-amber-200/60 dark:border-amber-800/60 pb-2">
+                <span class="font-black text-amber-900 dark:text-amber-200 flex items-center gap-2">
+                  <i class="fa-solid fa-clipboard-check text-amber-600 dark:text-amber-400 text-sm" aria-hidden="true"></i>
+                  <span>যাচাই ও সংশোধনের বিবরণ (Audit Log):</span>
+                </span>
+                <span id="wizardAuditStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/80 text-amber-800 dark:text-amber-200 border border-amber-300">যাচাইকৃত</span>
+              </div>
+              <div id="wizardAuditNotesContent" class="text-slate-800 dark:text-slate-200 font-mono text-[11px] whitespace-pre-wrap leading-relaxed"></div>
+            </div>
+
             <!-- 1-Click Multi-Format Download Action Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               
@@ -1123,6 +1155,18 @@
           </select>
         </div>
 
+        <!-- Auto-Verify Setting Toggle -->
+        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-[#1a263d] rounded-2xl border border-slate-200 dark:border-slate-700">
+          <div class="pr-2">
+            <label for="ai-ocr-settings-autoverify" class="font-bold text-slate-800 dark:text-slate-200 cursor-pointer block">স্বয়ংক্রিয় অডিট ও যাচাই (Auto-Verify)</label>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">কনভার্সন শেষে মূল ছবির সাথে বানান, উদ্দীপক ও মিসিং প্রশ্ন স্বয়ংক্রিয়ভাবে মিলিয়ে নেবে</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="ai-ocr-settings-autoverify" class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
         <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-emerald-900 dark:text-emerald-200">
           <span class="font-bold">আজকের অবশিষ্ট ফ্রি ক্রেডিট:</span>
           <span id="ai-ocr-credits-count" class="font-black font-mono text-sm">১৫ / ১৫</span>
@@ -1137,17 +1181,17 @@
     </div>
   </div>
 
-  <!-- Core JavaScript Engines (cache-busting v=20260905_v4) -->
-  <script src="js/vendor/pdf.min.js?v=20260905_v4"></script>
-  <script src="js/jszip.min.js?v=20260905_v4"></script>
-  <script src="js/bangla-converter-engine.js?v=20260905_v4"></script>
-  <script src="js/equation-converter.js?v=20260905_v4"></script>
-  <script src="js/docx-to-doc-engine.js?v=20260905_v4"></script>
-  <script src="js/docx-handler.js?v=20260905_v4"></script>
-  <script src="js/xlsx-handler.js?v=20260905_v4"></script>
-  <script src="js/pptx-handler.js?v=20260905_v4"></script>
-  <script src="js/ai-ocr-engine.js?v=20260905_v4"></script>
-  <script src="js/main.js?v=20260905_v4" defer></script>
+  <!-- Core JavaScript Engines (cache-busting v=20260905_v5) -->
+  <script src="js/vendor/pdf.min.js?v=20260905_v5"></script>
+  <script src="js/jszip.min.js?v=20260905_v5"></script>
+  <script src="js/bangla-converter-engine.js?v=20260905_v5"></script>
+  <script src="js/equation-converter.js?v=20260905_v5"></script>
+  <script src="js/docx-to-doc-engine.js?v=20260905_v5"></script>
+  <script src="js/docx-handler.js?v=20260905_v5"></script>
+  <script src="js/xlsx-handler.js?v=20260905_v5"></script>
+  <script src="js/pptx-handler.js?v=20260905_v5"></script>
+  <script src="js/ai-ocr-engine.js?v=20260905_v5"></script>
+  <script src="js/main.js?v=20260905_v5" defer></script>
 
   <!-- Floating CTA Stack -->
   <div class="floating-cta-stack" aria-label="দ্রুত যোগাযোগ">

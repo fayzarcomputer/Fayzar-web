@@ -2094,6 +2094,7 @@ function initUnifiedConverterEngine() {
   const wizardDlXlsxBtn = document.getElementById('wizardDlXlsxBtn');
   const wizardDlPptxBtn = document.getElementById('wizardDlPptxBtn');
   const wizardConvertAnotherBtn = document.getElementById('wizardConvertAnotherBtn');
+  const wizardVerifyBtn = document.getElementById('wizardVerifyBtn');
 
   let currentScanResult = null;
   let selectedAiTargetFormat = 'doc'; // 'doc', 'bijoy_docx', 'unicode_docx'
@@ -2615,6 +2616,13 @@ function initUnifiedConverterEngine() {
       }
       if (wizardDlDocxBtn) {
         wizardDlDocxBtn.onclick = () => window.FayzarAiOcrEngine.downloadWordDocument(selectedAiTargetFormat === 'unicode_docx' ? 'unicode_docx' : 'bijoy_docx');
+      }
+      if (wizardVerifyBtn) {
+        wizardVerifyBtn.onclick = () => {
+          if (window.FayzarAiOcrEngine && typeof window.FayzarAiOcrEngine.runVerificationPipeline === 'function') {
+            window.FayzarAiOcrEngine.runVerificationPipeline(false);
+          }
+        };
       }
 
       // Show Instant Download Alert
